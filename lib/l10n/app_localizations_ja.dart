@@ -1,0 +1,398 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Japanese (`ja`).
+class AppLocalizationsJa extends AppLocalizations {
+  AppLocalizationsJa([String locale = 'ja']) : super(locale);
+
+  @override
+  String get appName => 'グル バトラー';
+
+  @override
+  String get feed => 'フィード';
+
+  @override
+  String get diary => '日記';
+
+  @override
+  String get report => 'レポート';
+
+  @override
+  String get settings => '設定';
+
+  @override
+  String get add => '追加';
+
+  @override
+  String get cancel => 'キャンセル';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get delete => '削除';
+
+  @override
+  String get edit => '編集';
+
+  @override
+  String get today => '今日';
+
+  @override
+  String get yesterday => '昨日';
+
+  @override
+  String get thisWeek => '今週';
+
+  @override
+  String get thisMonth => '今月';
+
+  @override
+  String get bloodGlucose => '血糖値';
+
+  @override
+  String get meal => '食事';
+
+  @override
+  String get exercise => '運動';
+
+  @override
+  String get glucoseUnit => '単位';
+
+  @override
+  String get mgdl => 'mg/dL';
+
+  @override
+  String get mmoll => 'mmol/L';
+
+  @override
+  String get low => '低血糖';
+
+  @override
+  String get normal => '正常';
+
+  @override
+  String get high => '高血糖';
+
+  @override
+  String get breakfast => '朝食';
+
+  @override
+  String get lunch => '昼食';
+
+  @override
+  String get dinner => '夕食';
+
+  @override
+  String get snack => 'おやつ';
+
+  @override
+  String get beforeMeal => '食前';
+
+  @override
+  String get afterMeal => '食後';
+
+  @override
+  String get fasting => '空腹時';
+
+  @override
+  String get dailyReport => '日次レポート';
+
+  @override
+  String get weeklyReport => '週次レポート';
+
+  @override
+  String get aiInsight => 'AIインサイト';
+
+  @override
+  String get glucoseScore => '血糖スコア';
+
+  @override
+  String get profile => 'プロフィール';
+
+  @override
+  String get name => '名前';
+
+  @override
+  String get gender => '性別';
+
+  @override
+  String get male => '男性';
+
+  @override
+  String get female => '女性';
+
+  @override
+  String get birthday => '生年月日';
+
+  @override
+  String get diabetesType => '糖尿病タイプ';
+
+  @override
+  String get type1 => '1型';
+
+  @override
+  String get type2 => '2型';
+
+  @override
+  String get none => 'なし';
+
+  @override
+  String get language => '言語';
+
+  @override
+  String get changeInSettings => '設定アプリで変更';
+
+  @override
+  String get darkMode => 'ダークモード';
+
+  @override
+  String get displaySettings => '表示';
+
+  @override
+  String get systemDefault => 'システム設定';
+
+  @override
+  String get systemDefaultDescription => 'システムテーマに従う';
+
+  @override
+  String get lightMode => 'ライト';
+
+  @override
+  String get darkModeOption => 'ダーク';
+
+  @override
+  String get notifications => '通知';
+
+  @override
+  String get notificationTime => '通知時間';
+
+  @override
+  String get healthConnect => 'ヘルスケア連携';
+
+  @override
+  String get connected => '接続済み';
+
+  @override
+  String get notConnected => '未接続';
+
+  @override
+  String get connect => '接続する';
+
+  @override
+  String get disconnect => '接続解除';
+
+  @override
+  String get subscription => 'サブスクリプション';
+
+  @override
+  String get gluButlerPro => 'グル バトラー Pro';
+
+  @override
+  String get upgradeToPro => 'Proにアップグレード';
+
+  @override
+  String get proDescription => 'すべてのプレミアム機能をアンロック';
+
+  @override
+  String get proFeature1 => '無制限のAIインサイト';
+
+  @override
+  String get proFeature2 => '高度な分析とレポート';
+
+  @override
+  String get proFeature3 => 'データエクスポート';
+
+  @override
+  String get proFeature4 => '優先サポート';
+
+  @override
+  String get subscribeMonthly => '月額プラン';
+
+  @override
+  String get subscribeYearly => '年額プラン';
+
+  @override
+  String get monthlyPrice => '¥700/月';
+
+  @override
+  String get yearlyPrice => '¥5,800/年';
+
+  @override
+  String get restorePurchases => '購入を復元';
+
+  @override
+  String get currentPlan => '現在のプラン';
+
+  @override
+  String get freePlan => '無料';
+
+  @override
+  String get proPlan => 'Pro';
+
+  @override
+  String get youArePro => 'You\'re Pro!';
+
+  @override
+  String get proThankYou =>
+      'Thank you for supporting Glu Butler. Enjoy all premium features!';
+
+  @override
+  String get subscriptionStartDate => 'Started';
+
+  @override
+  String get subscriptionPlan => 'Plan';
+
+  @override
+  String get yearlyPlan => 'Yearly';
+
+  @override
+  String get monthlyPlan => 'Monthly';
+
+  @override
+  String get manageSubscription => 'Manage Subscription';
+
+  @override
+  String get disclaimer => 'このアプリは参考用であり、医療アドバイスを提供するものではありません。';
+
+  @override
+  String get enterGlucose => '血糖値を入力';
+
+  @override
+  String get enterMeal => '食事を追加';
+
+  @override
+  String get enterExercise => '運動を追加';
+
+  @override
+  String get takePhoto => '写真を撮る';
+
+  @override
+  String get chooseFromGallery => 'ギャラリーから選択';
+
+  @override
+  String get noRecords => '記録がありません';
+
+  @override
+  String get startTracking => '健康記録を始めましょう！';
+
+  @override
+  String get goodMorning => 'おはようございます！';
+
+  @override
+  String get goodAfternoon => 'こんにちは！';
+
+  @override
+  String get goodEvening => 'こんばんは！';
+
+  @override
+  String get butlerGreeting => '執事がお手伝いいたします。';
+
+  @override
+  String get home => '今日';
+
+  @override
+  String get yourToday => '今日のあなた';
+
+  @override
+  String get points => '点';
+
+  @override
+  String get todaysGlucose => '血糖トレンド';
+
+  @override
+  String get todaysStats => '今日の統計';
+
+  @override
+  String get average => '平均';
+
+  @override
+  String get lowest => '最低';
+
+  @override
+  String get highest => '最高';
+
+  @override
+  String get glucoseDistribution => '血糖分布';
+
+  @override
+  String get times => '回';
+
+  @override
+  String get viewReport => 'レポートを見る';
+
+  @override
+  String get excellentScore => '素晴らしい！今日の血糖管理は順調です。';
+
+  @override
+  String get goodScore => '良いですね！もう少し気をつければ完璧です。';
+
+  @override
+  String get needsAttention => '今日は血糖の変動が大きかったです。食事を確認してください。';
+
+  @override
+  String get noGlucoseToday => '今日の血糖記録がありません';
+
+  @override
+  String get addGlucose => '血糖を追加';
+
+  @override
+  String get addDiaryEntry => '日記を追加';
+
+  @override
+  String get insulin => 'Insulin';
+
+  @override
+  String get addInsulin => 'Add Insulin';
+
+  @override
+  String get insulinType => 'Insulin Type';
+
+  @override
+  String get rapidActing => 'Rapid-acting';
+
+  @override
+  String get shortActing => 'Short-acting';
+
+  @override
+  String get intermediateActing => 'Intermediate';
+
+  @override
+  String get longActing => 'Long-acting';
+
+  @override
+  String get insulinDose => 'Dose';
+
+  @override
+  String get units => 'U';
+
+  @override
+  String get injectionSite => 'Injection Site';
+
+  @override
+  String get abdomen => 'Abdomen';
+
+  @override
+  String get thigh => 'Thigh';
+
+  @override
+  String get arm => 'Arm';
+
+  @override
+  String get buttock => 'Buttock';
+
+  @override
+  String get measurementTime => 'Time';
+
+  @override
+  String get injectionTime => 'Injection Time';
+
+  @override
+  String get measurementTiming => 'Timing';
+
+  @override
+  String get addRecord => 'Add Record';
+}
