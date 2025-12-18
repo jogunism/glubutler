@@ -69,26 +69,20 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 400),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOut,
-      ),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutBack,
-      ),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
-    _exitFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _exitController,
-        curve: Curves.easeIn,
-      ),
-    );
+    _exitFadeAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
 
     // 아이콘 먼저 즉시 표시
     _controller.forward();
@@ -141,15 +135,13 @@ class _SplashScreenState extends State<SplashScreen>
       body: AnimatedBuilder(
         animation: Listenable.merge([_controller, _exitController]),
         builder: (context, child) {
-          final exitOpacity = _exitController.isAnimating || _exitController.isCompleted
+          final exitOpacity =
+              _exitController.isAnimating || _exitController.isCompleted
               ? _exitFadeAnimation.value
               : 1.0;
           return Opacity(
             opacity: _fadeAnimation.value * exitOpacity,
-            child: Transform.scale(
-              scale: _scaleAnimation.value,
-              child: child,
-            ),
+            child: Transform.scale(scale: _scaleAnimation.value, child: child),
           );
         },
         child: Center(
@@ -176,9 +168,7 @@ class _SplashScreenState extends State<SplashScreen>
               AnimatedOpacity(
                 opacity: _showLoading ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 300),
-                child: const CupertinoActivityIndicator(
-                  radius: 14,
-                ),
+                child: const CupertinoActivityIndicator(radius: 14),
               ),
             ],
           ),
