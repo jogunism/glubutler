@@ -171,6 +171,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get notificationTime => '알림 시간';
 
   @override
+  String get sync => '연동';
+
+  @override
   String get healthConnect => '건강 앱 연동';
 
   @override
@@ -394,4 +397,69 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get addRecord => '기록 추가';
+
+  @override
+  String get appleHealth => 'Apple 건강';
+
+  @override
+  String get appleHealthDescription =>
+      '건강 앱과 연동하여 혈당 관리에 도움이 되는 운동, 수면, 체중 등 다양한 데이터를 함께 확인할 수 있습니다.';
+
+  @override
+  String get syncedData => '연동 데이터';
+
+  @override
+  String get connectAppleHealth => 'Apple 건강 연결';
+
+  @override
+  String get successfullyConnected => 'Apple 건강 앱과 연결되었습니다';
+
+  @override
+  String get failedToConnect => '연결에 실패했습니다. 권한을 확인해주세요.';
+
+  @override
+  String get privacyNote =>
+      '건강 데이터는 기기에만 저장되며 허락 없이 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.';
+
+  @override
+  String get readWrite => '읽기 및 쓰기';
+
+  @override
+  String get readOnly => '읽기 전용';
+
+  @override
+  String get workouts => '운동';
+
+  @override
+  String get sleep => '수면';
+
+  @override
+  String get weightBody => '체중 및 신체';
+
+  @override
+  String get waterIntake => '수분 섭취';
+
+  @override
+  String get menstrualCycle => '생리 주기';
+
+  @override
+  String get steps => '걸음 수';
+
+  @override
+  String get openHealthApp => '건강 앱 > 공유 > 앱에서 권한을 관리하세요';
+
+  @override
+  String get syncPeriod => '연동 기간';
+
+  @override
+  String get syncPeriod1Week => '1주';
+
+  @override
+  String get syncPeriod2Weeks => '2주';
+
+  @override
+  String get syncPeriod1Month => '1개월';
+
+  @override
+  String get syncPeriod3Months => '3개월';
 }

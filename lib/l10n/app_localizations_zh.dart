@@ -171,6 +171,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationTime => '通知时间';
 
   @override
+  String get sync => '同步';
+
+  @override
   String get healthConnect => '健康连接';
 
   @override
@@ -395,4 +398,68 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get appleHealth => 'Apple 健康';
+
+  @override
+  String get appleHealthDescription => '连接健康 App，查看运动、睡眠、体重等可能有助于血糖管理的数据。';
+
+  @override
+  String get syncedData => '同步数据';
+
+  @override
+  String get connectAppleHealth => '连接 Apple 健康';
+
+  @override
+  String get successfullyConnected => '已成功连接到 Apple 健康';
+
+  @override
+  String get failedToConnect => '连接失败，请检查权限设置。';
+
+  @override
+  String get privacyNote =>
+      '您的健康数据仅保存在设备上，未经许可不会共享。您可以在健康 App > 共享 > App > Glu Butler 中管理权限。';
+
+  @override
+  String get readWrite => '读写';
+
+  @override
+  String get readOnly => '只读';
+
+  @override
+  String get workouts => '体能训练';
+
+  @override
+  String get sleep => '睡眠';
+
+  @override
+  String get weightBody => '体重与身体数据';
+
+  @override
+  String get waterIntake => '饮水量';
+
+  @override
+  String get menstrualCycle => '月经周期';
+
+  @override
+  String get steps => '步数';
+
+  @override
+  String get openHealthApp => '在健康 App > 共享 > App 中管理权限';
+
+  @override
+  String get syncPeriod => '同步周期';
+
+  @override
+  String get syncPeriod1Week => '1周';
+
+  @override
+  String get syncPeriod2Weeks => '2周';
+
+  @override
+  String get syncPeriod1Month => '1个月';
+
+  @override
+  String get syncPeriod3Months => '3个月';
 }

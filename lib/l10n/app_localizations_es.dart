@@ -171,6 +171,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationTime => 'Hora de notificación';
 
   @override
+  String get sync => 'Sincronización';
+
+  @override
   String get healthConnect => 'Conexión de salud';
 
   @override
@@ -398,4 +401,71 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get appleHealth => 'Apple Salud';
+
+  @override
+  String get appleHealthDescription =>
+      'Conéctate con la app Salud para ver entrenamientos, sueño, peso y otros datos que pueden ayudarte a controlar tu glucosa.';
+
+  @override
+  String get syncedData => 'Datos sincronizados';
+
+  @override
+  String get connectAppleHealth => 'Conectar Apple Salud';
+
+  @override
+  String get successfullyConnected => 'Conectado exitosamente a Apple Salud';
+
+  @override
+  String get failedToConnect =>
+      'Error de conexión. Por favor verifica tus permisos.';
+
+  @override
+  String get privacyNote =>
+      'Tus datos de salud permanecen en tu dispositivo y nunca se comparten sin tu permiso. Puedes gestionar el acceso en Salud > Compartir > Apps > Glu Butler.';
+
+  @override
+  String get readWrite => 'Lectura y escritura';
+
+  @override
+  String get readOnly => 'Solo lectura';
+
+  @override
+  String get workouts => 'Entrenamientos';
+
+  @override
+  String get sleep => 'Sueño';
+
+  @override
+  String get weightBody => 'Peso y cuerpo';
+
+  @override
+  String get waterIntake => 'Ingesta de agua';
+
+  @override
+  String get menstrualCycle => 'Ciclo menstrual';
+
+  @override
+  String get steps => 'Pasos';
+
+  @override
+  String get openHealthApp =>
+      'Abre Salud > Compartir > Apps para gestionar permisos';
+
+  @override
+  String get syncPeriod => 'Período de sincronización';
+
+  @override
+  String get syncPeriod1Week => '1 semana';
+
+  @override
+  String get syncPeriod2Weeks => '2 semanas';
+
+  @override
+  String get syncPeriod1Month => '1 mes';
+
+  @override
+  String get syncPeriod3Months => '3 meses';
 }

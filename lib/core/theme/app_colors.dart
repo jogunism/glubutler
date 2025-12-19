@@ -12,6 +12,9 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.textSecondary,
     required this.glassBackground,
     required this.glassBorder,
+    required this.success,
+    required this.error,
+    required this.iconGrey,
   });
 
   /// iOS-style background color
@@ -38,6 +41,15 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Glass effect border color
   final Color glassBorder;
 
+  /// Success color (iOS System Green)
+  final Color success;
+
+  /// Error color (iOS System Red)
+  final Color error;
+
+  /// Icon grey color (for neutral icons like system default)
+  final Color iconGrey;
+
   /// Light theme colors (Glu Sight palette)
   static const light = AppColors(
     background: Color(0xFFF2F2F7), // iOS Default Light
@@ -48,6 +60,9 @@ class AppColors extends ThemeExtension<AppColors> {
     textSecondary: Color(0xFF8E8E93), // Gray
     glassBackground: Color(0x1A4ECDC4), // Mint/Teal 10%
     glassBorder: Color(0x4D4ECDC4), // Mint/Teal 30%
+    success: Color(0xFF34C759), // iOS System Green
+    error: Color(0xFFFF3B30), // iOS System Red
+    iconGrey: Color(0xFF8E8E93), // iOS System Grey
   );
 
   /// Dark theme colors (Glu Sight palette)
@@ -60,6 +75,9 @@ class AppColors extends ThemeExtension<AppColors> {
     textSecondary: Color(0xFF8E8E93), // Gray
     glassBackground: Color(0x264ECDC4), // Mint/Teal 15%
     glassBorder: Color(0x664ECDC4), // Mint/Teal 40%
+    success: Color(0xFF30D158), // iOS System Green (Dark)
+    error: Color(0xFFFF453A), // iOS System Red (Dark)
+    iconGrey: Color(0xFF98989D), // iOS System Grey (Dark)
   );
 
   @override
@@ -72,6 +90,9 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? textSecondary,
     Color? glassBackground,
     Color? glassBorder,
+    Color? success,
+    Color? error,
+    Color? iconGrey,
   }) {
     return AppColors(
       background: background ?? this.background,
@@ -82,6 +103,9 @@ class AppColors extends ThemeExtension<AppColors> {
       textSecondary: textSecondary ?? this.textSecondary,
       glassBackground: glassBackground ?? this.glassBackground,
       glassBorder: glassBorder ?? this.glassBorder,
+      success: success ?? this.success,
+      error: error ?? this.error,
+      iconGrey: iconGrey ?? this.iconGrey,
     );
   }
 
@@ -99,6 +123,9 @@ class AppColors extends ThemeExtension<AppColors> {
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       glassBackground: Color.lerp(glassBackground, other.glassBackground, t)!,
       glassBorder: Color.lerp(glassBorder, other.glassBorder, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      error: Color.lerp(error, other.error, t)!,
+      iconGrey: Color.lerp(iconGrey, other.iconGrey, t)!,
     );
   }
 }

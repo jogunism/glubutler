@@ -16,6 +16,7 @@ class SettingsService extends ChangeNotifier {
   bool _isHealthConnected = false;
   bool _isPro = false;
   DateTime? _subscriptionDate;
+  int _syncPeriod = AppConstants.defaultSyncPeriod;
 
   String get language => _language;
   String get unit => _unit;
@@ -25,6 +26,7 @@ class SettingsService extends ChangeNotifier {
   bool get isHealthConnected => _isHealthConnected;
   bool get isPro => _isPro;
   DateTime? get subscriptionDate => _subscriptionDate;
+  int get syncPeriod => _syncPeriod;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -69,6 +71,8 @@ class SettingsService extends ChangeNotifier {
     if (subscriptionDateString != null) {
       _subscriptionDate = DateTime.tryParse(subscriptionDateString);
     }
+
+    _syncPeriod = _prefs.getInt(AppConstants.keySyncPeriod) ?? AppConstants.defaultSyncPeriod;
 
     notifyListeners();
   }
@@ -130,6 +134,16 @@ class SettingsService extends ChangeNotifier {
       _subscriptionDate = null;
       await _prefs.remove(AppConstants.keySubscriptionDate);
     }
+    notifyListeners();
+  }
+
+  Future<void> setSyncPeriod(int days) async {
+    if (days != AppConstants.syncPeriod1Week &&
+        days != AppConstants.syncPeriod2Weeks &&
+        days != AppConstants.syncPeriod1Month &&
+        days != AppConstants.syncPeriod3Months) return;
+    _syncPeriod = days;
+    await _prefs.setInt(AppConstants.keySyncPeriod, days);
     notifyListeners();
   }
 }

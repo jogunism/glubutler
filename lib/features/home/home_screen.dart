@@ -247,14 +247,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text('${chartMax.toInt()}',
-                            style: const TextStyle(
-                                fontSize: 10, color: Colors.grey)),
+                            style: TextStyle(
+                                fontSize: 10, color: context.colors.textSecondary)),
                         Text('${(chartMax / 2).toInt()}',
-                            style: const TextStyle(
-                                fontSize: 10, color: Colors.grey)),
+                            style: TextStyle(
+                                fontSize: 10, color: context.colors.textSecondary)),
                         Text('0',
-                            style: const TextStyle(
-                                fontSize: 10, color: Colors.grey)),
+                            style: TextStyle(
+                                fontSize: 10, color: context.colors.textSecondary)),
                       ],
                     ),
                   ),
@@ -331,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: barWidth - 8,
                     child: Text(
                       entry.time.substring(0, 5),
-                      style: const TextStyle(fontSize: 9, color: Colors.grey),
+                      style: TextStyle(fontSize: 9, color: context.colors.textSecondary),
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -489,6 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 lowRatio: total > 0 ? dist['low']! / total : 0,
                 normalRatio: total > 0 ? dist['normal']! / total : 0,
                 highRatio: total > 0 ? dist['high']! / total : 0,
+                holeColor: context.colors.card,
               ),
             ),
           ),
@@ -660,11 +661,13 @@ class _PieChartPainter extends CustomPainter {
   final double lowRatio;
   final double normalRatio;
   final double highRatio;
+  final Color holeColor;
 
   _PieChartPainter({
     required this.lowRatio,
     required this.normalRatio,
     required this.highRatio,
+    required this.holeColor,
   });
 
   @override
@@ -706,7 +709,7 @@ class _PieChartPainter extends CustomPainter {
 
     // 중앙 구멍 (도넛 차트)
     final holePaint = Paint()
-      ..color = Colors.white
+      ..color = holeColor
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, radius * 0.6, holePaint);
   }

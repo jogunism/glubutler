@@ -61,6 +61,7 @@
   "darkModeOption": "Dark",
   "notifications": "Notifications",
   "notificationTime": "Notification Time",
+  "sync": "Sync",
   "healthConnect": "Health Connect",
   "connected": "Connected",
   "notConnected": "Not Connected",
@@ -142,5 +143,28 @@
   "measurementTime": "Time",
   "injectionTime": "Injection Time",
   "measurementTiming": "Timing",
-  "addRecord": "Add Record"
+  "addRecord": "Add Record",
+
+  "appleHealth": "Apple Health",
+  "appleHealthDescription": "Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.",
+  "syncedData": "Synced Data",
+  "connectAppleHealth": "Connect Apple Health",
+  "successfullyConnected": "Successfully connected to Apple Health",
+  "failedToConnect": "Failed to connect. Please check your permissions.",
+  "privacyNote": "Your health data stays on your device and is never shared without your permission. You can manage access in Health app > Sharing > Apps > Glu Butler.",
+  "readWrite": "Read & Write",
+  "readOnly": "Read only",
+  "workouts": "Workouts",
+  "sleep": "Sleep",
+  "weightBody": "Weight & Body",
+  "waterIntake": "Water Intake",
+  "menstrualCycle": "Menstrual Cycle",
+  "steps": "Steps",
+  "openHealthApp": "Open Health app > Sharing > Apps to manage permissions",
+
+  "syncPeriod": "Sync Period",
+  "syncPeriod1Week": "1 Week",
+  "syncPeriod2Weeks": "2 Weeks",
+  "syncPeriod1Month": "1 Month",
+  "syncPeriod3Months": "3 Months"
 }

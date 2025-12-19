@@ -61,6 +61,7 @@
   "darkModeOption": "深色",
   "notifications": "通知",
   "notificationTime": "通知时间",
+  "sync": "同步",
   "healthConnect": "健康连接",
   "connected": "已连接",
   "notConnected": "未连接",
@@ -116,5 +117,28 @@
   "needsAttention": "今天血糖波动较大，请检查饮食。",
   "noGlucoseToday": "今天没有血糖记录",
   "addGlucose": "添加血糖",
-  "addDiaryEntry": "添加日记"
+  "addDiaryEntry": "添加日记",
+
+  "appleHealth": "Apple 健康",
+  "appleHealthDescription": "连接健康 App，查看运动、睡眠、体重等可能有助于血糖管理的数据。",
+  "syncedData": "同步数据",
+  "connectAppleHealth": "连接 Apple 健康",
+  "successfullyConnected": "已成功连接到 Apple 健康",
+  "failedToConnect": "连接失败，请检查权限设置。",
+  "privacyNote": "您的健康数据仅保存在设备上，未经许可不会共享。您可以在健康 App > 共享 > App > Glu Butler 中管理权限。",
+  "readWrite": "读写",
+  "readOnly": "只读",
+  "workouts": "体能训练",
+  "sleep": "睡眠",
+  "weightBody": "体重与身体数据",
+  "waterIntake": "饮水量",
+  "menstrualCycle": "月经周期",
+  "steps": "步数",
+  "openHealthApp": "在健康 App > 共享 > App 中管理权限",
+
+  "syncPeriod": "同步周期",
+  "syncPeriod1Week": "1周",
+  "syncPeriod2Weeks": "2周",
+  "syncPeriod1Month": "1个月",
+  "syncPeriod3Months": "3个月"
 }

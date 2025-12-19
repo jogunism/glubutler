@@ -61,6 +61,7 @@
   "darkModeOption": "ダーク",
   "notifications": "通知",
   "notificationTime": "通知時間",
+  "sync": "連携",
   "healthConnect": "ヘルスケア連携",
   "connected": "接続済み",
   "notConnected": "未接続",
@@ -116,5 +117,28 @@
   "needsAttention": "今日は血糖の変動が大きかったです。食事を確認してください。",
   "noGlucoseToday": "今日の血糖記録がありません",
   "addGlucose": "血糖を追加",
-  "addDiaryEntry": "日記を追加"
+  "addDiaryEntry": "日記を追加",
+
+  "appleHealth": "Apple ヘルスケア",
+  "appleHealthDescription": "ヘルスケアアプリと連携して、血糖管理に役立つ運動、睡眠、体重などのデータを確認できます。",
+  "syncedData": "連携データ",
+  "connectAppleHealth": "Apple ヘルスケアに接続",
+  "successfullyConnected": "Apple ヘルスケアに接続しました",
+  "failedToConnect": "接続に失敗しました。権限を確認してください。",
+  "privacyNote": "健康データはデバイスにのみ保存され、許可なく共有されることはありません。ヘルスケアアプリ > 共有 > App > Glu Butlerで権限を管理できます。",
+  "readWrite": "読み取り/書き込み",
+  "readOnly": "読み取りのみ",
+  "workouts": "ワークアウト",
+  "sleep": "睡眠",
+  "weightBody": "体重・体組成",
+  "waterIntake": "水分摂取",
+  "menstrualCycle": "月経周期",
+  "steps": "歩数",
+  "openHealthApp": "ヘルスケアアプリ > 共有 > Appで権限を管理してください",
+
+  "syncPeriod": "連携期間",
+  "syncPeriod1Week": "1週間",
+  "syncPeriod2Weeks": "2週間",
+  "syncPeriod1Month": "1ヶ月",
+  "syncPeriod3Months": "3ヶ月"
 }

@@ -56,5 +56,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Glu Butler needs access to your health data to display blood glucose, workouts, and sleep information.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Glu Butler needs permission to save your blood glucose readings to Apple Health.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>x-apple-health</string>
+	</array>
 </dict>
 </plist>

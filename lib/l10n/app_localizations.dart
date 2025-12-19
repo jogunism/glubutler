@@ -434,6 +434,12 @@ abstract class AppLocalizations {
   /// **'Notification Time'**
   String get notificationTime;
 
+  /// No description provided for @sync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get sync;
+
   /// No description provided for @healthConnect.
   ///
   /// In en, this message translates to:
@@ -883,6 +889,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Record'**
   String get addRecord;
+
+  /// No description provided for @appleHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Health'**
+  String get appleHealth;
+
+  /// No description provided for @appleHealthDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.'**
+  String get appleHealthDescription;
+
+  /// No description provided for @syncedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced Data'**
+  String get syncedData;
+
+  /// No description provided for @connectAppleHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Apple Health'**
+  String get connectAppleHealth;
+
+  /// No description provided for @successfullyConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully connected to Apple Health'**
+  String get successfullyConnected;
+
+  /// No description provided for @failedToConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect. Please check your permissions.'**
+  String get failedToConnect;
+
+  /// No description provided for @privacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your health data stays on your device and is never shared without your permission. You can manage access in Health app > Sharing > Apps > Glu Butler.'**
+  String get privacyNote;
+
+  /// No description provided for @readWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Read & Write'**
+  String get readWrite;
+
+  /// No description provided for @readOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Read only'**
+  String get readOnly;
+
+  /// No description provided for @workouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get workouts;
+
+  /// No description provided for @sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get sleep;
+
+  /// No description provided for @weightBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight & Body'**
+  String get weightBody;
+
+  /// No description provided for @waterIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Intake'**
+  String get waterIntake;
+
+  /// No description provided for @menstrualCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Menstrual Cycle'**
+  String get menstrualCycle;
+
+  /// No description provided for @steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get steps;
+
+  /// No description provided for @openHealthApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Health app > Sharing > Apps to manage permissions'**
+  String get openHealthApp;
+
+  /// No description provided for @syncPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Period'**
+  String get syncPeriod;
+
+  /// No description provided for @syncPeriod1Week.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Week'**
+  String get syncPeriod1Week;
+
+  /// No description provided for @syncPeriod2Weeks.
+  ///
+  /// In en, this message translates to:
+  /// **'2 Weeks'**
+  String get syncPeriod2Weeks;
+
+  /// No description provided for @syncPeriod1Month.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Month'**
+  String get syncPeriod1Month;
+
+  /// No description provided for @syncPeriod3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'3 Months'**
+  String get syncPeriod3Months;
 }
 
 class _AppLocalizationsDelegate

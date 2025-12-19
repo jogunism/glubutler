@@ -1,0 +1,598 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:health/health.dart';
+import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/models/exercise_record.dart';
+import 'package:glu_butler/models/sleep_record.dart';
+import 'package:glu_butler/models/weight_record.dart';
+import 'package:glu_butler/models/water_record.dart';
+import 'package:glu_butler/models/menstruation_record.dart';
+import 'package:glu_butler/models/insulin_record.dart';
+
+class HealthService {
+  static final HealthService _instance = HealthService._internal();
+  factory HealthService() => _instance;
+  HealthService._internal();
+
+  bool _isAuthorized = false;
+  bool get isAuthorized => _isAuthorized;
+
+  static const List<HealthDataType> _readTypes = [
+    HealthDataType.BLOOD_GLUCOSE,
+    HealthDataType.INSULIN_DELIVERY,
+    HealthDataType.WORKOUT,
+    HealthDataType.STEPS,
+    HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.SLEEP_ASLEEP,
+    HealthDataType.SLEEP_AWAKE,
+    HealthDataType.SLEEP_DEEP,
+    HealthDataType.SLEEP_REM,
+    HealthDataType.SLEEP_LIGHT,
+    // Weight & Body
+    HealthDataType.WEIGHT,
+    HealthDataType.BODY_FAT_PERCENTAGE,
+    HealthDataType.BODY_MASS_INDEX,
+    // Water
+    HealthDataType.WATER,
+    // Menstruation
+    HealthDataType.MENSTRUATION_FLOW,
+  ];
+
+  static const List<HealthDataType> _writeTypes = [
+    HealthDataType.BLOOD_GLUCOSE,
+    HealthDataType.INSULIN_DELIVERY,
+  ];
+
+  Future<bool> requestAuthorization() async {
+    if (!Platform.isIOS && !Platform.isAndroid) {
+      debugPrint('[HealthService] Platform not supported');
+      return false;
+    }
+
+    try {
+      final health = Health();
+
+      // Configure health package
+      await health.configure();
+
+      // Combine read and write types, with appropriate permissions
+      final allTypes = <HealthDataType>[];
+      final permissions = <HealthDataAccess>[];
+
+      for (final type in _readTypes) {
+        allTypes.add(type);
+        // If type is also in writeTypes, request READ_WRITE, otherwise just READ
+        if (_writeTypes.contains(type)) {
+          permissions.add(HealthDataAccess.READ_WRITE);
+        } else {
+          permissions.add(HealthDataAccess.READ);
+        }
+      }
+
+      // Request authorization
+      _isAuthorized = await health.requestAuthorization(
+        allTypes,
+        permissions: permissions,
+      );
+
+      debugPrint('[HealthService] Authorization result: $_isAuthorized');
+      return _isAuthorized;
+    } catch (e) {
+      debugPrint('[HealthService] Error requesting authorization: $e');
+      return false;
+    }
+  }
+
+  Future<bool> hasPermissions() async {
+    if (!Platform.isIOS && !Platform.isAndroid) return false;
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final hasPermissions = await health.hasPermissions(
+        _readTypes,
+        permissions: _readTypes.map((_) => HealthDataAccess.READ).toList(),
+      );
+
+      _isAuthorized = hasPermissions ?? false;
+      return _isAuthorized;
+    } catch (e) {
+      debugPrint('[HealthService] Error checking permissions: $e');
+      return false;
+    }
+  }
+
+  Future<List<GlucoseRecord>> fetchGlucoseData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch glucose data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.BLOOD_GLUCOSE],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <GlucoseRecord>[];
+
+      for (final point in dataPoints) {
+        if (point.value is NumericHealthValue) {
+          final numericValue = point.value as NumericHealthValue;
+          records.add(GlucoseRecord(
+            id: 'hk_${point.dateFrom.millisecondsSinceEpoch}',
+            value: numericValue.numericValue.toDouble(),
+            unit: 'mg/dL',
+            timestamp: point.dateFrom,
+            isFromHealthKit: true,
+          ));
+        }
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} glucose records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching glucose data: $e');
+      return [];
+    }
+  }
+
+  Future<List<ExerciseRecord>> fetchWorkoutData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch workout data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.WORKOUT],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <ExerciseRecord>[];
+
+      for (final point in dataPoints) {
+        if (point.value is WorkoutHealthValue) {
+          final workoutValue = point.value as WorkoutHealthValue;
+          final durationMinutes =
+              point.dateTo.difference(point.dateFrom).inMinutes;
+
+          records.add(ExerciseRecord(
+            id: 'hk_workout_${point.dateFrom.millisecondsSinceEpoch}',
+            timestamp: point.dateFrom,
+            exerciseType: _mapWorkoutType(workoutValue.workoutActivityType),
+            durationMinutes: durationMinutes,
+            calories: workoutValue.totalEnergyBurned?.toInt(),
+            isFromHealthKit: true,
+          ));
+        }
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} workout records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching workout data: $e');
+      return [];
+    }
+  }
+
+  Future<List<SleepRecord>> fetchSleepData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch sleep data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final sleepTypes = [
+        HealthDataType.SLEEP_ASLEEP,
+        HealthDataType.SLEEP_AWAKE,
+        HealthDataType.SLEEP_DEEP,
+        HealthDataType.SLEEP_REM,
+        HealthDataType.SLEEP_LIGHT,
+      ];
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: sleepTypes,
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <SleepRecord>[];
+
+      for (final point in dataPoints) {
+        final durationMinutes =
+            point.dateTo.difference(point.dateFrom).inMinutes;
+
+        records.add(SleepRecord(
+          id: 'hk_sleep_${point.dateFrom.millisecondsSinceEpoch}',
+          startTime: point.dateFrom,
+          endTime: point.dateTo,
+          durationMinutes: durationMinutes,
+          stage: _mapSleepStage(point.type),
+          isFromHealthKit: true,
+        ));
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} sleep records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching sleep data: $e');
+      return [];
+    }
+  }
+
+  Future<int?> fetchTodaySteps() async {
+    if (!_isAuthorized) return null;
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+
+      final steps = await health.getTotalStepsInInterval(startOfDay, now);
+      debugPrint('[HealthService] Today steps: $steps');
+      return steps;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching steps: $e');
+      return null;
+    }
+  }
+
+  Future<List<WeightRecord>> fetchWeightData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch weight data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final weightPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.WEIGHT],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final bodyFatPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.BODY_FAT_PERCENTAGE],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final bmiPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.BODY_MASS_INDEX],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <WeightRecord>[];
+
+      for (final point in weightPoints) {
+        if (point.value is NumericHealthValue) {
+          final numericValue = point.value as NumericHealthValue;
+
+          // Find matching body fat and BMI for same timestamp
+          double? bodyFat;
+          double? bmi;
+
+          for (final bf in bodyFatPoints) {
+            if (bf.dateFrom.difference(point.dateFrom).inMinutes.abs() < 5) {
+              if (bf.value is NumericHealthValue) {
+                bodyFat = (bf.value as NumericHealthValue).numericValue.toDouble();
+              }
+              break;
+            }
+          }
+
+          for (final b in bmiPoints) {
+            if (b.dateFrom.difference(point.dateFrom).inMinutes.abs() < 5) {
+              if (b.value is NumericHealthValue) {
+                bmi = (b.value as NumericHealthValue).numericValue.toDouble();
+              }
+              break;
+            }
+          }
+
+          records.add(WeightRecord(
+            id: 'hk_weight_${point.dateFrom.millisecondsSinceEpoch}',
+            timestamp: point.dateFrom,
+            weightKg: numericValue.numericValue.toDouble(),
+            bodyFatPercentage: bodyFat,
+            bmi: bmi,
+            isFromHealthKit: true,
+          ));
+        }
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} weight records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching weight data: $e');
+      return [];
+    }
+  }
+
+  Future<List<WaterRecord>> fetchWaterData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch water data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.WATER],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <WaterRecord>[];
+
+      for (final point in dataPoints) {
+        if (point.value is NumericHealthValue) {
+          final numericValue = point.value as NumericHealthValue;
+          // HealthKit stores water in liters, convert to ml
+          records.add(WaterRecord(
+            id: 'hk_water_${point.dateFrom.millisecondsSinceEpoch}',
+            timestamp: point.dateFrom,
+            amountMl: numericValue.numericValue.toDouble() * 1000,
+            isFromHealthKit: true,
+          ));
+        }
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} water records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching water data: $e');
+      return [];
+    }
+  }
+
+  Future<List<MenstruationRecord>> fetchMenstruationData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch menstruation data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.MENSTRUATION_FLOW],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <MenstruationRecord>[];
+
+      for (final point in dataPoints) {
+        if (point.value is NumericHealthValue) {
+          final numericValue = point.value as NumericHealthValue;
+          records.add(MenstruationRecord(
+            id: 'hk_menstruation_${point.dateFrom.millisecondsSinceEpoch}',
+            date: point.dateFrom,
+            flow: _mapMenstruationFlow(numericValue.numericValue.toInt()),
+            isFromHealthKit: true,
+          ));
+        }
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} menstruation records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching menstruation data: $e');
+      return [];
+    }
+  }
+
+  Future<double?> fetchTodayWaterIntake() async {
+    if (!_isAuthorized) return null;
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.WATER],
+        startTime: startOfDay,
+        endTime: now,
+      );
+
+      double totalMl = 0;
+      for (final point in dataPoints) {
+        if (point.value is NumericHealthValue) {
+          final numericValue = point.value as NumericHealthValue;
+          totalMl += numericValue.numericValue.toDouble() * 1000;
+        }
+      }
+
+      debugPrint('[HealthService] Today water intake: ${totalMl}ml');
+      return totalMl;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching today water: $e');
+      return null;
+    }
+  }
+
+  MenstruationFlow _mapMenstruationFlow(int value) {
+    // HealthKit menstruation flow values
+    switch (value) {
+      case 1:
+        return MenstruationFlow.unspecified;
+      case 2:
+        return MenstruationFlow.light;
+      case 3:
+        return MenstruationFlow.medium;
+      case 4:
+        return MenstruationFlow.heavy;
+      case 5:
+        return MenstruationFlow.none;
+      default:
+        return MenstruationFlow.unspecified;
+    }
+  }
+
+  Future<bool> writeGlucoseRecord(GlucoseRecord record) async {
+    if (!Platform.isIOS && !Platform.isAndroid) return false;
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final success = await health.writeHealthData(
+        value: record.value,
+        type: HealthDataType.BLOOD_GLUCOSE,
+        startTime: record.timestamp,
+        endTime: record.timestamp,
+        unit: HealthDataUnit.MILLIGRAM_PER_DECILITER,
+      );
+
+      debugPrint('[HealthService] Write glucose result: $success');
+      return success;
+    } catch (e) {
+      debugPrint('[HealthService] Error writing glucose: $e');
+      return false;
+    }
+  }
+
+  Future<bool> writeInsulinRecord(InsulinRecord record) async {
+    if (!Platform.isIOS && !Platform.isAndroid) return false;
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final success = await health.writeHealthData(
+        value: record.units,
+        type: HealthDataType.INSULIN_DELIVERY,
+        startTime: record.timestamp,
+        endTime: record.timestamp,
+        unit: HealthDataUnit.INTERNATIONAL_UNIT,
+      );
+
+      debugPrint('[HealthService] Write insulin result: $success');
+      return success;
+    } catch (e) {
+      debugPrint('[HealthService] Error writing insulin: $e');
+      return false;
+    }
+  }
+
+  Future<List<InsulinRecord>> fetchInsulinData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] Not authorized to fetch insulin data');
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.INSULIN_DELIVERY],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <InsulinRecord>[];
+
+      for (final point in dataPoints) {
+        if (point.value is NumericHealthValue) {
+          final numericValue = point.value as NumericHealthValue;
+          records.add(InsulinRecord(
+            id: 'hk_insulin_${point.dateFrom.millisecondsSinceEpoch}',
+            timestamp: point.dateFrom,
+            units: numericValue.numericValue.toDouble(),
+            insulinType: InsulinType.rapidActing, // Default, HealthKit doesn't distinguish
+            isFromHealthKit: true,
+          ));
+        }
+      }
+
+      debugPrint('[HealthService] Fetched ${records.length} insulin records');
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching insulin data: $e');
+      return [];
+    }
+  }
+
+  String _mapWorkoutType(HealthWorkoutActivityType type) {
+    switch (type) {
+      case HealthWorkoutActivityType.RUNNING:
+        return 'running';
+      case HealthWorkoutActivityType.WALKING:
+        return 'walking';
+      case HealthWorkoutActivityType.BIKING:
+        return 'cycling';
+      case HealthWorkoutActivityType.SWIMMING:
+        return 'swimming';
+      case HealthWorkoutActivityType.YOGA:
+        return 'yoga';
+      case HealthWorkoutActivityType.STRENGTH_TRAINING:
+        return 'strength';
+      case HealthWorkoutActivityType.HIGH_INTENSITY_INTERVAL_TRAINING:
+        return 'hiit';
+      default:
+        return 'other';
+    }
+  }
+
+  SleepStage _mapSleepStage(HealthDataType type) {
+    switch (type) {
+      case HealthDataType.SLEEP_AWAKE:
+        return SleepStage.awake;
+      case HealthDataType.SLEEP_REM:
+        return SleepStage.rem;
+      case HealthDataType.SLEEP_LIGHT:
+        return SleepStage.light;
+      case HealthDataType.SLEEP_DEEP:
+        return SleepStage.deep;
+      default:
+        return SleepStage.unknown;
+    }
+  }
+}

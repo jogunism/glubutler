@@ -171,6 +171,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationTime => 'Notification Time';
 
   @override
+  String get sync => 'Sync';
+
+  @override
   String get healthConnect => 'Health Connect';
 
   @override
@@ -399,4 +402,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get appleHealth => 'Apple Health';
+
+  @override
+  String get appleHealthDescription =>
+      'Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.';
+
+  @override
+  String get syncedData => 'Synced Data';
+
+  @override
+  String get connectAppleHealth => 'Connect Apple Health';
+
+  @override
+  String get successfullyConnected => 'Successfully connected to Apple Health';
+
+  @override
+  String get failedToConnect =>
+      'Failed to connect. Please check your permissions.';
+
+  @override
+  String get privacyNote =>
+      'Your health data stays on your device and is never shared without your permission. You can manage access in Health app > Sharing > Apps > Glu Butler.';
+
+  @override
+  String get readWrite => 'Read & Write';
+
+  @override
+  String get readOnly => 'Read only';
+
+  @override
+  String get workouts => 'Workouts';
+
+  @override
+  String get sleep => 'Sleep';
+
+  @override
+  String get weightBody => 'Weight & Body';
+
+  @override
+  String get waterIntake => 'Water Intake';
+
+  @override
+  String get menstrualCycle => 'Menstrual Cycle';
+
+  @override
+  String get steps => 'Steps';
+
+  @override
+  String get openHealthApp =>
+      'Open Health app > Sharing > Apps to manage permissions';
+
+  @override
+  String get syncPeriod => 'Sync Period';
+
+  @override
+  String get syncPeriod1Week => '1 Week';
+
+  @override
+  String get syncPeriod2Weeks => '2 Weeks';
+
+  @override
+  String get syncPeriod1Month => '1 Month';
+
+  @override
+  String get syncPeriod3Months => '3 Months';
 }

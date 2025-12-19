@@ -171,6 +171,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get notificationTime => 'Orario notifiche';
 
   @override
+  String get sync => 'Sincronizzazione';
+
+  @override
   String get healthConnect => 'Connessione salute';
 
   @override
@@ -398,4 +401,71 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get appleHealth => 'Apple Salute';
+
+  @override
+  String get appleHealthDescription =>
+      'Collegati all\'app Salute per visualizzare allenamenti, sonno, peso e altri dati che possono aiutarti a gestire la glicemia.';
+
+  @override
+  String get syncedData => 'Dati sincronizzati';
+
+  @override
+  String get connectAppleHealth => 'Connetti Apple Salute';
+
+  @override
+  String get successfullyConnected => 'Connesso con successo a Apple Salute';
+
+  @override
+  String get failedToConnect =>
+      'Connessione fallita. Verifica i tuoi permessi.';
+
+  @override
+  String get privacyNote =>
+      'I tuoi dati sulla salute rimangono sul dispositivo e non vengono mai condivisi senza il tuo permesso. Puoi gestire l\'accesso in Salute > Condivisione > App > Glu Butler.';
+
+  @override
+  String get readWrite => 'Lettura e scrittura';
+
+  @override
+  String get readOnly => 'Solo lettura';
+
+  @override
+  String get workouts => 'Allenamenti';
+
+  @override
+  String get sleep => 'Sonno';
+
+  @override
+  String get weightBody => 'Peso e corpo';
+
+  @override
+  String get waterIntake => 'Assunzione di acqua';
+
+  @override
+  String get menstrualCycle => 'Ciclo mestruale';
+
+  @override
+  String get steps => 'Passi';
+
+  @override
+  String get openHealthApp =>
+      'Apri Salute > Condivisione > App per gestire i permessi';
+
+  @override
+  String get syncPeriod => 'Periodo di sincronizzazione';
+
+  @override
+  String get syncPeriod1Week => '1 settimana';
+
+  @override
+  String get syncPeriod2Weeks => '2 settimane';
+
+  @override
+  String get syncPeriod1Month => '1 mese';
+
+  @override
+  String get syncPeriod3Months => '3 mesi';
 }

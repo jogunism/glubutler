@@ -13,6 +13,7 @@ import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/app_settings_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 앱 설정 화면
 ///
@@ -112,10 +113,10 @@ class SettingsScreen extends StatelessWidget {
                     iconColor: AppTheme.iconCyan,
                     title: l10n.language,
                     subtitle: l10n.changeInSettings,
-                    trailing: const Icon(
+                    trailing: Icon(
                       CupertinoIcons.arrow_up_right,
                       size: 16,
-                      color: Colors.grey,
+                      color: context.colors.iconGrey,
                     ),
                     onTap: () => AppSettingsService.openAppSettings(),
                   ),
@@ -143,28 +144,25 @@ class SettingsScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Health Connect Section
-              _buildSectionTitle(context, l10n.healthConnect),
+              // Sync Section
+              _buildSectionTitle(context, l10n.sync),
               _buildGroupedSection(
                 context: context,
                 children: [
-                  _buildSettingsTile(
-                    context: context,
-                    icon: CupertinoIcons.heart_fill,
-                    iconColor: AppTheme.iconPink,
-                    title: l10n.healthConnect,
-                    subtitle: settings.isHealthConnected
-                        ? l10n.connected
-                        : l10n.notConnected,
-                    trailing: CupertinoSwitch(
-                      value: settings.isHealthConnected,
-                      onChanged: (value) =>
-                          settings.setHealthConnected(value),
-                      activeTrackColor: theme.colorScheme.primary,
-                    ),
-                    onTap: () => settings.setHealthConnected(
-                      !settings.isHealthConnected,
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final feedProvider = context.watch<FeedProvider>();
+                      return _buildSettingsTile(
+                        context: context,
+                        icon: CupertinoIcons.heart_fill,
+                        iconColor: AppTheme.iconPink,
+                        title: l10n.appleHealth,
+                        subtitle: feedProvider.isHealthConnected
+                            ? l10n.connected
+                            : l10n.notConnected,
+                        onTap: () => context.push('/settings/health'),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -177,7 +175,7 @@ class SettingsScreen extends StatelessWidget {
                 child: Text(
                   l10n.disclaimer,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: context.colors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -253,7 +251,7 @@ class SettingsScreen extends StatelessWidget {
                   Icon(
                     CupertinoIcons.chevron_right,
                     size: 16,
-                    color: Colors.grey[400],
+                    color: context.colors.iconGrey,
                   ),
             ],
           ),

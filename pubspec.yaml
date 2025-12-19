@@ -28,7 +28,7 @@ dependencies:
   hive_flutter: ^1.1.0
 
   # Health Data Integration
-  # health: ^13.2.1  # TODO: iOS 26 베타 호환성 문제로 임시 비활성화
+  health: ^13.2.1
 
   # Charts
   fl_chart: ^0.69.2
@@ -50,6 +50,10 @@ dependencies:
 
   # Environment variables
   flutter_dotenv: ^5.2.1
+
+  # URL Launcher (for opening external apps)
+  url_launcher: ^6.3.1
+  toastification: ^3.0.3
 
 dev_dependencies:
   flutter_test:

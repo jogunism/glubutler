@@ -61,6 +61,7 @@
   "darkModeOption": "다크",
   "notifications": "알림",
   "notificationTime": "알림 시간",
+  "sync": "연동",
   "healthConnect": "건강 앱 연동",
   "connected": "연결됨",
   "notConnected": "연결 안됨",
@@ -142,5 +143,28 @@
   "measurementTime": "측정 시간",
   "injectionTime": "투여 시간",
   "measurementTiming": "측정 시점",
-  "addRecord": "기록 추가"
+  "addRecord": "기록 추가",
+
+  "appleHealth": "Apple 건강",
+  "appleHealthDescription": "건강 앱과 연동하여 혈당 관리에 도움이 되는 운동, 수면, 체중 등 다양한 데이터를 함께 확인할 수 있습니다.",
+  "syncedData": "연동 데이터",
+  "connectAppleHealth": "Apple 건강 연결",
+  "successfullyConnected": "Apple 건강 앱과 연결되었습니다",
+  "failedToConnect": "연결에 실패했습니다. 권한을 확인해주세요.",
+  "privacyNote": "건강 데이터는 기기에만 저장되며 허락 없이 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.",
+  "readWrite": "읽기 및 쓰기",
+  "readOnly": "읽기 전용",
+  "workouts": "운동",
+  "sleep": "수면",
+  "weightBody": "체중 및 신체",
+  "waterIntake": "수분 섭취",
+  "menstrualCycle": "생리 주기",
+  "steps": "걸음 수",
+  "openHealthApp": "건강 앱 > 공유 > 앱에서 권한을 관리하세요",
+
+  "syncPeriod": "연동 기간",
+  "syncPeriod1Week": "1주",
+  "syncPeriod2Weeks": "2주",
+  "syncPeriod1Month": "1개월",
+  "syncPeriod3Months": "3개월"
 }

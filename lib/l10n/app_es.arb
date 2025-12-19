@@ -61,6 +61,7 @@
   "darkModeOption": "Oscuro",
   "notifications": "Notificaciones",
   "notificationTime": "Hora de notificación",
+  "sync": "Sincronización",
   "healthConnect": "Conexión de salud",
   "connected": "Conectado",
   "notConnected": "No conectado",
@@ -116,5 +117,28 @@
   "needsAttention": "Tu glucosa varió mucho hoy. Revisa tu dieta.",
   "noGlucoseToday": "Sin registros de glucosa hoy",
   "addGlucose": "Añadir Glucosa",
-  "addDiaryEntry": "Añadir entrada al diario"
+  "addDiaryEntry": "Añadir entrada al diario",
+
+  "appleHealth": "Apple Salud",
+  "appleHealthDescription": "Conéctate con la app Salud para ver entrenamientos, sueño, peso y otros datos que pueden ayudarte a controlar tu glucosa.",
+  "syncedData": "Datos sincronizados",
+  "connectAppleHealth": "Conectar Apple Salud",
+  "successfullyConnected": "Conectado exitosamente a Apple Salud",
+  "failedToConnect": "Error de conexión. Por favor verifica tus permisos.",
+  "privacyNote": "Tus datos de salud permanecen en tu dispositivo y nunca se comparten sin tu permiso. Puedes gestionar el acceso en Salud > Compartir > Apps > Glu Butler.",
+  "readWrite": "Lectura y escritura",
+  "readOnly": "Solo lectura",
+  "workouts": "Entrenamientos",
+  "sleep": "Sueño",
+  "weightBody": "Peso y cuerpo",
+  "waterIntake": "Ingesta de agua",
+  "menstrualCycle": "Ciclo menstrual",
+  "steps": "Pasos",
+  "openHealthApp": "Abre Salud > Compartir > Apps para gestionar permisos",
+
+  "syncPeriod": "Período de sincronización",
+  "syncPeriod1Week": "1 semana",
+  "syncPeriod2Weeks": "2 semanas",
+  "syncPeriod1Month": "1 mes",
+  "syncPeriod3Months": "3 meses"
 }

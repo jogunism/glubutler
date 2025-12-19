@@ -44,6 +44,13 @@ class AppConstants {
   static const String themeModeLight = 'light';
   static const String themeModeDark = 'dark';
 
+  // Sync Period (days)
+  static const int syncPeriod1Week = 7;
+  static const int syncPeriod2Weeks = 14;
+  static const int syncPeriod1Month = 30;
+  static const int syncPeriod3Months = 90;
+  static const int defaultSyncPeriod = syncPeriod1Week;
+
   // Storage Keys
   static const String keyLanguage = 'language';
   static const String keyUnit = 'unit';
@@ -53,4 +60,5 @@ class AppConstants {
   static const String keyHealthConnected = 'health_connected';
   static const String keyIsPro = 'is_pro';
   static const String keySubscriptionDate = 'subscription_date';
+  static const String keySyncPeriod = 'sync_period';
 }

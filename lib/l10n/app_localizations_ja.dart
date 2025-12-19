@@ -171,6 +171,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get notificationTime => '通知時間';
 
   @override
+  String get sync => '連携';
+
+  @override
   String get healthConnect => 'ヘルスケア連携';
 
   @override
@@ -395,4 +398,69 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get appleHealth => 'Apple ヘルスケア';
+
+  @override
+  String get appleHealthDescription =>
+      'ヘルスケアアプリと連携して、血糖管理に役立つ運動、睡眠、体重などのデータを確認できます。';
+
+  @override
+  String get syncedData => '連携データ';
+
+  @override
+  String get connectAppleHealth => 'Apple ヘルスケアに接続';
+
+  @override
+  String get successfullyConnected => 'Apple ヘルスケアに接続しました';
+
+  @override
+  String get failedToConnect => '接続に失敗しました。権限を確認してください。';
+
+  @override
+  String get privacyNote =>
+      '健康データはデバイスにのみ保存され、許可なく共有されることはありません。ヘルスケアアプリ > 共有 > App > Glu Butlerで権限を管理できます。';
+
+  @override
+  String get readWrite => '読み取り/書き込み';
+
+  @override
+  String get readOnly => '読み取りのみ';
+
+  @override
+  String get workouts => 'ワークアウト';
+
+  @override
+  String get sleep => '睡眠';
+
+  @override
+  String get weightBody => '体重・体組成';
+
+  @override
+  String get waterIntake => '水分摂取';
+
+  @override
+  String get menstrualCycle => '月経周期';
+
+  @override
+  String get steps => '歩数';
+
+  @override
+  String get openHealthApp => 'ヘルスケアアプリ > 共有 > Appで権限を管理してください';
+
+  @override
+  String get syncPeriod => '連携期間';
+
+  @override
+  String get syncPeriod1Week => '1週間';
+
+  @override
+  String get syncPeriod2Weeks => '2週間';
+
+  @override
+  String get syncPeriod1Month => '1ヶ月';
+
+  @override
+  String get syncPeriod3Months => '3ヶ月';
 }

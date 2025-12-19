@@ -61,6 +61,7 @@
   "darkModeOption": "Dunkel",
   "notifications": "Benachrichtigungen",
   "notificationTime": "Benachrichtigungszeit",
+  "sync": "Synchronisierung",
   "healthConnect": "Health Connect",
   "connected": "Verbunden",
   "notConnected": "Nicht verbunden",
@@ -116,5 +117,28 @@
   "needsAttention": "Ihr Blutzucker hat heute stark geschwankt. Überprüfen Sie Ihre Ernährung.",
   "noGlucoseToday": "Heute keine Blutzuckerwerte",
   "addGlucose": "Blutzucker hinzufügen",
-  "addDiaryEntry": "Tagebucheintrag hinzufügen"
+  "addDiaryEntry": "Tagebucheintrag hinzufügen",
+
+  "appleHealth": "Apple Health",
+  "appleHealthDescription": "Verbinden Sie sich mit der Health-App, um Workouts, Schlaf, Gewicht und andere Daten anzuzeigen, die bei der Blutzuckerkontrolle helfen können.",
+  "syncedData": "Synchronisierte Daten",
+  "connectAppleHealth": "Apple Health verbinden",
+  "successfullyConnected": "Erfolgreich mit Apple Health verbunden",
+  "failedToConnect": "Verbindung fehlgeschlagen. Bitte überprüfen Sie Ihre Berechtigungen.",
+  "privacyNote": "Ihre Gesundheitsdaten bleiben auf Ihrem Gerät und werden ohne Ihre Erlaubnis nicht geteilt. Sie können den Zugriff in der Health-App > Freigabe > Apps > Glu Butler verwalten.",
+  "readWrite": "Lesen & Schreiben",
+  "readOnly": "Nur Lesen",
+  "workouts": "Workouts",
+  "sleep": "Schlaf",
+  "weightBody": "Gewicht & Körper",
+  "waterIntake": "Wasseraufnahme",
+  "menstrualCycle": "Menstruationszyklus",
+  "steps": "Schritte",
+  "openHealthApp": "Öffnen Sie Health-App > Freigabe > Apps, um Berechtigungen zu verwalten",
+
+  "syncPeriod": "Sync-Zeitraum",
+  "syncPeriod1Week": "1 Woche",
+  "syncPeriod2Weeks": "2 Wochen",
+  "syncPeriod1Month": "1 Monat",
+  "syncPeriod3Months": "3 Monate"
 }

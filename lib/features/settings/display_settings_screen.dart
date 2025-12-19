@@ -53,6 +53,7 @@ class DisplaySettingsScreen extends StatelessWidget {
     return LargeTitleScrollView(
       title: l10n.displaySettings,
       showBackButton: true,
+      showLargeTitle: false,
       onRefresh: null,
       slivers: [
         SliverPadding(
@@ -66,7 +67,7 @@ class DisplaySettingsScreen extends StatelessWidget {
                   _buildThemeOption(
                     context: context,
                     icon: CupertinoIcons.device_phone_portrait,
-                    iconColor: Colors.grey,
+                    iconColor: context.colors.iconGrey,
                     title: l10n.systemDefault,
                     subtitle: l10n.systemDefaultDescription,
                     value: AppConstants.themeModeSystem,
