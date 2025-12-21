@@ -13,12 +13,16 @@ class AppConstants {
   static const double mgDlToMmolL = 18.0182;
 
   // Blood Glucose Ranges (mg/dL) - Default thresholds
-  static const double defaultVeryLow = 54.0;
-  static const double defaultLow = 70.0;
-  static const double defaultTargetLow = 80.0;
-  static const double defaultTargetHigh = 120.0;
+  // 5단계: very low < low < target < high < very high
+  static const double defaultVeryLow = 60.0;
+  static const double defaultLow = 80.0;
+  static const double defaultTarget = 100.0;
   static const double defaultHigh = 160.0;
   static const double defaultVeryHigh = 180.0;
+
+  // Legacy: targetLow/targetHigh for range-based logic
+  static const double defaultTargetLow = 80.0;
+  static const double defaultTargetHigh = 120.0;
 
   // Legacy values for compatibility
   static const double lowGlucose = 70.0;
@@ -70,11 +74,10 @@ class AppConstants {
   static const String keySubscriptionDate = 'subscription_date';
   static const String keySyncPeriod = 'sync_period';
 
-  // Glucose Range Keys
+  // Glucose Range Keys (5단계)
   static const String keyGlucoseVeryLow = 'glucose_very_low';
   static const String keyGlucoseLow = 'glucose_low';
-  static const String keyGlucoseTargetLow = 'glucose_target_low';
-  static const String keyGlucoseTargetHigh = 'glucose_target_high';
+  static const String keyGlucoseTarget = 'glucose_target';
   static const String keyGlucoseHigh = 'glucose_high';
   static const String keyGlucoseVeryHigh = 'glucose_very_high';
 }

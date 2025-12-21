@@ -147,5 +147,7 @@
   "disconnected": "Apple ヘルスケアとの連携が解除されました",
 
   "cgmBaseline": "安定",
-  "cgmFluctuation": "変動"
+  "cgmFluctuation": "変動",
+
+  "targetGlucoseRange": "目標血糖値範囲"
 }

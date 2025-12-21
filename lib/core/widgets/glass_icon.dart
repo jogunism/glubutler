@@ -1,6 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
+/// 설정 화면용 아이콘 위젯
+///
+/// ScreenFab과 동일한 스타일 - 단색 배경 + 그림자
 class GlassIcon extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -15,44 +17,25 @@ class GlassIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
-      width: size + 8,
-      height: size + 8,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular((size + 8) * 0.3),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: isDark ? 0.4 : 0.25),
-            color.withValues(alpha: isDark ? 0.2 : 0.15),
-          ],
-        ),
-        border: Border.all(
-          color: color.withValues(alpha: isDark ? 0.3 : 0.2),
-          width: 0.5,
-        ),
+        borderRadius: BorderRadius.circular(size * 0.25),
+        color: color,
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.2),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular((size + 8) * 0.3),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Center(
-            child: Icon(
-              icon,
-              color: color,
-              size: size * 0.6,
-            ),
-          ),
+      child: Center(
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: size * 0.55,
         ),
       ),
     );

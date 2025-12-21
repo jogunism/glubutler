@@ -147,5 +147,7 @@
   "disconnected": "已断开与 Apple 健康的连接",
 
   "cgmBaseline": "稳定",
-  "cgmFluctuation": "波动"
+  "cgmFluctuation": "波动",
+
+  "targetGlucoseRange": "目标血糖范围"
 }

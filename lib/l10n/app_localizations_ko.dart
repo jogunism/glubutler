@@ -477,4 +477,23 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get cgmFluctuation => '변동';
+
+  @override
+  String get targetGlucoseRange => '목표 혈당 범위';
+
+  @override
+  String get targetGlucoseRangeDescription =>
+      '설정된 목표수치를 바탕으로 피드에서 보이는 혈당 정보를 더 정확하게 분석할 수 있습니다.';
+
+  @override
+  String get veryHigh => '매우 높음';
+
+  @override
+  String get elevated => '높음';
+
+  @override
+  String get target => '목표';
+
+  @override
+  String get veryLow => '매우 낮음';
 }

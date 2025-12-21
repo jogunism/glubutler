@@ -173,5 +173,12 @@
   "disconnected": "Disconnected from Apple Health",
 
   "cgmBaseline": "Stable",
-  "cgmFluctuation": "Fluctuation"
+  "cgmFluctuation": "Fluctuation",
+
+  "targetGlucoseRange": "Target Glucose Range",
+  "targetGlucoseRangeDescription": "Your target values are used to analyze glucose data more accurately in the feed.",
+  "veryHigh": "Very High",
+  "elevated": "High",
+  "target": "Target",
+  "veryLow": "Very Low"
 }

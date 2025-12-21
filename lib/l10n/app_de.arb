@@ -147,5 +147,7 @@
   "disconnected": "Verbindung zu Apple Health getrennt",
 
   "cgmBaseline": "Stabil",
-  "cgmFluctuation": "Schwankung"
+  "cgmFluctuation": "Schwankung",
+
+  "targetGlucoseRange": "Zielbereich Blutzucker"
 }

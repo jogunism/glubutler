@@ -147,5 +147,7 @@
   "disconnected": "Déconnecté d'Apple Santé",
 
   "cgmBaseline": "Stable",
-  "cgmFluctuation": "Fluctuation"
+  "cgmFluctuation": "Fluctuation",
+
+  "targetGlucoseRange": "Plage de glycémie cible"
 }

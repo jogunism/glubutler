@@ -484,4 +484,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cgmFluctuation => 'Fluctuación';
+
+  @override
+  String get targetGlucoseRange => 'Rango objetivo de glucosa';
+
+  @override
+  String get targetGlucoseRangeDescription =>
+      'Your target values are used to analyze glucose data more accurately in the feed.';
+
+  @override
+  String get veryHigh => 'Very High';
+
+  @override
+  String get elevated => 'High';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get veryLow => 'Very Low';
 }

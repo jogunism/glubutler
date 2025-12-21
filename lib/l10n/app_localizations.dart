@@ -1045,6 +1045,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fluctuation'**
   String get cgmFluctuation;
+
+  /// No description provided for @targetGlucoseRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Glucose Range'**
+  String get targetGlucoseRange;
+
+  /// No description provided for @targetGlucoseRangeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your target values are used to analyze glucose data more accurately in the feed.'**
+  String get targetGlucoseRangeDescription;
+
+  /// No description provided for @veryHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Very High'**
+  String get veryHigh;
+
+  /// No description provided for @elevated.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get elevated;
+
+  /// No description provided for @target.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get target;
+
+  /// No description provided for @veryLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Low'**
+  String get veryLow;
 }
 
 class _AppLocalizationsDelegate

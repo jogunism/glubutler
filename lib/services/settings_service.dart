@@ -79,12 +79,11 @@ class SettingsService extends ChangeNotifier {
 
     _syncPeriod = _prefs.getInt(AppConstants.keySyncPeriod) ?? AppConstants.defaultSyncPeriod;
 
-    // Load glucose range settings
+    // Load glucose range settings (5단계)
     _glucoseRange = GlucoseRangeSettings(
       veryLow: _prefs.getDouble(AppConstants.keyGlucoseVeryLow) ?? AppConstants.defaultVeryLow,
       low: _prefs.getDouble(AppConstants.keyGlucoseLow) ?? AppConstants.defaultLow,
-      targetLow: _prefs.getDouble(AppConstants.keyGlucoseTargetLow) ?? AppConstants.defaultTargetLow,
-      targetHigh: _prefs.getDouble(AppConstants.keyGlucoseTargetHigh) ?? AppConstants.defaultTargetHigh,
+      target: _prefs.getDouble(AppConstants.keyGlucoseTarget) ?? AppConstants.defaultTarget,
       high: _prefs.getDouble(AppConstants.keyGlucoseHigh) ?? AppConstants.defaultHigh,
       veryHigh: _prefs.getDouble(AppConstants.keyGlucoseVeryHigh) ?? AppConstants.defaultVeryHigh,
     );
@@ -170,8 +169,7 @@ class SettingsService extends ChangeNotifier {
     _glucoseRange = range;
     await _prefs.setDouble(AppConstants.keyGlucoseVeryLow, range.veryLow);
     await _prefs.setDouble(AppConstants.keyGlucoseLow, range.low);
-    await _prefs.setDouble(AppConstants.keyGlucoseTargetLow, range.targetLow);
-    await _prefs.setDouble(AppConstants.keyGlucoseTargetHigh, range.targetHigh);
+    await _prefs.setDouble(AppConstants.keyGlucoseTarget, range.target);
     await _prefs.setDouble(AppConstants.keyGlucoseHigh, range.high);
     await _prefs.setDouble(AppConstants.keyGlucoseVeryHigh, range.veryHigh);
     notifyListeners();

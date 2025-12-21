@@ -133,6 +133,15 @@ class SettingsScreen extends StatelessWidget {
                   _buildDivider(context),
                   _buildSettingsTile(
                     context: context,
+                    icon: CupertinoIcons.chart_bar_fill,
+                    iconColor: AppTheme.iconOrange,
+                    title: l10n.targetGlucoseRange,
+                    subtitle: _getTargetRangeSubtitle(settings),
+                    onTap: () => context.push('/settings/glucose-range'),
+                  ),
+                  _buildDivider(context),
+                  _buildSettingsTile(
+                    context: context,
                     icon: CupertinoIcons.moon_fill,
                     iconColor: AppTheme.iconIndigo,
                     title: l10n.displaySettings,
@@ -160,6 +169,7 @@ class SettingsScreen extends StatelessWidget {
                         subtitle: feedProvider.isHealthConnected
                             ? l10n.connected
                             : l10n.notConnected,
+                        customIcon: _buildAppleHealthIcon(),
                         onTap: () => context.push('/settings/health'),
                       );
                     },
@@ -216,6 +226,7 @@ class SettingsScreen extends StatelessWidget {
     required String title,
     String? subtitle,
     Widget? trailing,
+    Widget? customIcon,
     required VoidCallback onTap,
   }) {
     return Material(
@@ -227,7 +238,7 @@ class SettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              GlassIcon(icon: icon, color: iconColor, size: 32),
+              customIcon ?? GlassIcon(icon: icon, color: iconColor, size: 32),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -260,6 +271,39 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  /// Apple Health 아이콘 - 흰색 배경에 작은 핑크 하트가 우상단에 위치
+  Widget _buildAppleHealthIcon() {
+    const double size = 32;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.25),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Icon(
+              CupertinoIcons.heart_fill,
+              color: AppTheme.iconPink,
+              size: size * 0.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDivider(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 62),
@@ -279,6 +323,21 @@ class SettingsScreen extends StatelessWidget {
       default:
         return l10n.systemDefault;
     }
+  }
+
+  String _getTargetRangeSubtitle(SettingsService settings) {
+    final range = settings.glucoseRange;
+    final unit = settings.unit;
+    final isMmol = unit == AppConstants.unitMmolL;
+
+    String formatValue(double value) {
+      if (isMmol) {
+        return (value / AppConstants.mgDlToMmolL).toStringAsFixed(1);
+      }
+      return value.toStringAsFixed(0);
+    }
+
+    return '${formatValue(range.targetLow)} - ${formatValue(range.targetHigh)} $unit';
   }
 
   void _showUnitActionSheet(

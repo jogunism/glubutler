@@ -10,6 +10,7 @@ import 'package:glu_butler/features/input/input_screen.dart';
 import 'package:glu_butler/features/settings/display_settings_screen.dart';
 import 'package:glu_butler/features/settings/subscription_screen.dart';
 import 'package:glu_butler/features/settings/health_connect_screen.dart';
+import 'package:glu_butler/features/settings/glucose_range_screen.dart';
 import 'package:glu_butler/features/splash/splash_screen.dart';
 import 'package:glu_butler/core/navigation/main_shell.dart';
 
@@ -82,6 +83,11 @@ class AppRouter {
         path: '/settings/health',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const HealthConnectScreen(),
+      ),
+      GoRoute(
+        path: '/settings/glucose-range',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const GlucoseRangeScreen(),
       ),
     ],
   );
