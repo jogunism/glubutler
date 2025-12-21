@@ -6,6 +6,7 @@ class SleepRecord {
   final SleepStage? stage;
   final String? note;
   final bool isFromHealthKit;
+  final String? sourceName;
 
   SleepRecord({
     required this.id,
@@ -15,6 +16,7 @@ class SleepRecord {
     this.stage,
     this.note,
     this.isFromHealthKit = false,
+    this.sourceName,
   });
 
   SleepRecord copyWith({

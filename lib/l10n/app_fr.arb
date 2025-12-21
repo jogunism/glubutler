@@ -78,6 +78,7 @@
 
   "noRecords": "Aucun enregistrement",
   "startTracking": "Commencez à suivre votre santé !",
+  "feedEmptyHint": "Connectez Apple Santé pour plus d'informations",
 
   "goodMorning": "Bonjour !",
   "goodAfternoon": "Bon après-midi !",

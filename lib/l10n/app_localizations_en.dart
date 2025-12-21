@@ -284,6 +284,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startTracking => 'Start tracking your health!';
 
   @override
+  String get feedEmptyHint => 'Connect Apple Health to see more insights';
+
+  @override
   String get goodMorning => 'Good morning!';
 
   @override

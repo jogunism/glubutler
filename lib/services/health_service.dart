@@ -9,6 +9,16 @@ import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/menstruation_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 
+class DailyActivityData {
+  final int steps;
+  final double? distanceKm;
+
+  DailyActivityData({
+    required this.steps,
+    this.distanceKm,
+  });
+}
+
 class HealthService {
   static final HealthService _instance = HealthService._internal();
   factory HealthService() => _instance;
@@ -26,6 +36,7 @@ class HealthService {
     HealthDataType.INSULIN_DELIVERY,
     HealthDataType.WORKOUT,
     HealthDataType.STEPS,
+    HealthDataType.DISTANCE_WALKING_RUNNING,
     HealthDataType.ACTIVE_ENERGY_BURNED,
     HealthDataType.SLEEP_ASLEEP,
     HealthDataType.SLEEP_AWAKE,
@@ -130,8 +141,8 @@ class HealthService {
       _permissionStatus[HealthDataType.INSULIN_DELIVERY] = glucosePermission;
       debugPrint('[HealthService] BLOOD_GLUCOSE write permission: $glucosePermission');
 
-      // For READ-only types, if we're authorized (requestAuthorization was called),
-      // assume the user granted permission. We can't verify READ permissions on iOS.
+      // For READ-only types, if blood glucose write permission is granted,
+      // assume READ permissions are also granted (we can't verify READ on iOS).
       final readOnlyTypes = [
         HealthDataType.WORKOUT,
         HealthDataType.STEPS,
@@ -143,11 +154,15 @@ class HealthService {
       ];
 
       for (final type in readOnlyTypes) {
-        // Assume granted if we've been through authorization
-        _permissionStatus[type] = _isAuthorized;
+        // Assume granted if blood glucose write permission was granted
+        _permissionStatus[type] = glucosePermission;
       }
 
+      // Update _isAuthorized based on blood glucose permission
+      _isAuthorized = glucosePermission;
+
       debugPrint('[HealthService] Permission status: $_permissionStatus');
+      debugPrint('[HealthService] isAuthorized updated to: $_isAuthorized');
     } catch (e) {
       debugPrint('[HealthService] Error checking permission status: $e');
     }
@@ -249,6 +264,7 @@ class HealthService {
             unit: 'mg/dL',
             timestamp: point.dateFrom,
             isFromHealthKit: true,
+            sourceName: point.sourceName,
           ));
         }
       }
@@ -295,6 +311,7 @@ class HealthService {
             durationMinutes: durationMinutes,
             calories: workoutValue.totalEnergyBurned?.toInt(),
             isFromHealthKit: true,
+            sourceName: point.sourceName,
           ));
         }
       }
@@ -347,6 +364,7 @@ class HealthService {
           durationMinutes: durationMinutes,
           stage: _mapSleepStage(point.type),
           isFromHealthKit: true,
+          sourceName: point.sourceName,
         ));
       }
 
@@ -374,6 +392,52 @@ class HealthService {
     } catch (e) {
       debugPrint('[HealthService] Error fetching steps: $e');
       return null;
+    }
+  }
+
+  /// Fetch steps and distance for each day in the given date range
+  /// Returns a map of date (normalized to start of day) to DailyActivityData
+  Future<Map<DateTime, DailyActivityData>> fetchDailyActivityByDate({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('[HealthService] fetchDailyActivityByDate: not authorized');
+      return {};
+    }
+    debugPrint('[HealthService] fetchDailyActivityByDate called: $startDate to $endDate');
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final Map<DateTime, DailyActivityData> activityByDate = {};
+
+      // Iterate through each day in the range for steps
+      DateTime current = DateTime(startDate.year, startDate.month, startDate.day);
+      final end = DateTime(endDate.year, endDate.month, endDate.day);
+
+      while (!current.isAfter(end)) {
+        final dayStart = current;
+        final dayEnd = current.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1));
+
+        final steps = await health.getTotalStepsInInterval(dayStart, dayEnd);
+
+        if (steps != null && steps > 0) {
+          activityByDate[current] = DailyActivityData(
+            steps: steps,
+            distanceKm: null,
+          );
+        }
+
+        current = current.add(const Duration(days: 1));
+      }
+
+      debugPrint('[HealthService] Fetched activity for ${activityByDate.length} days');
+      return activityByDate;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching daily activity: $e');
+      return {};
     }
   }
 
@@ -485,6 +549,7 @@ class HealthService {
             timestamp: point.dateFrom,
             amountMl: numericValue.numericValue.toDouble() * 1000,
             isFromHealthKit: true,
+            sourceName: point.sourceName,
           ));
         }
       }

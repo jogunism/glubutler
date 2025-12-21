@@ -6,6 +6,7 @@ class GlucoseRecord {
   final String? mealContext; // before_meal, after_meal, fasting
   final String? note;
   final bool isFromHealthKit;
+  final String? sourceName;
 
   GlucoseRecord({
     required this.id,
@@ -15,6 +16,7 @@ class GlucoseRecord {
     this.mealContext,
     this.note,
     this.isFromHealthKit = false,
+    this.sourceName,
   });
 
   GlucoseRecord copyWith({

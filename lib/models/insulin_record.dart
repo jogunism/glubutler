@@ -6,6 +6,7 @@ class InsulinRecord {
   final String? injectionSite; // abdomen, thigh, arm, buttock
   final String? note;
   final bool isFromHealthKit;
+  final String? sourceName;
 
   InsulinRecord({
     required this.id,
@@ -15,6 +16,7 @@ class InsulinRecord {
     this.injectionSite,
     this.note,
     this.isFromHealthKit = false,
+    this.sourceName,
   });
 
   InsulinRecord copyWith({

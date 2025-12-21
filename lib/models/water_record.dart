@@ -4,6 +4,7 @@ class WaterRecord {
   final double amountMl;
   final String? note;
   final bool isFromHealthKit;
+  final String? sourceName;
 
   WaterRecord({
     required this.id,
@@ -11,6 +12,7 @@ class WaterRecord {
     required this.amountMl,
     this.note,
     this.isFromHealthKit = false,
+    this.sourceName,
   });
 
   WaterRecord copyWith({

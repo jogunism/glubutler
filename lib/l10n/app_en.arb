@@ -102,6 +102,7 @@
 
   "noRecords": "No records yet",
   "startTracking": "Start tracking your health!",
+  "feedEmptyHint": "Connect Apple Health to see more insights",
 
   "goodMorning": "Good morning!",
   "goodAfternoon": "Good afternoon!",

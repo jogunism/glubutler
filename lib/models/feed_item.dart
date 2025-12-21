@@ -94,6 +94,23 @@ class FeedItem implements Comparable<FeedItem> {
   InsulinRecord? get insulinRecord =>
       type == FeedItemType.insulin ? data as InsulinRecord : null;
 
+  String? get sourceName {
+    switch (type) {
+      case FeedItemType.glucose:
+        return glucoseRecord?.sourceName;
+      case FeedItemType.exercise:
+        return exerciseRecord?.sourceName;
+      case FeedItemType.sleep:
+        return sleepRecord?.sourceName;
+      case FeedItemType.water:
+        return waterRecord?.sourceName;
+      case FeedItemType.insulin:
+        return insulinRecord?.sourceName;
+      case FeedItemType.meal:
+        return null;
+    }
+  }
+
   factory FeedItem.fromWater(WaterRecord record) {
     return FeedItem(
       id: record.id,

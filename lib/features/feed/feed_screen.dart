@@ -5,12 +5,12 @@ import 'package:jiffy/jiffy.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
-import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/screen_fab.dart';
 import 'package:glu_butler/core/widgets/modals/record_input_modal.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/features/feed/widgets/feed_item_card.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -47,14 +47,8 @@ class _FeedScreenState extends State<FeedScreen> {
               onRefresh: _onRefresh,
               trailing: const SettingsIconButton(),
               slivers: [
-                // Steps summary if connected
-                if (provider.isHealthConnected && provider.todaySteps != null)
-                  SliverToBoxAdapter(
-                    child: _buildStepsSummary(context, provider.todaySteps!),
-                  ),
-
-                // Loading indicator
-                if (provider.isLoading && provider.items.isEmpty)
+                  // Loading indicator
+                if (provider.isLoading && provider.items.isEmpty && provider.activityByDate.isEmpty)
                   const SliverFillRemaining(
                     hasScrollBody: false,
                     child: Center(
@@ -62,14 +56,14 @@ class _FeedScreenState extends State<FeedScreen> {
                     ),
                   )
                 // Empty state
-                else if (provider.items.isEmpty)
+                else if (provider.items.isEmpty && provider.activityByDate.isEmpty)
                   SliverFillRemaining(
                     hasScrollBody: false,
                     child: _buildEmptyState(theme, l10n),
                   )
                 // Feed items grouped by date
                 else
-                  ..._buildFeedContent(context, provider),
+                  ..._buildFeedContent(context, provider, l10n),
               ],
             ),
             ScreenFab(
@@ -81,46 +75,88 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  Widget _buildStepsSummary(BuildContext context, int steps) {
+  Widget _buildStepsSummary(BuildContext context, DailyActivityData activity, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(16),
-      decoration: context.decorations.cardElevated,
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppTheme.iconGreen.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.directions_walk,
-              color: AppTheme.iconGreen,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Today\'s Steps',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: context.colors.textSecondary,
-                ),
-              ),
-              Text(
-                _formatNumber(steps),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppTheme.iconGreen.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.directions_walk,
+                color: AppTheme.iconGreen,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        l10n.steps,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        ' · Health',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: context.colors.textSecondary.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        Text(
+                          _formatNumber(activity.steps),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (activity.distanceKm != null) ...[
+                          const SizedBox(width: 12),
+                          Text(
+                            '${activity.distanceKm!.toStringAsFixed(1)} km',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -139,10 +175,10 @@ class _FeedScreenState extends State<FeedScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.timeline,
+            Icon(
+              Icons.view_agenda_outlined,
               size: 80,
-              color: AppTheme.primaryColor,
+              color: context.colors.textSecondary,
             ),
             const SizedBox(height: 16),
             Text(
@@ -151,8 +187,11 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              l10n.startTracking,
-              style: theme.textTheme.bodyMedium,
+              l10n.feedEmptyHint,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: context.colors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -160,16 +199,25 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  List<Widget> _buildFeedContent(BuildContext context, FeedProvider provider) {
+  List<Widget> _buildFeedContent(BuildContext context, FeedProvider provider, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final itemsByDate = provider.itemsByDate;
-    final sortedDates = itemsByDate.keys.toList()
+
+    // Combine dates from both feed items and activity data
+    final allDates = <DateTime>{
+      ...itemsByDate.keys,
+      ...provider.activityByDate.keys,
+    }.toList()
       ..sort((a, b) => b.compareTo(a));
 
     final List<Widget> slivers = [];
 
-    for (final date in sortedDates) {
-      final items = itemsByDate[date]!;
+    for (final date in allDates) {
+      final items = itemsByDate[date] ?? [];
+      final activityForDate = provider.activityByDate[date];
+
+      // Skip if no items and no activity for this date
+      if (items.isEmpty && activityForDate == null) continue;
 
       // Date header
       slivers.add(
@@ -187,21 +235,32 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       );
 
-      // Items for this date
-      slivers.add(
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => FeedItemCard(item: items[index]),
-            childCount: items.length,
+      // Steps summary for this date
+      if (provider.isHealthConnected && activityForDate != null) {
+        slivers.add(
+          SliverToBoxAdapter(
+            child: _buildStepsSummary(context, activityForDate, l10n),
           ),
-        ),
-      );
+        );
+      }
+
+      // Items for this date
+      if (items.isNotEmpty) {
+        slivers.add(
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => FeedItemCard(item: items[index]),
+              childCount: items.length,
+            ),
+          ),
+        );
+      }
     }
 
-    // Bottom padding for FAB
+    // Bottom padding for FAB and tab bar
     slivers.add(
       const SliverToBoxAdapter(
-        child: SizedBox(height: 100),
+        child: SizedBox(height: 120),
       ),
     );
 

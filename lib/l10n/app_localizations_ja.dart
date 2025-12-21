@@ -283,6 +283,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get startTracking => '健康記録を始めましょう！';
 
   @override
+  String get feedEmptyHint => 'ヘルスケアアプリと連携してより多くの情報を確認できます';
+
+  @override
   String get goodMorning => 'おはようございます！';
 
   @override

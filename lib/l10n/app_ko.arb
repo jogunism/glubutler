@@ -102,6 +102,7 @@
 
   "noRecords": "기록이 없습니다",
   "startTracking": "건강 기록을 시작하세요!",
+  "feedEmptyHint": "건강 앱을 연동해 더 많은 정보를 확인하세요",
 
   "goodMorning": "좋은 아침이에요!",
   "goodAfternoon": "좋은 오후예요!",

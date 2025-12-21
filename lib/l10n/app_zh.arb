@@ -78,6 +78,7 @@
 
   "noRecords": "暂无记录",
   "startTracking": "开始记录您的健康！",
+  "feedEmptyHint": "连接健康 App 查看更多信息",
 
   "goodMorning": "早上好！",
   "goodAfternoon": "下午好！",

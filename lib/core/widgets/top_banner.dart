@@ -29,17 +29,11 @@ class TopBanner {
     // Detect dark mode by checking if card color is not white (dark theme uses navy)
     final isDarkMode = colors.card != const Color(0xFFFFFFFF);
 
-    return toastification.show(
+    const horizontalMargin = 16.0;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return toastification.showCustom(
       context: context,
-      type: isSuccess ? ToastificationType.success : ToastificationType.error,
-      style: ToastificationStyle.flat,
-      title: Text(
-        message,
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-        ),
-      ),
       alignment: Alignment.topCenter,
       autoCloseDuration: duration ?? const Duration(seconds: 3),
       animationDuration: const Duration(milliseconds: 300),
@@ -72,37 +66,60 @@ class TopBanner {
           ),
         );
       },
-      icon: Icon(
-        isSuccess
-            ? CupertinoIcons.checkmark_circle_fill
-            : CupertinoIcons.xmark_circle_fill,
-        color: isSuccess ? colors.success : colors.error,
-        size: 22,
-      ),
-      primaryColor: isSuccess ? colors.success : colors.error,
-      backgroundColor: colors.card,
-      foregroundColor: colors.textPrimary,
-      borderRadius: BorderRadius.circular(12),
-      borderSide: isDarkMode
-          ? const BorderSide(color: Color(0xFF5C5C7A), width: 0.75)
-          : BorderSide.none,
-      boxShadow: [
-        BoxShadow(
-          color: const Color(0xFF000000).withValues(alpha: 0.1),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-      ],
-      // Match the width of content cards (screen width - 16px padding on each side)
-      // Bottom margin adds spacing between multiple toasts
-      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-      applyBlurEffect: false,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      showProgressBar: false,
-      closeButton: const ToastCloseButton(showType: CloseButtonShowType.none),
-      closeOnClick: true,
-      dragToClose: true,
-      dismissDirection: DismissDirection.up,
+      builder: (context, holder) {
+        return Center(
+          child: GestureDetector(
+            onTap: () => toastification.dismiss(holder),
+            onVerticalDragEnd: (details) {
+              if (details.primaryVelocity != null &&
+                  details.primaryVelocity! < 0) {
+                toastification.dismiss(holder);
+              }
+            },
+            child: Container(
+              width: screenWidth - (horizontalMargin * 2),
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: colors.card,
+                borderRadius: BorderRadius.circular(12),
+                border: isDarkMode
+                    ? Border.all(color: const Color(0xFF5C5C7A), width: 0.75)
+                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF000000).withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    isSuccess
+                        ? CupertinoIcons.checkmark_circle_fill
+                        : CupertinoIcons.xmark_circle_fill,
+                    color: isSuccess ? colors.success : colors.error,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

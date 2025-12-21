@@ -7,6 +7,7 @@ class ExerciseRecord {
   final int? steps;
   final String? note;
   final bool isFromHealthKit;
+  final String? sourceName;
 
   ExerciseRecord({
     required this.id,
@@ -17,6 +18,7 @@ class ExerciseRecord {
     this.steps,
     this.note,
     this.isFromHealthKit = false,
+    this.sourceName,
   });
 
   ExerciseRecord copyWith({

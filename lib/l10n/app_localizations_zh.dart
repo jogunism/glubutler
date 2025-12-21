@@ -283,6 +283,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get startTracking => '开始记录您的健康！';
 
   @override
+  String get feedEmptyHint => '连接健康 App 查看更多信息';
+
+  @override
   String get goodMorning => '早上好！';
 
   @override

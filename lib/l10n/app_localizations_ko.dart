@@ -282,6 +282,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get startTracking => '건강 기록을 시작하세요!';
 
   @override
+  String get feedEmptyHint => '건강 앱을 연동해 더 많은 정보를 확인하세요';
+
+  @override
   String get goodMorning => '좋은 아침이에요!';
 
   @override

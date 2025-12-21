@@ -49,6 +49,9 @@ class FeedProvider extends ChangeNotifier {
   int? _todaySteps;
   int? get todaySteps => _todaySteps;
 
+  final Map<DateTime, DailyActivityData> _activityByDate = {};
+  Map<DateTime, DailyActivityData> get activityByDate => Map.unmodifiable(_activityByDate);
+
   double? _todayWaterMl;
   double? get todayWaterMl => _todayWaterMl;
 
@@ -86,104 +89,10 @@ class FeedProvider extends ChangeNotifier {
       }
     }
 
-    // Add dummy data for design preview
-    _loadDummyData();
+    // Load initial data
+    await refreshData();
 
     notifyListeners();
-  }
-
-  void _loadDummyData() {
-    final now = DateTime.now();
-
-    // Today's data
-    _items.addAll([
-      // Glucose from Apple Health (high)
-      FeedItem.fromGlucose(GlucoseRecord(
-        id: '1',
-        value: 148,
-        unit: 'mg/dL',
-        timestamp: now.subtract(const Duration(hours: 1)),
-        isFromHealthKit: true,
-      )),
-      // Glucose from user (normal)
-      FeedItem.fromGlucose(GlucoseRecord(
-        id: '2',
-        value: 95,
-        unit: 'mg/dL',
-        timestamp: now.subtract(const Duration(hours: 3)),
-        isFromHealthKit: false,
-      )),
-      // Meal from user
-      FeedItem.fromMeal(MealRecord(
-        id: '3',
-        mealType: 'dinner',
-        description: '치킨 샐러드, 현미밥',
-        timestamp: now.subtract(const Duration(hours: 2)),
-      )),
-      // Exercise from Apple Health
-      FeedItem.fromExercise(ExerciseRecord(
-        id: '4',
-        exerciseType: 'running',
-        durationMinutes: 32,
-        calories: 280,
-        timestamp: now.subtract(const Duration(hours: 5)),
-        isFromHealthKit: true,
-      )),
-      // Water from Apple Health
-      FeedItem.fromWater(WaterRecord(
-        id: '5',
-        amountMl: 350,
-        timestamp: now.subtract(const Duration(hours: 4)),
-        isFromHealthKit: true,
-      )),
-      // Insulin from user
-      FeedItem.fromInsulin(InsulinRecord(
-        id: '6',
-        timestamp: now.subtract(const Duration(hours: 2, minutes: 30)),
-        units: 4.0,
-        insulinType: InsulinType.rapidActing,
-        isFromHealthKit: false,
-      )),
-    ]);
-
-    // Yesterday's data
-    final yesterday = now.subtract(const Duration(days: 1));
-    _items.addAll([
-      // Glucose (low)
-      FeedItem.fromGlucose(GlucoseRecord(
-        id: '7',
-        value: 65,
-        unit: 'mg/dL',
-        timestamp: yesterday.subtract(const Duration(hours: 2)),
-        isFromHealthKit: true,
-      )),
-      // Sleep
-      FeedItem.fromSleep(SleepRecord(
-        id: '8',
-        startTime: yesterday.subtract(const Duration(hours: 8)),
-        endTime: yesterday,
-        durationMinutes: 480,
-        stage: SleepStage.deep,
-        isFromHealthKit: true,
-      )),
-      // Meal
-      FeedItem.fromMeal(MealRecord(
-        id: '9',
-        mealType: 'lunch',
-        description: '된장찌개, 불고기',
-        timestamp: yesterday.subtract(const Duration(hours: 6)),
-      )),
-      // Insulin
-      FeedItem.fromInsulin(InsulinRecord(
-        id: '10',
-        timestamp: yesterday.subtract(const Duration(hours: 7)),
-        units: 12.0,
-        insulinType: InsulinType.longActing,
-        isFromHealthKit: false,
-      )),
-    ]);
-
-    _items.sort();
   }
 
   Future<bool> connectToHealth() async {
@@ -342,6 +251,9 @@ class FeedProvider extends ChangeNotifier {
       await _databaseService.clearHealthPermissions();
       statusChanged = false; // Now disconnected
       debugPrint('[FeedProvider] Health disconnected - write permission revoked');
+
+      // Refresh data to remove HealthKit items
+      await refreshData();
     }
     // If previously disconnected but now has write permission, mark as connected
     else if (!_isHealthConnected && hasWritePermission) {
@@ -358,6 +270,9 @@ class FeedProvider extends ChangeNotifier {
       await _savePermissionsToDb();
       statusChanged = true; // Now connected
       debugPrint('[FeedProvider] Health connected - write permission granted');
+
+      // Refresh data to load HealthKit items
+      await refreshData();
     }
 
     notifyListeners();
@@ -410,6 +325,14 @@ class FeedProvider extends ChangeNotifier {
 
         _todaySteps = await _healthService.fetchTodaySteps();
         _todayWaterMl = await _healthService.fetchTodayWaterIntake();
+
+        // Fetch activity (steps + distance) for all dates in the sync period
+        final activityData = await _healthService.fetchDailyActivityByDate(
+          startDate: startDate,
+          endDate: now,
+        );
+        _activityByDate.clear();
+        _activityByDate.addAll(activityData);
       }
 
       // Add local records from database
@@ -437,14 +360,9 @@ class FeedProvider extends ChangeNotifier {
       );
       allItems.addAll(localInsulin.map(FeedItem.fromInsulin));
 
-      // Keep dummy data if no real data
-      if (allItems.isEmpty) {
-        _loadDummyData();
-      } else {
-        // Sort by timestamp (newest first)
-        allItems.sort();
-        _items = allItems;
-      }
+      // Sort by timestamp (newest first)
+      allItems.sort();
+      _items = allItems;
     } catch (e) {
       _error = e.toString();
       debugPrint('[FeedProvider] Error refreshing data: $e');

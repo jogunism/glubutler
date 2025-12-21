@@ -4,6 +4,7 @@ import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
+import 'package:glu_butler/core/theme/app_colors.dart';
 
 class FeedItemCard extends StatelessWidget {
   final FeedItem item;
@@ -14,9 +15,13 @@ class FeedItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final time = Jiffy.parseFromDateTime(item.timestamp).format(pattern: 'HH:mm');
+    final title = _getItemTitle(l10n);
+    final sourceName = item.sourceName;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
@@ -28,60 +33,58 @@ class FeedItemCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header: Title, Source, Time
-            _buildHeader(theme, l10n),
-            const SizedBox(height: 8),
-            // Content with icon
-            Row(
+            _buildIcon(theme),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Title row - aligned with icon top
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
+                      if (sourceName != null) ...[
+                        Text(
+                          ' · $sourceName',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: context.colors.textSecondary.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  // Value - below icon bottom
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: _buildValue(theme, l10n),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildIcon(theme),
-                const SizedBox(width: 12),
-                Expanded(child: _buildValue(theme, l10n)),
+                Text(
+                  time,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(ThemeData theme, AppLocalizations l10n) {
-    final title = _getItemTitle(l10n);
-    final source = item.isFromHealthKit ? 'Apple Health' : 'User';
-    final time = Jiffy.parseFromDateTime(item.timestamp).format(pattern: 'HH:mm');
-
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        Text(
-          source,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: item.isFromHealthKit
-                ? Colors.red.withValues(alpha: 0.8)
-                : AppTheme.primaryColor,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          time,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-          ),
-        ),
-      ],
     );
   }
 
@@ -125,8 +128,8 @@ class FeedItemCard extends StatelessWidget {
       children: [
         Text(
           '${glucose.value.toStringAsFixed(0)} ${glucose.unit}',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(width: 8),
@@ -141,8 +144,8 @@ class FeedItemCard extends StatelessWidget {
       children: [
         Text(
           '${exercise.durationMinutes} min',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
         ),
         if (exercise.calories != null) ...[
@@ -160,8 +163,8 @@ class FeedItemCard extends StatelessWidget {
     final sleep = item.sleepRecord!;
     return Text(
       sleep.formattedDuration,
-      style: theme.textTheme.bodyLarge?.copyWith(
-        fontWeight: FontWeight.w600,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -171,7 +174,9 @@ class FeedItemCard extends StatelessWidget {
     if (meal.description != null) {
       return Text(
         meal.description!,
-        style: theme.textTheme.bodyMedium,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );
@@ -183,8 +188,8 @@ class FeedItemCard extends StatelessWidget {
     final water = item.waterRecord!;
     return Text(
       water.formattedAmount(),
-      style: theme.textTheme.bodyLarge?.copyWith(
-        fontWeight: FontWeight.w600,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -195,8 +200,8 @@ class FeedItemCard extends StatelessWidget {
       children: [
         Text(
           insulin.formattedUnits,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(width: 8),
@@ -237,13 +242,13 @@ class FeedItemCard extends StatelessWidget {
     }
 
     return Container(
-      width: 34,
-      height: 34,
+      width: 44,
+      height: 44,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, color: color, size: 17),
+      child: Icon(icon, color: color, size: 24),
     );
   }
 

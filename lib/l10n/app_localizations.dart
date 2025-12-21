@@ -656,6 +656,12 @@ abstract class AppLocalizations {
   /// **'Start tracking your health!'**
   String get startTracking;
 
+  /// No description provided for @feedEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Apple Health to see more insights'**
+  String get feedEmptyHint;
+
   /// No description provided for @goodMorning.
   ///
   /// In en, this message translates to:
