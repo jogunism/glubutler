@@ -26,6 +26,8 @@ class TopBanner {
     Duration? duration,
   }) {
     final colors = context.colors;
+    // Detect dark mode by checking if card color is not white (dark theme uses navy)
+    final isDarkMode = colors.card != const Color(0xFFFFFFFF);
 
     return toastification.show(
       context: context,
@@ -42,16 +44,32 @@ class TopBanner {
       autoCloseDuration: duration ?? const Duration(seconds: 3),
       animationDuration: const Duration(milliseconds: 300),
       animationBuilder: (context, animation, alignment, child) {
+        // Slide animation with fade out on dismiss
+        final slideAnimation = Tween<Offset>(
+          begin: const Offset(0, -1),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.elasticOut,
+          reverseCurve: Curves.easeInCubic,
+        ));
+
+        // Fade animation - only fade out on dismiss (reverse)
+        final fadeAnimation = Tween<double>(
+          begin: 0.0,
+          end: 1.0,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+          reverseCurve: Curves.easeIn,
+        ));
+
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, -1),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.elasticOut,
-            reverseCurve: Curves.easeInCubic,
-          )),
-          child: child,
+          position: slideAnimation,
+          child: FadeTransition(
+            opacity: fadeAnimation,
+            child: child,
+          ),
         );
       },
       icon: Icon(
@@ -64,7 +82,10 @@ class TopBanner {
       primaryColor: isSuccess ? colors.success : colors.error,
       backgroundColor: colors.card,
       foregroundColor: colors.textPrimary,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: isDarkMode
+          ? const BorderSide(color: Color(0xFF5C5C7A), width: 0.75)
+          : BorderSide.none,
       boxShadow: [
         BoxShadow(
           color: const Color(0xFF000000).withValues(alpha: 0.1),
@@ -72,12 +93,16 @@ class TopBanner {
           offset: const Offset(0, 8),
         ),
       ],
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      // Match the width of content cards (screen width - 16px padding on each side)
+      // Bottom margin adds spacing between multiple toasts
+      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+      applyBlurEffect: false,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       showProgressBar: false,
       closeButton: const ToastCloseButton(showType: CloseButtonShowType.none),
       closeOnClick: true,
       dragToClose: true,
+      dismissDirection: DismissDirection.up,
     );
   }
 
