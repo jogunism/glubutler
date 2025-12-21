@@ -413,6 +413,24 @@ class HealthService {
 
       final Map<DateTime, DailyActivityData> activityByDate = {};
 
+      // Fetch all distance data for the range
+      final Map<DateTime, double> distanceByDate = {};
+      try {
+        final distancePoints = await health.getHealthDataFromTypes(
+          types: [HealthDataType.DISTANCE_WALKING_RUNNING],
+          startTime: startDate,
+          endTime: endDate,
+        );
+        for (final point in distancePoints) {
+          final date = DateTime(point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
+          final value = (point.value as NumericHealthValue).numericValue.toDouble();
+          distanceByDate[date] = (distanceByDate[date] ?? 0) + value;
+        }
+        debugPrint('[HealthService] Got distance for ${distanceByDate.length} days');
+      } catch (e) {
+        debugPrint('[HealthService] Could not fetch distance data: $e');
+      }
+
       // Iterate through each day in the range for steps
       DateTime current = DateTime(startDate.year, startDate.month, startDate.day);
       final end = DateTime(endDate.year, endDate.month, endDate.day);
@@ -422,11 +440,12 @@ class HealthService {
         final dayEnd = current.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1));
 
         final steps = await health.getTotalStepsInInterval(dayStart, dayEnd);
+        final distanceMeters = distanceByDate[current];
 
         if (steps != null && steps > 0) {
           activityByDate[current] = DailyActivityData(
             steps: steps,
-            distanceKm: null,
+            distanceKm: distanceMeters != null ? distanceMeters / 1000 : null,
           );
         }
 

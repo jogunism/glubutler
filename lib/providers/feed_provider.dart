@@ -291,6 +291,11 @@ class FeedProvider extends ChangeNotifier {
 
       final List<FeedItem> allItems = [];
 
+      // Clear activity data first
+      _activityByDate.clear();
+      _todaySteps = null;
+      _todayWaterMl = null;
+
       // Fetch from HealthKit if connected
       if (_isHealthConnected) {
         final glucoseRecords = await _healthService.fetchGlucoseData(
@@ -331,7 +336,6 @@ class FeedProvider extends ChangeNotifier {
           startDate: startDate,
           endDate: now,
         );
-        _activityByDate.clear();
         _activityByDate.addAll(activityData);
       }
 
