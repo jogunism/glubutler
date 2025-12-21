@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/cgm_glucose_group.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
@@ -184,13 +184,13 @@ class CgmGroupingService {
   ) {
     if (sequence.isEmpty) return [];
 
-    // 디버그 로깅 (10월 27일만)
-    bool hasOct27 = sequence.any((r) => r.timestamp.month == 10 && r.timestamp.day == 27);
-    if (hasOct27) {
-      debugPrint('[CGM] === 그룹화 시작 ===');
-      debugPrint('[CGM] 표준 범위: ${rangeSettings.targetLow} ~ ${rangeSettings.targetHigh}');
-      debugPrint('[CGM] 레코드 수: ${sequence.length}');
-    }
+    // // 디버그 로깅 (10월 27일만)
+    // bool hasOct27 = sequence.any((r) => r.timestamp.month == 10 && r.timestamp.day == 27);
+    // if (hasOct27) {
+    //   debugPrint('[CGM] === 그룹화 시작 ===');
+    //   debugPrint('[CGM] 표준 범위: ${rangeSettings.targetLow} ~ ${rangeSettings.targetHigh}');
+    //   debugPrint('[CGM] 레코드 수: ${sequence.length}');
+    // }
 
     if (sequence.length == 1) {
       final isBaseline = _isBaseline(sequence.first.value, rangeSettings);
@@ -228,30 +228,30 @@ class CgmGroupingService {
       ));
     }
 
-    if (hasOct27) {
-      debugPrint('[CGM] 초기 그룹 수: ${groups.length}');
-    }
+    // if (hasOct27) {
+    //   debugPrint('[CGM] 초기 그룹 수: ${groups.length}');
+    // }
 
     // 3단계: 연속된 동일 타입 그룹 병합
     final mergedGroups = _mergeSameTypeGroups(groups);
 
-    if (hasOct27) {
-      debugPrint('[CGM] 동일 타입 병합 후: ${mergedGroups.length}');
-      for (final g in mergedGroups) {
-        debugPrint('[CGM]   ${g.groupType}: ${g.recordCount}개, ${g.minValue.toInt()}~${g.maxValue.toInt()}');
-      }
-    }
+    // if (hasOct27) {
+    //   debugPrint('[CGM] 동일 타입 병합 후: ${mergedGroups.length}');
+    //   for (final g in mergedGroups) {
+    //     debugPrint('[CGM]   ${g.groupType}: ${g.recordCount}개, ${g.minValue.toInt()}~${g.maxValue.toInt()}');
+    //   }
+    // }
 
     // 4단계: 작은 그룹들을 큰 그룹에 흡수 + 연속 작은 그룹 병합
     final finalGroups = _mergeOscillatingGroups(mergedGroups);
 
-    if (hasOct27) {
-      debugPrint('[CGM] === 최종 결과 ===');
-      debugPrint('[CGM] 최종 그룹 수: ${finalGroups.length}');
-      for (final g in finalGroups) {
-        debugPrint('[CGM]   ${g.groupType}: ${g.recordCount}개, ${g.minValue.toInt()}~${g.maxValue.toInt()}');
-      }
-    }
+    // if (hasOct27) {
+    //   debugPrint('[CGM] === 최종 결과 ===');
+    //   debugPrint('[CGM] 최종 그룹 수: ${finalGroups.length}');
+    //   for (final g in finalGroups) {
+    //     debugPrint('[CGM]   ${g.groupType}: ${g.recordCount}개, ${g.minValue.toInt()}~${g.maxValue.toInt()}');
+    //   }
+    // }
 
     return finalGroups;
   }

@@ -1,4 +1,5 @@
 import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/core/constants/app_constants.dart';
 
 /// CGM 혈당 그룹 타입
 enum CgmGroupType {
@@ -67,4 +68,35 @@ class CgmGlucoseGroup {
   /// 이벤트 타입에 따른 아이콘/라벨용
   bool get isEvent => groupType == CgmGroupType.fluctuation;
   bool get isBaseline => groupType == CgmGroupType.baseline;
+
+  /// mg/dL 값을 mmol/L로 변환
+  static double _toMmolL(double mgDl) => mgDl / AppConstants.mgDlToMmolL;
+
+  /// 지정된 단위로 변환된 min 값
+  double getMinValue(String targetUnit) {
+    if (targetUnit == AppConstants.unitMmolL) {
+      return _toMmolL(minValue);
+    }
+    return minValue;
+  }
+
+  /// 지정된 단위로 변환된 max 값
+  double getMaxValue(String targetUnit) {
+    if (targetUnit == AppConstants.unitMmolL) {
+      return _toMmolL(maxValue);
+    }
+    return maxValue;
+  }
+
+  /// 지정된 단위로 변환된 범위 문자열
+  String getRangeString(String targetUnit) {
+    final min = getMinValue(targetUnit);
+    final max = getMaxValue(targetUnit);
+    final decimals = targetUnit == AppConstants.unitMmolL ? 1 : 0;
+
+    if (min == max || (min - max).abs() < 0.1) {
+      return min.toStringAsFixed(decimals);
+    }
+    return '${min.toStringAsFixed(decimals)}~${max.toStringAsFixed(decimals)}';
+  }
 }

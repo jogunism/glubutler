@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 class FeedItemCard extends StatelessWidget {
   final FeedItem item;
@@ -66,7 +69,7 @@ class FeedItemCard extends StatelessWidget {
                   // Value - below icon bottom
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: _buildValue(theme, l10n),
+                    child: _buildValue(context, theme, l10n),
                   ),
                 ],
               ),
@@ -105,10 +108,10 @@ class FeedItemCard extends StatelessWidget {
     }
   }
 
-  Widget _buildValue(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildValue(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     switch (item.type) {
       case FeedItemType.glucose:
-        return _buildGlucoseValue(theme);
+        return _buildGlucoseValue(context, theme);
       case FeedItemType.exercise:
         return _buildExerciseValue(theme);
       case FeedItemType.sleep:
@@ -122,14 +125,32 @@ class FeedItemCard extends StatelessWidget {
     }
   }
 
-  Widget _buildGlucoseValue(ThemeData theme) {
+  Widget _buildGlucoseValue(BuildContext context, ThemeData theme) {
     final glucose = item.glucoseRecord!;
+    final settings = context.watch<SettingsService>();
+    final unit = settings.unit;
+
+    // 단위 변환
+    final isMmol = unit == AppConstants.unitMmolL;
+    final displayValue = isMmol
+        ? (glucose.value / AppConstants.mgDlToMmolL).toStringAsFixed(1)
+        : glucose.value.toStringAsFixed(0);
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
-          '${glucose.value.toStringAsFixed(0)} ${glucose.unit}',
+          displayValue,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          unit,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(width: 8),

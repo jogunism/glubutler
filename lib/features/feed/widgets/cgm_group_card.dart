@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 import 'package:glu_butler/models/cgm_glucose_group.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 class CgmGroupCard extends StatefulWidget {
   final CgmGlucoseGroup group;
@@ -163,6 +166,8 @@ class _CgmGroupCardState extends State<CgmGroupCard>
 
   Widget _buildExpandedContent(ThemeData theme, AppLocalizations l10n) {
     final group = widget.group;
+    final settings = context.watch<SettingsService>();
+    final unit = settings.unit;
     // Sort records by time (newest first)
     final sortedRecords = List<GlucoseRecord>.from(group.records)
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
@@ -178,15 +183,21 @@ class _CgmGroupCardState extends State<CgmGroupCard>
       child: Column(
         children: [
           for (int i = 0; i < sortedRecords.length; i++)
-            _buildRecordRow(sortedRecords[i], theme, i == sortedRecords.length - 1),
+            _buildRecordRow(sortedRecords[i], theme, i == sortedRecords.length - 1, unit),
         ],
       ),
     );
   }
 
-  Widget _buildRecordRow(GlucoseRecord record, ThemeData theme, bool isLast) {
+  Widget _buildRecordRow(GlucoseRecord record, ThemeData theme, bool isLast, String unit) {
     final time = Jiffy.parseFromDateTime(record.timestamp).format(pattern: 'HH:mm');
     final color = _getGlucoseColor(record.status);
+
+    // 단위 변환
+    final isMmol = unit == AppConstants.unitMmolL;
+    final displayValue = isMmol
+        ? (record.value / AppConstants.mgDlToMmolL).toStringAsFixed(1)
+        : record.value.toStringAsFixed(0);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -221,9 +232,16 @@ class _CgmGroupCardState extends State<CgmGroupCard>
           const SizedBox(width: 16),
           // Value
           Text(
-            '${record.value.toStringAsFixed(0)} ${record.unit}',
+            displayValue,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            unit,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
           const SizedBox(width: 8),
@@ -273,12 +291,24 @@ class _CgmGroupCardState extends State<CgmGroupCard>
   Widget _buildValue(ThemeData theme) {
     final group = widget.group;
     final l10n = AppLocalizations.of(context)!;
+    final settings = context.watch<SettingsService>();
+    final unit = settings.unit;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
-          '${group.rangeString} ${group.unit}',
+          group.getRangeString(unit),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          unit,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(width: 8),
