@@ -12,7 +12,15 @@ class AppConstants {
   // Conversion factor: 1 mmol/L = 18.0182 mg/dL
   static const double mgDlToMmolL = 18.0182;
 
-  // Blood Glucose Ranges (mg/dL)
+  // Blood Glucose Ranges (mg/dL) - Default thresholds
+  static const double defaultVeryLow = 54.0;
+  static const double defaultLow = 70.0;
+  static const double defaultTargetLow = 80.0;
+  static const double defaultTargetHigh = 120.0;
+  static const double defaultHigh = 160.0;
+  static const double defaultVeryHigh = 180.0;
+
+  // Legacy values for compatibility
   static const double lowGlucose = 70.0;
   static const double normalGlucoseMin = 70.0;
   static const double normalGlucoseMax = 140.0;
@@ -61,4 +69,12 @@ class AppConstants {
   static const String keyIsPro = 'is_pro';
   static const String keySubscriptionDate = 'subscription_date';
   static const String keySyncPeriod = 'sync_period';
+
+  // Glucose Range Keys
+  static const String keyGlucoseVeryLow = 'glucose_very_low';
+  static const String keyGlucoseLow = 'glucose_low';
+  static const String keyGlucoseTargetLow = 'glucose_target_low';
+  static const String keyGlucoseTargetHigh = 'glucose_target_high';
+  static const String keyGlucoseHigh = 'glucose_high';
+  static const String keyGlucoseVeryHigh = 'glucose_very_high';
 }

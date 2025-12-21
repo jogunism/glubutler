@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:intl/intl.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -11,7 +12,9 @@ import 'package:glu_butler/core/widgets/screen_fab.dart';
 import 'package:glu_butler/core/widgets/modals/record_input_modal.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/services/health_service.dart';
+import 'package:glu_butler/models/cgm_glucose_group.dart';
 import 'package:glu_butler/features/feed/widgets/feed_item_card.dart';
+import 'package:glu_butler/features/feed/widgets/cgm_group_card.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -162,10 +165,8 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   String _formatNumber(int number) {
-    if (number >= 1000) {
-      return '${(number / 1000).toStringAsFixed(1)}k';
-    }
-    return number.toString();
+    final locale = Localizations.localeOf(context).toString();
+    return NumberFormat.decimalPattern(locale).format(number);
   }
 
   Widget _buildEmptyState(ThemeData theme, AppLocalizations l10n) {
@@ -202,22 +203,41 @@ class _FeedScreenState extends State<FeedScreen> {
   List<Widget> _buildFeedContent(BuildContext context, FeedProvider provider, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final itemsByDate = provider.itemsByDate;
+    final cgmGroupsByDate = provider.cgmGroupsByDate;
 
-    // Combine dates from both feed items and activity data
-    final allDates = <DateTime>{
-      ...itemsByDate.keys,
-      ...provider.activityByDate.keys,
-    }.toList()
-      ..sort((a, b) => b.compareTo(a));
+    // Combine dates from feed items, activity data, and CGM groups
+    // Normalize all dates to midnight to ensure proper deduplication
+    final allDatesSet = <DateTime>{};
+    for (final date in itemsByDate.keys) {
+      allDatesSet.add(DateTime(date.year, date.month, date.day));
+    }
+    for (final date in provider.activityByDate.keys) {
+      allDatesSet.add(DateTime(date.year, date.month, date.day));
+    }
+    for (final date in cgmGroupsByDate.keys) {
+      allDatesSet.add(DateTime(date.year, date.month, date.day));
+    }
+    final allDates = allDatesSet.toList()..sort((a, b) => b.compareTo(a));
 
     final List<Widget> slivers = [];
 
     for (final date in allDates) {
-      final items = itemsByDate[date] ?? [];
-      final activityForDate = provider.activityByDate[date];
+      // Find items/groups/activity matching this date (comparing year, month, day only)
+      final items = itemsByDate.entries
+          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
+          .expand((e) => e.value)
+          .toList();
+      final cgmGroups = cgmGroupsByDate.entries
+          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
+          .expand((e) => e.value)
+          .toList();
+      final activityEntry = provider.activityByDate.entries
+          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
+          .firstOrNull;
+      final activityForDate = activityEntry?.value;
 
-      // Skip if no items and no activity for this date
-      if (items.isEmpty && activityForDate == null) continue;
+      // Skip if no items, no CGM groups, and no activity for this date
+      if (items.isEmpty && cgmGroups.isEmpty && activityForDate == null) continue;
 
       // Date header
       slivers.add(
@@ -244,13 +264,23 @@ class _FeedScreenState extends State<FeedScreen> {
         );
       }
 
-      // Items for this date
-      if (items.isNotEmpty) {
+      // Build combined list of CGM groups and feed items, sorted by time
+      final combinedItems = _buildCombinedItems(items, cgmGroups);
+
+      // Render combined items
+      if (combinedItems.isNotEmpty) {
         slivers.add(
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => FeedItemCard(item: items[index]),
-              childCount: items.length,
+              (context, index) {
+                final item = combinedItems[index];
+                if (item is CgmGlucoseGroup) {
+                  return CgmGroupCard(group: item);
+                } else {
+                  return FeedItemCard(item: item);
+                }
+              },
+              childCount: combinedItems.length,
             ),
           ),
         );
@@ -279,5 +309,42 @@ class _FeedScreenState extends State<FeedScreen> {
     } else {
       return Jiffy.parseFromDateTime(date).format(pattern: 'EEEE, MMM d');
     }
+  }
+
+  /// Combine feed items and CGM groups, sorted by time (newest first)
+  List<dynamic> _buildCombinedItems(List items, List<CgmGlucoseGroup> cgmGroups) {
+    final List<dynamic> combined = [];
+
+    // Add feed items with their timestamps
+    for (final item in items) {
+      combined.add(item);
+    }
+
+    // Add CGM groups with their start times
+    for (final group in cgmGroups) {
+      combined.add(group);
+    }
+
+    // Sort by timestamp (newest first)
+    combined.sort((a, b) {
+      final DateTime timeA;
+      final DateTime timeB;
+
+      if (a is CgmGlucoseGroup) {
+        timeA = a.startTime;
+      } else {
+        timeA = a.timestamp;
+      }
+
+      if (b is CgmGlucoseGroup) {
+        timeB = b.startTime;
+      } else {
+        timeB = b.timestamp;
+      }
+
+      return timeB.compareTo(timeA);
+    });
+
+    return combined;
   }
 }

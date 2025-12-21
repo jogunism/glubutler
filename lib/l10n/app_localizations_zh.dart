@@ -471,4 +471,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get disconnected => '已断开与 Apple 健康的连接';
+
+  @override
+  String get cgmBaseline => '稳定';
+
+  @override
+  String get cgmFluctuation => '波动';
 }

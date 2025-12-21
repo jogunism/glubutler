@@ -8,9 +8,12 @@ import 'package:glu_butler/models/sleep_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
+import 'package:glu_butler/models/cgm_glucose_group.dart';
+import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/cgm_grouping_service.dart';
 
 /// Enum for health data categories shown in UI
 enum HealthDataCategory {
@@ -32,6 +35,9 @@ class FeedProvider extends ChangeNotifier {
 
   List<FeedItem> _items = [];
   List<FeedItem> get items => _items;
+
+  List<CgmGlucoseGroup> _cgmGroups = [];
+  List<CgmGlucoseGroup> get cgmGroups => _cgmGroups;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -291,10 +297,14 @@ class FeedProvider extends ChangeNotifier {
 
       final List<FeedItem> allItems = [];
 
-      // Clear activity data first
+      // Clear activity data and CGM groups first
       _activityByDate.clear();
+      _cgmGroups = [];
       _todaySteps = null;
       _todayWaterMl = null;
+
+      // Collect all glucose records for CGM grouping
+      final List<GlucoseRecord> allGlucoseRecords = [];
 
       // Fetch from HealthKit if connected
       if (_isHealthConnected) {
@@ -302,7 +312,7 @@ class FeedProvider extends ChangeNotifier {
           startDate: startDate,
           endDate: now,
         );
-        allItems.addAll(glucoseRecords.map(FeedItem.fromGlucose));
+        allGlucoseRecords.addAll(glucoseRecords);
 
         final exerciseRecords = await _healthService.fetchWorkoutData(
           startDate: startDate,
@@ -344,7 +354,7 @@ class FeedProvider extends ChangeNotifier {
         startDate: startDate,
         endDate: now,
       );
-      allItems.addAll(localGlucose.map(FeedItem.fromGlucose));
+      allGlucoseRecords.addAll(localGlucose);
 
       final localMeals = await _databaseService.getMealRecords(
         startDate: startDate,
@@ -363,6 +373,15 @@ class FeedProvider extends ChangeNotifier {
         endDate: now,
       );
       allItems.addAll(localInsulin.map(FeedItem.fromInsulin));
+
+      // Group glucose records using CGM grouping service
+      final rangeSettings = _settingsService?.glucoseRange ?? const GlucoseRangeSettings();
+      final (cgmGroups, individualGlucose) =
+          CgmGroupingService.groupGlucoseRecords(allGlucoseRecords, rangeSettings: rangeSettings);
+      _cgmGroups = cgmGroups;
+
+      // Add individual glucose records (non-CGM) to feed items
+      allItems.addAll(individualGlucose.map(FeedItem.fromGlucose));
 
       // Sort by timestamp (newest first)
       allItems.sort();
@@ -437,6 +456,29 @@ class FeedProvider extends ChangeNotifier {
         item.timestamp.day,
       );
       grouped.putIfAbsent(dateKey, () => []).add(item);
+    }
+    return grouped;
+  }
+
+  // Get CGM groups for a specific date
+  List<CgmGlucoseGroup> getCgmGroupsForDate(DateTime date) {
+    return _cgmGroups.where((group) {
+      return group.startTime.year == date.year &&
+          group.startTime.month == date.month &&
+          group.startTime.day == date.day;
+    }).toList();
+  }
+
+  // Get CGM groups grouped by date
+  Map<DateTime, List<CgmGlucoseGroup>> get cgmGroupsByDate {
+    final Map<DateTime, List<CgmGlucoseGroup>> grouped = {};
+    for (final group in _cgmGroups) {
+      final dateKey = DateTime(
+        group.startTime.year,
+        group.startTime.month,
+        group.startTime.day,
+      );
+      grouped.putIfAbsent(dateKey, () => []).add(group);
     }
     return grouped;
   }

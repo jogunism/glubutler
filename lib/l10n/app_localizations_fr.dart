@@ -479,4 +479,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get disconnected => 'Déconnecté d\'Apple Santé';
+
+  @override
+  String get cgmBaseline => 'Stable';
+
+  @override
+  String get cgmFluctuation => 'Fluctuation';
 }

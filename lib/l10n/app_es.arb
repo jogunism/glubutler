@@ -144,5 +144,8 @@
   "syncPeriod1Month": "1 mes",
   "syncPeriod3Months": "3 meses",
 
-  "disconnected": "Desconectado de Apple Salud"
+  "disconnected": "Desconectado de Apple Salud",
+
+  "cgmBaseline": "Estable",
+  "cgmFluctuation": "Fluctuación"
 }

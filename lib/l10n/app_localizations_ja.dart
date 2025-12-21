@@ -472,4 +472,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get disconnected => 'Apple ヘルスケアとの連携が解除されました';
+
+  @override
+  String get cgmBaseline => '安定';
+
+  @override
+  String get cgmFluctuation => '変動';
 }

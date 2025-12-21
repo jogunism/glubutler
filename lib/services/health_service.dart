@@ -405,7 +405,6 @@ class HealthService {
       debugPrint('[HealthService] fetchDailyActivityByDate: not authorized');
       return {};
     }
-    debugPrint('[HealthService] fetchDailyActivityByDate called: $startDate to $endDate');
 
     try {
       final health = Health();
@@ -421,38 +420,82 @@ class HealthService {
           startTime: startDate,
           endTime: endDate,
         );
+
+        // iPhone and Apple Watch report overlapping distance data
+        // Use only the primary source (prefer iPhone, as it's more consistently available)
+        // Group by date and source, then pick one source per day
+
+        // First, group all points by date
+        final Map<DateTime, Map<String, double>> distanceByDateAndSource = {};
         for (final point in distancePoints) {
           final date = DateTime(point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
+          final source = point.sourceName;
           final value = (point.value as NumericHealthValue).numericValue.toDouble();
-          distanceByDate[date] = (distanceByDate[date] ?? 0) + value;
+
+          distanceByDateAndSource.putIfAbsent(date, () => {});
+          distanceByDateAndSource[date]![source] = (distanceByDateAndSource[date]![source] ?? 0) + value;
         }
-        debugPrint('[HealthService] Got distance for ${distanceByDate.length} days');
+
+        // For each date, pick the source with the most distance (usually the most accurate)
+        for (final entry in distanceByDateAndSource.entries) {
+          final date = entry.key;
+          final sourceDistances = entry.value;
+
+          // Find the source with the maximum distance for this day
+          String? bestSource;
+          double maxDistance = 0;
+          for (final sourceEntry in sourceDistances.entries) {
+            if (sourceEntry.value > maxDistance) {
+              maxDistance = sourceEntry.value;
+              bestSource = sourceEntry.key;
+            }
+          }
+
+          if (bestSource != null) {
+            distanceByDate[date] = maxDistance;
+          }
+        }
       } catch (e) {
         debugPrint('[HealthService] Could not fetch distance data: $e');
       }
 
       // Iterate through each day in the range for steps
+      // startDate and endDate are already local time (from DateTime.now())
       DateTime current = DateTime(startDate.year, startDate.month, startDate.day);
       final end = DateTime(endDate.year, endDate.month, endDate.day);
 
-      while (!current.isAfter(end)) {
-        final dayStart = current;
-        final dayEnd = current.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1));
+      // Calculate total days to iterate (avoid DST issues with Duration)
+      final totalDays = end.difference(current).inDays + 1;
+
+      for (int i = 0; i < totalDays; i++) {
+        // Create date by adding days to start date (avoids DST issues)
+        final date = DateTime(current.year, current.month, current.day + i);
+        final dayStart = DateTime(date.year, date.month, date.day, 0, 0, 0);
+        final dayEnd = DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
 
         final steps = await health.getTotalStepsInInterval(dayStart, dayEnd);
-        final distanceMeters = distanceByDate[current];
 
-        if (steps != null && steps > 0) {
-          activityByDate[current] = DailyActivityData(
-            steps: steps,
+        // Find distance for this date by comparing year/month/day
+        double? distanceMeters;
+        for (final entry in distanceByDate.entries) {
+          if (entry.key.year == date.year &&
+              entry.key.month == date.month &&
+              entry.key.day == date.day) {
+            distanceMeters = entry.value;
+            break;
+          }
+        }
+
+        // Add activity if we have either steps or distance
+        final dateKey = DateTime(date.year, date.month, date.day);
+        if ((steps != null && steps > 0) || distanceMeters != null) {
+          activityByDate[dateKey] = DailyActivityData(
+            steps: steps ?? 0,
             distanceKm: distanceMeters != null ? distanceMeters / 1000 : null,
           );
         }
-
-        current = current.add(const Duration(days: 1));
       }
 
-      debugPrint('[HealthService] Fetched activity for ${activityByDate.length} days');
       return activityByDate;
     } catch (e) {
       debugPrint('[HealthService] Error fetching daily activity: $e');

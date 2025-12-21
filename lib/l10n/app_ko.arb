@@ -170,5 +170,8 @@
   "syncPeriod1Month": "1개월",
   "syncPeriod3Months": "3개월",
 
-  "disconnected": "Apple 건강 연동이 해제되었습니다"
+  "disconnected": "Apple 건강 연동이 해제되었습니다",
+
+  "cgmBaseline": "표준",
+  "cgmFluctuation": "변동"
 }

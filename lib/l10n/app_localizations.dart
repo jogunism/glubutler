@@ -1033,6 +1033,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Disconnected from Apple Health'**
   String get disconnected;
+
+  /// No description provided for @cgmBaseline.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get cgmBaseline;
+
+  /// No description provided for @cgmFluctuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Fluctuation'**
+  String get cgmFluctuation;
 }
 
 class _AppLocalizationsDelegate

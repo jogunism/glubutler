@@ -129,6 +129,14 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
     }
   }
 
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
@@ -147,52 +155,56 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
             top: 0,
             left: 0,
             right: 0,
-            child: Container(
-              padding: EdgeInsets.only(top: topPadding),
-              color: backgroundColor,
-              child: SizedBox(
-                height: 44,
-                child: Stack(
-                  children: [
-                    // 뒤로가기 버튼
-                    if (widget.showBackButton)
-                      Positioned(
-                        left: 8,
-                        top: 0,
-                        bottom: 0,
-                        child: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () => Navigator.pop(context),
-                          child: const Icon(
-                            CupertinoIcons.back,
-                            color: AppTheme.primaryColor,
-                            size: 28,
+            child: GestureDetector(
+              onTap: _scrollToTop,
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                padding: EdgeInsets.only(top: topPadding),
+                color: backgroundColor,
+                child: SizedBox(
+                  height: 44,
+                  child: Stack(
+                    children: [
+                      // 뒤로가기 버튼
+                      if (widget.showBackButton)
+                        Positioned(
+                          left: 8,
+                          top: 0,
+                          bottom: 0,
+                          child: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () => Navigator.pop(context),
+                            child: const Icon(
+                              CupertinoIcons.back,
+                              color: AppTheme.primaryColor,
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      // 타이틀
+                      Center(
+                        child: Opacity(
+                          opacity: _navTitleOpacity,
+                          child: Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.textPrimary(context),
+                            ),
                           ),
                         ),
                       ),
-                    // 타이틀
-                    Center(
-                      child: Opacity(
-                        opacity: _navTitleOpacity,
-                        child: Text(
-                          widget.title,
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.textPrimary(context),
-                          ),
+                      // 우측 trailing 위젯
+                      if (widget.trailing != null)
+                        Positioned(
+                          right: 8,
+                          top: 0,
+                          bottom: 0,
+                          child: Center(child: widget.trailing!),
                         ),
-                      ),
-                    ),
-                    // 우측 trailing 위젯
-                    if (widget.trailing != null)
-                      Positioned(
-                        right: 8,
-                        top: 0,
-                        bottom: 0,
-                        child: Center(child: widget.trailing!),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

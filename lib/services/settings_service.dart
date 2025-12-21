@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/models/user_profile.dart';
+import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/services/database_service.dart';
 
 class SettingsService extends ChangeNotifier {
@@ -19,6 +20,7 @@ class SettingsService extends ChangeNotifier {
   bool _isPro = false;
   DateTime? _subscriptionDate;
   int _syncPeriod = AppConstants.defaultSyncPeriod;
+  GlucoseRangeSettings _glucoseRange = const GlucoseRangeSettings();
 
   String get language => _language;
   String get unit => _unit;
@@ -29,6 +31,7 @@ class SettingsService extends ChangeNotifier {
   bool get isPro => _isPro;
   DateTime? get subscriptionDate => _subscriptionDate;
   int get syncPeriod => _syncPeriod;
+  GlucoseRangeSettings get glucoseRange => _glucoseRange;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -75,6 +78,16 @@ class SettingsService extends ChangeNotifier {
     }
 
     _syncPeriod = _prefs.getInt(AppConstants.keySyncPeriod) ?? AppConstants.defaultSyncPeriod;
+
+    // Load glucose range settings
+    _glucoseRange = GlucoseRangeSettings(
+      veryLow: _prefs.getDouble(AppConstants.keyGlucoseVeryLow) ?? AppConstants.defaultVeryLow,
+      low: _prefs.getDouble(AppConstants.keyGlucoseLow) ?? AppConstants.defaultLow,
+      targetLow: _prefs.getDouble(AppConstants.keyGlucoseTargetLow) ?? AppConstants.defaultTargetLow,
+      targetHigh: _prefs.getDouble(AppConstants.keyGlucoseTargetHigh) ?? AppConstants.defaultTargetHigh,
+      high: _prefs.getDouble(AppConstants.keyGlucoseHigh) ?? AppConstants.defaultHigh,
+      veryHigh: _prefs.getDouble(AppConstants.keyGlucoseVeryHigh) ?? AppConstants.defaultVeryHigh,
+    );
 
     notifyListeners();
   }
@@ -150,6 +163,17 @@ class SettingsService extends ChangeNotifier {
     // Update sync period in database
     await _databaseService.updateSyncPeriod(days);
 
+    notifyListeners();
+  }
+
+  Future<void> setGlucoseRange(GlucoseRangeSettings range) async {
+    _glucoseRange = range;
+    await _prefs.setDouble(AppConstants.keyGlucoseVeryLow, range.veryLow);
+    await _prefs.setDouble(AppConstants.keyGlucoseLow, range.low);
+    await _prefs.setDouble(AppConstants.keyGlucoseTargetLow, range.targetLow);
+    await _prefs.setDouble(AppConstants.keyGlucoseTargetHigh, range.targetHigh);
+    await _prefs.setDouble(AppConstants.keyGlucoseHigh, range.high);
+    await _prefs.setDouble(AppConstants.keyGlucoseVeryHigh, range.veryHigh);
     notifyListeners();
   }
 }

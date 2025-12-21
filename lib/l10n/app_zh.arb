@@ -144,5 +144,8 @@
   "syncPeriod1Month": "1个月",
   "syncPeriod3Months": "3个月",
 
-  "disconnected": "已断开与 Apple 健康的连接"
+  "disconnected": "已断开与 Apple 健康的连接",
+
+  "cgmBaseline": "稳定",
+  "cgmFluctuation": "波动"
 }

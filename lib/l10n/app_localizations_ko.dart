@@ -471,4 +471,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get disconnected => 'Apple 건강 연동이 해제되었습니다';
+
+  @override
+  String get cgmBaseline => '표준';
+
+  @override
+  String get cgmFluctuation => '변동';
 }

@@ -144,5 +144,8 @@
   "syncPeriod1Month": "1ヶ月",
   "syncPeriod3Months": "3ヶ月",
 
-  "disconnected": "Apple ヘルスケアとの連携が解除されました"
+  "disconnected": "Apple ヘルスケアとの連携が解除されました",
+
+  "cgmBaseline": "安定",
+  "cgmFluctuation": "変動"
 }
