@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:glu_butler/core/theme/app_theme.dart';
+import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/initialization_service.dart';
 
@@ -47,6 +47,9 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _exitFadeAnimation;
 
   bool _showLoading = false;
+
+  // static으로 앱 전체에서 한 번만 초기화되도록 보장
+  static bool _hasInitialized = false;
 
   @override
   void initState() {
@@ -98,6 +101,13 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startInitialization() async {
+    // 중복 초기화 방지 (static으로 앱 전체에서 한 번만)
+    if (_hasInitialized) {
+      if (mounted) _navigateToHome();
+      return;
+    }
+    _hasInitialized = true;
+
     final settingsService = context.read<SettingsService>();
     final initService = InitializationService(settingsService: settingsService);
 
@@ -117,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen>
     await _exitController.forward();
 
     if (mounted) {
-      context.go('/home');
+      AppRoutes.goToMain(context);
     }
   }
 

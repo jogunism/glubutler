@@ -2,9 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/core/navigation/main_screen.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
@@ -577,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 14),
       color: AppTheme.primaryColor,
       borderRadius: BorderRadius.circular(12),
-      onPressed: () => context.go('/report'),
+      onPressed: () => MainScreen.switchToTab(3), // Report tab
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

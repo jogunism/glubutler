@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:glu_butler/core/theme/app_theme.dart';
+import 'package:glu_butler/core/navigation/app_routes.dart';
 
 /// 네비게이션바 우측 설정 아이콘 버튼
 ///
@@ -24,7 +24,7 @@ class SettingsIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoButton(
       padding: const EdgeInsets.all(8),
-      onPressed: () => context.push('/settings'),
+      onPressed: () => AppRoutes.goToSettings(context),
       child: const Icon(
         CupertinoIcons.gear,
         color: AppTheme.primaryColor,

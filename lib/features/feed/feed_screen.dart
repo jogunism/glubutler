@@ -24,13 +24,8 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FeedProvider>().refreshData();
-    });
-  }
+  // main.dart에서 FeedProvider.initialize()가 이미 데이터를 로드하므로
+  // initState에서 refreshData() 호출 불필요
 
   Future<void> _onRefresh() async {
     await context.read<FeedProvider>().refreshData();

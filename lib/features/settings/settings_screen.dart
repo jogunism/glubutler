@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
@@ -9,6 +8,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/app_settings_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
@@ -75,7 +75,7 @@ class SettingsScreen extends StatelessWidget {
                         : AppTheme.iconOrange,
                     title: l10n.gluButlerPro,
                     subtitle: settings.isPro ? l10n.proPlan : l10n.upgradeToPro,
-                    onTap: () => context.push('/settings/subscription'),
+                    onTap: () => AppRoutes.goToSubscription(context),
                   ),
                 ],
               ),
@@ -137,7 +137,7 @@ class SettingsScreen extends StatelessWidget {
                     iconColor: AppTheme.iconOrange,
                     title: l10n.targetGlucoseRange,
                     subtitle: _getTargetRangeSubtitle(settings),
-                    onTap: () => context.push('/settings/glucose-range'),
+                    onTap: () => AppRoutes.goToGlucoseRange(context),
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(
@@ -146,7 +146,7 @@ class SettingsScreen extends StatelessWidget {
                     iconColor: AppTheme.iconIndigo,
                     title: l10n.displaySettings,
                     subtitle: _getThemeModeLabel(settings.themeMode, l10n),
-                    onTap: () => context.push('/settings/display'),
+                    onTap: () => AppRoutes.goToDisplaySettings(context),
                   ),
                 ],
               ),
@@ -170,7 +170,7 @@ class SettingsScreen extends StatelessWidget {
                             ? l10n.connected
                             : l10n.notConnected,
                         customIcon: _buildAppleHealthIcon(),
-                        onTap: () => context.push('/settings/health'),
+                        onTap: () => AppRoutes.goToHealthConnect(context),
                       );
                     },
                   ),

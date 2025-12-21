@@ -26,8 +26,18 @@ class GlucoseRangeScreen extends StatefulWidget {
 }
 
 class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
-  /// 조절 단위 (mg/dL 기준)
+  /// 조절 단위
   static const double _stepMgDl = 5.0;
+  static const double _stepMmolL = 0.3;
+
+  /// 현재 단위에 맞는 step 값을 mg/dL로 반환
+  double _getStepInMgDl(String unit) {
+    if (unit == AppConstants.unitMmolL) {
+      // 0.3 mmol/L를 mg/dL로 변환
+      return _stepMmolL * AppConstants.mgDlToMmolL;
+    }
+    return _stepMgDl;
+  }
 
   String _formatValue(double valueMgDl, String unit) {
     if (unit == AppConstants.unitMmolL) {
@@ -42,7 +52,9 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
   }) {
     final settings = context.read<SettingsService>();
     final range = settings.glucoseRange;
-    final step = increment ? _stepMgDl : -_stepMgDl;
+    final unit = settings.unit;
+    final stepMgDl = _getStepInMgDl(unit);
+    final step = increment ? stepMgDl : -stepMgDl;
 
     double newValue;
     switch (field) {

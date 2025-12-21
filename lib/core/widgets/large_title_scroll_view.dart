@@ -124,125 +124,118 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
     final topPadding = MediaQuery.of(context).padding.top;
     final backgroundColor =
         widget.backgroundColor ?? AppTheme.iosBackground(context);
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Stack(
-        children: [
-          // 메인 스크롤 컨텐츠
-          _buildScrollContent(context, topPadding, backgroundColor),
-
-          // 네비게이션바 - 항상 표시, 타이틀만 페이드인/아웃
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.only(top: topPadding),
-              color: backgroundColor,
-              child: SizedBox(
-                height: 44,
-                child: Stack(
-                  children: [
-                    // 뒤로가기 버튼
-                    if (widget.showBackButton)
-                      Positioned(
-                        left: 8,
-                        top: 0,
-                        bottom: 0,
-                        child: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () => Navigator.pop(context),
-                          child: const Icon(
-                            CupertinoIcons.back,
-                            color: AppTheme.primaryColor,
-                            size: 28,
-                          ),
-                        ),
-                      ),
-                    // 타이틀
-                    Center(
-                      child: Opacity(
-                        opacity: _navTitleOpacity,
-                        child: Text(
-                          widget.title,
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.textPrimary(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // 우측 trailing 위젯
-                    if (widget.trailing != null)
-                      Positioned(
-                        right: 8,
-                        top: 0,
-                        bottom: 0,
-                        child: Center(child: widget.trailing!),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildScrollContent(
-    BuildContext context,
-    double topPadding,
-    Color backgroundColor,
-  ) {
     final navBarHeight = topPadding + 44;
 
-    return Padding(
-      padding: EdgeInsets.only(top: navBarHeight),
-      child: NotificationListener<ScrollNotification>(
+    // Scaffold가 PrimaryScrollController를 생성하고 iOS status bar tap 처리
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           if (notification is ScrollUpdateNotification) {
             _onScroll(notification.metrics.pixels);
           }
           return false;
         },
-        child: CustomScrollView(
-          // primary: true enables Status Bar tap to scroll to top
-          primary: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            // iOS 기본 스타일 pull-to-refresh
-            if (widget.onRefresh != null)
-              CupertinoSliverRefreshControl(
-                onRefresh: widget.onRefresh,
-              ),
-            // 큰 타이틀 (옵션)
-            if (widget.showLargeTitle)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 8,
-                    left: 16,
-                    right: 16,
-                    bottom: 8,
+        child: Stack(
+          children: [
+            // 메인 스크롤 컨텐츠 - primary: true로 상태바 탭 scroll to top 지원
+            CustomScrollView(
+              primary: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // 네비게이션바 높이만큼 상단 패딩
+                SliverToBoxAdapter(
+                  child: SizedBox(height: navBarHeight),
+                ),
+                // iOS 기본 스타일 pull-to-refresh
+                if (widget.onRefresh != null)
+                  CupertinoSliverRefreshControl(
+                    onRefresh: widget.onRefresh,
                   ),
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.textPrimary(context),
+                // 큰 타이틀 (옵션)
+                if (widget.showLargeTitle)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary(context),
+                        ),
+                      ),
                     ),
+                  ),
+                // 사용자 정의 slivers
+                ...widget.slivers,
+              ],
+            ),
+
+            // 네비게이션바 - 항상 표시, 타이틀만 페이드인/아웃
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.only(top: topPadding),
+                color: backgroundColor,
+                child: SizedBox(
+                  height: 44,
+                  child: Stack(
+                    children: [
+                      // 뒤로가기 버튼
+                      if (widget.showBackButton)
+                        Positioned(
+                          left: 8,
+                          top: 0,
+                          bottom: 0,
+                          child: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () => Navigator.pop(context),
+                            child: const Icon(
+                              CupertinoIcons.back,
+                              color: AppTheme.primaryColor,
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      // 타이틀
+                      Center(
+                        child: Opacity(
+                          opacity: _navTitleOpacity,
+                          child: Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.textPrimary(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // 우측 trailing 위젯
+                      if (widget.trailing != null)
+                        Positioned(
+                          right: 8,
+                          top: 0,
+                          bottom: 0,
+                          child: Center(child: widget.trailing!),
+                        ),
+                    ],
                   ),
                 ),
               ),
-            // 사용자 정의 slivers
-            ...widget.slivers,
+            ),
           ],
         ),
       ),
     );
   }
 }
+

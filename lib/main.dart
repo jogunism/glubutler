@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
-import 'package:glu_butler/core/navigation/app_router.dart';
+import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
@@ -38,16 +38,19 @@ class GluButlerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<SettingsService>();
+    // themeMode만 구독해서 불필요한 rebuild 방지
+    final themeMode = context.select<SettingsService, ThemeMode>(
+      (settings) => settings.flutterThemeMode,
+    );
 
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Glu Butler',
       debugShowCheckedModeBanner: false,
 
       // Theme
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: settings.flutterThemeMode,
+      themeMode: themeMode,
 
       // Localization - uses iOS per-app language settings
       localizationsDelegates: const [
@@ -67,8 +70,9 @@ class GluButlerApp extends StatelessWidget {
         Locale('it'),
       ],
 
-      // Router
-      routerConfig: AppRouter.router,
+      // Navigation - basic Navigator instead of GoRouter
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
