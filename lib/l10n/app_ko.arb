@@ -149,7 +149,7 @@
   "appleHealthDescription": "건강 앱과 연동하여 혈당 관리에 도움이 되는 운동, 수면, 체중 등 다양한 데이터를 함께 확인할 수 있습니다.",
   "syncedData": "연동 데이터",
   "connectAppleHealth": "Apple 건강 연결",
-  "successfullyConnected": "Apple 건강 앱과 연결되었습니다",
+  "successfullyConnected": "연동 정보가 업데이트 되었습니다",
   "failedToConnect": "연결에 실패했습니다. 권한을 확인해주세요.",
   "privacyNote": "건강 데이터는 기기에만 저장되며 허락 없이 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.",
   "readWrite": "읽기 및 쓰기",
@@ -160,11 +160,14 @@
   "waterIntake": "수분 섭취",
   "menstrualCycle": "생리 주기",
   "steps": "걸음 수",
+  "mindfulness": "마음 챙김",
   "openHealthApp": "건강 앱 > 공유 > 앱에서 권한을 관리하세요",
 
   "syncPeriod": "연동 기간",
   "syncPeriod1Week": "1주",
   "syncPeriod2Weeks": "2주",
   "syncPeriod1Month": "1개월",
-  "syncPeriod3Months": "3개월"
+  "syncPeriod3Months": "3개월",
+
+  "disconnected": "Apple 건강 연동이 해제되었습니다"
 }

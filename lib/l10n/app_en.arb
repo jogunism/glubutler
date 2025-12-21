@@ -149,7 +149,7 @@
   "appleHealthDescription": "Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.",
   "syncedData": "Synced Data",
   "connectAppleHealth": "Connect Apple Health",
-  "successfullyConnected": "Successfully connected to Apple Health",
+  "successfullyConnected": "Sync info has been updated",
   "failedToConnect": "Failed to connect. Please check your permissions.",
   "privacyNote": "Your health data stays on your device and is never shared without your permission. You can manage access in Health app > Sharing > Apps > Glu Butler.",
   "readWrite": "Read & Write",
@@ -160,11 +160,14 @@
   "waterIntake": "Water Intake",
   "menstrualCycle": "Menstrual Cycle",
   "steps": "Steps",
+  "mindfulness": "Mindfulness",
   "openHealthApp": "Open Health app > Sharing > Apps to manage permissions",
 
   "syncPeriod": "Sync Period",
   "syncPeriod1Week": "1 Week",
   "syncPeriod2Weeks": "2 Weeks",
   "syncPeriod1Month": "1 Month",
-  "syncPeriod3Months": "3 Months"
+  "syncPeriod3Months": "3 Months",
+
+  "disconnected": "Disconnected from Apple Health"
 }

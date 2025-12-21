@@ -416,7 +416,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get connectAppleHealth => 'Connetti Apple Salute';
 
   @override
-  String get successfullyConnected => 'Connesso con successo a Apple Salute';
+  String get successfullyConnected =>
+      'Le informazioni di sincronizzazione sono state aggiornate';
 
   @override
   String get failedToConnect =>
@@ -451,6 +452,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get steps => 'Passi';
 
   @override
+  String get mindfulness => 'Consapevolezza';
+
+  @override
   String get openHealthApp =>
       'Apri Salute > Condivisione > App per gestire i permessi';
 
@@ -468,4 +472,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get syncPeriod3Months => '3 mesi';
+
+  @override
+  String get disconnected => 'Disconnesso da Apple Salute';
 }

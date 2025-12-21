@@ -17,6 +17,10 @@ class HealthService {
   bool _isAuthorized = false;
   bool get isAuthorized => _isAuthorized;
 
+  // Track individual permission status
+  final Map<HealthDataType, bool> _permissionStatus = {};
+  Map<HealthDataType, bool> get permissionStatus => Map.unmodifiable(_permissionStatus);
+
   static const List<HealthDataType> _readTypes = [
     HealthDataType.BLOOD_GLUCOSE,
     HealthDataType.INSULIN_DELIVERY,
@@ -36,6 +40,8 @@ class HealthService {
     HealthDataType.WATER,
     // Menstruation
     HealthDataType.MENSTRUATION_FLOW,
+    // Mindfulness
+    HealthDataType.MINDFULNESS,
   ];
 
   static const List<HealthDataType> _writeTypes = [
@@ -70,17 +76,127 @@ class HealthService {
       }
 
       // Request authorization
-      _isAuthorized = await health.requestAuthorization(
+      // Note: On iOS, this returns true if the dialog was shown, NOT if user granted permission
+      await health.requestAuthorization(
         allTypes,
         permissions: permissions,
       );
 
-      debugPrint('[HealthService] Authorization result: $_isAuthorized');
+      // Check actual permission status by testing write access
+      // This is the only reliable way to verify permissions on iOS
+      await checkPermissionStatus();
+
+      // Consider authorized only if we have write permission for blood glucose
+      // (our primary data type that we need to write)
+      _isAuthorized = _permissionStatus[HealthDataType.BLOOD_GLUCOSE] == true;
+
+      debugPrint('[HealthService] Authorization verified: $_isAuthorized');
+      debugPrint('[HealthService] Blood glucose write permission: ${_permissionStatus[HealthDataType.BLOOD_GLUCOSE]}');
       return _isAuthorized;
     } catch (e) {
       debugPrint('[HealthService] Error requesting authorization: $e');
       return false;
     }
+  }
+
+  /// Check permission status for each data type individually
+  ///
+  /// iOS doesn't expose permission status via hasPermissions() - it always returns null.
+  /// So we check WRITE permissions by attempting to write test data,
+  /// and assume READ permissions are granted if authorization was requested.
+  ///
+  /// For READ-only types, we can't reliably check - iOS just returns empty data.
+  /// So after requestAuthorization succeeds, we assume READ permissions are granted.
+  Future<void> checkPermissionStatus() async {
+    if (!Platform.isIOS && !Platform.isAndroid) return;
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      // For WRITE types, test by attempting to write
+      // Note: Insulin requires HKMetadataKeyInsulinDeliveryReason metadata,
+      // so we only test blood glucose and assume insulin has same permission
+
+      // Test BLOOD_GLUCOSE write permission
+      final glucosePermission = await _testWritePermission(
+        health,
+        HealthDataType.BLOOD_GLUCOSE,
+        1.0, // dummy value
+        HealthDataUnit.MILLIGRAM_PER_DECILITER,
+      );
+      _permissionStatus[HealthDataType.BLOOD_GLUCOSE] = glucosePermission;
+      // Assume insulin has same permission as glucose (both are requested together)
+      _permissionStatus[HealthDataType.INSULIN_DELIVERY] = glucosePermission;
+      debugPrint('[HealthService] BLOOD_GLUCOSE write permission: $glucosePermission');
+
+      // For READ-only types, if we're authorized (requestAuthorization was called),
+      // assume the user granted permission. We can't verify READ permissions on iOS.
+      final readOnlyTypes = [
+        HealthDataType.WORKOUT,
+        HealthDataType.STEPS,
+        HealthDataType.SLEEP_ASLEEP,
+        HealthDataType.WEIGHT,
+        HealthDataType.WATER,
+        HealthDataType.MENSTRUATION_FLOW,
+        HealthDataType.MINDFULNESS,
+      ];
+
+      for (final type in readOnlyTypes) {
+        // Assume granted if we've been through authorization
+        _permissionStatus[type] = _isAuthorized;
+      }
+
+      debugPrint('[HealthService] Permission status: $_permissionStatus');
+    } catch (e) {
+      debugPrint('[HealthService] Error checking permission status: $e');
+    }
+  }
+
+  /// Test write permission by attempting to write and immediately delete
+  Future<bool> _testWritePermission(
+    Health health,
+    HealthDataType type,
+    double testValue,
+    HealthDataUnit unit,
+  ) async {
+    try {
+      // Use a timestamp far in the past to avoid interfering with real data
+      final testTime = DateTime(2000, 1, 1, 0, 0, 0);
+
+      final success = await health.writeHealthData(
+        value: testValue,
+        type: type,
+        startTime: testTime,
+        endTime: testTime,
+        unit: unit,
+      );
+
+      if (success) {
+        // Try to delete the test data
+        await health.delete(
+          type: type,
+          startTime: testTime,
+          endTime: testTime.add(const Duration(seconds: 1)),
+        );
+      }
+
+      return success;
+    } catch (e) {
+      debugPrint('[HealthService] Write permission test failed for $type: $e');
+      return false;
+    }
+  }
+
+  /// Check if a specific data type has permission
+  /// Returns true only if explicitly granted, false otherwise
+  bool hasPermissionFor(HealthDataType type) {
+    return _permissionStatus[type] == true;
+  }
+
+  /// Get the permission status for a type
+  bool getPermissionStatus(HealthDataType type) {
+    return _permissionStatus[type] ?? false;
   }
 
   Future<bool> hasPermissions() async {

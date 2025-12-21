@@ -412,7 +412,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get connectAppleHealth => '连接 Apple 健康';
 
   @override
-  String get successfullyConnected => '已成功连接到 Apple 健康';
+  String get successfullyConnected => '同步信息已更新';
 
   @override
   String get failedToConnect => '连接失败，请检查权限设置。';
@@ -446,6 +446,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get steps => '步数';
 
   @override
+  String get mindfulness => '正念';
+
+  @override
   String get openHealthApp => '在健康 App > 共享 > App 中管理权限';
 
   @override
@@ -462,4 +465,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get syncPeriod3Months => '3个月';
+
+  @override
+  String get disconnected => '已断开与 Apple 健康的连接';
 }

@@ -917,7 +917,7 @@ abstract class AppLocalizations {
   /// No description provided for @successfullyConnected.
   ///
   /// In en, this message translates to:
-  /// **'Successfully connected to Apple Health'**
+  /// **'Sync info has been updated'**
   String get successfullyConnected;
 
   /// No description provided for @failedToConnect.
@@ -980,6 +980,12 @@ abstract class AppLocalizations {
   /// **'Steps'**
   String get steps;
 
+  /// No description provided for @mindfulness.
+  ///
+  /// In en, this message translates to:
+  /// **'Mindfulness'**
+  String get mindfulness;
+
   /// No description provided for @openHealthApp.
   ///
   /// In en, this message translates to:
@@ -1015,6 +1021,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'3 Months'**
   String get syncPeriod3Months;
+
+  /// No description provided for @disconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected from Apple Health'**
+  String get disconnected;
 }
 
 class _AppLocalizationsDelegate

@@ -6,10 +6,14 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_router.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize database first (tables, migrations)
+  await DatabaseService().initialize();
 
   final settingsService = SettingsService();
   await settingsService.init();

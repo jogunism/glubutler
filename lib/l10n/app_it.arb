@@ -123,7 +123,7 @@
   "appleHealthDescription": "Collegati all'app Salute per visualizzare allenamenti, sonno, peso e altri dati che possono aiutarti a gestire la glicemia.",
   "syncedData": "Dati sincronizzati",
   "connectAppleHealth": "Connetti Apple Salute",
-  "successfullyConnected": "Connesso con successo a Apple Salute",
+  "successfullyConnected": "Le informazioni di sincronizzazione sono state aggiornate",
   "failedToConnect": "Connessione fallita. Verifica i tuoi permessi.",
   "privacyNote": "I tuoi dati sulla salute rimangono sul dispositivo e non vengono mai condivisi senza il tuo permesso. Puoi gestire l'accesso in Salute > Condivisione > App > Glu Butler.",
   "readWrite": "Lettura e scrittura",
@@ -134,11 +134,14 @@
   "waterIntake": "Assunzione di acqua",
   "menstrualCycle": "Ciclo mestruale",
   "steps": "Passi",
+  "mindfulness": "Consapevolezza",
   "openHealthApp": "Apri Salute > Condivisione > App per gestire i permessi",
 
   "syncPeriod": "Periodo di sincronizzazione",
   "syncPeriod1Week": "1 settimana",
   "syncPeriod2Weeks": "2 settimane",
   "syncPeriod1Month": "1 mese",
-  "syncPeriod3Months": "3 mesi"
+  "syncPeriod3Months": "3 mesi",
+
+  "disconnected": "Disconnesso da Apple Salute"
 }

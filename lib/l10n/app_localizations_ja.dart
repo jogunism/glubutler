@@ -413,7 +413,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get connectAppleHealth => 'Apple ヘルスケアに接続';
 
   @override
-  String get successfullyConnected => 'Apple ヘルスケアに接続しました';
+  String get successfullyConnected => '連携情報が更新されました';
 
   @override
   String get failedToConnect => '接続に失敗しました。権限を確認してください。';
@@ -447,6 +447,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get steps => '歩数';
 
   @override
+  String get mindfulness => 'マインドフルネス';
+
+  @override
   String get openHealthApp => 'ヘルスケアアプリ > 共有 > Appで権限を管理してください';
 
   @override
@@ -463,4 +466,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get syncPeriod3Months => '3ヶ月';
+
+  @override
+  String get disconnected => 'Apple ヘルスケアとの連携が解除されました';
 }

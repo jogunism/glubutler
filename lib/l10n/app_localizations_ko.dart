@@ -412,7 +412,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get connectAppleHealth => 'Apple 건강 연결';
 
   @override
-  String get successfullyConnected => 'Apple 건강 앱과 연결되었습니다';
+  String get successfullyConnected => '연동 정보가 업데이트 되었습니다';
 
   @override
   String get failedToConnect => '연결에 실패했습니다. 권한을 확인해주세요.';
@@ -446,6 +446,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get steps => '걸음 수';
 
   @override
+  String get mindfulness => '마음 챙김';
+
+  @override
   String get openHealthApp => '건강 앱 > 공유 > 앱에서 권한을 관리하세요';
 
   @override
@@ -462,4 +465,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncPeriod3Months => '3개월';
+
+  @override
+  String get disconnected => 'Apple 건강 연동이 해제되었습니다';
 }

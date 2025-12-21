@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:health/health.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/glucose_record.dart';
@@ -9,9 +10,24 @@ import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/database_service.dart';
+
+/// Enum for health data categories shown in UI
+enum HealthDataCategory {
+  bloodGlucose,
+  insulin,
+  workouts,
+  sleep,
+  weight,
+  water,
+  menstrualCycle,
+  steps,
+  mindfulness,
+}
 
 class FeedProvider extends ChangeNotifier {
   final HealthService _healthService = HealthService();
+  final DatabaseService _databaseService = DatabaseService();
   SettingsService? _settingsService;
 
   List<FeedItem> _items = [];
@@ -26,26 +42,49 @@ class FeedProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  // Permission status for each category (true = granted, false = denied, null = unknown)
+  final Map<HealthDataCategory, bool?> _categoryPermissions = {};
+  Map<HealthDataCategory, bool?> get categoryPermissions => Map.unmodifiable(_categoryPermissions);
+
   int? _todaySteps;
   int? get todaySteps => _todaySteps;
 
   double? _todayWaterMl;
   double? get todayWaterMl => _todayWaterMl;
 
-  // Local records (manual input)
-  final List<GlucoseRecord> _localGlucoseRecords = [];
-  final List<ExerciseRecord> _localExerciseRecords = [];
-  final List<SleepRecord> _localSleepRecords = [];
-  final List<MealRecord> _localMealRecords = [];
-  final List<WaterRecord> _localWaterRecords = [];
-  final List<InsulinRecord> _localInsulinRecords = [];
-
   void setSettingsService(SettingsService settingsService) {
     _settingsService = settingsService;
   }
 
   Future<void> initialize() async {
-    _isHealthConnected = await _healthService.hasPermissions();
+    // Load connection status from DB first
+    final healthConnection = await _databaseService.getHealthConnection();
+    _isHealthConnected = healthConnection.isConnected;
+
+    // Verify actual permissions with HealthKit if DB says connected
+    if (_isHealthConnected) {
+      // Check actual write permission by testing
+      await _healthService.checkPermissionStatus();
+      final hasWritePermission =
+          _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+
+      if (!hasWritePermission) {
+        // Write permission revoked, mark as disconnected
+        _isHealthConnected = false;
+        await _databaseService.saveHealthConnection(
+          healthConnection.copyWith(
+            isConnected: false,
+            updatedAt: DateTime.now(),
+          ),
+        );
+        await _databaseService.clearHealthPermissions();
+        debugPrint('[FeedProvider] Initialize: disconnected - write permission revoked');
+      } else {
+        // Still connected, sync permissions from HealthService
+        await _syncPermissionsFromHealthService();
+        debugPrint('[FeedProvider] Initialize: still connected with write permission');
+      }
+    }
 
     // Add dummy data for design preview
     _loadDummyData();
@@ -153,8 +192,23 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // requestAuthorization now checks actual write permission internally
       _isHealthConnected = await _healthService.requestAuthorization();
+
       if (_isHealthConnected) {
+        // Save connection status to DB only if write permission was granted
+        final syncPeriod = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
+        await _databaseService.saveHealthConnection(
+          HealthConnectionInfo(
+            isConnected: true,
+            syncPeriodDays: syncPeriod,
+            connectedAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
+
+        // Update local permission map from HealthService
+        await _syncPermissionsFromHealthService();
         await refreshData();
       }
       return _isHealthConnected;
@@ -165,6 +219,149 @@ class FeedProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  /// Sync permission status from HealthService to local map and DB
+  /// Called after requestAuthorization which already checked permissions
+  Future<void> _syncPermissionsFromHealthService() async {
+    _categoryPermissions.clear();
+    _categoryPermissions[HealthDataCategory.bloodGlucose] =
+        _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+    _categoryPermissions[HealthDataCategory.insulin] =
+        _healthService.getPermissionStatus(HealthDataType.INSULIN_DELIVERY);
+    _categoryPermissions[HealthDataCategory.workouts] =
+        _healthService.getPermissionStatus(HealthDataType.WORKOUT);
+    _categoryPermissions[HealthDataCategory.steps] =
+        _healthService.getPermissionStatus(HealthDataType.STEPS);
+    _categoryPermissions[HealthDataCategory.sleep] =
+        _healthService.getPermissionStatus(HealthDataType.SLEEP_ASLEEP);
+    _categoryPermissions[HealthDataCategory.weight] =
+        _healthService.getPermissionStatus(HealthDataType.WEIGHT);
+    _categoryPermissions[HealthDataCategory.water] =
+        _healthService.getPermissionStatus(HealthDataType.WATER);
+    _categoryPermissions[HealthDataCategory.menstrualCycle] =
+        _healthService.getPermissionStatus(HealthDataType.MENSTRUATION_FLOW);
+    _categoryPermissions[HealthDataCategory.mindfulness] =
+        _healthService.getPermissionStatus(HealthDataType.MINDFULNESS);
+
+    debugPrint('[FeedProvider] Synced permissions from HealthService: $_categoryPermissions');
+
+    // Save permissions to DB
+    await _savePermissionsToDb();
+  }
+
+  /// Update permission status for each health data category
+  Future<void> _updatePermissionStatus() async {
+    await _healthService.checkPermissionStatus();
+
+    _categoryPermissions.clear();
+    _categoryPermissions[HealthDataCategory.bloodGlucose] =
+        _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+    _categoryPermissions[HealthDataCategory.insulin] =
+        _healthService.getPermissionStatus(HealthDataType.INSULIN_DELIVERY);
+    _categoryPermissions[HealthDataCategory.workouts] =
+        _healthService.getPermissionStatus(HealthDataType.WORKOUT);
+    _categoryPermissions[HealthDataCategory.steps] =
+        _healthService.getPermissionStatus(HealthDataType.STEPS);
+    _categoryPermissions[HealthDataCategory.sleep] =
+        _healthService.getPermissionStatus(HealthDataType.SLEEP_ASLEEP);
+    _categoryPermissions[HealthDataCategory.weight] =
+        _healthService.getPermissionStatus(HealthDataType.WEIGHT);
+    _categoryPermissions[HealthDataCategory.water] =
+        _healthService.getPermissionStatus(HealthDataType.WATER);
+    _categoryPermissions[HealthDataCategory.menstrualCycle] =
+        _healthService.getPermissionStatus(HealthDataType.MENSTRUATION_FLOW);
+    _categoryPermissions[HealthDataCategory.mindfulness] =
+        _healthService.getPermissionStatus(HealthDataType.MINDFULNESS);
+
+    debugPrint('[FeedProvider] Category permissions: $_categoryPermissions');
+
+    // Save permissions to DB
+    await _savePermissionsToDb();
+  }
+
+  Future<void> _savePermissionsToDb() async {
+    final permissionsToSave = <String, HealthPermissionType>{};
+
+    // Write types (read_write)
+    if (_categoryPermissions[HealthDataCategory.bloodGlucose] == true) {
+      permissionsToSave[HealthDataCategory.bloodGlucose.name] =
+          HealthPermissionType.readWrite;
+    }
+    if (_categoryPermissions[HealthDataCategory.insulin] == true) {
+      permissionsToSave[HealthDataCategory.insulin.name] =
+          HealthPermissionType.readWrite;
+    }
+
+    // Read-only types
+    final readOnlyCategories = [
+      HealthDataCategory.workouts,
+      HealthDataCategory.sleep,
+      HealthDataCategory.weight,
+      HealthDataCategory.water,
+      HealthDataCategory.menstrualCycle,
+      HealthDataCategory.steps,
+      HealthDataCategory.mindfulness,
+    ];
+
+    for (final category in readOnlyCategories) {
+      // For read-only, we can't verify on iOS, so save as readOnly if connected
+      if (_isHealthConnected) {
+        permissionsToSave[category.name] = HealthPermissionType.readOnly;
+      }
+    }
+
+    await _databaseService.saveHealthPermissions(permissionsToSave);
+    debugPrint('[FeedProvider] Saved ${permissionsToSave.length} permissions to DB');
+  }
+
+  /// Refresh permission status (call when returning from Health app settings)
+  /// Also updates connection status if write permissions are revoked
+  /// Returns: null if no change, true if connected, false if disconnected
+  Future<bool?> refreshPermissionStatus() async {
+    await _updatePermissionStatus();
+
+    // Check if write permission (blood glucose) is still granted
+    final hasWritePermission =
+        _categoryPermissions[HealthDataCategory.bloodGlucose] == true;
+
+    bool? statusChanged;
+
+    // If previously connected but now no write permission, mark as disconnected
+    if (_isHealthConnected && !hasWritePermission) {
+      _isHealthConnected = false;
+      await _databaseService.saveHealthConnection(
+        HealthConnectionInfo(
+          isConnected: false,
+          syncPeriodDays:
+              _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod,
+          connectedAt: null,
+          updatedAt: DateTime.now(),
+        ),
+      );
+      await _databaseService.clearHealthPermissions();
+      statusChanged = false; // Now disconnected
+      debugPrint('[FeedProvider] Health disconnected - write permission revoked');
+    }
+    // If previously disconnected but now has write permission, mark as connected
+    else if (!_isHealthConnected && hasWritePermission) {
+      _isHealthConnected = true;
+      await _databaseService.saveHealthConnection(
+        HealthConnectionInfo(
+          isConnected: true,
+          syncPeriodDays:
+              _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod,
+          connectedAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+      await _savePermissionsToDb();
+      statusChanged = true; // Now connected
+      debugPrint('[FeedProvider] Health connected - write permission granted');
+    }
+
+    notifyListeners();
+    return statusChanged;
   }
 
   Future<void> refreshData() async {
@@ -215,13 +412,30 @@ class FeedProvider extends ChangeNotifier {
         _todayWaterMl = await _healthService.fetchTodayWaterIntake();
       }
 
-      // Add local records
-      allItems.addAll(_localGlucoseRecords.map(FeedItem.fromGlucose));
-      allItems.addAll(_localExerciseRecords.map(FeedItem.fromExercise));
-      allItems.addAll(_localSleepRecords.map(FeedItem.fromSleep));
-      allItems.addAll(_localMealRecords.map(FeedItem.fromMeal));
-      allItems.addAll(_localWaterRecords.map(FeedItem.fromWater));
-      allItems.addAll(_localInsulinRecords.map(FeedItem.fromInsulin));
+      // Add local records from database
+      final localGlucose = await _databaseService.getGlucoseRecords(
+        startDate: startDate,
+        endDate: now,
+      );
+      allItems.addAll(localGlucose.map(FeedItem.fromGlucose));
+
+      final localMeals = await _databaseService.getMealRecords(
+        startDate: startDate,
+        endDate: now,
+      );
+      allItems.addAll(localMeals.map(FeedItem.fromMeal));
+
+      final localExercise = await _databaseService.getExerciseRecords(
+        startDate: startDate,
+        endDate: now,
+      );
+      allItems.addAll(localExercise.map(FeedItem.fromExercise));
+
+      final localInsulin = await _databaseService.getInsulinRecords(
+        startDate: startDate,
+        endDate: now,
+      );
+      allItems.addAll(localInsulin.map(FeedItem.fromInsulin));
 
       // Keep dummy data if no real data
       if (allItems.isEmpty) {
@@ -241,8 +455,8 @@ class FeedProvider extends ChangeNotifier {
   }
 
   // Add local glucose record
-  void addGlucoseRecord(GlucoseRecord record) {
-    _localGlucoseRecords.add(record);
+  Future<void> addGlucoseRecord(GlucoseRecord record) async {
+    await _databaseService.insertGlucose(record);
     _items.add(FeedItem.fromGlucose(record));
     _items.sort();
     notifyListeners();
@@ -254,32 +468,24 @@ class FeedProvider extends ChangeNotifier {
   }
 
   // Add local exercise record
-  void addExerciseRecord(ExerciseRecord record) {
-    _localExerciseRecords.add(record);
+  Future<void> addExerciseRecord(ExerciseRecord record) async {
+    await _databaseService.insertExercise(record);
     _items.add(FeedItem.fromExercise(record));
     _items.sort();
     notifyListeners();
   }
 
-  // Add local sleep record
-  void addSleepRecord(SleepRecord record) {
-    _localSleepRecords.add(record);
-    _items.add(FeedItem.fromSleep(record));
-    _items.sort();
-    notifyListeners();
-  }
-
   // Add local meal record
-  void addMealRecord(MealRecord record) {
-    _localMealRecords.add(record);
+  Future<void> addMealRecord(MealRecord record) async {
+    await _databaseService.insertMeal(record);
     _items.add(FeedItem.fromMeal(record));
     _items.sort();
     notifyListeners();
   }
 
   // Add local insulin record
-  void addInsulinRecord(InsulinRecord record) {
-    _localInsulinRecords.add(record);
+  Future<void> addInsulinRecord(InsulinRecord record) async {
+    await _databaseService.insertInsulin(record);
     _items.add(FeedItem.fromInsulin(record));
     _items.sort();
     notifyListeners();

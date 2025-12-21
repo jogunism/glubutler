@@ -417,7 +417,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectAppleHealth => 'Connect Apple Health';
 
   @override
-  String get successfullyConnected => 'Successfully connected to Apple Health';
+  String get successfullyConnected => 'Sync info has been updated';
 
   @override
   String get failedToConnect =>
@@ -452,6 +452,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get steps => 'Steps';
 
   @override
+  String get mindfulness => 'Mindfulness';
+
+  @override
   String get openHealthApp =>
       'Open Health app > Sharing > Apps to manage permissions';
 
@@ -469,4 +472,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncPeriod3Months => '3 Months';
+
+  @override
+  String get disconnected => 'Disconnected from Apple Health';
 }

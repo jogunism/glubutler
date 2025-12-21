@@ -13,8 +13,62 @@ import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 
-class HealthConnectScreen extends StatelessWidget {
+class HealthConnectScreen extends StatefulWidget {
   const HealthConnectScreen({super.key});
+
+  @override
+  State<HealthConnectScreen> createState() => _HealthConnectScreenState();
+}
+
+class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Refresh permission status when app comes back to foreground
+    // (user might have changed permissions in Health app)
+    if (state == AppLifecycleState.resumed) {
+      final provider = context.read<FeedProvider>();
+      final l10n = AppLocalizations.of(context)!;
+      _onRefresh(context, provider, l10n);
+    }
+  }
+
+  Future<void> _onRefresh(
+    BuildContext context,
+    FeedProvider provider,
+    AppLocalizations l10n,
+  ) async {
+    final statusChanged = await provider.refreshPermissionStatus();
+
+    if (!context.mounted) return;
+
+    if (statusChanged == true) {
+      // Now connected
+      TopBanner.show(
+        context,
+        message: l10n.successfullyConnected,
+        isSuccess: true,
+      );
+    } else if (statusChanged == false) {
+      // Now disconnected
+      TopBanner.show(
+        context,
+        message: l10n.disconnected,
+        isSuccess: false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +81,7 @@ class HealthConnectScreen extends StatelessWidget {
           title: l10n.healthConnect,
           showBackButton: true,
           showLargeTitle: false,
+          onRefresh: () => _onRefresh(context, provider, l10n),
           slivers: [
             SliverPadding(
               padding: const EdgeInsets.all(16),
@@ -39,7 +94,7 @@ class HealthConnectScreen extends StatelessWidget {
                   // Data Types Section
                   _buildSectionTitle(context, l10n.syncedData),
                   const SizedBox(height: 12),
-                  _buildDataTypesList(context, theme, l10n, provider.isHealthConnected),
+                  _buildDataTypesList(context, theme, l10n, provider),
                   const SizedBox(height: 32),
 
                   // Sync Period Section
@@ -129,47 +184,87 @@ class HealthConnectScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDataTypesList(BuildContext context, ThemeData theme, AppLocalizations l10n, bool isConnected) {
-    final dataTypes = [
+  Widget _buildDataTypesList(BuildContext context, ThemeData theme, AppLocalizations l10n, FeedProvider provider) {
+    final permissions = provider.categoryPermissions;
+    final isConnected = provider.isHealthConnected;
+
+    // Write types - can verify permission status
+    final writeTypes = [
       _DataTypeItem(
         icon: CupertinoIcons.drop_fill,
         title: l10n.bloodGlucose,
+        subtitle: l10n.readWrite,
         color: AppTheme.primaryColor,
+        category: HealthDataCategory.bloodGlucose,
+        isWriteType: true,
       ),
       _DataTypeItem(
         icon: Icons.vaccines,
         title: l10n.insulin,
+        subtitle: l10n.readWrite,
         color: AppTheme.iconPurple,
+        category: HealthDataCategory.insulin,
+        isWriteType: true,
       ),
+    ];
+
+    // Read-only types - cannot verify permission on iOS
+    final readOnlyTypes = [
       _DataTypeItem(
         icon: CupertinoIcons.flame_fill,
         title: l10n.workouts,
+        subtitle: l10n.readOnly,
         color: AppTheme.iconOrange,
+        category: HealthDataCategory.workouts,
+        isWriteType: false,
       ),
       _DataTypeItem(
         icon: CupertinoIcons.moon_fill,
         title: l10n.sleep,
+        subtitle: l10n.readOnly,
         color: AppTheme.iconIndigo,
+        category: HealthDataCategory.sleep,
+        isWriteType: false,
       ),
       _DataTypeItem(
         icon: Icons.monitor_weight,
         title: l10n.weightBody,
+        subtitle: l10n.readOnly,
         color: AppTheme.iconTeal,
+        category: HealthDataCategory.weight,
+        isWriteType: false,
       ),
       _DataTypeItem(
         icon: CupertinoIcons.drop,
         title: l10n.waterIntake,
+        subtitle: l10n.readOnly,
         color: AppTheme.iconCyan,
+        category: HealthDataCategory.water,
+        isWriteType: false,
       ),
       _DataTypeItem(
         icon: CupertinoIcons.heart,
         title: l10n.menstrualCycle,
+        subtitle: l10n.readOnly,
         color: AppTheme.iconPink,
+        category: HealthDataCategory.menstrualCycle,
+        isWriteType: false,
       ),
       _DataTypeItem(
         icon: Icons.directions_walk,
         title: l10n.steps,
+        subtitle: l10n.readOnly,
         color: AppTheme.iconGreen,
+        category: HealthDataCategory.steps,
+        isWriteType: false,
+      ),
+      _DataTypeItem(
+        icon: Icons.self_improvement,
+        title: l10n.mindfulness,
+        subtitle: l10n.readOnly,
+        color: AppTheme.iconTeal,
+        category: HealthDataCategory.mindfulness,
+        isWriteType: false,
       ),
     ];
 
@@ -177,9 +272,31 @@ class HealthConnectScreen extends StatelessWidget {
       decoration: context.decorations.card,
       child: Column(
         children: [
-          for (int i = 0; i < dataTypes.length; i++) ...[
-            _buildDataTypeRow(context, dataTypes[i], isConnected),
-            if (i < dataTypes.length - 1)
+          // Write types with permission check
+          for (int i = 0; i < writeTypes.length; i++) ...[
+            _buildDataTypeRow(
+              context,
+              writeTypes[i],
+              isConnected: isConnected,
+              permissionStatus: permissions[writeTypes[i].category] ?? false,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 52),
+              child: Divider(
+                height: 1,
+                color: context.colors.divider,
+              ),
+            ),
+          ],
+          // Read-only types without permission check
+          for (int i = 0; i < readOnlyTypes.length; i++) ...[
+            _buildDataTypeRow(
+              context,
+              readOnlyTypes[i],
+              isConnected: isConnected,
+              permissionStatus: null, // Don't show check for read-only
+            ),
+            if (i < readOnlyTypes.length - 1)
               Padding(
                 padding: const EdgeInsets.only(left: 52),
                 child: Divider(
@@ -194,8 +311,17 @@ class HealthConnectScreen extends StatelessWidget {
   }
 
   Widget _buildDataTypeRow(
-      BuildContext context, _DataTypeItem item, bool isConnected) {
+    BuildContext context,
+    _DataTypeItem item, {
+    required bool isConnected,
+    required bool? permissionStatus,
+  }) {
     final theme = Theme.of(context);
+    // For write types: show check if connected AND has permission
+    // For read-only types: permissionStatus is null, don't show check icon
+    final showCheck = item.isWriteType;
+    final isEnabled = isConnected && permissionStatus == true;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
@@ -211,20 +337,34 @@ class HealthConnectScreen extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              item.title,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+            child: Row(
+              children: [
+                Text(
+                  item.title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (item.subtitle != null) ...[
+                  const SizedBox(width: 6),
+                  Text(
+                    item.subtitle!,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-          Icon(
-            isConnected
-                ? CupertinoIcons.checkmark_circle_fill
-                : CupertinoIcons.circle,
-            color: isConnected ? AppTheme.iconGreen : context.colors.iconGrey,
-            size: 20,
-          ),
+          if (showCheck)
+            Icon(
+              isEnabled
+                  ? CupertinoIcons.checkmark_circle_fill
+                  : CupertinoIcons.circle,
+              color: isEnabled ? AppTheme.iconGreen : context.colors.iconGrey,
+              size: 20,
+            ),
         ],
       ),
     );
@@ -478,11 +618,17 @@ class HealthConnectScreen extends StatelessWidget {
 class _DataTypeItem {
   final IconData icon;
   final String title;
+  final String? subtitle;
   final Color color;
+  final HealthDataCategory category;
+  final bool isWriteType;
 
   _DataTypeItem({
     required this.icon,
     required this.title,
+    this.subtitle,
     required this.color,
+    required this.category,
+    required this.isWriteType,
   });
 }

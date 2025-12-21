@@ -4,9 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/models/user_profile.dart';
+import 'package:glu_butler/services/database_service.dart';
 
 class SettingsService extends ChangeNotifier {
   late SharedPreferences _prefs;
+  final DatabaseService _databaseService = DatabaseService();
 
   String _language = AppConstants.defaultLanguage;
   String _unit = AppConstants.defaultUnit;
@@ -144,6 +146,10 @@ class SettingsService extends ChangeNotifier {
         days != AppConstants.syncPeriod3Months) return;
     _syncPeriod = days;
     await _prefs.setInt(AppConstants.keySyncPeriod, days);
+
+    // Update sync period in database
+    await _databaseService.updateSyncPeriod(days);
+
     notifyListeners();
   }
 }
