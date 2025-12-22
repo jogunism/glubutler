@@ -344,13 +344,17 @@ class _FeedScreenState extends State<FeedScreen> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
+    final l10n = AppLocalizations.of(context)!;
 
     if (date == today) {
-      return 'Today';
+      return l10n.today;
     } else if (date == yesterday) {
-      return 'Yesterday';
+      return l10n.yesterday;
     } else {
-      return Jiffy.parseFromDateTime(date).format(pattern: 'EEEE, MMM d');
+      // Format date with locale using Jiffy
+      // Jiffy locale is set globally in main.dart based on app locale
+      final jiffy = Jiffy.parseFromDateTime(date);
+      return jiffy.format(pattern: 'EEEE, MMM d');
     }
   }
 

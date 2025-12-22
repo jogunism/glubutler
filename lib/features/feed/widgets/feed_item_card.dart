@@ -99,15 +99,15 @@ class FeedItemCard extends StatelessWidget {
       case FeedItemType.exercise:
         return _formatExerciseType(item.exerciseRecord!.exerciseType);
       case FeedItemType.sleep:
-        return 'Sleep';
+        return l10n.sleep;
       case FeedItemType.meal:
         return _formatMealType(item.mealRecord!.mealType);
       case FeedItemType.water:
-        return 'Water';
+        return l10n.waterIntake;
       case FeedItemType.insulin:
         return l10n.insulin;
       case FeedItemType.mindfulness:
-        return 'Mindfulness';
+        return l10n.mindfulness;
     }
   }
 
