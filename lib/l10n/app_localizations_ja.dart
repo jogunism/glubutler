@@ -90,6 +90,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get snack => 'おやつ';
 
   @override
+  String get fasting => '空腹';
+
+  @override
   String get beforeMeal => '食前';
 
   @override
@@ -401,6 +404,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get glucoseSaved => '血糖値を保存しました';
+
+  @override
+  String get insulinSaved => 'インスリン投与量を保存しました';
+
+  @override
+  String get saveFailed => '保存に失敗しました';
 
   @override
   String get appleHealth => 'Apple ヘルスケア';

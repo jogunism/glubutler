@@ -90,6 +90,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get snack => '간식';
 
   @override
+  String get fasting => '공복';
+
+  @override
   String get beforeMeal => '식전';
 
   @override
@@ -400,6 +403,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get addRecord => '기록 추가';
+
+  @override
+  String get glucoseSaved => '혈당 기록이 저장되었습니다';
+
+  @override
+  String get insulinSaved => '인슐린 기록이 저장되었습니다';
+
+  @override
+  String get saveFailed => '저장에 실패했습니다';
 
   @override
   String get appleHealth => 'Apple 건강';

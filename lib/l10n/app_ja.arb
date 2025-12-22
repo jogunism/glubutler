@@ -31,6 +31,7 @@
   "dinner": "夕食",
   "snack": "おやつ",
 
+  "fasting": "空腹",
   "beforeMeal": "食前",
   "afterMeal": "食後",
   "unspecified": "未指定",
@@ -157,5 +158,9 @@
   "initCheckingHealth": "ヘルスデータ同期を確認中...",
   "initCheckingiCloud": "iCloud同期を確認中...",
   "initLocalDatabase": "ローカルデータベースを初期化中...",
-  "initDone": "完了"
+  "initDone": "完了",
+
+  "glucoseSaved": "血糖値を保存しました",
+  "insulinSaved": "インスリン投与量を保存しました",
+  "saveFailed": "保存に失敗しました"
 }

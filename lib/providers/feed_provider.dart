@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:health/health.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
+import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
@@ -10,7 +10,6 @@ import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/models/cgm_glucose_group.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
-import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cgm_grouping_service.dart';

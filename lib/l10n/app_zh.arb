@@ -31,6 +31,7 @@
   "dinner": "晚餐",
   "snack": "零食",
 
+  "fasting": "空腹",
   "beforeMeal": "餐前",
   "afterMeal": "餐后",
   "unspecified": "未指定",
@@ -157,5 +158,9 @@
   "initCheckingHealth": "正在检查健康数据同步...",
   "initCheckingiCloud": "正在检查 iCloud 同步...",
   "initLocalDatabase": "正在初始化本地数据库...",
-  "initDone": "完成"
+  "initDone": "完成",
+
+  "glucoseSaved": "血糖记录已保存",
+  "insulinSaved": "胰岛素剂量已保存",
+  "saveFailed": "保存失败"
 }

@@ -272,6 +272,12 @@ abstract class AppLocalizations {
   /// **'Snack'**
   String get snack;
 
+  /// No description provided for @fasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting'**
+  String get fasting;
+
   /// No description provided for @beforeMeal.
   ///
   /// In en, this message translates to:
@@ -743,7 +749,7 @@ abstract class AppLocalizations {
   /// No description provided for @times.
   ///
   /// In en, this message translates to:
-  /// **'times'**
+  /// **'×'**
   String get times;
 
   /// No description provided for @viewReport.
@@ -895,6 +901,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Record'**
   String get addRecord;
+
+  /// No description provided for @glucoseSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood glucose saved'**
+  String get glucoseSaved;
+
+  /// No description provided for @insulinSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Insulin dose saved'**
+  String get insulinSaved;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save'**
+  String get saveFailed;
 
   /// No description provided for @appleHealth.
   ///

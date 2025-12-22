@@ -207,7 +207,7 @@ class _GlucoseInputModalState extends State<GlucoseInputModal> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '측정 시점',
+                    l10n.measurementTiming,
                     style: context.textStyles.tileSubtitle,
                   ),
                   const SizedBox(height: 8),
@@ -245,7 +245,7 @@ class _GlucoseInputModalState extends State<GlucoseInputModal> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '측정 시간',
+                    l10n.measurementTime,
                     style: context.textStyles.tileSubtitle,
                   ),
                   const SizedBox(height: 8),

@@ -31,6 +31,7 @@
   "dinner": "Abendessen",
   "snack": "Snack",
 
+  "fasting": "Nüchtern",
   "beforeMeal": "Vor dem Essen",
   "afterMeal": "Nach dem Essen",
   "unspecified": "Nicht angegeben",
@@ -111,7 +112,7 @@
   "lowest": "Niedrigster",
   "highest": "Höchster",
   "glucoseDistribution": "Blutzucker-Verteilung",
-  "times": "mal",
+  "times": "×",
   "viewReport": "Bericht ansehen",
   "excellentScore": "Ausgezeichnet! Sie managen Ihren Blutzucker heute gut.",
   "goodScore": "Gut! Nur noch etwas mehr Aufmerksamkeit und es ist perfekt.",
@@ -157,5 +158,9 @@
   "initCheckingHealth": "Gesundheitsdaten-Sync wird überprüft...",
   "initCheckingiCloud": "iCloud-Sync wird überprüft...",
   "initLocalDatabase": "Lokale Datenbank wird initialisiert...",
-  "initDone": "Fertig"
+  "initDone": "Fertig",
+
+  "glucoseSaved": "Blutzucker gespeichert",
+  "insulinSaved": "Insulindosis gespeichert",
+  "saveFailed": "Speichern fehlgeschlagen"
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:health/health.dart';
 
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/services/health_service.dart';

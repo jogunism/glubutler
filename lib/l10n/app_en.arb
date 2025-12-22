@@ -31,6 +31,7 @@
   "dinner": "Dinner",
   "snack": "Snack",
 
+  "fasting": "Fasting",
   "beforeMeal": "Before Meal",
   "afterMeal": "After Meal",
   "unspecified": "Unspecified",
@@ -118,7 +119,7 @@
   "lowest": "Lowest",
   "highest": "Highest",
   "glucoseDistribution": "Glucose Distribution",
-  "times": "times",
+  "times": "×",
   "viewReport": "View Report",
   "excellentScore": "Excellent! You're managing your glucose well today.",
   "goodScore": "Good! Just a little more attention and you'll be perfect.",
@@ -145,6 +146,9 @@
   "injectionTime": "Injection Time",
   "measurementTiming": "Timing",
   "addRecord": "Add Record",
+  "glucoseSaved": "Blood glucose saved",
+  "insulinSaved": "Insulin dose saved",
+  "saveFailed": "Failed to save",
 
   "appleHealth": "Apple Health",
   "appleHealthDescription": "Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.",

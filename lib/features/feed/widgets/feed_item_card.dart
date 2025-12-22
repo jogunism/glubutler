@@ -3,6 +3,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/insulin_record.dart';
+import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -40,7 +41,7 @@ class FeedItemCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildIcon(theme),
+            _buildIcon(context, theme),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -133,12 +134,18 @@ class FeedItemCard extends StatelessWidget {
     final glucose = item.glucoseRecord!;
     final settings = context.watch<SettingsService>();
     final unit = settings.unit;
+    final l10n = AppLocalizations.of(context)!;
 
     // 단위 변환
     final isMmol = unit == AppConstants.unitMmolL;
     final displayValue = isMmol
         ? (glucose.value / AppConstants.mgDlToMmolL).toStringAsFixed(1)
         : glucose.value.toStringAsFixed(0);
+
+    // Calculate 5-level status based on glucose range settings
+    final glucoseRange = settings.glucoseRange;
+    final mgDlValue = glucose.valueIn('mg/dL');
+    final status = _getGlucoseStatus(mgDlValue, glucoseRange);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -158,7 +165,18 @@ class FeedItemCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        _buildStatusChip(glucose.status, theme),
+        // Show meal context chip (always show, default to fasting if null or empty)
+        _buildMealContextChip(
+          context,
+          (glucose.mealContext == null || glucose.mealContext!.isEmpty)
+            ? 'fasting'
+            : glucose.mealContext!,
+          theme,
+          l10n,
+        ),
+        const SizedBox(width: 4),
+        // Then show status chip
+        _buildStatusChip(status, theme, l10n),
       ],
     );
   }
@@ -250,7 +268,7 @@ class FeedItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIcon(ThemeData theme) {
+  Widget _buildIcon(BuildContext context, ThemeData theme) {
     IconData icon;
     Color color;
 
@@ -258,7 +276,16 @@ class FeedItemCard extends StatelessWidget {
       case FeedItemType.glucose:
         icon = Icons.water_drop;
         final glucose = item.glucoseRecord;
-        color = glucose != null ? _getGlucoseColor(glucose.status) : AppTheme.primaryColor;
+        if (glucose != null) {
+          // Calculate 5-level status for icon color
+          final settings = context.watch<SettingsService>();
+          final glucoseRange = settings.glucoseRange;
+          final mgDlValue = glucose.valueIn('mg/dL');
+          final status = _getGlucoseStatus(mgDlValue, glucoseRange);
+          color = _getGlucoseColor(status);
+        } else {
+          color = AppTheme.primaryColor;
+        }
       case FeedItemType.exercise:
         icon = Icons.fitness_center;
         color = Colors.orange;
@@ -292,29 +319,91 @@ class FeedItemCard extends StatelessWidget {
 
   Color _getGlucoseColor(String status) {
     switch (status) {
+      case 'veryLow':
+        return Colors.purple;
       case 'low':
-        return Colors.orange;
+        return Colors.blue;
       case 'high':
+        return Colors.yellow.shade700;
+      case 'veryHigh':
         return Colors.red;
       default:
-        return AppTheme.primaryColor;
+        return AppTheme.glucoseNormal;  // Green color for normal range
     }
   }
 
-  Widget _buildStatusChip(String status, ThemeData theme) {
+  /// Calculate 5-level glucose status based on target ± 20 range
+  String _getGlucoseStatus(double mgDlValue, GlucoseRangeSettings range) {
+    // target ± 20 범위를 Normal로 설정
+    final normalLow = range.target - 20;
+    final normalHigh = range.target + 20;
+
+    // 5단계 분류
+    if (mgDlValue < normalLow - 20) {
+      return 'veryLow';  // target - 40 미만
+    } else if (mgDlValue < normalLow) {
+      return 'low';  // target - 40 ~ target - 20
+    } else if (mgDlValue <= normalHigh) {
+      return 'normal';  // target - 20 ~ target + 20
+    } else if (mgDlValue <= normalHigh + 20) {
+      return 'high';  // target + 20 ~ target + 40
+    } else {
+      return 'veryHigh';  // target + 40 초과
+    }
+  }
+
+  Widget _buildMealContextChip(BuildContext context, String mealContext, ThemeData theme, AppLocalizations l10n) {
+    String label;
+    switch (mealContext) {
+      case 'before_meal':
+        label = l10n.beforeMeal;
+      case 'after_meal':
+        label = l10n.afterMeal;
+      case 'fasting':
+        label = l10n.fasting;
+      default:
+        label = l10n.unspecified;
+    }
+
+    final color = context.colors.textSecondary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(String status, ThemeData theme, AppLocalizations l10n) {
     Color color;
     String label;
 
     switch (status) {
+      case 'veryLow':
+        color = Colors.purple;
+        label = l10n.veryLow;
       case 'low':
-        color = Colors.orange;
-        label = 'Low';
+        color = Colors.blue;
+        label = l10n.low;
       case 'high':
+        color = Colors.yellow.shade700;
+        label = l10n.elevated;
+      case 'veryHigh':
         color = Colors.red;
-        label = 'High';
+        label = l10n.veryHigh;
       default:
-        color = AppTheme.primaryColor;
-        label = 'Normal';
+        color = AppTheme.glucoseNormal;  // Green color for normal range
+        label = l10n.normal;
     }
 
     return Container(

@@ -90,6 +90,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snack => '零食';
 
   @override
+  String get fasting => '空腹';
+
+  @override
   String get beforeMeal => '餐前';
 
   @override
@@ -401,6 +404,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get glucoseSaved => '血糖记录已保存';
+
+  @override
+  String get insulinSaved => '胰岛素剂量已保存';
+
+  @override
+  String get saveFailed => '保存失败';
 
   @override
   String get appleHealth => 'Apple 健康';

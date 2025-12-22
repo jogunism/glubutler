@@ -9,6 +9,7 @@ import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/models/glucose_record.dart';
@@ -53,7 +54,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
   final _glucoseController = TextEditingController();
   final _glucoseFocusNode = FocusNode();
   bool _glucoseHasFocus = false;
-  String _selectedTiming = 'unspecified'; // unspecified, beforeMeal, afterMeal
+  String _selectedTiming = 'fasting'; // fasting, beforeMeal, afterMeal
   bool _isSaving = false;
   DateTime _selectedTime = DateTime.now();
 
@@ -101,9 +102,10 @@ class _RecordInputModalState extends State<RecordInputModal> {
   Future<void> _save() async {
     if (_isSaving) return;
 
-    // Capture navigator before async gap
+    // Capture context and navigator before async gap
     final nav = Navigator.of(context);
     final feedProvider = context.read<FeedProvider>();
+    final l10n = AppLocalizations.of(context)!;
     final isMmol = widget.settings.unit == AppConstants.unitMmolL;
 
     if (_selectedType == RecordType.glucose) {
@@ -123,14 +125,22 @@ class _RecordInputModalState extends State<RecordInputModal> {
         unit: 'mg/dL',
         timestamp: _selectedTime,
         isFromHealthKit: false,
-        mealContext: _selectedTiming == 'unspecified' ? null : _selectedTiming,
+        mealContext: _selectedTiming,
       );
 
-      // Save via FeedProvider (handles Health/Local routing)
-      await feedProvider.addGlucoseRecord(record);
+      try {
+        // Save via FeedProvider (handles Health/Local routing)
+        await feedProvider.addGlucoseRecord(record);
 
-      if (mounted) {
-        nav.pop();
+        if (mounted) {
+          TopBanner.success(context, message: l10n.glucoseSaved);
+          nav.pop();
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isSaving = false);
+          TopBanner.error(context, message: l10n.saveFailed);
+        }
       }
     } else {
       final doseValue = double.tryParse(_insulinDoseController.text);
@@ -149,11 +159,19 @@ class _RecordInputModalState extends State<RecordInputModal> {
         isFromHealthKit: false,
       );
 
-      // Save via FeedProvider (handles Health/Local routing)
-      await feedProvider.addInsulinRecord(record);
+      try {
+        // Save via FeedProvider (handles Health/Local routing)
+        await feedProvider.addInsulinRecord(record);
 
-      if (mounted) {
-        nav.pop();
+        if (mounted) {
+          TopBanner.success(context, message: l10n.insulinSaved);
+          nav.pop();
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isSaving = false);
+          TopBanner.error(context, message: l10n.saveFailed);
+        }
       }
     }
   }
@@ -437,8 +455,8 @@ class _RecordInputModalState extends State<RecordInputModal> {
                 children: [
                   _buildTimingChip(
                     context,
-                    label: l10n.unspecified,
-                    value: 'unspecified',
+                    label: l10n.fasting,
+                    value: 'fasting',
                   ),
                   const SizedBox(width: 8),
                   _buildTimingChip(

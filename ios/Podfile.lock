@@ -1,10 +1,6 @@
 PODS:
-  - device_info_plus (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
   - flutter_local_notifications (0.0.1):
-    - Flutter
-  - health (13.2.1):
     - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
@@ -20,10 +16,8 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
-  - health (from `.symlinks/plugins/health/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - liquid_tabbar_minimize (from `.symlinks/plugins/liquid_tabbar_minimize/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -31,14 +25,10 @@ DEPENDENCIES:
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 EXTERNAL SOURCES:
-  device_info_plus:
-    :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
-  health:
-    :path: ".symlinks/plugins/health/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   liquid_tabbar_minimize:
@@ -51,10 +41,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_local_notifications: 395056b3175ba4f08480a7c5de30cd36d69827e4
-  health: e310387222e199d4b3261337490a67aaff6d18eb
   image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
   liquid_tabbar_minimize: 2623640cda6c1e01948a1af43af041420956d5db
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb

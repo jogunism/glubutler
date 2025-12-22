@@ -31,6 +31,7 @@
   "dinner": "Cena",
   "snack": "Merienda",
 
+  "fasting": "En ayunas",
   "beforeMeal": "Antes de comer",
   "afterMeal": "Después de comer",
   "unspecified": "Sin especificar",
@@ -111,7 +112,7 @@
   "lowest": "Mínimo",
   "highest": "Máximo",
   "glucoseDistribution": "Distribución de Glucosa",
-  "times": "veces",
+  "times": "×",
   "viewReport": "Ver Informe",
   "excellentScore": "¡Excelente! Estás controlando bien tu glucosa hoy.",
   "goodScore": "¡Bien! Solo un poco más de atención y será perfecto.",
@@ -157,5 +158,9 @@
   "initCheckingHealth": "Verificando sincronización de salud...",
   "initCheckingiCloud": "Verificando sincronización de iCloud...",
   "initLocalDatabase": "Inicializando base de datos local...",
-  "initDone": "Listo"
+  "initDone": "Listo",
+
+  "glucoseSaved": "Glucosa guardada",
+  "insulinSaved": "Dosis de insulina guardada",
+  "saveFailed": "Error al guardar"
 }

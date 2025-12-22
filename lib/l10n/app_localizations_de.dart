@@ -90,6 +90,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get snack => 'Snack';
 
   @override
+  String get fasting => 'Nüchtern';
+
+  @override
   String get beforeMeal => 'Vor dem Essen';
 
   @override
@@ -326,7 +329,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get glucoseDistribution => 'Blutzucker-Verteilung';
 
   @override
-  String get times => 'mal';
+  String get times => '×';
 
   @override
   String get viewReport => 'Bericht ansehen';
@@ -405,6 +408,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addRecord => 'Add Record';
+
+  @override
+  String get glucoseSaved => 'Blutzucker gespeichert';
+
+  @override
+  String get insulinSaved => 'Insulindosis gespeichert';
+
+  @override
+  String get saveFailed => 'Speichern fehlgeschlagen';
 
   @override
   String get appleHealth => 'Apple Health';

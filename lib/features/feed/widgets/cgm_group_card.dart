@@ -93,6 +93,8 @@ class _CgmGroupCardState extends State<CgmGroupCard>
                         children: [
                           // Title row
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
                                 _getTitle(l10n),
@@ -102,16 +104,16 @@ class _CgmGroupCardState extends State<CgmGroupCard>
                               ),
                               if (group.sourceName != null) ...[
                                 Text(
-                                  ' ${group.sourceName} (${group.recordCount}회)',
-                                  style: theme.textTheme.labelSmall?.copyWith(
+                                  ' · ${group.sourceName} (${group.recordCount}${l10n.times})',
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     color: context.colors.textSecondary
                                         .withValues(alpha: 0.7),
                                   ),
                                 ),
                               ] else ...[
                                 Text(
-                                  ' (${group.recordCount}회)',
-                                  style: theme.textTheme.labelSmall?.copyWith(
+                                  ' (${group.recordCount}${l10n.times})',
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     color: context.colors.textSecondary
                                         .withValues(alpha: 0.7),
                                   ),
@@ -279,13 +281,7 @@ class _CgmGroupCardState extends State<CgmGroupCard>
   }
 
   String _getTitle(AppLocalizations l10n) {
-    final group = widget.group;
-    switch (group.groupType) {
-      case CgmGroupType.fluctuation:
-        return '${l10n.bloodGlucose} ~';
-      case CgmGroupType.baseline:
-        return l10n.bloodGlucose;
-    }
+    return l10n.bloodGlucose;
   }
 
   Widget _buildValue(ThemeData theme) {

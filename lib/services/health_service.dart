@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:health/health.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
 import 'package:glu_butler/models/sleep_record.dart';
@@ -10,6 +9,27 @@ import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/menstruation_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/models/mindfulness_record.dart';
+
+// Health data types enum (replaces health package dependency)
+enum HealthDataType {
+  BLOOD_GLUCOSE,
+  INSULIN_DELIVERY,
+  WORKOUT,
+  STEPS,
+  DISTANCE_WALKING_RUNNING,
+  ACTIVE_ENERGY_BURNED,
+  SLEEP_ASLEEP,
+  SLEEP_AWAKE,
+  SLEEP_DEEP,
+  SLEEP_REM,
+  SLEEP_LIGHT,
+  WEIGHT,
+  BODY_FAT_PERCENTAGE,
+  BODY_MASS_INDEX,
+  WATER,
+  MENSTRUATION_FLOW,
+  MINDFULNESS,
+}
 
 class DailyActivityData {
   final int steps;
@@ -25,6 +45,9 @@ class HealthService {
   static final HealthService _instance = HealthService._internal();
   factory HealthService() => _instance;
   HealthService._internal();
+
+  // iOS Native HealthKit channel
+  static const MethodChannel _healthKitChannel = MethodChannel('custom_healthkit');
 
   bool _isAuthorized = false;
   bool get isAuthorized => _isAuthorized;
@@ -43,83 +66,24 @@ class HealthService {
   final Map<HealthDataType, bool> _permissionStatus = {};
   Map<HealthDataType, bool> get permissionStatus => Map.unmodifiable(_permissionStatus);
 
-  static const List<HealthDataType> _readTypes = [
-    HealthDataType.BLOOD_GLUCOSE,
-    HealthDataType.INSULIN_DELIVERY,
-    HealthDataType.WORKOUT,
-    HealthDataType.STEPS,
-    HealthDataType.DISTANCE_WALKING_RUNNING,
-    HealthDataType.ACTIVE_ENERGY_BURNED,
-    HealthDataType.SLEEP_ASLEEP,
-    HealthDataType.SLEEP_AWAKE,
-    HealthDataType.SLEEP_DEEP,
-    HealthDataType.SLEEP_REM,
-    HealthDataType.SLEEP_LIGHT,
-    // Weight & Body
-    HealthDataType.WEIGHT,
-    HealthDataType.BODY_FAT_PERCENTAGE,
-    HealthDataType.BODY_MASS_INDEX,
-    // Water
-    HealthDataType.WATER,
-    // Menstruation
-    HealthDataType.MENSTRUATION_FLOW,
-    // Mindfulness
-    HealthDataType.MINDFULNESS,
-  ];
-
-  static const List<HealthDataType> _writeTypes = [
-    HealthDataType.BLOOD_GLUCOSE,
-    HealthDataType.INSULIN_DELIVERY,
-  ];
-
   Future<bool> requestAuthorization() async {
-    if (!Platform.isIOS && !Platform.isAndroid) {
-      debugPrint('[HealthService] Platform not supported');
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] Platform not supported - iOS only');
       return false;
     }
 
     try {
-      final health = Health();
-
-      // Configure health package
-      await health.configure();
-
-      // Combine read and write types, with appropriate permissions
-      final allTypes = <HealthDataType>[];
-      final permissions = <HealthDataAccess>[];
-
-      for (final type in _readTypes) {
-        allTypes.add(type);
-        // If type is also in writeTypes, request READ_WRITE, otherwise just READ
-        if (_writeTypes.contains(type)) {
-          permissions.add(HealthDataAccess.READ_WRITE);
-        } else {
-          permissions.add(HealthDataAccess.READ);
-        }
-      }
-
-      // Request authorization
-      // Note: On iOS, this returns true if the dialog was shown, NOT if user granted permission
-      await health.requestAuthorization(
-        allTypes,
-        permissions: permissions,
-      );
-
-      // Mark that permissions have been requested (even if denied)
-      // This allows us to attempt reading data
+      await _healthKitChannel.invokeMethod('requestAuthorization');
       _hasRequestedPermissions = true;
 
-      // Check actual permission status by testing write access
-      // This is the only reliable way to verify permissions on iOS
+      // Check actual permission status
       await checkPermissionStatus();
 
-      // Consider authorized if we have ANY permission (write or read)
-      // This allows users to keep connection even if they disable write permissions
-      // but still have read-only permissions enabled
+      // Consider authorized if we have ANY permission
       _isAuthorized = _permissionStatus.values.any((status) => status == true);
 
-      debugPrint('[HealthService] requestAuthorization - isAuthorized: $_isAuthorized');
-      debugPrint('[HealthService] requestAuthorization - all permissions: $_permissionStatus');
+      debugPrint('[HealthService] iOS Native - isAuthorized: $_isAuthorized');
+      debugPrint('[HealthService] iOS Native - permissions: $_permissionStatus');
 
       return _isAuthorized;
     } catch (e) {
@@ -137,32 +101,21 @@ class HealthService {
   /// For READ-only types, we can't reliably check - iOS just returns empty data.
   /// So after requestAuthorization succeeds, we assume READ permissions are granted.
   Future<void> checkPermissionStatus() async {
-    if (!Platform.isIOS && !Platform.isAndroid) return;
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] checkPermissionStatus: Platform not supported (iOS only)');
+      return;
+    }
 
     try {
-      final health = Health();
-      await health.configure();
-
-      // Test BLOOD_GLUCOSE write permission
-      final glucosePermission = await _testWritePermission(
-        health,
-        HealthDataType.BLOOD_GLUCOSE,
-        1.0, // dummy value
-        HealthDataUnit.MILLIGRAM_PER_DECILITER,
-      );
+      // Test blood glucose write permission
+      final glucosePermission = await _healthKitChannel.invokeMethod('testBloodGlucoseWritePermission') as bool;
       _permissionStatus[HealthDataType.BLOOD_GLUCOSE] = glucosePermission;
 
-      // Test INSULIN_DELIVERY write permission separately
-      // iOS requires HKMetadataKeyInsulinDeliveryReason metadata for insulin writes
-      final insulinPermission = await _testInsulinWritePermission(health);
+      // Test insulin write permission
+      final insulinPermission = await _healthKitChannel.invokeMethod('testInsulinWritePermission') as bool;
       _permissionStatus[HealthDataType.INSULIN_DELIVERY] = insulinPermission;
 
-      debugPrint('[HealthService] Permission status - Glucose: $glucosePermission, Insulin: $insulinPermission');
-
-      // For READ-only types, we can't verify permissions on iOS.
-      // iOS doesn't expose read permission status - it always returns null.
-      // So we assume READ permissions are granted if authorization was requested.
-      // This allows users to keep read-only data sync even if write permissions are disabled.
+      // Assume read-only permissions are granted if authorization was requested
       final readOnlyTypes = [
         HealthDataType.WORKOUT,
         HealthDataType.STEPS,
@@ -174,72 +127,15 @@ class HealthService {
       ];
 
       for (final type in readOnlyTypes) {
-        // Assume granted if authorization was requested (regardless of write permission status)
         _permissionStatus[type] = _hasRequestedPermissions;
       }
-
-      debugPrint('[HealthService] Read-only permissions assumed granted: $_hasRequestedPermissions');
-      debugPrint('[HealthService] All permissions: $_permissionStatus');
     } catch (e) {
       debugPrint('[HealthService] Error checking permission status: $e');
     }
   }
 
-  /// Test write permission by attempting to write and immediately delete
-  Future<bool> _testWritePermission(
-    Health health,
-    HealthDataType type,
-    double testValue,
-    HealthDataUnit unit,
-  ) async {
-    try {
-      // Use a timestamp far in the past to avoid interfering with real data
-      final testTime = DateTime(2000, 1, 1, 0, 0, 0);
-
-      final success = await health.writeHealthData(
-        value: testValue,
-        type: type,
-        startTime: testTime,
-        endTime: testTime,
-        unit: unit,
-      );
-
-      if (success) {
-        // Try to delete the test data
-        await health.delete(
-          type: type,
-          startTime: testTime,
-          endTime: testTime.add(const Duration(seconds: 1)),
-        );
-      }
-
-      return success;
-    } catch (e) {
-      debugPrint('[HealthService] Write permission test failed for $type: $e');
-      return false;
-    }
-  }
-
-  /// Test insulin write permission using native iOS HealthKit
-  /// iOS requires HKMetadataKeyInsulinDeliveryReason metadata for insulin writes.
-  /// We use a native Swift method channel to test this permission properly.
-  Future<bool> _testInsulinWritePermission(Health health) async {
-    if (!Platform.isIOS) {
-      // On Android, assume same as glucose permission
-      return _permissionStatus[HealthDataType.BLOOD_GLUCOSE] ?? false;
-    }
-
-    try {
-      const platform = MethodChannel('health_permission');
-      final bool hasPermission = await platform.invokeMethod('testInsulinWritePermission');
-      debugPrint('[HealthService] Native insulin permission test result: $hasPermission');
-      return hasPermission;
-    } catch (e) {
-      debugPrint('[HealthService] Native insulin permission test failed: $e');
-      // Return false on error - don't fallback to glucose permission
-      return false;
-    }
-  }
+  // Removed: Android-only helper functions (not used in iOS native implementation)
+  // _testWritePermission and _testInsulinWritePermission
 
   /// Check if a specific data type has permission
   /// Returns true only if explicitly granted, false otherwise
@@ -253,23 +149,14 @@ class HealthService {
   }
 
   Future<bool> hasPermissions() async {
-    if (!Platform.isIOS && !Platform.isAndroid) return false;
-
-    try {
-      final health = Health();
-      await health.configure();
-
-      final hasPermissions = await health.hasPermissions(
-        _readTypes,
-        permissions: _readTypes.map((_) => HealthDataAccess.READ).toList(),
-      );
-
-      _isAuthorized = hasPermissions ?? false;
-      return _isAuthorized;
-    } catch (e) {
-      debugPrint('[HealthService] Error checking permissions: $e');
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] hasPermissions: Platform not supported (iOS only)');
       return false;
     }
+
+    // iOS permissions are checked via checkPermissionStatus()
+    // Return the current authorization status
+    return _isAuthorized;
   }
 
   Future<List<GlucoseRecord>> fetchGlucoseData({
@@ -280,38 +167,60 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit to get meal context metadata
+      try {
+        final Map<String, dynamic> arguments = {
+          'type': 'BLOOD_GLUCOSE',
+          'startTime': startDate.millisecondsSinceEpoch,
+          'endTime': endDate.millisecondsSinceEpoch,
+        };
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.BLOOD_GLUCOSE],
-        startTime: startDate,
-        endTime: endDate,
-      );
+        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
 
-      final records = <GlucoseRecord>[];
+        final records = <GlucoseRecord>[];
 
-      for (final point in dataPoints) {
-        if (point.value is NumericHealthValue) {
-          final numericValue = point.value as NumericHealthValue;
+        for (final item in data) {
+          final map = item as Map<dynamic, dynamic>;
+
+          String? mealContext;
+
+          // Map HealthKit meal time metadata back to our app's mealContext
+          if (map['mealTime'] != null) {
+            switch (map['mealTime']) {
+              case 'preprandial':
+                mealContext = 'before_meal';
+                break;
+              case 'postprandial':
+                mealContext = 'after_meal';
+                break;
+            }
+          }
+
+          final sourceName = map['dataSource'] as String?;
+
           records.add(GlucoseRecord(
-            id: 'hk_${point.dateFrom.millisecondsSinceEpoch}',
-            value: numericValue.numericValue.toDouble(),
+            id: 'hk_${(map['startTime'] as num).toInt()}',
+            value: (map['value'] as num).toDouble(),
             unit: 'mg/dL',
-            timestamp: point.dateFrom,
+            timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
+            mealContext: mealContext,
             isFromHealthKit: true,
-            sourceName: point.sourceName,
+            sourceName: sourceName,
           ));
         }
-      }
 
-      // debugPrint('[HealthService] Fetched ${records.length} glucose records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching glucose data: $e');
-      return [];
+        // debugPrint('[HealthService] Fetched ${records.length} glucose records from native iOS');
+        return records;
+      } catch (e) {
+        debugPrint('[HealthService] Error fetching glucose data from native iOS: $e');
+        return [];
+      }
     }
+
+    // Platform not supported
+    debugPrint('[HealthService] fetchGlucoseData: Platform not supported (iOS only)');
+    return [];
   }
 
   Future<List<ExerciseRecord>> fetchWorkoutData({
@@ -322,42 +231,44 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit
+      try {
+        final Map<String, dynamic> arguments = {
+          'type': 'WORKOUT',
+          'startTime': startDate.millisecondsSinceEpoch,
+          'endTime': endDate.millisecondsSinceEpoch,
+        };
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.WORKOUT],
-        startTime: startDate,
-        endTime: endDate,
-      );
+        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+        final records = <ExerciseRecord>[];
 
-      final records = <ExerciseRecord>[];
-
-      for (final point in dataPoints) {
-        if (point.value is WorkoutHealthValue) {
-          final workoutValue = point.value as WorkoutHealthValue;
-          final durationMinutes =
-              point.dateTo.difference(point.dateFrom).inMinutes;
+        for (final item in data) {
+          final map = item as Map<dynamic, dynamic>;
+          final durationMinutes = ((map['duration'] as num).toDouble() / 60).round();
 
           records.add(ExerciseRecord(
-            id: 'hk_workout_${point.dateFrom.millisecondsSinceEpoch}',
-            timestamp: point.dateFrom,
-            exerciseType: _mapWorkoutType(workoutValue.workoutActivityType),
+            id: 'hk_workout_${(map['startTime'] as num).toInt()}',
+            timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
+            exerciseType: 'other', // TODO: Map workoutActivityType from native
             durationMinutes: durationMinutes,
-            calories: workoutValue.totalEnergyBurned?.toInt(),
+            calories: (map['totalEnergyBurned'] as num?)?.toInt(),
             isFromHealthKit: true,
-            sourceName: point.sourceName,
+            sourceName: map['dataSource'] as String?,  // Changed from 'sourceName' to 'source'
           ));
         }
-      }
 
-      // debugPrint('[HealthService] Fetched ${records.length} workout records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching workout data: $e');
-      return [];
+        // debugPrint('[HealthService] Fetched ${records.length} workout records from native iOS');
+        return records;
+      } catch (e) {
+        debugPrint('[HealthService] Error fetching workout data from native iOS: $e');
+        return [];
+      }
     }
+
+    // Platform not supported
+    debugPrint('[HealthService] fetchWorkoutData: Platform not supported (iOS only)');
+    return [];
   }
 
   Future<List<SleepRecord>> fetchSleepData({
@@ -368,64 +279,70 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit
+      try {
+        final Map<String, dynamic> arguments = {
+          'type': 'SLEEP',
+          'startTime': startDate.millisecondsSinceEpoch,
+          'endTime': endDate.millisecondsSinceEpoch,
+        };
 
-      final sleepTypes = [
-        HealthDataType.SLEEP_ASLEEP,
-        HealthDataType.SLEEP_AWAKE,
-        HealthDataType.SLEEP_DEEP,
-        HealthDataType.SLEEP_REM,
-        HealthDataType.SLEEP_LIGHT,
-      ];
+        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+        final records = <SleepRecord>[];
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: sleepTypes,
-        startTime: startDate,
-        endTime: endDate,
-      );
+        for (final item in data) {
+          final map = item as Map<dynamic, dynamic>;
+          final startTime = DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt());
+          final endTime = DateTime.fromMillisecondsSinceEpoch((map['endTime'] as num).toInt());
+          final durationMinutes = endTime.difference(startTime).inMinutes;
 
-      final records = <SleepRecord>[];
+          records.add(SleepRecord(
+            id: 'hk_sleep_${(map['startTime'] as num).toInt()}',
+            startTime: startTime,
+            endTime: endTime,
+            durationMinutes: durationMinutes,
+            stage: SleepStage.unknown, // Native doesn't distinguish stages
+            isFromHealthKit: true,
+            sourceName: map['dataSource'] as String?,
+          ));
+        }
 
-      for (final point in dataPoints) {
-        final durationMinutes =
-            point.dateTo.difference(point.dateFrom).inMinutes;
-
-        records.add(SleepRecord(
-          id: 'hk_sleep_${point.dateFrom.millisecondsSinceEpoch}',
-          startTime: point.dateFrom,
-          endTime: point.dateTo,
-          durationMinutes: durationMinutes,
-          stage: _mapSleepStage(point.type),
-          isFromHealthKit: true,
-          sourceName: point.sourceName,
-        ));
+        // debugPrint('[HealthService] Fetched ${records.length} sleep records from native iOS');
+        return records;
+      } catch (e) {
+        debugPrint('[HealthService] Error fetching sleep data from native iOS: $e');
+        return [];
       }
-
-      // debugPrint('[HealthService] Fetched ${records.length} sleep records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching sleep data: $e');
-      return [];
     }
+
+    // Platform not supported
+    debugPrint('[HealthService] fetchSleepData: Platform not supported (iOS only)');
+    return [];
   }
 
   Future<int?> fetchTodaySteps() async {
     if (!_hasRequestedPermissions) return null;
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] fetchTodaySteps: Platform not supported (iOS only)');
+      return null;
+    }
 
+    try {
       final now = DateTime.now();
       final startOfDay = DateTime(now.year, now.month, now.day);
 
-      final steps = await health.getTotalStepsInInterval(startOfDay, now);
-      // debugPrint('[HealthService] Today steps: $steps');
-      return steps;
+      final activityData = await fetchDailyActivityByDate(
+        startDate: startOfDay,
+        endDate: now,
+      );
+
+      // Get today's activity
+      final todayActivity = activityData[startOfDay];
+      return todayActivity?.steps;
     } catch (e) {
-      debugPrint('[HealthService] Error fetching steps: $e');
+      debugPrint('[HealthService] Error fetching today steps: $e');
       return null;
     }
   }
@@ -440,94 +357,38 @@ class HealthService {
       return {};
     }
 
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] fetchDailyActivityByDate: Platform not supported (iOS only)');
+      return {};
+    }
+
     try {
-      final health = Health();
-      await health.configure();
+      final arguments = {
+        'startTime': startDate.millisecondsSinceEpoch.toDouble(),
+        'endTime': endDate.millisecondsSinceEpoch.toDouble(),
+      };
+
+      final List<dynamic> data = await _healthKitChannel.invokeMethod('fetchDailyActivity', arguments);
 
       final Map<DateTime, DailyActivityData> activityByDate = {};
 
-      // Fetch all distance data for the range
-      final Map<DateTime, double> distanceByDate = {};
-      try {
-        final distancePoints = await health.getHealthDataFromTypes(
-          types: [HealthDataType.DISTANCE_WALKING_RUNNING],
-          startTime: startDate,
-          endTime: endDate,
+      for (final item in data) {
+        final map = item as Map<dynamic, dynamic>;
+        final dateStr = map['date'] as String;
+        final steps = map['steps'] as int;
+        final distanceKm = (map['distanceKm'] as num).toDouble();
+
+        // Parse date string (format: "yyyy-MM-dd")
+        final dateParts = dateStr.split('-');
+        final year = int.parse(dateParts[0]);
+        final month = int.parse(dateParts[1]);
+        final day = int.parse(dateParts[2]);
+        final date = DateTime(year, month, day);
+
+        activityByDate[date] = DailyActivityData(
+          steps: steps,
+          distanceKm: distanceKm > 0 ? distanceKm : null,
         );
-
-        // iPhone and Apple Watch report overlapping distance data
-        // Use only the primary source (prefer iPhone, as it's more consistently available)
-        // Group by date and source, then pick one source per day
-
-        // First, group all points by date
-        final Map<DateTime, Map<String, double>> distanceByDateAndSource = {};
-        for (final point in distancePoints) {
-          final date = DateTime(point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
-          final source = point.sourceName;
-          final value = (point.value as NumericHealthValue).numericValue.toDouble();
-
-          distanceByDateAndSource.putIfAbsent(date, () => {});
-          distanceByDateAndSource[date]![source] = (distanceByDateAndSource[date]![source] ?? 0) + value;
-        }
-
-        // For each date, pick the source with the most distance (usually the most accurate)
-        for (final entry in distanceByDateAndSource.entries) {
-          final date = entry.key;
-          final sourceDistances = entry.value;
-
-          // Find the source with the maximum distance for this day
-          String? bestSource;
-          double maxDistance = 0;
-          for (final sourceEntry in sourceDistances.entries) {
-            if (sourceEntry.value > maxDistance) {
-              maxDistance = sourceEntry.value;
-              bestSource = sourceEntry.key;
-            }
-          }
-
-          if (bestSource != null) {
-            distanceByDate[date] = maxDistance;
-          }
-        }
-      } catch (e) {
-        debugPrint('[HealthService] Could not fetch distance data: $e');
-      }
-
-      // Iterate through each day in the range for steps
-      // startDate and endDate are already local time (from DateTime.now())
-      DateTime current = DateTime(startDate.year, startDate.month, startDate.day);
-      final end = DateTime(endDate.year, endDate.month, endDate.day);
-
-      // Calculate total days to iterate (avoid DST issues with Duration)
-      final totalDays = end.difference(current).inDays + 1;
-
-      for (int i = 0; i < totalDays; i++) {
-        // Create date by adding days to start date (avoids DST issues)
-        final date = DateTime(current.year, current.month, current.day + i);
-        final dayStart = DateTime(date.year, date.month, date.day, 0, 0, 0);
-        final dayEnd = DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
-
-        final steps = await health.getTotalStepsInInterval(dayStart, dayEnd);
-
-        // Find distance for this date by comparing year/month/day
-        double? distanceMeters;
-        for (final entry in distanceByDate.entries) {
-          if (entry.key.year == date.year &&
-              entry.key.month == date.month &&
-              entry.key.day == date.day) {
-            distanceMeters = entry.value;
-            break;
-          }
-        }
-
-        // Add activity if we have either steps or distance
-        final dateKey = DateTime(date.year, date.month, date.day);
-        if ((steps != null && steps > 0) || distanceMeters != null) {
-          activityByDate[dateKey] = DailyActivityData(
-            steps: steps ?? 0,
-            distanceKm: distanceMeters != null ? distanceMeters / 1000 : null,
-          );
-        }
       }
 
       return activityByDate;
@@ -545,73 +406,14 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
-
-      final weightPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.WEIGHT],
-        startTime: startDate,
-        endTime: endDate,
-      );
-
-      final bodyFatPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.BODY_FAT_PERCENTAGE],
-        startTime: startDate,
-        endTime: endDate,
-      );
-
-      final bmiPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.BODY_MASS_INDEX],
-        startTime: startDate,
-        endTime: endDate,
-      );
-
-      final records = <WeightRecord>[];
-
-      for (final point in weightPoints) {
-        if (point.value is NumericHealthValue) {
-          final numericValue = point.value as NumericHealthValue;
-
-          // Find matching body fat and BMI for same timestamp
-          double? bodyFat;
-          double? bmi;
-
-          for (final bf in bodyFatPoints) {
-            if (bf.dateFrom.difference(point.dateFrom).inMinutes.abs() < 5) {
-              if (bf.value is NumericHealthValue) {
-                bodyFat = (bf.value as NumericHealthValue).numericValue.toDouble();
-              }
-              break;
-            }
-          }
-
-          for (final b in bmiPoints) {
-            if (b.dateFrom.difference(point.dateFrom).inMinutes.abs() < 5) {
-              if (b.value is NumericHealthValue) {
-                bmi = (b.value as NumericHealthValue).numericValue.toDouble();
-              }
-              break;
-            }
-          }
-
-          records.add(WeightRecord(
-            id: 'hk_weight_${point.dateFrom.millisecondsSinceEpoch}',
-            timestamp: point.dateFrom,
-            weightKg: numericValue.numericValue.toDouble(),
-            bodyFatPercentage: bodyFat,
-            bmi: bmi,
-            isFromHealthKit: true,
-          ));
-        }
-      }
-
-      // debugPrint('[HealthService] Fetched ${records.length} weight records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching weight data: $e');
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] fetchWeightData: Platform not supported (iOS only)');
       return [];
     }
+
+    // TODO: Implement native iOS weight fetching if needed
+    debugPrint('[HealthService] fetchWeightData: Not implemented for iOS native');
+    return [];
   }
 
   Future<List<WaterRecord>> fetchWaterData({
@@ -622,38 +424,41 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit
+      try {
+        final Map<String, dynamic> arguments = {
+          'type': 'WATER',
+          'startTime': startDate.millisecondsSinceEpoch,
+          'endTime': endDate.millisecondsSinceEpoch,
+        };
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.WATER],
-        startTime: startDate,
-        endTime: endDate,
-      );
+        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+        final records = <WaterRecord>[];
 
-      final records = <WaterRecord>[];
-
-      for (final point in dataPoints) {
-        if (point.value is NumericHealthValue) {
-          final numericValue = point.value as NumericHealthValue;
-          // HealthKit stores water in liters, convert to ml
+        for (final item in data) {
+          final map = item as Map<dynamic, dynamic>;
+          // Native returns water in mL
           records.add(WaterRecord(
-            id: 'hk_water_${point.dateFrom.millisecondsSinceEpoch}',
-            timestamp: point.dateFrom,
-            amountMl: numericValue.numericValue.toDouble() * 1000,
+            id: 'hk_water_${(map['startTime'] as num).toInt()}',
+            timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
+            amountMl: (map['value'] as num).toDouble(),
             isFromHealthKit: true,
-            sourceName: point.sourceName,
+            sourceName: map['dataSource'] as String?,
           ));
         }
-      }
 
-      // debugPrint('[HealthService] Fetched ${records.length} water records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching water data: $e');
-      return [];
+        // debugPrint('[HealthService] Fetched ${records.length} water records from native iOS');
+        return records;
+      } catch (e) {
+        debugPrint('[HealthService] Error fetching water data from native iOS: $e');
+        return [];
+      }
     }
+
+    // Platform not supported
+    debugPrint('[HealthService] fetchWaterData: Platform not supported (iOS only)');
+    return [];
   }
 
   Future<List<MenstruationRecord>> fetchMenstruationData({
@@ -664,66 +469,42 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
-
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.MENSTRUATION_FLOW],
-        startTime: startDate,
-        endTime: endDate,
-      );
-
-      final records = <MenstruationRecord>[];
-
-      for (final point in dataPoints) {
-        if (point.value is NumericHealthValue) {
-          final numericValue = point.value as NumericHealthValue;
-          records.add(MenstruationRecord(
-            id: 'hk_menstruation_${point.dateFrom.millisecondsSinceEpoch}',
-            date: point.dateFrom,
-            flow: _mapMenstruationFlow(numericValue.numericValue.toInt()),
-            isFromHealthKit: true,
-          ));
-        }
-      }
-
-      // debugPrint('[HealthService] Fetched ${records.length} menstruation records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching menstruation data: $e');
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] fetchMenstruationData: Platform not supported (iOS only)');
       return [];
     }
+
+    // TODO: Implement native iOS menstruation fetching if needed
+    debugPrint('[HealthService] fetchMenstruationData: Not implemented for iOS native');
+    return [];
   }
 
   Future<double?> fetchTodayWaterIntake() async {
     if (!_hasRequestedPermissions) return null;
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] fetchTodayWaterIntake: Platform not supported (iOS only)');
+      return null;
+    }
 
+    try {
       final now = DateTime.now();
       final startOfDay = DateTime(now.year, now.month, now.day);
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.WATER],
-        startTime: startOfDay,
-        endTime: now,
+      final waterRecords = await fetchWaterData(
+        startDate: startOfDay,
+        endDate: now,
       );
 
-      double totalMl = 0;
-      for (final point in dataPoints) {
-        if (point.value is NumericHealthValue) {
-          final numericValue = point.value as NumericHealthValue;
-          totalMl += numericValue.numericValue.toDouble() * 1000;
-        }
+      // Sum all water intake for today
+      double total = 0.0;
+      for (final record in waterRecords) {
+        total += record.amountMl;
       }
 
-      // debugPrint('[HealthService] Today water intake: ${totalMl}ml');
-      return totalMl;
+      return total > 0 ? total : null;
     } catch (e) {
-      debugPrint('[HealthService] Error fetching today water: $e');
+      debugPrint('[HealthService] Error fetching today water intake: $e');
       return null;
     }
   }
@@ -736,105 +517,140 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit
+      try {
+        final Map<String, dynamic> arguments = {
+          'type': 'MINDFULNESS',
+          'startTime': startDate.millisecondsSinceEpoch,
+          'endTime': endDate.millisecondsSinceEpoch,
+        };
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.MINDFULNESS],
-        startTime: startDate,
-        endTime: endDate,
-      );
+        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+        final records = <MindfulnessRecord>[];
 
-      final records = <MindfulnessRecord>[];
+        for (final item in data) {
+          final map = item as Map<dynamic, dynamic>;
+          final startTime = DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt());
+          final endTime = DateTime.fromMillisecondsSinceEpoch((map['endTime'] as num).toInt());
+          final durationMinutes = endTime.difference(startTime).inMinutes;
 
-      for (final point in dataPoints) {
-        final durationMinutes =
-            point.dateTo.difference(point.dateFrom).inMinutes;
+          records.add(MindfulnessRecord(
+            id: 'hk_mindfulness_${(map['startTime'] as num).toInt()}',
+            startTime: startTime,
+            endTime: endTime,
+            durationMinutes: durationMinutes,
+            isFromHealthKit: true,
+            sourceName: map['dataSource'] as String?,
+          ));
+        }
 
-        records.add(MindfulnessRecord(
-          id: 'hk_mindfulness_${point.dateFrom.millisecondsSinceEpoch}',
-          startTime: point.dateFrom,
-          endTime: point.dateTo,
-          durationMinutes: durationMinutes,
-          isFromHealthKit: true,
-          sourceName: point.sourceName,
-        ));
+        // debugPrint('[HealthService] Fetched ${records.length} mindfulness records from native iOS');
+        return records;
+      } catch (e) {
+        debugPrint('[HealthService] Error fetching mindfulness data from native iOS: $e');
+        return [];
       }
-
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching mindfulness data: $e');
-      return [];
     }
-  }
 
-  MenstruationFlow _mapMenstruationFlow(int value) {
-    // HealthKit menstruation flow values
-    switch (value) {
-      case 1:
-        return MenstruationFlow.unspecified;
-      case 2:
-        return MenstruationFlow.light;
-      case 3:
-        return MenstruationFlow.medium;
-      case 4:
-        return MenstruationFlow.heavy;
-      case 5:
-        return MenstruationFlow.none;
-      default:
-        return MenstruationFlow.unspecified;
-    }
+    // Platform not supported
+    debugPrint('[HealthService] fetchMindfulnessData: Platform not supported (iOS only)');
+    return [];
   }
 
   Future<bool> writeGlucoseRecord(GlucoseRecord record) async {
-    if (!Platform.isIOS && !Platform.isAndroid) return false;
-
-    try {
-      final health = Health();
-      await health.configure();
-
-      final success = await health.writeHealthData(
-        value: record.value,
-        type: HealthDataType.BLOOD_GLUCOSE,
-        startTime: record.timestamp,
-        endTime: record.timestamp,
-        unit: HealthDataUnit.MILLIGRAM_PER_DECILITER,
-        recordingMethod: RecordingMethod.manual,
-        clientRecordId: record.id,
-      );
-
-      debugPrint('[HealthService] Write glucose result: $success');
-      return success;
-    } catch (e) {
-      debugPrint('[HealthService] Error writing glucose: $e');
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] writeGlucoseRecord: Platform not supported (iOS only)');
       return false;
     }
+
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit with meal context metadata support
+      try {
+        final Map<String, dynamic> arguments = {
+          'value': record.value,
+          'startTime': record.timestamp.millisecondsSinceEpoch,
+        };
+
+        // Map mealContext to HealthKit metadata
+        // Only preprandial and postprandial are supported by Apple Health
+        // Fasting is stored without meal time metadata
+        if (record.mealContext != null) {
+          switch (record.mealContext) {
+            case 'before_meal':
+            case 'beforeMeal':
+              arguments['mealTime'] = 'preprandial';
+              break;
+            case 'after_meal':
+            case 'afterMeal':
+              arguments['mealTime'] = 'postprandial';
+              break;
+            case 'fasting':
+            default:
+              // Fasting: no mealTime metadata (not pre/post meal)
+              break;
+          }
+        }
+
+        debugPrint('[HealthService] Writing glucose: value=${record.value}, mealContext=${record.mealContext}, mealTime=${arguments['mealTime']}');
+
+        final success = await _healthKitChannel.invokeMethod('writeBloodGlucose', arguments);
+        debugPrint('[HealthService] Native iOS glucose write result: $success');
+        return success as bool;
+      } catch (e) {
+        debugPrint('[HealthService] Error writing glucose to native iOS: $e');
+        return false;
+      }
+    }
+
+    // Platform not supported
+    debugPrint('[HealthService] writeGlucoseRecord: Platform not supported (iOS only)');
+    return false;
   }
 
   Future<bool> writeInsulinRecord(InsulinRecord record) async {
-    if (!Platform.isIOS && !Platform.isAndroid) return false;
-
-    try {
-      final health = Health();
-      await health.configure();
-
-      final success = await health.writeHealthData(
-        value: record.units,
-        type: HealthDataType.INSULIN_DELIVERY,
-        startTime: record.timestamp,
-        endTime: record.timestamp,
-        unit: HealthDataUnit.INTERNATIONAL_UNIT,
-        recordingMethod: RecordingMethod.manual,
-        clientRecordId: record.id,
-      );
-
-      debugPrint('[HealthService] Write insulin result: $success');
-      return success;
-    } catch (e) {
-      debugPrint('[HealthService] Error writing insulin: $e');
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] writeInsulinRecord: Platform not supported (iOS only)');
       return false;
     }
+
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit with delivery reason metadata (required)
+      try {
+        // Map InsulinType to HealthKit delivery reason
+        // longActing and intermediate -> basal
+        // rapidActing, shortActing, mixed -> bolus
+        String deliveryReason;
+        switch (record.insulinType) {
+          case InsulinType.longActing:
+          case InsulinType.intermediate:
+            deliveryReason = 'basal';
+            break;
+          case InsulinType.rapidActing:
+          case InsulinType.shortActing:
+          case InsulinType.mixed:
+            deliveryReason = 'bolus';
+            break;
+        }
+
+        final Map<String, dynamic> arguments = {
+          'value': record.units,
+          'startTime': record.timestamp.millisecondsSinceEpoch,
+          'reason': deliveryReason,
+        };
+
+        final success = await _healthKitChannel.invokeMethod('writeInsulin', arguments);
+        debugPrint('[HealthService] Native iOS insulin write result: $success (reason: $deliveryReason)');
+        return success as bool;
+      } catch (e) {
+        debugPrint('[HealthService] Error writing insulin to native iOS: $e');
+        return false;
+      }
+    }
+
+    // Platform not supported
+    debugPrint('[HealthService] writeInsulinRecord: Platform not supported (iOS only)');
+    return false;
   }
 
   Future<List<InsulinRecord>> fetchInsulinData({
@@ -845,72 +661,55 @@ class HealthService {
       return [];
     }
 
-    try {
-      final health = Health();
-      await health.configure();
+    if (Platform.isIOS) {
+      // Use native iOS HealthKit to get delivery reason metadata
+      try {
+        final Map<String, dynamic> arguments = {
+          'type': 'INSULIN_DELIVERY',
+          'startTime': startDate.millisecondsSinceEpoch,
+          'endTime': endDate.millisecondsSinceEpoch,
+        };
 
-      final dataPoints = await health.getHealthDataFromTypes(
-        types: [HealthDataType.INSULIN_DELIVERY],
-        startTime: startDate,
-        endTime: endDate,
-      );
+        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+        final records = <InsulinRecord>[];
 
-      final records = <InsulinRecord>[];
+        for (final item in data) {
+          final map = item as Map<dynamic, dynamic>;
 
-      for (final point in dataPoints) {
-        if (point.value is NumericHealthValue) {
-          final numericValue = point.value as NumericHealthValue;
+          // Map HealthKit delivery reason back to InsulinType
+          InsulinType insulinType = InsulinType.rapidActing; // Default
+          if (map['reason'] != null) {
+            switch (map['reason']) {
+              case 'basal':
+                insulinType = InsulinType.longActing;
+                break;
+              case 'bolus':
+                insulinType = InsulinType.rapidActing;
+                break;
+            }
+          }
+
           records.add(InsulinRecord(
-            id: 'hk_insulin_${point.dateFrom.millisecondsSinceEpoch}',
-            timestamp: point.dateFrom,
-            units: numericValue.numericValue.toDouble(),
-            insulinType: InsulinType.rapidActing, // Default, HealthKit doesn't distinguish
+            id: 'hk_insulin_${(map['startTime'] as num).toInt()}',
+            timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
+            units: (map['value'] as num).toDouble(),
+            insulinType: insulinType,
             isFromHealthKit: true,
+            sourceName: map['dataSource'] as String?,
           ));
         }
+
+        // debugPrint('[HealthService] Fetched ${records.length} insulin records from native iOS');
+        return records;
+      } catch (e) {
+        debugPrint('[HealthService] Error fetching insulin data from native iOS: $e');
+        return [];
       }
-
-      // debugPrint('[HealthService] Fetched ${records.length} insulin records');
-      return records;
-    } catch (e) {
-      debugPrint('[HealthService] Error fetching insulin data: $e');
-      return [];
     }
+
+    // Platform not supported
+    debugPrint('[HealthService] fetchInsulinData: Platform not supported (iOS only)');
+    return [];
   }
 
-  String _mapWorkoutType(HealthWorkoutActivityType type) {
-    switch (type) {
-      case HealthWorkoutActivityType.RUNNING:
-        return 'running';
-      case HealthWorkoutActivityType.WALKING:
-        return 'walking';
-      case HealthWorkoutActivityType.BIKING:
-        return 'cycling';
-      case HealthWorkoutActivityType.SWIMMING:
-        return 'swimming';
-      case HealthWorkoutActivityType.YOGA:
-        return 'yoga';
-      case HealthWorkoutActivityType.STRENGTH_TRAINING:
-        return 'strength';
-      case HealthWorkoutActivityType.HIGH_INTENSITY_INTERVAL_TRAINING:
-        return 'hiit';
-      default:
-        return 'other';
-    }
-  }
-
-  SleepStage _mapSleepStage(HealthDataType type) {
-    switch (type) {
-      case HealthDataType.SLEEP_AWAKE:
-        return SleepStage.awake;
-      case HealthDataType.SLEEP_REM:
-        return SleepStage.rem;
-      case HealthDataType.SLEEP_LIGHT:
-        return SleepStage.light;
-      case HealthDataType.SLEEP_DEEP:
-        return SleepStage.deep;
-      default:
-        return SleepStage.unknown;
-    }
-  }
 }

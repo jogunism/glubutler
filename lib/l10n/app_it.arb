@@ -31,6 +31,7 @@
   "dinner": "Cena",
   "snack": "Spuntino",
 
+  "fasting": "A digiuno",
   "beforeMeal": "Prima del pasto",
   "afterMeal": "Dopo il pasto",
   "unspecified": "Non specificato",
@@ -111,7 +112,7 @@
   "lowest": "Minimo",
   "highest": "Massimo",
   "glucoseDistribution": "Distribuzione Glicemica",
-  "times": "volte",
+  "times": "×",
   "viewReport": "Vedi Rapporto",
   "excellentScore": "Eccellente! Stai gestendo bene la glicemia oggi.",
   "goodScore": "Bene! Ancora un po' di attenzione e sarà perfetto.",
@@ -157,5 +158,9 @@
   "initCheckingHealth": "Verifica sincronizzazione salute...",
   "initCheckingiCloud": "Verifica sincronizzazione iCloud...",
   "initLocalDatabase": "Inizializzazione database locale...",
-  "initDone": "Fatto"
+  "initDone": "Fatto",
+
+  "glucoseSaved": "Glicemia salvata",
+  "insulinSaved": "Dose di insulina salvata",
+  "saveFailed": "Salvataggio fallito"
 }
