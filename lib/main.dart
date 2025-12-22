@@ -38,41 +38,40 @@ class GluButlerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // themeMode만 구독해서 불필요한 rebuild 방지
-    final themeMode = context.select<SettingsService, ThemeMode>(
-      (settings) => settings.flutterThemeMode,
-    );
+    return Consumer<SettingsService>(
+      builder: (context, settings, child) {
+        return MaterialApp(
+          title: 'Glu Butler',
+          debugShowCheckedModeBanner: false,
 
-    return MaterialApp(
-      title: 'Glu Butler',
-      debugShowCheckedModeBanner: false,
+          // Theme
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: settings.flutterThemeMode,
 
-      // Theme
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
+          // Localization - uses iOS per-app language settings
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('ko'),
+            Locale('ja'),
+            Locale('zh'),
+            Locale('de'),
+            Locale('es'),
+            Locale('fr'),
+            Locale('it'),
+          ],
 
-      // Localization - uses iOS per-app language settings
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ko'),
-        Locale('ja'),
-        Locale('zh'),
-        Locale('de'),
-        Locale('es'),
-        Locale('fr'),
-        Locale('it'),
-      ],
-
-      // Navigation - basic Navigator instead of GoRouter
-      initialRoute: AppRoutes.splash,
-      onGenerateRoute: AppRoutes.generateRoute,
+          // Navigation - basic Navigator instead of GoRouter
+          initialRoute: AppRoutes.splash,
+          onGenerateRoute: AppRoutes.generateRoute,
+        );
+      },
     );
   }
 }

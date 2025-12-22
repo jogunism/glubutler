@@ -496,4 +496,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get veryLow => 'Very Low';
+
+  @override
+  String get appSlogan => '您的健康伙伴';
+
+  @override
+  String get initLoadingSettings => '正在加载设置...';
+
+  @override
+  String get initCheckingHealth => '正在检查健康数据同步...';
+
+  @override
+  String get initCheckingiCloud => '正在检查 iCloud 同步...';
+
+  @override
+  String get initLocalDatabase => '正在初始化本地数据库...';
+
+  @override
+  String get initDone => '完成';
 }

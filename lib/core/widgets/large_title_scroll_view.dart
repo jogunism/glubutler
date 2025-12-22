@@ -141,16 +141,28 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
             // 메인 스크롤 컨텐츠 - primary: true로 상태바 탭 scroll to top 지원
             CustomScrollView(
               primary: true,
-              physics: const AlwaysScrollableScrollPhysics(),
+              // BouncingScrollPhysics 필수 - CupertinoSliverRefreshControl이 동작하려면 overscroll 필요
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               slivers: [
-                // 네비게이션바 높이만큼 상단 패딩
-                SliverToBoxAdapter(
-                  child: SizedBox(height: navBarHeight),
-                ),
-                // iOS 기본 스타일 pull-to-refresh
+                // iOS 기본 스타일 pull-to-refresh (반드시 첫 번째 sliver)
+                // refreshIndicatorExtent를 navBarHeight만큼 추가해서 스피너가 navBar 아래에 나타나도록
                 if (widget.onRefresh != null)
-                  CupertinoSliverRefreshControl(
-                    onRefresh: widget.onRefresh,
+                  SliverPadding(
+                    padding: EdgeInsets.only(top: navBarHeight),
+                    sliver: CupertinoSliverRefreshControl(
+                      refreshIndicatorExtent: 60,
+                      refreshTriggerPullDistance: 100,
+                      onRefresh: () {
+                        return widget.onRefresh!();
+                      },
+                    ),
+                  ),
+                // onRefresh가 없을 때만 navBarHeight 패딩 추가
+                if (widget.onRefresh == null)
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: navBarHeight),
                   ),
                 // 큰 타이틀 (옵션)
                 if (widget.showLargeTitle)

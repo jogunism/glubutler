@@ -180,5 +180,13 @@
   "veryHigh": "Very High",
   "elevated": "High",
   "target": "Target",
-  "veryLow": "Very Low"
+  "veryLow": "Very Low",
+
+  "appSlogan": "Your Health Companion",
+
+  "initLoadingSettings": "Loading settings...",
+  "initCheckingHealth": "Checking health data sync...",
+  "initCheckingiCloud": "Checking iCloud sync...",
+  "initLocalDatabase": "Initializing local database...",
+  "initDone": "Done."
 }

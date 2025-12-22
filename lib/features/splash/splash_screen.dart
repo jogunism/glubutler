@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
@@ -47,9 +48,12 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _exitFadeAnimation;
 
   bool _showLoading = false;
+  InitializationStep _currentStep = InitializationStep.settings;
 
   // static으로 앱 전체에서 한 번만 초기화되도록 보장
-  static bool _hasInitialized = false;
+  static bool _isAppInitializing = false;
+  // 현재 활성화된 인스턴스의 상태 업데이트 콜백
+  static void Function(InitializationStep)? _activeStepCallback;
 
   @override
   void initState() {
@@ -100,21 +104,41 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
+  void _updateStep(InitializationStep step) {
+    debugPrint('[SplashScreen] Step changed to: $step, mounted: $mounted, hashCode: $hashCode');
+    if (mounted) {
+      setState(() {
+        _currentStep = step;
+      });
+    }
+  }
+
   Future<void> _startInitialization() async {
-    // 중복 초기화 방지 (static으로 앱 전체에서 한 번만)
-    if (_hasInitialized) {
-      if (mounted) _navigateToHome();
+    debugPrint('[SplashScreen] _startInitialization called, hashCode: $hashCode, _isAppInitializing: $_isAppInitializing');
+
+    // 이 인스턴스를 활성 콜백으로 등록 (항상 최신 인스턴스가 UI 업데이트 받음)
+    _activeStepCallback = _updateStep;
+
+    // 이미 초기화 중이면 콜백만 등록하고 리턴
+    if (_isAppInitializing) {
+      debugPrint('[SplashScreen] Already initializing, registered callback only');
       return;
     }
-    _hasInitialized = true;
+    _isAppInitializing = true;
 
     final settingsService = context.read<SettingsService>();
-    final initService = InitializationService(settingsService: settingsService);
+    final initService = InitializationService(
+      settingsService: settingsService,
+      onStepChanged: (step) {
+        // static 콜백을 통해 현재 활성 인스턴스에 상태 전달
+        _activeStepCallback?.call(step);
+      },
+    );
 
     try {
       await initService.initialize();
     } catch (e) {
-      debugPrint('Initialization error: $e');
+      debugPrint('[SplashScreen] Initialization error: $e');
     }
 
     if (mounted) {
@@ -123,11 +147,34 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToHome() async {
-    // 페이드아웃 애니메이션 실행
-    await _exitController.forward();
+    if (!mounted) return;
+
+    // 페이드아웃 애니메이션 실행 (TickerMode가 비활성화된 경우 타임아웃 처리)
+    try {
+      await _exitController.forward().orCancel.timeout(
+        const Duration(milliseconds: 500),
+        onTimeout: () {},
+      );
+    } catch (_) {}
 
     if (mounted) {
       AppRoutes.goToMain(context);
+    }
+  }
+
+  String _getStatusText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (_currentStep) {
+      case InitializationStep.settings:
+        return l10n.initLoadingSettings;
+      case InitializationStep.healthSync:
+        return l10n.initCheckingHealth;
+      case InitializationStep.iCloudSync:
+        return l10n.initCheckingiCloud;
+      case InitializationStep.localDatabase:
+        return l10n.initLocalDatabase;
+      case InitializationStep.done:
+        return l10n.initDone;
     }
   }
 
@@ -151,38 +198,53 @@ class _SplashScreenState extends State<SplashScreen>
               : 1.0;
           return Opacity(
             opacity: _fadeAnimation.value * exitOpacity,
-            child: Transform.scale(scale: _scaleAnimation.value, child: child),
-          );
-        },
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 앱 로고 이미지
-              Image.asset(
-                'assets/images/main_logo-removebg.png',
-                width: 240,
-                height: 240,
-              ),
-              const SizedBox(height: 16),
-              // 앱 슬로건
-              Text(
-                'Your Health Companion',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppTheme.textPrimary(context).withValues(alpha: 0.6),
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 앱 로고 이미지
+                    Image.asset(
+                      'assets/images/main_logo-removebg.png',
+                      width: 240,
+                      height: 240,
+                    ),
+                    const SizedBox(height: 16),
+                    // 앱 슬로건
+                    Text(
+                      AppLocalizations.of(context)!.appSlogan,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppTheme.textPrimary(context).withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+                    // 로딩 인디케이터
+                    AnimatedOpacity(
+                      opacity: _showLoading ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 300),
+                      child: const CupertinoActivityIndicator(radius: 14),
+                    ),
+                    const SizedBox(height: 16),
+                    // 초기화 상태 텍스트
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        _getStatusText(context),
+                        key: ValueKey(_currentStep),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.textPrimary(context).withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 48),
-              // 로딩 인디케이터
-              AnimatedOpacity(
-                opacity: _showLoading ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: const CupertinoActivityIndicator(radius: 14),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

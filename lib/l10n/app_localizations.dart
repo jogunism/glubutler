@@ -1081,6 +1081,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Very Low'**
   String get veryLow;
+
+  /// No description provided for @appSlogan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Health Companion'**
+  String get appSlogan;
+
+  /// No description provided for @initLoadingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading settings...'**
+  String get initLoadingSettings;
+
+  /// No description provided for @initCheckingHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking health data sync...'**
+  String get initCheckingHealth;
+
+  /// No description provided for @initCheckingiCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking iCloud sync...'**
+  String get initCheckingiCloud;
+
+  /// No description provided for @initLocalDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing local database...'**
+  String get initLocalDatabase;
+
+  /// No description provided for @initDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done.'**
+  String get initDone;
 }
 
 class _AppLocalizationsDelegate

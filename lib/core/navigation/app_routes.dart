@@ -33,9 +33,14 @@ class AppRoutes {
         );
 
       case main:
-        return MaterialPageRoute(
-          builder: (_) => MainScreen(key: MainScreen.globalKey),
+        // 스플래시에서 메인으로 전환 시 페이드 효과
+        return PageRouteBuilder(
           settings: settings,
+          pageBuilder: (_, __, ___) => MainScreen(key: MainScreen.globalKey),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 300),
         );
 
       case AppRoutes.settings:

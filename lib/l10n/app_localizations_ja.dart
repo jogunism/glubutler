@@ -497,4 +497,22 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get veryLow => 'Very Low';
+
+  @override
+  String get appSlogan => 'あなたの健康パートナー';
+
+  @override
+  String get initLoadingSettings => '設定を読み込み中...';
+
+  @override
+  String get initCheckingHealth => 'ヘルスデータ同期を確認中...';
+
+  @override
+  String get initCheckingiCloud => 'iCloud同期を確認中...';
+
+  @override
+  String get initLocalDatabase => 'ローカルデータベースを初期化中...';
+
+  @override
+  String get initDone => '完了';
 }

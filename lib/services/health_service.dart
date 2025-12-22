@@ -269,7 +269,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} glucose records');
+      // debugPrint('[HealthService] Fetched ${records.length} glucose records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching glucose data: $e');
@@ -316,7 +316,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} workout records');
+      // debugPrint('[HealthService] Fetched ${records.length} workout records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching workout data: $e');
@@ -368,7 +368,7 @@ class HealthService {
         ));
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} sleep records');
+      // debugPrint('[HealthService] Fetched ${records.length} sleep records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching sleep data: $e');
@@ -387,7 +387,7 @@ class HealthService {
       final startOfDay = DateTime(now.year, now.month, now.day);
 
       final steps = await health.getTotalStepsInInterval(startOfDay, now);
-      debugPrint('[HealthService] Today steps: $steps');
+      // debugPrint('[HealthService] Today steps: $steps');
       return steps;
     } catch (e) {
       debugPrint('[HealthService] Error fetching steps: $e');
@@ -573,7 +573,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} weight records');
+      // debugPrint('[HealthService] Fetched ${records.length} weight records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching weight data: $e');
@@ -616,7 +616,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} water records');
+      // debugPrint('[HealthService] Fetched ${records.length} water records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching water data: $e');
@@ -657,7 +657,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} menstruation records');
+      // debugPrint('[HealthService] Fetched ${records.length} menstruation records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching menstruation data: $e');
@@ -689,7 +689,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Today water intake: ${totalMl}ml');
+      // debugPrint('[HealthService] Today water intake: ${totalMl}ml');
       return totalMl;
     } catch (e) {
       debugPrint('[HealthService] Error fetching today water: $e');
@@ -795,7 +795,7 @@ class HealthService {
         }
       }
 
-      debugPrint('[HealthService] Fetched ${records.length} insulin records');
+      // debugPrint('[HealthService] Fetched ${records.length} insulin records');
       return records;
     } catch (e) {
       debugPrint('[HealthService] Error fetching insulin data: $e');

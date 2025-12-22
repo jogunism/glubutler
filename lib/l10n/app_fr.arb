@@ -149,5 +149,13 @@
   "cgmBaseline": "Stable",
   "cgmFluctuation": "Fluctuation",
 
-  "targetGlucoseRange": "Plage de glycémie cible"
+  "targetGlucoseRange": "Plage de glycémie cible",
+
+  "appSlogan": "Votre compagnon santé",
+
+  "initLoadingSettings": "Chargement des paramètres...",
+  "initCheckingHealth": "Vérification de la synchronisation santé...",
+  "initCheckingiCloud": "Vérification de la synchronisation iCloud...",
+  "initLocalDatabase": "Initialisation de la base de données locale...",
+  "initDone": "Terminé."
 }

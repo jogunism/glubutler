@@ -149,5 +149,13 @@
   "cgmBaseline": "Stabil",
   "cgmFluctuation": "Schwankung",
 
-  "targetGlucoseRange": "Zielbereich Blutzucker"
+  "targetGlucoseRange": "Zielbereich Blutzucker",
+
+  "appSlogan": "Ihr Gesundheitsbegleiter",
+
+  "initLoadingSettings": "Einstellungen werden geladen...",
+  "initCheckingHealth": "Gesundheitsdaten-Sync wird überprüft...",
+  "initCheckingiCloud": "iCloud-Sync wird überprüft...",
+  "initLocalDatabase": "Lokale Datenbank wird initialisiert...",
+  "initDone": "Fertig."
 }

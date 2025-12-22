@@ -149,5 +149,13 @@
   "cgmBaseline": "Estable",
   "cgmFluctuation": "Fluctuación",
 
-  "targetGlucoseRange": "Rango objetivo de glucosa"
+  "targetGlucoseRange": "Rango objetivo de glucosa",
+
+  "appSlogan": "Tu compañero de salud",
+
+  "initLoadingSettings": "Cargando configuración...",
+  "initCheckingHealth": "Verificando sincronización de salud...",
+  "initCheckingiCloud": "Verificando sincronización de iCloud...",
+  "initLocalDatabase": "Inicializando base de datos local...",
+  "initDone": "Listo."
 }

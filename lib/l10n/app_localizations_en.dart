@@ -503,4 +503,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get veryLow => 'Very Low';
+
+  @override
+  String get appSlogan => 'Your Health Companion';
+
+  @override
+  String get initLoadingSettings => 'Loading settings...';
+
+  @override
+  String get initCheckingHealth => 'Checking health data sync...';
+
+  @override
+  String get initCheckingiCloud => 'Checking iCloud sync...';
+
+  @override
+  String get initLocalDatabase => 'Initializing local database...';
+
+  @override
+  String get initDone => 'Done.';
 }

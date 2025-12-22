@@ -496,4 +496,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get veryLow => '매우 낮음';
+
+  @override
+  String get appSlogan => '당신의 건강 파트너';
+
+  @override
+  String get initLoadingSettings => '설정 불러오는 중...';
+
+  @override
+  String get initCheckingHealth => '건강 데이터 동기화 확인 중...';
+
+  @override
+  String get initCheckingiCloud => 'iCloud 동기화 확인 중...';
+
+  @override
+  String get initLocalDatabase => '로컬 데이터베이스 초기화 중...';
+
+  @override
+  String get initDone => '완료.';
 }

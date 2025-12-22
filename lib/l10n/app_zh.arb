@@ -149,5 +149,13 @@
   "cgmBaseline": "稳定",
   "cgmFluctuation": "波动",
 
-  "targetGlucoseRange": "目标血糖范围"
+  "targetGlucoseRange": "目标血糖范围",
+
+  "appSlogan": "您的健康伙伴",
+
+  "initLoadingSettings": "正在加载设置...",
+  "initCheckingHealth": "正在检查健康数据同步...",
+  "initCheckingiCloud": "正在检查 iCloud 同步...",
+  "initLocalDatabase": "正在初始化本地数据库...",
+  "initDone": "完成"
 }

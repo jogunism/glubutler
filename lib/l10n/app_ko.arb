@@ -180,5 +180,13 @@
   "veryHigh": "매우 높음",
   "elevated": "높음",
   "target": "목표",
-  "veryLow": "매우 낮음"
+  "veryLow": "매우 낮음",
+
+  "appSlogan": "당신의 건강 파트너",
+
+  "initLoadingSettings": "설정 불러오는 중...",
+  "initCheckingHealth": "건강 데이터 동기화 확인 중...",
+  "initCheckingiCloud": "iCloud 동기화 확인 중...",
+  "initLocalDatabase": "로컬 데이터베이스 초기화 중...",
+  "initDone": "완료."
 }
