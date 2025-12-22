@@ -8,6 +8,8 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/core/constants/app_constants.dart';
+import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
@@ -25,15 +27,18 @@ enum RecordType { glucose, insulin }
 /// RecordInputModal.show(context);
 /// ```
 class RecordInputModal extends StatefulWidget {
-  const RecordInputModal({super.key});
+  final SettingsService settings;
+
+  const RecordInputModal({super.key, required this.settings});
 
   static Future<void> show(BuildContext context) {
+    final settings = context.read<SettingsService>();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       useRootNavigator: true,
-      builder: (context) => const RecordInputModal(),
+      builder: (context) => RecordInputModal(settings: settings),
     );
   }
 
@@ -99,12 +104,16 @@ class _RecordInputModalState extends State<RecordInputModal> {
     // Capture navigator before async gap
     final nav = Navigator.of(context);
     final feedProvider = context.read<FeedProvider>();
+    final isMmol = widget.settings.unit == AppConstants.unitMmolL;
 
     if (_selectedType == RecordType.glucose) {
-      final glucoseValue = double.tryParse(_glucoseController.text);
-      if (glucoseValue == null || glucoseValue <= 0) {
+      final inputValue = double.tryParse(_glucoseController.text);
+      if (inputValue == null || inputValue <= 0) {
         return;
       }
+
+      // mmol/L인 경우 mg/dL로 변환하여 저장
+      final glucoseValue = isMmol ? inputValue * AppConstants.mgDlToMmolL : inputValue;
 
       setState(() => _isSaving = true);
 
@@ -305,6 +314,9 @@ class _RecordInputModalState extends State<RecordInputModal> {
   }
 
   Widget _buildGlucoseForm(BuildContext context, AppLocalizations l10n) {
+    final isMmol = widget.settings.unit == AppConstants.unitMmolL;
+    final unitLabel = isMmol ? l10n.mmoll : l10n.mgdl;
+
     return Column(
       key: const ValueKey('glucose_form'),
       children: [
@@ -340,7 +352,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
                             Padding(
                               padding: const EdgeInsets.only(right: 16),
                               child: Text(
-                                '0',
+                                isMmol ? '0.0' : '0',
                                 style: TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
@@ -352,11 +364,15 @@ class _RecordInputModalState extends State<RecordInputModal> {
                           TextField(
                             controller: _glucoseController,
                             focusNode: _glucoseFocusNode,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(3),
-                            ],
+                            keyboardType: TextInputType.numberWithOptions(decimal: isMmol),
+                            inputFormatters: isMmol
+                                ? [
+                                    FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}\.?\d{0,1}$')),
+                                  ]
+                                : [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(3),
+                                  ],
                             textAlign: TextAlign.right,
                             style: const TextStyle(
                               fontSize: 32,
@@ -389,7 +405,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
                     Padding(
                       padding: const EdgeInsets.only(right: 12),
                       child: Text(
-                        l10n.mgdl,
+                        unitLabel,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,

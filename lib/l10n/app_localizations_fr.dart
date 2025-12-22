@@ -524,7 +524,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Initialisation de la base de données locale...';
 
   @override
-  String get initDone => 'Terminé.';
+  String get initDone => 'Terminé';
 
   @override
   String syncCompleteMessage(int count) {

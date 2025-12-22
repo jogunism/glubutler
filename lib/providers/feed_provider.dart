@@ -318,14 +318,17 @@ class FeedProvider extends ChangeNotifier {
   Future<bool?> refreshPermissionStatus() async {
     await _updatePermissionStatus();
 
-    // Check if write permission (blood glucose) is still granted
-    final hasWritePermission =
-        _categoryPermissions[HealthDataCategory.bloodGlucose] == true;
+    // Check if ANY permission (write or read) is granted
+    final hasAnyPermission = _categoryPermissions.values.any((status) => status == true);
+
+    debugPrint('[FeedProvider] Category permissions: $_categoryPermissions');
+    debugPrint('[FeedProvider] Has any permission: $hasAnyPermission');
+    debugPrint('[FeedProvider] Is health connected: $_isHealthConnected');
 
     bool? statusChanged;
 
-    // If previously connected but now no write permission, mark as disconnected
-    if (_isHealthConnected && !hasWritePermission) {
+    // If previously connected but now no permissions, mark as disconnected
+    if (_isHealthConnected && !hasAnyPermission) {
       _isHealthConnected = false;
       await _databaseService.saveHealthConnection(
         HealthConnectionInfo(
@@ -342,8 +345,8 @@ class FeedProvider extends ChangeNotifier {
       // Refresh data to remove HealthKit items
       await refreshData();
     }
-    // If previously disconnected but now has write permission, mark as connected
-    else if (!_isHealthConnected && hasWritePermission) {
+    // If previously disconnected but now has any permission, mark as connected
+    else if (!_isHealthConnected && hasAnyPermission) {
       _isHealthConnected = true;
       await _databaseService.saveHealthConnection(
         HealthConnectionInfo(

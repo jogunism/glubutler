@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/core/constants/app_constants.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// 혈당 입력 모달 팝업
 ///
@@ -18,15 +21,18 @@ import 'package:glu_butler/core/theme/app_decorations.dart';
 /// GlucoseInputModal.show(context);
 /// ```
 class GlucoseInputModal extends StatefulWidget {
-  const GlucoseInputModal({super.key});
+  final SettingsService settings;
+
+  const GlucoseInputModal({super.key, required this.settings});
 
   static Future<void> show(BuildContext context) {
+    final settings = context.read<SettingsService>();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       useRootNavigator: true,
-      builder: (context) => const GlucoseInputModal(),
+      builder: (context) => GlucoseInputModal(settings: settings),
     );
   }
 
@@ -61,6 +67,8 @@ class _GlucoseInputModalState extends State<GlucoseInputModal> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isMmol = widget.settings.unit == AppConstants.unitMmolL;
+    final unitLabel = isMmol ? l10n.mmoll : l10n.mgdl;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
@@ -161,15 +169,15 @@ class _GlucoseInputModalState extends State<GlucoseInputModal> {
                               fontWeight: FontWeight.bold,
                               color: AppTheme.primaryColor,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: '0',
-                              hintStyle: TextStyle(
+                              hintText: isMmol ? '0.0' : '0',
+                              hintStyle: const TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey,
                               ),
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 20,
                               ),
@@ -179,7 +187,7 @@ class _GlucoseInputModalState extends State<GlucoseInputModal> {
                         Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: Text(
-                            l10n.mgdl,
+                            unitLabel,
                             style: context.textStyles.bodyTextSecondary,
                           ),
                         ),

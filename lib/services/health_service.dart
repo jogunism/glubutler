@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:health/health.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
@@ -112,9 +113,13 @@ class HealthService {
       // This is the only reliable way to verify permissions on iOS
       await checkPermissionStatus();
 
-      // Consider authorized only if we have write permission for blood glucose
-      // (our primary data type that we need to write)
-      _isAuthorized = _permissionStatus[HealthDataType.BLOOD_GLUCOSE] == true;
+      // Consider authorized if we have ANY permission (write or read)
+      // This allows users to keep connection even if they disable write permissions
+      // but still have read-only permissions enabled
+      _isAuthorized = _permissionStatus.values.any((status) => status == true);
+
+      debugPrint('[HealthService] requestAuthorization - isAuthorized: $_isAuthorized');
+      debugPrint('[HealthService] requestAuthorization - all permissions: $_permissionStatus');
 
       return _isAuthorized;
     } catch (e) {
@@ -138,10 +143,6 @@ class HealthService {
       final health = Health();
       await health.configure();
 
-      // For WRITE types, test by attempting to write
-      // Note: Insulin requires HKMetadataKeyInsulinDeliveryReason metadata,
-      // so we only test blood glucose and assume insulin has same permission
-
       // Test BLOOD_GLUCOSE write permission
       final glucosePermission = await _testWritePermission(
         health,
@@ -150,11 +151,18 @@ class HealthService {
         HealthDataUnit.MILLIGRAM_PER_DECILITER,
       );
       _permissionStatus[HealthDataType.BLOOD_GLUCOSE] = glucosePermission;
-      // Assume insulin has same permission as glucose (both are requested together)
-      _permissionStatus[HealthDataType.INSULIN_DELIVERY] = glucosePermission;
 
-      // For READ-only types, if blood glucose write permission is granted,
-      // assume READ permissions are also granted (we can't verify READ on iOS).
+      // Test INSULIN_DELIVERY write permission separately
+      // iOS requires HKMetadataKeyInsulinDeliveryReason metadata for insulin writes
+      final insulinPermission = await _testInsulinWritePermission(health);
+      _permissionStatus[HealthDataType.INSULIN_DELIVERY] = insulinPermission;
+
+      debugPrint('[HealthService] Permission status - Glucose: $glucosePermission, Insulin: $insulinPermission');
+
+      // For READ-only types, we can't verify permissions on iOS.
+      // iOS doesn't expose read permission status - it always returns null.
+      // So we assume READ permissions are granted if authorization was requested.
+      // This allows users to keep read-only data sync even if write permissions are disabled.
       final readOnlyTypes = [
         HealthDataType.WORKOUT,
         HealthDataType.STEPS,
@@ -166,12 +174,12 @@ class HealthService {
       ];
 
       for (final type in readOnlyTypes) {
-        // Assume granted if blood glucose write permission was granted
-        _permissionStatus[type] = glucosePermission;
+        // Assume granted if authorization was requested (regardless of write permission status)
+        _permissionStatus[type] = _hasRequestedPermissions;
       }
 
-      // Update _isAuthorized based on blood glucose permission
-      _isAuthorized = glucosePermission;
+      debugPrint('[HealthService] Read-only permissions assumed granted: $_hasRequestedPermissions');
+      debugPrint('[HealthService] All permissions: $_permissionStatus');
     } catch (e) {
       debugPrint('[HealthService] Error checking permission status: $e');
     }
@@ -208,6 +216,27 @@ class HealthService {
       return success;
     } catch (e) {
       debugPrint('[HealthService] Write permission test failed for $type: $e');
+      return false;
+    }
+  }
+
+  /// Test insulin write permission using native iOS HealthKit
+  /// iOS requires HKMetadataKeyInsulinDeliveryReason metadata for insulin writes.
+  /// We use a native Swift method channel to test this permission properly.
+  Future<bool> _testInsulinWritePermission(Health health) async {
+    if (!Platform.isIOS) {
+      // On Android, assume same as glucose permission
+      return _permissionStatus[HealthDataType.BLOOD_GLUCOSE] ?? false;
+    }
+
+    try {
+      const platform = MethodChannel('health_permission');
+      final bool hasPermission = await platform.invokeMethod('testInsulinWritePermission');
+      debugPrint('[HealthService] Native insulin permission test result: $hasPermission');
+      return hasPermission;
+    } catch (e) {
+      debugPrint('[HealthService] Native insulin permission test failed: $e');
+      // Return false on error - don't fallback to glucose permission
       return false;
     }
   }

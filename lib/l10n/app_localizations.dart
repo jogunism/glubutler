@@ -1115,7 +1115,7 @@ abstract class AppLocalizations {
   /// No description provided for @initDone.
   ///
   /// In en, this message translates to:
-  /// **'Done.'**
+  /// **'Done'**
   String get initDone;
 
   /// No description provided for @syncCompleteMessage.

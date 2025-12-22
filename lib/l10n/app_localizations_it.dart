@@ -520,7 +520,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get initLocalDatabase => 'Inizializzazione database locale...';
 
   @override
-  String get initDone => 'Fatto.';
+  String get initDone => 'Fatto';
 
   @override
   String syncCompleteMessage(int count) {

@@ -513,7 +513,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get initLocalDatabase => '로컬 데이터베이스 초기화 중...';
 
   @override
-  String get initDone => '완료.';
+  String get initDone => '완료';
 
   @override
   String syncCompleteMessage(int count) {
