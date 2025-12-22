@@ -539,4 +539,14 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncFailedMessage => '동기화에 실패했습니다. 다음 실행시 재시도합니다.';
+
+  @override
+  String get deleteGlucoseConfirmation =>
+      '이 혈당 기록을 삭제하시겠습니까?\n로컬 데이터와 Apple 건강 데이터가 모두 삭제됩니다.';
+
+  @override
+  String get glucoseDeleted => '혈당 기록이 삭제되었습니다';
+
+  @override
+  String get deleteFailed => '삭제에 실패했습니다';
 }

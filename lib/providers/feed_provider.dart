@@ -555,4 +555,29 @@ class FeedProvider extends ChangeNotifier {
     return grouped;
   }
 
+  /// Delete a glucose record from both local DB and Apple Health
+  Future<bool> deleteGlucoseRecord(String id, DateTime timestamp) async {
+    try {
+      // Delete from local database
+      final dbResult = await _databaseService.deleteGlucose(id);
+      debugPrint('[FeedProvider] Deleted glucose from DB: $id, result: $dbResult');
+
+      // Delete from Apple Health if connected
+      if (_healthService.hasRequestedPermissions) {
+        final healthResult = await _healthService.deleteBloodGlucose(timestamp);
+        debugPrint('[FeedProvider] Deleted glucose from Apple Health: $healthResult');
+      }
+
+      // Refresh feed data
+      await refreshData();
+
+      return true;
+    } catch (e) {
+      debugPrint('[FeedProvider] Error deleting glucose record: $e');
+      _error = 'Failed to delete glucose record';
+      notifyListeners();
+      return false;
+    }
+  }
+
 }

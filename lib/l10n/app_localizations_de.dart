@@ -546,4 +546,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
+
+  @override
+  String get deleteGlucoseConfirmation =>
+      'Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.';
+
+  @override
+  String get glucoseDeleted => 'Glucose record deleted';
+
+  @override
+  String get deleteFailed => 'Delete failed';
 }

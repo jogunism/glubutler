@@ -1159,6 +1159,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync failed. Will retry on next app launch.'**
   String get syncFailedMessage;
+
+  /// No description provided for @deleteGlucoseConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.'**
+  String get deleteGlucoseConfirmation;
+
+  /// No description provided for @glucoseDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Glucose record deleted'**
+  String get glucoseDeleted;
+
+  /// No description provided for @deleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete failed'**
+  String get deleteFailed;
 }
 
 class _AppLocalizationsDelegate

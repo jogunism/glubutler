@@ -608,6 +608,28 @@ class HealthService {
     return false;
   }
 
+  Future<bool> deleteBloodGlucose(DateTime timestamp) async {
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] deleteBloodGlucose: Platform not supported (iOS only)');
+      return false;
+    }
+
+    try {
+      final Map<String, dynamic> arguments = {
+        'timestamp': timestamp.millisecondsSinceEpoch,
+      };
+
+      debugPrint('[HealthService] Deleting glucose at timestamp: ${timestamp.toIso8601String()}');
+
+      final success = await _healthKitChannel.invokeMethod('deleteBloodGlucose', arguments);
+      debugPrint('[HealthService] Native iOS glucose delete result: $success');
+      return success as bool;
+    } catch (e) {
+      debugPrint('[HealthService] Error deleting glucose from native iOS: $e');
+      return false;
+    }
+  }
+
   Future<bool> writeInsulinRecord(InsulinRecord record) async {
     if (!Platform.isIOS) {
       debugPrint('[HealthService] writeInsulinRecord: Platform not supported (iOS only)');
