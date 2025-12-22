@@ -14,6 +14,8 @@ import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cgm_grouping_service.dart';
+import 'package:glu_butler/repositories/glucose_repository.dart';
+import 'package:glu_butler/repositories/insulin_repository.dart';
 
 /// Enum for health data categories shown in UI
 enum HealthDataCategory {
@@ -28,9 +30,28 @@ enum HealthDataCategory {
   mindfulness,
 }
 
+/// Result of migration operation
+class MigrationResult {
+  final int totalAttempted;
+  final int successCount;
+  final int failedCount;
+
+  MigrationResult({
+    required this.totalAttempted,
+    required this.successCount,
+    required this.failedCount,
+  });
+
+  bool get hasFailures => failedCount > 0;
+  bool get isFullSuccess => failedCount == 0 && successCount > 0;
+  bool get hasNoRecords => totalAttempted == 0;
+}
+
 class FeedProvider extends ChangeNotifier {
   final HealthService _healthService = HealthService();
   final DatabaseService _databaseService = DatabaseService();
+  final GlucoseRepository _glucoseRepository = GlucoseRepository();
+  final InsulinRepository _insulinRepository = InsulinRepository();
   SettingsService? _settingsService;
 
   List<FeedItem> _items = [];
@@ -44,6 +65,9 @@ class FeedProvider extends ChangeNotifier {
 
   bool _isHealthConnected = false;
   bool get isHealthConnected => _isHealthConnected;
+
+  /// Whether we have requested health permissions (can read data even if write is denied)
+  bool get hasHealthReadAccess => _healthService.hasRequestedPermissions;
 
   String? _error;
   String? get error => _error;
@@ -70,33 +94,46 @@ class FeedProvider extends ChangeNotifier {
     final healthConnection = await _databaseService.getHealthConnection();
     _isHealthConnected = healthConnection.isConnected;
 
-    // Verify actual permissions with HealthKit if DB says connected
-    if (_isHealthConnected) {
+    // If user has ever connected to Health (connectedAt exists or currently connected),
+    // mark as having requested permissions. This allows reading data even if write permission was later revoked.
+    final hasEverConnected = healthConnection.connectedAt != null || healthConnection.isConnected;
+    if (hasEverConnected) {
+      _healthService.setHasRequestedPermissions(true);
+    }
+
+    // Verify actual permissions with HealthKit if we have ever connected
+    if (hasEverConnected) {
       // Check actual write permission by testing
       await _healthService.checkPermissionStatus();
       final hasWritePermission =
           _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
 
       if (!hasWritePermission) {
-        // Write permission revoked, mark as disconnected
+        // Write permission revoked, mark as disconnected (but keep connectedAt for read access)
         _isHealthConnected = false;
-        await _databaseService.saveHealthConnection(
-          healthConnection.copyWith(
-            isConnected: false,
-            updatedAt: DateTime.now(),
-          ),
-        );
+        if (healthConnection.isConnected) {
+          await _databaseService.saveHealthConnection(
+            healthConnection.copyWith(
+              isConnected: false,
+              updatedAt: DateTime.now(),
+            ),
+          );
+        }
         await _databaseService.clearHealthPermissions();
-        debugPrint('[FeedProvider] Initialize: disconnected - write permission revoked');
       } else {
-        // Still connected, sync permissions from HealthService
+        // Has write permission
+        _isHealthConnected = true;
         await _syncPermissionsFromHealthService();
-        debugPrint('[FeedProvider] Initialize: still connected with write permission');
       }
     }
 
     // Load initial data
     await refreshData();
+
+    // Retry pending migration if connected (fire-and-forget)
+    if (_isHealthConnected) {
+      _retryPendingMigration();
+    }
 
     notifyListeners();
   }
@@ -124,6 +161,10 @@ class FeedProvider extends ChangeNotifier {
 
         // Update local permission map from HealthService
         await _syncPermissionsFromHealthService();
+
+        // Migrate local records to HealthKit (fire-and-forget)
+        _migrateLocalToHealthInBackground();
+
         await refreshData();
       }
       return _isHealthConnected;
@@ -159,8 +200,6 @@ class FeedProvider extends ChangeNotifier {
     _categoryPermissions[HealthDataCategory.mindfulness] =
         _healthService.getPermissionStatus(HealthDataType.MINDFULNESS);
 
-    debugPrint('[FeedProvider] Synced permissions from HealthService: $_categoryPermissions');
-
     // Save permissions to DB
     await _savePermissionsToDb();
   }
@@ -189,10 +228,54 @@ class FeedProvider extends ChangeNotifier {
     _categoryPermissions[HealthDataCategory.mindfulness] =
         _healthService.getPermissionStatus(HealthDataType.MINDFULNESS);
 
-    debugPrint('[FeedProvider] Category permissions: $_categoryPermissions');
-
     // Save permissions to DB
     await _savePermissionsToDb();
+  }
+
+  // Callback for migration completion (set by UI to show toast)
+  void Function(MigrationResult result)? onMigrationComplete;
+
+  /// Migrate local glucose/insulin records to HealthKit
+  /// Called when HealthKit write permission is granted
+  /// Runs in background (fire-and-forget) and calls onMigrationComplete when done
+  void _migrateLocalToHealthInBackground() {
+    // Fire-and-forget: don't await
+    _performMigration().then((result) {
+      if (!result.hasNoRecords) {
+        onMigrationComplete?.call(result);
+      }
+      // Refresh data after migration completes
+      refreshData();
+    });
+  }
+
+  /// Perform the actual migration and return result
+  Future<MigrationResult> _performMigration() async {
+    final (glucoseAttempted, glucoseSuccess) = await _glucoseRepository.migrateLocalToHealth();
+    final (insulinAttempted, insulinSuccess) = await _insulinRepository.migrateLocalToHealth();
+
+    final totalAttempted = glucoseAttempted + insulinAttempted;
+    final totalSuccess = glucoseSuccess + insulinSuccess;
+    final totalFailed = totalAttempted - totalSuccess;
+
+    return MigrationResult(
+      totalAttempted: totalAttempted,
+      successCount: totalSuccess,
+      failedCount: totalFailed,
+    );
+  }
+
+  /// Check for pending local records and retry migration
+  /// Called on app startup when health is connected
+  Future<void> _retryPendingMigration() async {
+    if (!_isHealthConnected) return;
+
+    final glucoseCount = await _glucoseRepository.getLocalRecordCount();
+    final insulinCount = await _insulinRepository.getLocalRecordCount();
+
+    if (glucoseCount == 0 && insulinCount == 0) return;
+
+    _migrateLocalToHealthInBackground();
   }
 
   Future<void> _savePermissionsToDb() async {
@@ -227,7 +310,6 @@ class FeedProvider extends ChangeNotifier {
     }
 
     await _databaseService.saveHealthPermissions(permissionsToSave);
-    debugPrint('[FeedProvider] Saved ${permissionsToSave.length} permissions to DB');
   }
 
   /// Refresh permission status (call when returning from Health app settings)
@@ -256,7 +338,6 @@ class FeedProvider extends ChangeNotifier {
       );
       await _databaseService.clearHealthPermissions();
       statusChanged = false; // Now disconnected
-      debugPrint('[FeedProvider] Health disconnected - write permission revoked');
 
       // Refresh data to remove HealthKit items
       await refreshData();
@@ -275,7 +356,6 @@ class FeedProvider extends ChangeNotifier {
       );
       await _savePermissionsToDb();
       statusChanged = true; // Now connected
-      debugPrint('[FeedProvider] Health connected - write permission granted');
 
       // Refresh data to load HealthKit items
       await refreshData();
@@ -295,25 +375,28 @@ class FeedProvider extends ChangeNotifier {
       final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
       final startDate = now.subtract(Duration(days: syncDays));
 
+      // Use local variables to collect all data first, then update state once at the end
       final List<FeedItem> allItems = [];
+      final Map<DateTime, DailyActivityData> newActivityByDate = {};
+      int? newTodaySteps;
+      double? newTodayWaterMl;
 
-      // Clear activity data and CGM groups first
-      _activityByDate.clear();
-      _cgmGroups = [];
-      _todaySteps = null;
-      _todayWaterMl = null;
+      // Fetch glucose records via repository (handles HealthKit + Local merge)
+      final allGlucoseRecords = await _glucoseRepository.fetch(
+        startDate: startDate,
+        endDate: now,
+      );
 
-      // Collect all glucose records for CGM grouping
-      final List<GlucoseRecord> allGlucoseRecords = [];
+      // Fetch insulin records via repository (handles HealthKit + Local merge)
+      final insulinRecords = await _insulinRepository.fetch(
+        startDate: startDate,
+        endDate: now,
+      );
+      allItems.addAll(insulinRecords.map(FeedItem.fromInsulin));
 
-      // Fetch from HealthKit if connected
-      if (_isHealthConnected) {
-        final glucoseRecords = await _healthService.fetchGlucoseData(
-          startDate: startDate,
-          endDate: now,
-        );
-        allGlucoseRecords.addAll(glucoseRecords);
-
+      // Fetch read-only health data from HealthKit if permissions were requested
+      // (This works even if write permission was denied, as long as read permission exists)
+      if (_healthService.hasRequestedPermissions) {
         final exerciseRecords = await _healthService.fetchWorkoutData(
           startDate: startDate,
           endDate: now,
@@ -332,60 +415,55 @@ class FeedProvider extends ChangeNotifier {
         );
         allItems.addAll(waterRecords.map(FeedItem.fromWater));
 
-        final insulinRecords = await _healthService.fetchInsulinData(
+        final mindfulnessRecords = await _healthService.fetchMindfulnessData(
           startDate: startDate,
           endDate: now,
         );
-        allItems.addAll(insulinRecords.map(FeedItem.fromInsulin));
+        allItems.addAll(mindfulnessRecords.map(FeedItem.fromMindfulness));
 
-        _todaySteps = await _healthService.fetchTodaySteps();
-        _todayWaterMl = await _healthService.fetchTodayWaterIntake();
+        newTodaySteps = await _healthService.fetchTodaySteps();
+        newTodayWaterMl = await _healthService.fetchTodayWaterIntake();
 
         // Fetch activity (steps + distance) for all dates in the sync period
         final activityData = await _healthService.fetchDailyActivityByDate(
           startDate: startDate,
           endDate: now,
         );
-        _activityByDate.addAll(activityData);
+        newActivityByDate.addAll(activityData);
       }
 
-      // Add local records from database
-      final localGlucose = await _databaseService.getGlucoseRecords(
-        startDate: startDate,
-        endDate: now,
-      );
-      allGlucoseRecords.addAll(localGlucose);
-
+      // Add local meal records from database
       final localMeals = await _databaseService.getMealRecords(
         startDate: startDate,
         endDate: now,
       );
       allItems.addAll(localMeals.map(FeedItem.fromMeal));
 
+      // Add local exercise records from database
       final localExercise = await _databaseService.getExerciseRecords(
         startDate: startDate,
         endDate: now,
       );
       allItems.addAll(localExercise.map(FeedItem.fromExercise));
 
-      final localInsulin = await _databaseService.getInsulinRecords(
-        startDate: startDate,
-        endDate: now,
-      );
-      allItems.addAll(localInsulin.map(FeedItem.fromInsulin));
-
       // Group glucose records using CGM grouping service
       final rangeSettings = _settingsService?.glucoseRange ?? const GlucoseRangeSettings();
       final (cgmGroups, individualGlucose) =
           CgmGroupingService.groupGlucoseRecords(allGlucoseRecords, rangeSettings: rangeSettings);
-      _cgmGroups = cgmGroups;
 
       // Add individual glucose records (non-CGM) to feed items
       allItems.addAll(individualGlucose.map(FeedItem.fromGlucose));
 
       // Sort by timestamp (newest first)
       allItems.sort();
+
+      // Update all state at once to prevent partial UI updates
       _items = allItems;
+      _cgmGroups = cgmGroups;
+      _activityByDate.clear();
+      _activityByDate.addAll(newActivityByDate);
+      _todaySteps = newTodaySteps;
+      _todayWaterMl = newTodayWaterMl;
     } catch (e) {
       _error = e.toString();
       debugPrint('[FeedProvider] Error refreshing data: $e');
@@ -395,17 +473,13 @@ class FeedProvider extends ChangeNotifier {
     }
   }
 
-  // Add local glucose record
-  Future<void> addGlucoseRecord(GlucoseRecord record) async {
-    await _databaseService.insertGlucose(record);
-    _items.add(FeedItem.fromGlucose(record));
-    _items.sort();
-    notifyListeners();
-
-    // Optionally write to HealthKit
-    if (_isHealthConnected) {
-      _healthService.writeGlucoseRecord(record);
+  // Add glucose record (via repository - handles Health/Local routing)
+  Future<bool> addGlucoseRecord(GlucoseRecord record) async {
+    final success = await _glucoseRepository.save(record);
+    if (success) {
+      await refreshData();
     }
+    return success;
   }
 
   // Add local exercise record
@@ -424,17 +498,13 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Add local insulin record
-  Future<void> addInsulinRecord(InsulinRecord record) async {
-    await _databaseService.insertInsulin(record);
-    _items.add(FeedItem.fromInsulin(record));
-    _items.sort();
-    notifyListeners();
-
-    // Write to HealthKit if connected
-    if (_isHealthConnected) {
-      _healthService.writeInsulinRecord(record);
+  // Add insulin record (via repository - handles Health/Local routing)
+  Future<bool> addInsulinRecord(InsulinRecord record) async {
+    final success = await _insulinRepository.save(record);
+    if (success) {
+      await refreshData();
     }
+    return success;
   }
 
   // Get items for a specific date
@@ -482,4 +552,5 @@ class FeedProvider extends ChangeNotifier {
     }
     return grouped;
   }
+
 }

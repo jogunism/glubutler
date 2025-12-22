@@ -96,7 +96,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get afterMeal => '餐后';
 
   @override
-  String get fasting => '空腹';
+  String get unspecified => '未指定';
 
   @override
   String get dailyReport => '每日报告';
@@ -418,11 +418,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get successfullyConnected => '同步信息已更新';
 
   @override
-  String get failedToConnect => '连接失败，请检查权限设置。';
+  String get failedToConnect => '连接失败，请在 Apple 健康 App 中检查权限设置。';
 
   @override
   String get privacyNote =>
-      '您的健康数据仅保存在设备上，未经许可不会共享。您可以在健康 App > 共享 > App > Glu Butler 中管理权限。';
+      '您的健康数据仅保存在您的设备上，不会向外部共享任何数据。您可以在健康 App > 共享 > App > Glu Butler 中管理权限。';
 
   @override
   String get readWrite => '读写';
@@ -514,4 +514,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get initDone => '完成';
+
+  @override
+  String syncCompleteMessage(int count) {
+    return '$count records synced to Apple Health';
+  }
+
+  @override
+  String syncPartialMessage(int success, int total) {
+    return '$success of $total records synced. Rest will retry later.';
+  }
+
+  @override
+  String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 }

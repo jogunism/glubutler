@@ -45,8 +45,6 @@ class InitializationService {
   /// 순차적으로 초기화 작업을 실행하며, 각 단계 완료 시 로그를 출력합니다.
   /// 에러 발생 시에도 앱 실행을 계속하도록 각 단계별로 try-catch 처리합니다.
   Future<void> initialize() async {
-    debugPrint('[InitializationService] Starting initialization...');
-
     // 1. 설정 로드 (이미 main.dart에서 수행됨)
     onStepChanged?.call(InitializationStep.settings);
     await _loadSettings();
@@ -65,12 +63,10 @@ class InitializationService {
 
     // 5. 완료
     onStepChanged?.call(InitializationStep.done);
-    debugPrint('[InitializationService] Initialization complete');
   }
 
   /// 설정 로드
   Future<void> _loadSettings() async {
-    debugPrint('[InitializationService] Loading settings...');
     // SettingsService.init()은 이미 main.dart에서 호출됨
     // 추가 설정 로드가 필요한 경우 여기에 구현
     await Future.delayed(const Duration(milliseconds: 600));
@@ -81,8 +77,6 @@ class InitializationService {
   /// HealthKit (iOS) 또는 Google Fit (Android)에서 데이터를 가져옵니다.
   /// 건강앱 연결이 활성화된 경우에만 동기화를 수행합니다.
   Future<void> _syncHealthData() async {
-    debugPrint('[InitializationService] Checking health data sync...');
-
     // 최소 표시 시간 보장
     const minDisplayTime = Duration(milliseconds: 400);
     final startTime = DateTime.now();
@@ -91,12 +85,9 @@ class InitializationService {
       try {
         // TODO: 실제 HealthKit/Google Fit 동기화 구현
         await Future.delayed(const Duration(milliseconds: 800));
-        debugPrint('[InitializationService] Health data synced');
       } catch (e) {
         debugPrint('[InitializationService] Health sync error: $e');
       }
-    } else {
-      debugPrint('[InitializationService] Health not connected, skipping sync');
     }
 
     // 최소 표시 시간까지 대기
@@ -108,7 +99,6 @@ class InitializationService {
 
   /// iCloud 데이터 동기화 (향후 구현)
   Future<void> _synciCloudData() async {
-    debugPrint('[InitializationService] Checking iCloud sync...');
     // TODO: iCloud 동기화 구현
     // 최소 표시 시간
     await Future.delayed(const Duration(milliseconds: 400));
@@ -116,7 +106,6 @@ class InitializationService {
 
   /// 로컬 데이터베이스 초기화 (향후 구현)
   Future<void> _initializeLocalDatabase() async {
-    debugPrint('[InitializationService] Initializing local database...');
     // TODO: Hive 데이터베이스 초기화
     // 최소 표시 시간
     await Future.delayed(const Duration(milliseconds: 400));

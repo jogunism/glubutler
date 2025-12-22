@@ -96,7 +96,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get afterMeal => '식후';
 
   @override
-  String get fasting => '공복';
+  String get unspecified => '미지정';
 
   @override
   String get dailyReport => '일일 리포트';
@@ -418,11 +418,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get successfullyConnected => '연동 정보가 업데이트 되었습니다';
 
   @override
-  String get failedToConnect => '연결에 실패했습니다. 권한을 확인해주세요.';
+  String get failedToConnect => '연결에 실패했습니다. 애플 건강앱에서 권한을 확인해주세요.';
 
   @override
   String get privacyNote =>
-      '건강 데이터는 기기에만 저장되며 허락 없이 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.';
+      '건강 데이터는 사용자의 기기에만 저장되며, 그 어떤 데이터도 외부에 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.';
 
   @override
   String get readWrite => '읽기 및 쓰기';
@@ -514,4 +514,17 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get initDone => '완료.';
+
+  @override
+  String syncCompleteMessage(int count) {
+    return '$count개 기록이 Apple 건강에 동기화되었습니다';
+  }
+
+  @override
+  String syncPartialMessage(int success, int total) {
+    return '$total개 중 $success개 동기화 완료. 나머지는 다음에 재시도합니다.';
+  }
+
+  @override
+  String get syncFailedMessage => '동기화에 실패했습니다. 다음 실행시 재시도합니다.';
 }

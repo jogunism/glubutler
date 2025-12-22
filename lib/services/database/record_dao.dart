@@ -53,6 +53,18 @@ class RecordDao {
     );
   }
 
+  /// Batch delete glucose records by IDs (single transaction)
+  Future<int> deleteGlucoseByIds(List<String> ids) async {
+    if (ids.isEmpty) return 0;
+
+    final placeholders = List.filled(ids.length, '?').join(',');
+    return await db.delete(
+      DatabaseSchema.tableGlucose,
+      where: 'id IN ($placeholders)',
+      whereArgs: ids,
+    );
+  }
+
   Map<String, dynamic> _glucoseToMap(GlucoseRecord record) {
     return {
       'id': record.id,
@@ -246,6 +258,18 @@ class RecordDao {
       DatabaseSchema.tableInsulin,
       where: 'id = ?',
       whereArgs: [id],
+    );
+  }
+
+  /// Batch delete insulin records by IDs (single transaction)
+  Future<int> deleteInsulinByIds(List<String> ids) async {
+    if (ids.isEmpty) return 0;
+
+    final placeholders = List.filled(ids.length, '?').join(',');
+    return await db.delete(
+      DatabaseSchema.tableInsulin,
+      where: 'id IN ($placeholders)',
+      whereArgs: ids,
     );
   }
 

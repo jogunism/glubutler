@@ -52,8 +52,6 @@ class DatabaseService {
     _healthDao = HealthDao(db);
     _recordDao = RecordDao(db);
     _isInitialized = true;
-
-    debugPrint('[DatabaseService] Initialized successfully');
   }
 
   Future<Database> _initDatabase() async {
@@ -61,8 +59,6 @@ class DatabaseService {
 
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _databaseName);
-
-    debugPrint('[DatabaseService] Database path: $path');
 
     _database = await openDatabase(
       path,
@@ -107,6 +103,7 @@ class DatabaseService {
   Future<List<GlucoseRecord>> getGlucoseRecords({DateTime? startDate, DateTime? endDate}) =>
       recordDao.getGlucoseRecords(startDate: startDate, endDate: endDate);
   Future<int> deleteGlucose(String id) => recordDao.deleteGlucose(id);
+  Future<int> deleteGlucoseByIds(List<String> ids) => recordDao.deleteGlucoseByIds(ids);
 
   Future<int> insertMeal(MealRecord record) => recordDao.insertMeal(record);
   Future<List<MealRecord>> getMealRecords({DateTime? startDate, DateTime? endDate}) =>
@@ -122,6 +119,7 @@ class DatabaseService {
   Future<List<InsulinRecord>> getInsulinRecords({DateTime? startDate, DateTime? endDate}) =>
       recordDao.getInsulinRecords(startDate: startDate, endDate: endDate);
   Future<int> deleteInsulin(String id) => recordDao.deleteInsulin(id);
+  Future<int> deleteInsulinByIds(List<String> ids) => recordDao.deleteInsulinByIds(ids);
 
   // ============ Utility Methods ============
 

@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/models/insulin_record.dart';
 
 /// 이벤트 유형
 enum RecordType { glucose, insulin }
@@ -44,7 +48,8 @@ class _RecordInputModalState extends State<RecordInputModal> {
   final _glucoseController = TextEditingController();
   final _glucoseFocusNode = FocusNode();
   bool _glucoseHasFocus = false;
-  String _selectedTiming = 'fasting'; // fasting, beforeMeal, afterMeal
+  String _selectedTiming = 'unspecified'; // unspecified, beforeMeal, afterMeal
+  bool _isSaving = false;
   DateTime _selectedTime = DateTime.now();
 
   // 인슐린 관련 상태
@@ -88,28 +93,75 @@ class _RecordInputModalState extends State<RecordInputModal> {
     super.dispose();
   }
 
-  void _save() {
+  Future<void> _save() async {
+    if (_isSaving) return;
+
+    // Capture navigator before async gap
+    final nav = Navigator.of(context);
+    final feedProvider = context.read<FeedProvider>();
+
     if (_selectedType == RecordType.glucose) {
       final glucoseValue = double.tryParse(_glucoseController.text);
       if (glucoseValue == null || glucoseValue <= 0) {
-        // TODO: Show validation error
         return;
       }
-      // TODO: Save glucose to service/database
-      debugPrint(
-          'Saving glucose: $glucoseValue mg/dL, timing: $_selectedTiming');
+
+      setState(() => _isSaving = true);
+
+      final record = GlucoseRecord(
+        id: 'manual_${_selectedTime.millisecondsSinceEpoch}',
+        value: glucoseValue,
+        unit: 'mg/dL',
+        timestamp: _selectedTime,
+        isFromHealthKit: false,
+        mealContext: _selectedTiming == 'unspecified' ? null : _selectedTiming,
+      );
+
+      // Save via FeedProvider (handles Health/Local routing)
+      await feedProvider.addGlucoseRecord(record);
+
+      if (mounted) {
+        nav.pop();
+      }
     } else {
       final doseValue = double.tryParse(_insulinDoseController.text);
       if (doseValue == null || doseValue <= 0) {
-        // TODO: Show validation error
         return;
       }
-      // TODO: Save insulin to service/database
-      debugPrint(
-          'Saving insulin: $doseValue units, type: $_selectedInsulinType, site: $_selectedInjectionSite');
-    }
 
-    Navigator.of(context).pop();
+      setState(() => _isSaving = true);
+
+      final record = InsulinRecord(
+        id: 'manual_${_selectedInsulinTime.millisecondsSinceEpoch}',
+        timestamp: _selectedInsulinTime,
+        units: doseValue,
+        insulinType: _mapInsulinType(_selectedInsulinType),
+        injectionSite: _selectedInjectionSite,
+        isFromHealthKit: false,
+      );
+
+      // Save via FeedProvider (handles Health/Local routing)
+      await feedProvider.addInsulinRecord(record);
+
+      if (mounted) {
+        nav.pop();
+      }
+    }
+  }
+
+  InsulinType _mapInsulinType(String type) {
+    switch (type) {
+      case 'rapidActing':
+        return InsulinType.rapidActing;
+      case 'shortActing':
+        return InsulinType.shortActing;
+      case 'intermediateActing':
+        return InsulinType.intermediate;
+      case 'longActing':
+        return InsulinType.longActing;
+      default:
+        return InsulinType.rapidActing;
+    }
   }
 
   @override
@@ -369,8 +421,8 @@ class _RecordInputModalState extends State<RecordInputModal> {
                 children: [
                   _buildTimingChip(
                     context,
-                    label: l10n.fasting,
-                    value: 'fasting',
+                    label: l10n.unspecified,
+                    value: 'unspecified',
                   ),
                   const SizedBox(width: 8),
                   _buildTimingChip(

@@ -27,6 +27,54 @@ class _FeedScreenState extends State<FeedScreen> {
   // main.dart에서 FeedProvider.initialize()가 이미 데이터를 로드하므로
   // initState에서 refreshData() 호출 불필요
 
+  @override
+  void initState() {
+    super.initState();
+    // Set up migration completion callback for toast messages
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<FeedProvider>();
+      provider.onMigrationComplete = _onMigrationComplete;
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up callback
+    context.read<FeedProvider>().onMigrationComplete = null;
+    super.dispose();
+  }
+
+  void _onMigrationComplete(MigrationResult result) {
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final String message;
+    final Color backgroundColor;
+
+    if (result.isFullSuccess) {
+      // All records synced successfully
+      message = l10n.syncCompleteMessage(result.successCount);
+      backgroundColor = Colors.green;
+    } else if (result.hasFailures && result.successCount > 0) {
+      // Partial success
+      message = l10n.syncPartialMessage(result.successCount, result.totalAttempted);
+      backgroundColor = Colors.orange;
+    } else {
+      // All failed
+      message = l10n.syncFailedMessage;
+      backgroundColor = Colors.red;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   Future<void> _onRefresh() async {
     await context.read<FeedProvider>().refreshData();
   }
@@ -250,8 +298,8 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       );
 
-      // Steps summary for this date
-      if (provider.isHealthConnected && activityForDate != null) {
+      // Steps summary for this date (show if we have read access and data exists)
+      if (provider.hasHealthReadAccess && activityForDate != null) {
         slivers.add(
           SliverToBoxAdapter(
             child: _buildStepsSummary(context, activityForDate, l10n),

@@ -4,6 +4,7 @@ import 'package:glu_butler/models/sleep_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
+import 'package:glu_butler/models/mindfulness_record.dart';
 
 /// Feed에 표시되는 항목 타입
 /// - glucose: 혈당 (Apple Health + 사용자)
@@ -19,6 +20,7 @@ enum FeedItemType {
   sleep,
   water,
   insulin,
+  mindfulness,
 }
 
 class FeedItem implements Comparable<FeedItem> {
@@ -94,6 +96,9 @@ class FeedItem implements Comparable<FeedItem> {
   InsulinRecord? get insulinRecord =>
       type == FeedItemType.insulin ? data as InsulinRecord : null;
 
+  MindfulnessRecord? get mindfulnessRecord =>
+      type == FeedItemType.mindfulness ? data as MindfulnessRecord : null;
+
   String? get sourceName {
     switch (type) {
       case FeedItemType.glucose:
@@ -106,6 +111,8 @@ class FeedItem implements Comparable<FeedItem> {
         return waterRecord?.sourceName;
       case FeedItemType.insulin:
         return insulinRecord?.sourceName;
+      case FeedItemType.mindfulness:
+        return mindfulnessRecord?.sourceName;
       case FeedItemType.meal:
         return null;
     }
@@ -126,6 +133,16 @@ class FeedItem implements Comparable<FeedItem> {
       id: record.id,
       type: FeedItemType.insulin,
       timestamp: record.timestamp,
+      isFromHealthKit: record.isFromHealthKit,
+      data: record,
+    );
+  }
+
+  factory FeedItem.fromMindfulness(MindfulnessRecord record) {
+    return FeedItem(
+      id: record.id,
+      type: FeedItemType.mindfulness,
+      timestamp: record.endTime,
       isFromHealthKit: record.isFromHealthKit,
       data: record,
     );

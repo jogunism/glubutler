@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'database_schema.dart';
@@ -73,7 +72,6 @@ class HealthDao {
       _healthConnectionToMap(info),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    debugPrint('[HealthDao] Health connection saved: ${info.isConnected}');
   }
 
   /// Update only sync period
@@ -100,7 +98,6 @@ class HealthDao {
         where: 'id = 1',
       );
     }
-    debugPrint('[HealthDao] Sync period updated to $days days');
   }
 
   Map<String, dynamic> _healthConnectionToMap(HealthConnectionInfo info) {
@@ -192,12 +189,10 @@ class HealthDao {
     }
 
     await batch.commit(noResult: true);
-    debugPrint('[HealthDao] Saved ${permissions.length} health permissions');
   }
 
   /// Clear all permissions
   Future<void> clearHealthPermissions() async {
     await db.delete(DatabaseSchema.tableHealthPermissions);
-    debugPrint('[HealthDao] Health permissions cleared');
   }
 }

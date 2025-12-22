@@ -33,7 +33,7 @@
 
   "beforeMeal": "식전",
   "afterMeal": "식후",
-  "fasting": "공복",
+  "unspecified": "미지정",
 
   "dailyReport": "일일 리포트",
   "weeklyReport": "주간 리포트",
@@ -151,8 +151,8 @@
   "syncedData": "연동 데이터",
   "connectAppleHealth": "Apple 건강 연결",
   "successfullyConnected": "연동 정보가 업데이트 되었습니다",
-  "failedToConnect": "연결에 실패했습니다. 권한을 확인해주세요.",
-  "privacyNote": "건강 데이터는 기기에만 저장되며 허락 없이 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.",
+  "failedToConnect": "연결에 실패했습니다. 애플 건강앱에서 권한을 확인해주세요.",
+  "privacyNote": "건강 데이터는 사용자의 기기에만 저장되며, 그 어떤 데이터도 외부에 공유되지 않습니다. 건강 앱 > 공유 > 앱 > Glu Butler에서 권한을 관리할 수 있습니다.",
   "readWrite": "읽기 및 쓰기",
   "readOnly": "읽기 전용",
   "workouts": "운동",
@@ -188,5 +188,9 @@
   "initCheckingHealth": "건강 데이터 동기화 확인 중...",
   "initCheckingiCloud": "iCloud 동기화 확인 중...",
   "initLocalDatabase": "로컬 데이터베이스 초기화 중...",
-  "initDone": "완료."
+  "initDone": "완료",
+
+  "syncCompleteMessage": "{count}개 기록이 Apple 건강에 동기화되었습니다",
+  "syncPartialMessage": "{total}개 중 {success}개 동기화 완료. 나머지는 다음에 재시도합니다.",
+  "syncFailedMessage": "동기화에 실패했습니다. 다음 실행시 재시도합니다."
 }

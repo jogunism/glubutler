@@ -33,7 +33,7 @@
 
   "beforeMeal": "食前",
   "afterMeal": "食後",
-  "fasting": "空腹時",
+  "unspecified": "未指定",
 
   "dailyReport": "日次レポート",
   "weeklyReport": "週次レポート",
@@ -125,8 +125,8 @@
   "syncedData": "連携データ",
   "connectAppleHealth": "Apple ヘルスケアに接続",
   "successfullyConnected": "連携情報が更新されました",
-  "failedToConnect": "接続に失敗しました。権限を確認してください。",
-  "privacyNote": "健康データはデバイスにのみ保存され、許可なく共有されることはありません。ヘルスケアアプリ > 共有 > App > Glu Butlerで権限を管理できます。",
+  "failedToConnect": "接続に失敗しました。Apple ヘルスケアアプリで権限を確認してください。",
+  "privacyNote": "健康データはお使いのデバイスにのみ保存され、外部に共有されることは一切ありません。ヘルスケアアプリ > 共有 > App > Glu Butlerで権限を管理できます。",
   "readWrite": "読み取り/書き込み",
   "readOnly": "読み取りのみ",
   "workouts": "ワークアウト",

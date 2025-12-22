@@ -96,7 +96,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get afterMeal => '食後';
 
   @override
-  String get fasting => '空腹時';
+  String get unspecified => '未指定';
 
   @override
   String get dailyReport => '日次レポート';
@@ -419,11 +419,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get successfullyConnected => '連携情報が更新されました';
 
   @override
-  String get failedToConnect => '接続に失敗しました。権限を確認してください。';
+  String get failedToConnect => '接続に失敗しました。Apple ヘルスケアアプリで権限を確認してください。';
 
   @override
   String get privacyNote =>
-      '健康データはデバイスにのみ保存され、許可なく共有されることはありません。ヘルスケアアプリ > 共有 > App > Glu Butlerで権限を管理できます。';
+      '健康データはお使いのデバイスにのみ保存され、外部に共有されることは一切ありません。ヘルスケアアプリ > 共有 > App > Glu Butlerで権限を管理できます。';
 
   @override
   String get readWrite => '読み取り/書き込み';
@@ -515,4 +515,17 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get initDone => '完了';
+
+  @override
+  String syncCompleteMessage(int count) {
+    return '$count records synced to Apple Health';
+  }
+
+  @override
+  String syncPartialMessage(int success, int total) {
+    return '$success of $total records synced. Rest will retry later.';
+  }
+
+  @override
+  String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 }

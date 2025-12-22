@@ -33,7 +33,7 @@
 
   "beforeMeal": "餐前",
   "afterMeal": "餐后",
-  "fasting": "空腹",
+  "unspecified": "未指定",
 
   "dailyReport": "每日报告",
   "weeklyReport": "每周报告",
@@ -125,8 +125,8 @@
   "syncedData": "同步数据",
   "connectAppleHealth": "连接 Apple 健康",
   "successfullyConnected": "同步信息已更新",
-  "failedToConnect": "连接失败，请检查权限设置。",
-  "privacyNote": "您的健康数据仅保存在设备上，未经许可不会共享。您可以在健康 App > 共享 > App > Glu Butler 中管理权限。",
+  "failedToConnect": "连接失败，请在 Apple 健康 App 中检查权限设置。",
+  "privacyNote": "您的健康数据仅保存在您的设备上，不会向外部共享任何数据。您可以在健康 App > 共享 > App > Glu Butler 中管理权限。",
   "readWrite": "读写",
   "readOnly": "只读",
   "workouts": "体能训练",

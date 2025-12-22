@@ -8,6 +8,7 @@ import 'package:glu_butler/models/weight_record.dart';
 import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/menstruation_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
+import 'package:glu_butler/models/mindfulness_record.dart';
 
 class DailyActivityData {
   final int steps;
@@ -26,6 +27,16 @@ class HealthService {
 
   bool _isAuthorized = false;
   bool get isAuthorized => _isAuthorized;
+
+  // Indicates that user has requested health permissions (even if write was denied)
+  // Used to determine if we should attempt to read data
+  bool _hasRequestedPermissions = false;
+  bool get hasRequestedPermissions => _hasRequestedPermissions;
+
+  /// Set permission request status (called from FeedProvider when restoring from DB)
+  void setHasRequestedPermissions(bool value) {
+    _hasRequestedPermissions = value;
+  }
 
   // Track individual permission status
   final Map<HealthDataType, bool> _permissionStatus = {};
@@ -93,6 +104,10 @@ class HealthService {
         permissions: permissions,
       );
 
+      // Mark that permissions have been requested (even if denied)
+      // This allows us to attempt reading data
+      _hasRequestedPermissions = true;
+
       // Check actual permission status by testing write access
       // This is the only reliable way to verify permissions on iOS
       await checkPermissionStatus();
@@ -101,8 +116,6 @@ class HealthService {
       // (our primary data type that we need to write)
       _isAuthorized = _permissionStatus[HealthDataType.BLOOD_GLUCOSE] == true;
 
-      debugPrint('[HealthService] Authorization verified: $_isAuthorized');
-      debugPrint('[HealthService] Blood glucose write permission: ${_permissionStatus[HealthDataType.BLOOD_GLUCOSE]}');
       return _isAuthorized;
     } catch (e) {
       debugPrint('[HealthService] Error requesting authorization: $e');
@@ -139,7 +152,6 @@ class HealthService {
       _permissionStatus[HealthDataType.BLOOD_GLUCOSE] = glucosePermission;
       // Assume insulin has same permission as glucose (both are requested together)
       _permissionStatus[HealthDataType.INSULIN_DELIVERY] = glucosePermission;
-      debugPrint('[HealthService] BLOOD_GLUCOSE write permission: $glucosePermission');
 
       // For READ-only types, if blood glucose write permission is granted,
       // assume READ permissions are also granted (we can't verify READ on iOS).
@@ -160,9 +172,6 @@ class HealthService {
 
       // Update _isAuthorized based on blood glucose permission
       _isAuthorized = glucosePermission;
-
-      debugPrint('[HealthService] Permission status: $_permissionStatus');
-      debugPrint('[HealthService] isAuthorized updated to: $_isAuthorized');
     } catch (e) {
       debugPrint('[HealthService] Error checking permission status: $e');
     }
@@ -238,8 +247,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch glucose data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 
@@ -281,8 +289,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch workout data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 
@@ -328,8 +335,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch sleep data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 
@@ -377,7 +383,7 @@ class HealthService {
   }
 
   Future<int?> fetchTodaySteps() async {
-    if (!_isAuthorized) return null;
+    if (!_hasRequestedPermissions) return null;
 
     try {
       final health = Health();
@@ -401,8 +407,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] fetchDailyActivityByDate: not authorized');
+    if (!_hasRequestedPermissions) {
       return {};
     }
 
@@ -507,8 +512,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch weight data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 
@@ -585,8 +589,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch water data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 
@@ -628,8 +631,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch menstruation data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 
@@ -666,7 +668,7 @@ class HealthService {
   }
 
   Future<double?> fetchTodayWaterIntake() async {
-    if (!_isAuthorized) return null;
+    if (!_hasRequestedPermissions) return null;
 
     try {
       final health = Health();
@@ -694,6 +696,47 @@ class HealthService {
     } catch (e) {
       debugPrint('[HealthService] Error fetching today water: $e');
       return null;
+    }
+  }
+
+  Future<List<MindfulnessRecord>> fetchMindfulnessData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    if (!_hasRequestedPermissions) {
+      return [];
+    }
+
+    try {
+      final health = Health();
+      await health.configure();
+
+      final dataPoints = await health.getHealthDataFromTypes(
+        types: [HealthDataType.MINDFULNESS],
+        startTime: startDate,
+        endTime: endDate,
+      );
+
+      final records = <MindfulnessRecord>[];
+
+      for (final point in dataPoints) {
+        final durationMinutes =
+            point.dateTo.difference(point.dateFrom).inMinutes;
+
+        records.add(MindfulnessRecord(
+          id: 'hk_mindfulness_${point.dateFrom.millisecondsSinceEpoch}',
+          startTime: point.dateFrom,
+          endTime: point.dateTo,
+          durationMinutes: durationMinutes,
+          isFromHealthKit: true,
+          sourceName: point.sourceName,
+        ));
+      }
+
+      return records;
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching mindfulness data: $e');
+      return [];
     }
   }
 
@@ -728,6 +771,8 @@ class HealthService {
         startTime: record.timestamp,
         endTime: record.timestamp,
         unit: HealthDataUnit.MILLIGRAM_PER_DECILITER,
+        recordingMethod: RecordingMethod.manual,
+        clientRecordId: record.id,
       );
 
       debugPrint('[HealthService] Write glucose result: $success');
@@ -751,6 +796,8 @@ class HealthService {
         startTime: record.timestamp,
         endTime: record.timestamp,
         unit: HealthDataUnit.INTERNATIONAL_UNIT,
+        recordingMethod: RecordingMethod.manual,
+        clientRecordId: record.id,
       );
 
       debugPrint('[HealthService] Write insulin result: $success');
@@ -765,8 +812,7 @@ class HealthService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    if (!_isAuthorized) {
-      debugPrint('[HealthService] Not authorized to fetch insulin data');
+    if (!_hasRequestedPermissions) {
       return [];
     }
 

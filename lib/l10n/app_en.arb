@@ -33,7 +33,7 @@
 
   "beforeMeal": "Before Meal",
   "afterMeal": "After Meal",
-  "fasting": "Fasting",
+  "unspecified": "Unspecified",
 
   "dailyReport": "Daily Report",
   "weeklyReport": "Weekly Report",
@@ -151,8 +151,8 @@
   "syncedData": "Synced Data",
   "connectAppleHealth": "Connect Apple Health",
   "successfullyConnected": "Sync info has been updated",
-  "failedToConnect": "Failed to connect. Please check your permissions.",
-  "privacyNote": "Your health data stays on your device and is never shared without your permission. You can manage access in Health app > Sharing > Apps > Glu Butler.",
+  "failedToConnect": "Failed to connect. Please check your permissions in the Apple Health app.",
+  "privacyNote": "Your health data is stored only on your device and is never shared externally. You can manage access in Health app > Sharing > Apps > Glu Butler.",
   "readWrite": "Read & Write",
   "readOnly": "Read only",
   "workouts": "Workouts",
@@ -188,5 +188,20 @@
   "initCheckingHealth": "Checking health data sync...",
   "initCheckingiCloud": "Checking iCloud sync...",
   "initLocalDatabase": "Initializing local database...",
-  "initDone": "Done."
+  "initDone": "Done",
+
+  "syncCompleteMessage": "{count} records synced to Apple Health",
+  "@syncCompleteMessage": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "syncPartialMessage": "{success} of {total} records synced. Rest will retry later.",
+  "@syncPartialMessage": {
+    "placeholders": {
+      "success": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "syncFailedMessage": "Sync failed. Will retry on next app launch."
 }

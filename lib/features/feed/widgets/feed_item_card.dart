@@ -105,6 +105,8 @@ class FeedItemCard extends StatelessWidget {
         return 'Water';
       case FeedItemType.insulin:
         return l10n.insulin;
+      case FeedItemType.mindfulness:
+        return 'Mindfulness';
     }
   }
 
@@ -122,6 +124,8 @@ class FeedItemCard extends StatelessWidget {
         return _buildWaterValue(theme);
       case FeedItemType.insulin:
         return _buildInsulinValue(theme);
+      case FeedItemType.mindfulness:
+        return _buildMindfulnessValue(theme);
     }
   }
 
@@ -236,6 +240,16 @@ class FeedItemCard extends StatelessWidget {
     );
   }
 
+  Widget _buildMindfulnessValue(ThemeData theme) {
+    final mindfulness = item.mindfulnessRecord!;
+    return Text(
+      mindfulness.formattedDuration,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Widget _buildIcon(ThemeData theme) {
     IconData icon;
     Color color;
@@ -260,6 +274,9 @@ class FeedItemCard extends StatelessWidget {
       case FeedItemType.insulin:
         icon = Icons.vaccines;
         color = Colors.purple;
+      case FeedItemType.mindfulness:
+        icon = Icons.self_improvement;
+        color = Colors.teal;
     }
 
     return Container(

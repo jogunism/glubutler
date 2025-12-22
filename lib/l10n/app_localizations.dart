@@ -284,11 +284,11 @@ abstract class AppLocalizations {
   /// **'After Meal'**
   String get afterMeal;
 
-  /// No description provided for @fasting.
+  /// No description provided for @unspecified.
   ///
   /// In en, this message translates to:
-  /// **'Fasting'**
-  String get fasting;
+  /// **'Unspecified'**
+  String get unspecified;
 
   /// No description provided for @dailyReport.
   ///
@@ -929,13 +929,13 @@ abstract class AppLocalizations {
   /// No description provided for @failedToConnect.
   ///
   /// In en, this message translates to:
-  /// **'Failed to connect. Please check your permissions.'**
+  /// **'Failed to connect. Please check your permissions in the Apple Health app.'**
   String get failedToConnect;
 
   /// No description provided for @privacyNote.
   ///
   /// In en, this message translates to:
-  /// **'Your health data stays on your device and is never shared without your permission. You can manage access in Health app > Sharing > Apps > Glu Butler.'**
+  /// **'Your health data is stored only on your device and is never shared externally. You can manage access in Health app > Sharing > Apps > Glu Butler.'**
   String get privacyNote;
 
   /// No description provided for @readWrite.
@@ -1117,6 +1117,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done.'**
   String get initDone;
+
+  /// No description provided for @syncCompleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} records synced to Apple Health'**
+  String syncCompleteMessage(int count);
+
+  /// No description provided for @syncPartialMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{success} of {total} records synced. Rest will retry later.'**
+  String syncPartialMessage(int success, int total);
+
+  /// No description provided for @syncFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed. Will retry on next app launch.'**
+  String get syncFailedMessage;
 }
 
 class _AppLocalizationsDelegate

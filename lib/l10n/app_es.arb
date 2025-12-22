@@ -33,7 +33,7 @@
 
   "beforeMeal": "Antes de comer",
   "afterMeal": "Después de comer",
-  "fasting": "En ayunas",
+  "unspecified": "Sin especificar",
 
   "dailyReport": "Informe diario",
   "weeklyReport": "Informe semanal",
@@ -125,8 +125,8 @@
   "syncedData": "Datos sincronizados",
   "connectAppleHealth": "Conectar Apple Salud",
   "successfullyConnected": "La información de sincronización se ha actualizado",
-  "failedToConnect": "Error de conexión. Por favor verifica tus permisos.",
-  "privacyNote": "Tus datos de salud permanecen en tu dispositivo y nunca se comparten sin tu permiso. Puedes gestionar el acceso en Salud > Compartir > Apps > Glu Butler.",
+  "failedToConnect": "Error de conexión. Por favor verifica los permisos en la app Apple Salud.",
+  "privacyNote": "Tus datos de salud se almacenan únicamente en tu dispositivo y nunca se comparten externamente. Puedes gestionar el acceso en Salud > Compartir > Apps > Glu Butler.",
   "readWrite": "Lectura y escritura",
   "readOnly": "Solo lectura",
   "workouts": "Entrenamientos",
@@ -157,5 +157,5 @@
   "initCheckingHealth": "Verificando sincronización de salud...",
   "initCheckingiCloud": "Verificando sincronización de iCloud...",
   "initLocalDatabase": "Inicializando base de datos local...",
-  "initDone": "Listo."
+  "initDone": "Listo"
 }

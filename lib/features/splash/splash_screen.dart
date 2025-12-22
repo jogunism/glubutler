@@ -105,7 +105,6 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _updateStep(InitializationStep step) {
-    debugPrint('[SplashScreen] Step changed to: $step, mounted: $mounted, hashCode: $hashCode');
     if (mounted) {
       setState(() {
         _currentStep = step;
@@ -114,16 +113,11 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startInitialization() async {
-    debugPrint('[SplashScreen] _startInitialization called, hashCode: $hashCode, _isAppInitializing: $_isAppInitializing');
-
     // 이 인스턴스를 활성 콜백으로 등록 (항상 최신 인스턴스가 UI 업데이트 받음)
     _activeStepCallback = _updateStep;
 
     // 이미 초기화 중이면 콜백만 등록하고 리턴
-    if (_isAppInitializing) {
-      debugPrint('[SplashScreen] Already initializing, registered callback only');
-      return;
-    }
+    if (_isAppInitializing) return;
     _isAppInitializing = true;
 
     final settingsService = context.read<SettingsService>();
@@ -137,6 +131,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     try {
       await initService.initialize();
+      debugPrint('[SplashScreen] Initialization complete');
     } catch (e) {
       debugPrint('[SplashScreen] Initialization error: $e');
     }
