@@ -80,79 +80,95 @@ class _CgmGroupCardState extends State<CgmGroupCard>
             // Main card content
             Padding(
               padding: const EdgeInsets.all(16),
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildIcon(theme),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Title row
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Text(
-                                _getTitle(l10n),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: context.colors.textSecondary,
+              child: Stack(
+                children: [
+                  // Main content
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildIcon(theme),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 80),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Title row
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 0,
+                                  runSpacing: 2,
+                                  children: [
+                                    Text(
+                                      _getTitle(l10n),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: context.colors.textSecondary,
+                                      ),
+                                    ),
+                                    if (group.sourceName != null) ...[
+                                      Text(
+                                        ' · ${group.sourceName} (${group.recordCount}${l10n.times})',
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: context.colors.textSecondary
+                                              .withValues(alpha: 0.7),
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      Text(
+                                        ' (${group.recordCount}${l10n.times})',
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: context.colors.textSecondary
+                                              .withValues(alpha: 0.7),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
                                 ),
-                              ),
-                              if (group.sourceName != null) ...[
-                                Text(
-                                  ' · ${group.sourceName} (${group.recordCount}${l10n.times})',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: context.colors.textSecondary
-                                        .withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              ] else ...[
-                                Text(
-                                  ' (${group.recordCount}${l10n.times})',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: context.colors.textSecondary
-                                        .withValues(alpha: 0.7),
-                                  ),
+                                // Value row
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: _buildValue(theme),
                                 ),
                               ],
-                            ],
-                          ),
-                          // Value row
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: _buildValue(theme),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        AnimatedRotation(
-                          turns: _isExpanded ? 0.5 : 0,
-                          duration: const Duration(milliseconds: 200),
-                          child: Icon(
-                            Icons.keyboard_arrow_down,
-                            size: 20,
-                            color: context.colors.textSecondary,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          group.timeRangeString,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: context.colors.textSecondary,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  // Floating time range (vertically centered on right)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedRotation(
+                            turns: _isExpanded ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 200),
+                            child: Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 20,
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            group.timeRangeString,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             // Expanded content
@@ -290,9 +306,10 @@ class _CgmGroupCardState extends State<CgmGroupCard>
     final settings = context.watch<SettingsService>();
     final unit = settings.unit;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 4,
+      runSpacing: 4,
       children: [
         Text(
           group.getRangeString(unit),
@@ -300,14 +317,13 @@ class _CgmGroupCardState extends State<CgmGroupCard>
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(width: 4),
         Text(
           unit,
           style: theme.textTheme.bodySmall?.copyWith(
             color: context.colors.textSecondary,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         _buildGroupTypeChip(theme, l10n),
       ],
     );

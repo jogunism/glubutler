@@ -151,6 +151,10 @@
   "cgmFluctuation": "波动",
 
   "targetGlucoseRange": "目标血糖范围",
+  "veryHigh": "非常高",
+  "elevated": "高",
+  "target": "目标",
+  "veryLow": "非常低",
 
   "appSlogan": "您的健康伙伴",
 
@@ -162,5 +166,9 @@
 
   "glucoseSaved": "血糖记录已保存",
   "insulinSaved": "胰岛素剂量已保存",
-  "saveFailed": "保存失败"
+  "saveFailed": "保存失败",
+
+  "deleteGlucoseConfirmation": "确定要删除吗？\n此操作无法撤销。",
+  "glucoseDeleted": "血糖记录已删除",
+  "deleteFailed": "删除失败"
 }

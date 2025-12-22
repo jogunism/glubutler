@@ -505,16 +505,16 @@ class AppLocalizationsDe extends AppLocalizations {
       'Your target values are used to analyze glucose data more accurately in the feed.';
 
   @override
-  String get veryHigh => 'Very High';
+  String get veryHigh => 'Sehr Hoch';
 
   @override
-  String get elevated => 'High';
+  String get elevated => 'Hoch';
 
   @override
-  String get target => 'Target';
+  String get target => 'Ziel';
 
   @override
-  String get veryLow => 'Very Low';
+  String get veryLow => 'Sehr Niedrig';
 
   @override
   String get appSlogan => 'Ihr Gesundheitsbegleiter';
@@ -549,11 +549,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteGlucoseConfirmation =>
-      'Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.';
+      'Möchten Sie wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
-  String get glucoseDeleted => 'Glucose record deleted';
+  String get glucoseDeleted => 'Blutzucker gelöscht';
 
   @override
-  String get deleteFailed => 'Delete failed';
+  String get deleteFailed => 'Löschen fehlgeschlagen';
 }

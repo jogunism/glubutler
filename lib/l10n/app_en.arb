@@ -209,7 +209,7 @@
   },
   "syncFailedMessage": "Sync failed. Will retry on next app launch.",
 
-  "deleteGlucoseConfirmation": "Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.",
+  "deleteGlucoseConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
   "glucoseDeleted": "Glucose record deleted",
   "deleteFailed": "Delete failed"
 }

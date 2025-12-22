@@ -1163,7 +1163,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteGlucoseConfirmation.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.'**
+  /// **'Are you sure you want to delete?\nThis action cannot be undone.'**
   String get deleteGlucoseConfirmation;
 
   /// No description provided for @glucoseDeleted.

@@ -151,6 +151,10 @@
   "cgmFluctuation": "Fluttuazione",
 
   "targetGlucoseRange": "Intervallo glicemico target",
+  "veryHigh": "Molto Alto",
+  "elevated": "Alto",
+  "target": "Target",
+  "veryLow": "Molto Basso",
 
   "appSlogan": "Il tuo compagno di salute",
 
@@ -162,5 +166,9 @@
 
   "glucoseSaved": "Glicemia salvata",
   "insulinSaved": "Dose di insulina salvata",
-  "saveFailed": "Salvataggio fallito"
+  "saveFailed": "Salvataggio fallito",
+
+  "deleteGlucoseConfirmation": "Sei sicuro di voler eliminare?\nQuesta azione non può essere annullata.",
+  "glucoseDeleted": "Glicemia eliminata",
+  "deleteFailed": "Eliminazione fallita"
 }

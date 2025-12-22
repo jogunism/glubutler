@@ -151,6 +151,10 @@
   "cgmFluctuation": "変動",
 
   "targetGlucoseRange": "目標血糖値範囲",
+  "veryHigh": "非常に高い",
+  "elevated": "高い",
+  "target": "目標",
+  "veryLow": "非常に低い",
 
   "appSlogan": "あなたの健康パートナー",
 
@@ -162,5 +166,9 @@
 
   "glucoseSaved": "血糖値を保存しました",
   "insulinSaved": "インスリン投与量を保存しました",
-  "saveFailed": "保存に失敗しました"
+  "saveFailed": "保存に失敗しました",
+
+  "deleteGlucoseConfirmation": "本当に削除しますか？\nこの操作は元に戻せません。",
+  "glucoseDeleted": "血糖値を削除しました",
+  "deleteFailed": "削除に失敗しました"
 }

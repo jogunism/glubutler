@@ -498,16 +498,16 @@ class AppLocalizationsZh extends AppLocalizations {
       'Your target values are used to analyze glucose data more accurately in the feed.';
 
   @override
-  String get veryHigh => 'Very High';
+  String get veryHigh => '非常高';
 
   @override
-  String get elevated => 'High';
+  String get elevated => '高';
 
   @override
-  String get target => 'Target';
+  String get target => '目标';
 
   @override
-  String get veryLow => 'Very Low';
+  String get veryLow => '非常低';
 
   @override
   String get appSlogan => '您的健康伙伴';
@@ -541,12 +541,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
-  String get deleteGlucoseConfirmation =>
-      'Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.';
+  String get deleteGlucoseConfirmation => '确定要删除吗？\n此操作无法撤销。';
 
   @override
-  String get glucoseDeleted => 'Glucose record deleted';
+  String get glucoseDeleted => '血糖记录已删除';
 
   @override
-  String get deleteFailed => 'Delete failed';
+  String get deleteFailed => '删除失败';
 }

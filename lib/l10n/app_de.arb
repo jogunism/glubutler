@@ -151,6 +151,10 @@
   "cgmFluctuation": "Schwankung",
 
   "targetGlucoseRange": "Zielbereich Blutzucker",
+  "veryHigh": "Sehr Hoch",
+  "elevated": "Hoch",
+  "target": "Ziel",
+  "veryLow": "Sehr Niedrig",
 
   "appSlogan": "Ihr Gesundheitsbegleiter",
 
@@ -162,5 +166,9 @@
 
   "glucoseSaved": "Blutzucker gespeichert",
   "insulinSaved": "Insulindosis gespeichert",
-  "saveFailed": "Speichern fehlgeschlagen"
+  "saveFailed": "Speichern fehlgeschlagen",
+
+  "deleteGlucoseConfirmation": "Möchten Sie wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.",
+  "glucoseDeleted": "Blutzucker gelöscht",
+  "deleteFailed": "Löschen fehlgeschlagen"
 }

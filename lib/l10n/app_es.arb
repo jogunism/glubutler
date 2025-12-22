@@ -151,6 +151,10 @@
   "cgmFluctuation": "Fluctuación",
 
   "targetGlucoseRange": "Rango objetivo de glucosa",
+  "veryHigh": "Muy Alto",
+  "elevated": "Alto",
+  "target": "Objetivo",
+  "veryLow": "Muy Bajo",
 
   "appSlogan": "Tu compañero de salud",
 
@@ -162,5 +166,9 @@
 
   "glucoseSaved": "Glucosa guardada",
   "insulinSaved": "Dosis de insulina guardada",
-  "saveFailed": "Error al guardar"
+  "saveFailed": "Error al guardar",
+
+  "deleteGlucoseConfirmation": "¿Estás seguro de que quieres eliminar?\nEsta acción no se puede deshacer.",
+  "glucoseDeleted": "Glucosa eliminada",
+  "deleteFailed": "Error al eliminar"
 }

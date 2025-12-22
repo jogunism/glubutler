@@ -151,6 +151,10 @@
   "cgmFluctuation": "Fluctuation",
 
   "targetGlucoseRange": "Plage de glycémie cible",
+  "veryHigh": "Très Élevé",
+  "elevated": "Élevé",
+  "target": "Cible",
+  "veryLow": "Très Bas",
 
   "appSlogan": "Votre compagnon santé",
 
@@ -162,5 +166,9 @@
 
   "glucoseSaved": "Glycémie enregistrée",
   "insulinSaved": "Dose d'insuline enregistrée",
-  "saveFailed": "Échec de l'enregistrement"
+  "saveFailed": "Échec de l'enregistrement",
+
+  "deleteGlucoseConfirmation": "Êtes-vous sûr de vouloir supprimer ?\nCette action ne peut pas être annulée.",
+  "glucoseDeleted": "Glycémie supprimée",
+  "deleteFailed": "Échec de la suppression"
 }

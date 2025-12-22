@@ -302,9 +302,10 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     final mgDlValue = glucose.valueIn('mg/dL');
     final status = _getGlucoseStatus(mgDlValue, glucoseRange);
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 4,
+      runSpacing: 4,
       children: [
         Text(
           displayValue,
@@ -312,14 +313,13 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(width: 4),
         Text(
           unit,
           style: theme.textTheme.bodySmall?.copyWith(
             color: context.colors.textSecondary,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         // Show meal context chip (always show, default to fasting if null or empty)
         _buildMealContextChip(
           context,
@@ -329,7 +329,6 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
           theme,
           l10n,
         ),
-        const SizedBox(width: 4),
         // Then show status chip
         _buildStatusChip(status, theme, l10n),
       ],
@@ -524,9 +523,8 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
       case 'after_meal':
         label = l10n.afterMeal;
       case 'fasting':
-        label = l10n.fasting;
       default:
-        label = l10n.unspecified;
+        label = l10n.fasting;
     }
 
     final color = context.colors.textSecondary;

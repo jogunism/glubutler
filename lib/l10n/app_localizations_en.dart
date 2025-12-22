@@ -549,7 +549,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteGlucoseConfirmation =>
-      'Are you sure you want to delete this glucose record?\nBoth local data and Apple Health data will be deleted.';
+      'Are you sure you want to delete?\nThis action cannot be undone.';
 
   @override
   String get glucoseDeleted => 'Glucose record deleted';
