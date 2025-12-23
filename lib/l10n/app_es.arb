@@ -114,6 +114,7 @@
   "glucoseDistribution": "Distribución de Glucosa",
   "times": "×",
   "viewReport": "Ver Informe",
+  "noData": "No hay datos disponibles",
   "excellentScore": "¡Excelente! Estás controlando bien tu glucosa hoy.",
   "goodScore": "¡Bien! Solo un poco más de atención y será perfecto.",
   "needsAttention": "Tu glucosa varió mucho hoy. Revisa tu dieta.",

@@ -334,6 +334,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get viewReport => '查看报告';
 
   @override
+  String get noData => '暂无数据';
+
+  @override
   String get excellentScore => '太棒了！今天的血糖管理很好。';
 
   @override

@@ -334,6 +334,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get viewReport => 'レポートを見る';
 
   @override
+  String get noData => 'データがありません';
+
+  @override
   String get excellentScore => '素晴らしい！今日の血糖管理は順調です。';
 
   @override

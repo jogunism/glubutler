@@ -114,6 +114,7 @@
   "glucoseDistribution": "Distribution Glycémique",
   "times": "×",
   "viewReport": "Voir le Rapport",
+  "noData": "Aucune donnée disponible",
   "excellentScore": "Excellent ! Vous gérez bien votre glycémie aujourd'hui.",
   "goodScore": "Bien ! Encore un peu d'attention et ce sera parfait.",
   "needsAttention": "Votre glycémie a beaucoup varié aujourd'hui. Vérifiez votre alimentation.",

@@ -101,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _formatSelectedDate() {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final selected = DateTime(
@@ -110,9 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (selected == today) {
-      return '오늘';
+      return l10n.today;
     } else if (selected == today.subtract(const Duration(days: 1))) {
-      return '어제';
+      return l10n.yesterday;
     } else {
       return '${_selectedDate.month}/${_selectedDate.day}';
     }
@@ -249,7 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildChartCard(BuildContext context, AppLocalizations l10n) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final dateButtonColor = isDarkMode ? context.colors.textPrimary : AppTheme.primaryColor;
+    final dateButtonColor = isDarkMode
+        ? context.colors.textPrimary
+        : AppTheme.primaryColor;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -261,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '혈당 추이',
+                l10n.todaysGlucose,
                 style: context.textStyles.tileTitle.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -280,7 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: dateButtonColor.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(8),
@@ -312,10 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           // 차트
-          SizedBox(
-            height: 200,
-            child: _buildGlucoseChart(context, l10n),
-          ),
+          SizedBox(height: 200, child: _buildGlucoseChart(context, l10n)),
         ],
       ),
     );
@@ -334,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              '데이터가 없습니다',
+              l10n.noData,
               style: context.textStyles.tileTitle.copyWith(
                 color: context.colors.textSecondary,
               ),
@@ -362,11 +365,17 @@ class _HomeScreenState extends State<HomeScreen> {
     final settings = context.watch<SettingsService>();
     final glucoseRange = settings.glucoseRange;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final averageLineColor = isDarkMode ? context.colors.textPrimary : Colors.black;
+    final averageLineColor = isDarkMode
+        ? context.colors.textPrimary
+        : Colors.black;
 
     // Y축 범위 계산: 실제 데이터와 설정값 중 더 큰 범위 사용
-    final maxValue = _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.max);
-    final minValue = _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.min);
+    final maxValue = _todayRecords
+        .map((e) => e.valueIn('mg/dL'))
+        .reduce(math.max);
+    final minValue = _todayRecords
+        .map((e) => e.valueIn('mg/dL'))
+        .reduce(math.min);
 
     final chartMaxY = math.max(glucoseRange.veryHigh, maxValue + 20).toDouble();
     final chartMinY = math.min(glucoseRange.veryLow, minValue - 20).toDouble();
@@ -396,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),
-                labelResolver: (line) => '오늘 평균 ${averageGlucose.toInt()}',
+                labelResolver: (line) => '${l10n.average} ${averageGlucose.toInt()}',
               ),
             ),
           ],
@@ -414,8 +423,19 @@ class _HomeScreenState extends State<HomeScreen> {
         barTouchData: BarTouchData(
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (group) => context.colors.card.withValues(alpha: 0.9),
-            tooltipBorder: BorderSide(color: context.colors.divider),
+            tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+            getTooltipColor: (group) {
+              if (isDarkMode) {
+                return context.colors.card.withValues(alpha: 1.0);
+              }
+              return context.colors.card.withValues(alpha: 0.9);
+            },
+            tooltipBorder: BorderSide(
+              color: isDarkMode
+                  ? Colors.grey.withValues(alpha: 0.5)
+                  : context.colors.divider,
+              width: isDarkMode ? 1.5 : 1.0,
+            ),
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               final hour = group.x.toInt();
               final value = rod.toY;
@@ -426,9 +446,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
+                textAlign: TextAlign.center,
                 children: [
                   TextSpan(
-                    text: '${value.toInt()} mg/dL',
+                    text: '${value.toInt()} ${settings.unit}',
                     style: TextStyle(
                       color: _getGlucoseColorForValue(value),
                       fontWeight: FontWeight.w600,
@@ -499,9 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-        borderData: FlBorderData(
-          show: false,
-        ),
+        borderData: FlBorderData(show: false),
         barGroups: List.generate(24, (hour) {
           final value = hourlyAverage[hour];
           if (value == null) {
@@ -509,11 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return BarChartGroupData(
               x: hour,
               barRods: [
-                BarChartRodData(
-                  toY: 0,
-                  color: Colors.transparent,
-                  width: 8,
-                ),
+                BarChartRodData(toY: 0, color: Colors.transparent, width: 8),
               ],
             );
           }
@@ -567,44 +582,36 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: _buildStatItem(
-              context,
-              label: l10n.normal,
-              value: '${_averageGlucose.toInt()}',
-              unit: 'mg/dL',
-              subtitle: l10n.average,
-              color: AppTheme.getGlucoseColor(_averageGlucose),
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 60,
-            color: context.colors.divider,
-          ),
-          Expanded(
-            child: _buildStatItem(
-              context,
-              label: l10n.low,
-              value: '${_minGlucose.toInt()}',
-              unit: 'mg/dL',
-              subtitle: l10n.lowest,
-              color: AppTheme.getGlucoseColor(_minGlucose),
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 60,
-            color: context.colors.divider,
-          ),
-          Expanded(
-            child: _buildStatItem(
-              context,
-              label: l10n.high,
-              value: '${_maxGlucose.toInt()}',
-              unit: 'mg/dL',
-              subtitle: l10n.highest,
-              color: AppTheme.getGlucoseColor(_maxGlucose),
-            ),
-          ),
+                  context,
+                  label: l10n.normal,
+                  value: '${_averageGlucose.toInt()}',
+                  unit: 'mg/dL',
+                  subtitle: l10n.average,
+                  color: AppTheme.getGlucoseColor(_averageGlucose),
+                ),
+              ),
+              Container(width: 1, height: 60, color: context.colors.divider),
+              Expanded(
+                child: _buildStatItem(
+                  context,
+                  label: l10n.low,
+                  value: '${_minGlucose.toInt()}',
+                  unit: 'mg/dL',
+                  subtitle: l10n.lowest,
+                  color: AppTheme.getGlucoseColor(_minGlucose),
+                ),
+              ),
+              Container(width: 1, height: 60, color: context.colors.divider),
+              Expanded(
+                child: _buildStatItem(
+                  context,
+                  label: l10n.high,
+                  value: '${_maxGlucose.toInt()}',
+                  unit: 'mg/dL',
+                  subtitle: l10n.highest,
+                  color: AppTheme.getGlucoseColor(_maxGlucose),
+                ),
+              ),
             ],
           ),
         ],
@@ -622,10 +629,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return Column(
       children: [
-        Text(
-          subtitle,
-          style: context.textStyles.tileSubtitle,
-        ),
+        Text(subtitle, style: context.textStyles.tileSubtitle),
         const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -641,13 +645,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(width: 2),
-            Text(
-              unit,
-              style: TextStyle(
-                fontSize: 12,
-                color: color,
-              ),
-            ),
+            Text(unit, style: TextStyle(fontSize: 12, color: color)),
           ],
         ),
       ],
@@ -668,55 +666,55 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               // 파이 차트
               SizedBox(
-            width: 100,
-            height: 100,
-            child: CustomPaint(
-              painter: _PieChartPainter(
-                lowRatio: total > 0 ? dist['low']! / total : 0,
-                normalRatio: total > 0 ? dist['normal']! / total : 0,
-                highRatio: total > 0 ? dist['high']! / total : 0,
-                holeColor: context.colors.card,
+                width: 100,
+                height: 100,
+                child: CustomPaint(
+                  painter: _PieChartPainter(
+                    lowRatio: total > 0 ? dist['low']! / total : 0,
+                    normalRatio: total > 0 ? dist['normal']! / total : 0,
+                    highRatio: total > 0 ? dist['high']! / total : 0,
+                    holeColor: context.colors.card,
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 24),
-          // 범례
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLegendItem(
-                  context,
-                  color: AppTheme.glucoseLow,
-                  label: l10n.low,
-                  value: '${dist['low']}${l10n.times}',
-                  percentage: total > 0
-                      ? '${(dist['low']! / total * 100).toInt()}%'
-                      : '0%',
+              const SizedBox(width: 24),
+              // 범례
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLegendItem(
+                      context,
+                      color: AppTheme.glucoseLow,
+                      label: l10n.low,
+                      value: '${dist['low']}${l10n.times}',
+                      percentage: total > 0
+                          ? '${(dist['low']! / total * 100).toInt()}%'
+                          : '0%',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildLegendItem(
+                      context,
+                      color: AppTheme.glucoseNormal,
+                      label: l10n.normal,
+                      value: '${dist['normal']}${l10n.times}',
+                      percentage: total > 0
+                          ? '${(dist['normal']! / total * 100).toInt()}%'
+                          : '0%',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildLegendItem(
+                      context,
+                      color: AppTheme.glucoseHigh,
+                      label: l10n.high,
+                      value: '${dist['high']}${l10n.times}',
+                      percentage: total > 0
+                          ? '${(dist['high']! / total * 100).toInt()}%'
+                          : '0%',
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                _buildLegendItem(
-                  context,
-                  color: AppTheme.glucoseNormal,
-                  label: l10n.normal,
-                  value: '${dist['normal']}${l10n.times}',
-                  percentage: total > 0
-                      ? '${(dist['normal']! / total * 100).toInt()}%'
-                      : '0%',
-                ),
-                const SizedBox(height: 8),
-                _buildLegendItem(
-                  context,
-                  color: AppTheme.glucoseHigh,
-                  label: l10n.high,
-                  value: '${dist['high']}${l10n.times}',
-                  percentage: total > 0
-                      ? '${(dist['high']! / total * 100).toInt()}%'
-                      : '0%',
-                ),
-              ],
-            ),
-          ),
+              ),
             ],
           ),
         ],
@@ -767,10 +765,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            l10n.viewReport,
-            style: context.textStyles.buttonText,
-          ),
+          Text(l10n.viewReport, style: context.textStyles.buttonText),
           const SizedBox(width: 8),
           const Icon(
             CupertinoIcons.chevron_right,

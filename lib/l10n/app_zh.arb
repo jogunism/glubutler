@@ -114,6 +114,7 @@
   "glucoseDistribution": "血糖分布",
   "times": "次",
   "viewReport": "查看报告",
+  "noData": "暂无数据",
   "excellentScore": "太棒了！今天的血糖管理很好。",
   "goodScore": "不错！再注意一点就完美了。",
   "needsAttention": "今天血糖波动较大，请检查饮食。",

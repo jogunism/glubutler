@@ -114,6 +114,7 @@
   "glucoseDistribution": "Blutzucker-Verteilung",
   "times": "×",
   "viewReport": "Bericht ansehen",
+  "noData": "Keine Daten verfügbar",
   "excellentScore": "Ausgezeichnet! Sie managen Ihren Blutzucker heute gut.",
   "goodScore": "Gut! Nur noch etwas mehr Aufmerksamkeit und es ist perfekt.",
   "needsAttention": "Ihr Blutzucker hat heute stark geschwankt. Überprüfen Sie Ihre Ernährung.",

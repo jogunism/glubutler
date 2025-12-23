@@ -114,6 +114,7 @@
   "glucoseDistribution": "血糖分布",
   "times": "回",
   "viewReport": "レポートを見る",
+  "noData": "データがありません",
   "excellentScore": "素晴らしい！今日の血糖管理は順調です。",
   "goodScore": "良いですね！もう少し気をつければ完璧です。",
   "needsAttention": "今日は血糖の変動が大きかったです。食事を確認してください。",

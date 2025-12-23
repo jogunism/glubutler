@@ -758,6 +758,12 @@ abstract class AppLocalizations {
   /// **'View Report'**
   String get viewReport;
 
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get noData;
+
   /// No description provided for @excellentScore.
   ///
   /// In en, this message translates to:

@@ -333,6 +333,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get viewReport => '리포트 보기';
 
   @override
+  String get noData => '데이터가 없습니다';
+
+  @override
   String get excellentScore => '훌륭해요! 오늘 혈당 관리를 잘 하고 계세요.';
 
   @override

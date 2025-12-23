@@ -335,6 +335,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewReport => 'View Report';
 
   @override
+  String get noData => 'No data available';
+
+  @override
   String get excellentScore =>
       'Excellent! You\'re managing your glucose well today.';
 

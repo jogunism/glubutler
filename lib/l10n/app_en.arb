@@ -121,6 +121,7 @@
   "glucoseDistribution": "Glucose Distribution",
   "times": "×",
   "viewReport": "View Report",
+  "noData": "No data available",
   "excellentScore": "Excellent! You're managing your glucose well today.",
   "goodScore": "Good! Just a little more attention and you'll be perfect.",
   "needsAttention": "Your glucose varied a lot today. Check your diet.",
