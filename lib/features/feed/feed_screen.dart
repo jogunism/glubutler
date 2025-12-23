@@ -219,7 +219,7 @@ class _FeedScreenState extends State<FeedScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.view_agenda_outlined,
+              Icons.list_alt_outlined,
               size: 80,
               color: context.colors.textSecondary,
             ),

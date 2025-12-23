@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:cupertino_native_plus/cupertino_native.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -12,6 +13,9 @@ import 'package:glu_butler/providers/feed_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize platform version for cupertino_native_plus
+  await PlatformVersion.initialize();
 
   // Initialize database first (tables, migrations)
   await DatabaseService().initialize();

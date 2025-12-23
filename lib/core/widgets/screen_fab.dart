@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:glu_butler/core/theme/app_theme.dart';
 
 /// 화면별 플로팅 액션 버튼
 ///
-/// home, feed, diary 화면에서 우측 하단에 표시되는 [+] 버튼입니다.
-/// 글래스 효과와 그림자를 적용한 iOS 스타일 버튼입니다.
+/// feed, diary 화면에서 우측 하단 탭바 위에 표시되는 [+] 버튼입니다.
 ///
 /// ## 사용법
 /// ```dart
@@ -26,39 +24,31 @@ class ScreenFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 플로팅 탭바 높이(64) + 하단 여백(8) + SafeArea + 추가 여백
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    final fabBottom = 64 + bottomPadding + 8 + 16;
-
     return Positioned(
       right: 16,
-      bottom: fabBottom,
-      child: GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.shadowPrimary,
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppTheme.primaryColor,
+      bottom: 16,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: AppTheme.primaryColor,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: const Icon(
-              Icons.add,
-              size: 32,
-              color: Colors.white,
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
-          ),
+          ],
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.add, color: Colors.white, size: 28),
+          onPressed: onPressed,
         ),
       ),
     );

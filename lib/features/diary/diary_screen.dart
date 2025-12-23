@@ -58,7 +58,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Icons.book,
+                        Icons.book_outlined,
                         size: 80,
                         color: AppTheme.primaryColor,
                       ),

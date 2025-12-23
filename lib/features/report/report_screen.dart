@@ -61,7 +61,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.analytics,
+                    Icons.bar_chart_outlined,
                     size: 80,
                     color: AppTheme.primaryColor,
                   ),
