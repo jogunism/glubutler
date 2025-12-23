@@ -22,7 +22,7 @@ class AppTheme {
   static const Color glucoseLow = Colors.blue; // Low (target-40 to target-20)
   static const Color glucoseNormal = Color(0xFF4CAF50); // Green (target±20)
   static const Color glucoseHigh = Color(0xFFF9A825); // Yellow/Amber (target+20 to target+40)
-  static const Color glucoseVeryHigh = Colors.red; // Very High (>target+40)
+  static const Color glucoseVeryHigh = primaryColor; // Very High (>target+40)
 
   // ==========================================================================
   // iOS Style Background Colors

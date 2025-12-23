@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/navigation/main_screen.dart';
@@ -11,6 +13,10 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
+import 'package:glu_butler/core/widgets/modals/date_picker_modal.dart';
+import 'package:glu_butler/repositories/glucose_repository.dart';
+import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// 홈 대시보드 화면
 ///
@@ -30,40 +36,126 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // TODO: Replace with real data from service
-  final int _todayScore = 81;
-  final List<_GlucoseEntry> _todayEntries = [
-    _GlucoseEntry(time: '07:00', value: 95, label: '공복'),
-    _GlucoseEntry(time: '09:00', value: 142, label: '아침 식후'),
-    _GlucoseEntry(time: '12:30', value: 88, label: '점심 식전'),
-    _GlucoseEntry(time: '14:00', value: 156, label: '점심 식후'),
-    _GlucoseEntry(time: '18:00', value: 92, label: '저녁 식전'),
-    _GlucoseEntry(time: '20:00', value: 138, label: '저녁 식후'),
-  ];
+  final _glucoseRepository = GlucoseRepository();
+
+  List<GlucoseRecord> _todayRecords = [];
+  bool _isLoading = true;
+  DateTime _selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTodayData();
+  }
+
+  Future<void> _loadTodayData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+
+      // GlucoseRepository.fetch() automatically handles:
+      // - Fetches from local DB
+      // - If HealthKit permissions exist, also fetches from HealthKit and merges
+      final records = await _glucoseRepository.fetch(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
+
+      setState(() {
+        _todayRecords = records;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('[HomeScreen] Error loading data: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _loadSelectedDateData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final startOfDay = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+      );
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+
+      final records = await _glucoseRepository.fetch(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
+
+      setState(() {
+        _todayRecords = records;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('[HomeScreen] Error loading data: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  String _formatSelectedDate() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selected = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+
+    if (selected == today) {
+      return '오늘';
+    } else if (selected == today.subtract(const Duration(days: 1))) {
+      return '어제';
+    } else {
+      return '${_selectedDate.month}/${_selectedDate.day}';
+    }
+  }
+
+  int get _todayScore {
+    if (_todayRecords.isEmpty) return 0;
+
+    int inRange = 0;
+    for (final record in _todayRecords) {
+      final value = record.valueIn('mg/dL');
+      if (value >= 80 && value <= 160) {
+        inRange++;
+      }
+    }
+
+    return ((inRange / _todayRecords.length) * 100).round();
+  }
 
   double get _averageGlucose {
-    if (_todayEntries.isEmpty) return 0;
-    return _todayEntries.map((e) => e.value).reduce((a, b) => a + b) /
-        _todayEntries.length;
+    if (_todayRecords.isEmpty) return 0;
+    final values = _todayRecords.map((e) => e.valueIn('mg/dL')).toList();
+    return values.reduce((a, b) => a + b) / values.length;
   }
 
   double get _minGlucose {
-    if (_todayEntries.isEmpty) return 0;
-    return _todayEntries.map((e) => e.value).reduce(math.min);
+    if (_todayRecords.isEmpty) return 0;
+    return _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.min);
   }
 
   double get _maxGlucose {
-    if (_todayEntries.isEmpty) return 0;
-    return _todayEntries.map((e) => e.value).reduce(math.max);
+    if (_todayRecords.isEmpty) return 0;
+    return _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.max);
   }
 
   // 범위별 비율 계산
   Map<String, int> get _rangeDistribution {
     int low = 0, normal = 0, high = 0;
-    for (final entry in _todayEntries) {
-      if (entry.value < 70) {
+    for (final record in _todayRecords) {
+      final value = record.valueIn('mg/dL');
+      if (value < 70) {
         low++;
-      } else if (entry.value <= 140) {
+      } else if (value <= 140) {
         normal++;
       } else {
         high++;
@@ -72,11 +164,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return {'low': low, 'normal': normal, 'high': high};
   }
 
-  int? _selectedEntryIndex;
-
   Future<void> _onRefresh() async {
-    // TODO: Implement data refresh
-    await Future.delayed(const Duration(seconds: 1));
+    await _loadTodayData();
   }
 
   @override
@@ -159,52 +248,69 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildChartCard(BuildContext context, AppLocalizations l10n) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final dateButtonColor = isDarkMode ? context.colors.textPrimary : AppTheme.primaryColor;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: context.decorations.card,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 선택된 항목 정보 표시
-          if (_selectedEntryIndex != null) ...[
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+          // 타이틀과 날짜 선택 버튼
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '혈당 추이',
+                style: context.textStyles.tileTitle.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.drop_fill,
-                    color: AppTheme.getGlucoseColor(
-                        _todayEntries[_selectedEntryIndex!].value),
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${_todayEntries[_selectedEntryIndex!].time} - ${_todayEntries[_selectedEntryIndex!].label}',
-                          style: context.textStyles.tileSubtitle,
-                        ),
-                        Text(
-                          '${_todayEntries[_selectedEntryIndex!].value.toInt()} mg/dL',
-                          style: context.textStyles.tileTitle.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+              GestureDetector(
+                onTap: () async {
+                  final pickedDate = await DatePickerModal.show(
+                    context,
+                    initialDate: _selectedDate,
+                  );
+                  if (pickedDate != null && pickedDate != _selectedDate) {
+                    setState(() {
+                      _selectedDate = pickedDate;
+                    });
+                    _loadSelectedDateData();
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: dateButtonColor.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: dateButtonColor.withValues(alpha: 0.2),
                     ),
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 14,
+                        color: dateButtonColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        _formatSelectedDate(),
+                        style: context.textStyles.caption.copyWith(
+                          color: dateButtonColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
+            ],
+          ),
+          const SizedBox(height: 16),
           // 차트
           SizedBox(
             height: 200,
@@ -216,158 +322,238 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildGlucoseChart(BuildContext context, AppLocalizations l10n) {
-    if (_todayEntries.isEmpty) {
+    if (_todayRecords.isEmpty) {
       return Center(
-        child: Text(
-          l10n.noGlucoseToday,
-          style: context.textStyles.bodyTextSecondary,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.insert_chart_outlined,
+              size: 48,
+              color: context.colors.textSecondary.withValues(alpha: 0.3),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '데이터가 없습니다',
+              style: context.textStyles.tileTitle.copyWith(
+                color: context.colors.textSecondary,
+              ),
+            ),
+          ],
         ),
       );
     }
 
-    final maxValue = _todayEntries.map((e) => e.value).reduce(math.max);
-    final chartMax = ((maxValue / 50).ceil() * 50).toDouble() + 20;
+    // 시간별로 데이터 그룹화 (0~23시)
+    final hourlyData = <int, List<double>>{};
+    for (final record in _todayRecords) {
+      final hour = record.timestamp.hour;
+      final value = record.valueIn('mg/dL');
+      hourlyData.putIfAbsent(hour, () => []).add(value);
+    }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final barWidth = (constraints.maxWidth - 40) / _todayEntries.length;
-        final chartHeight = constraints.maxHeight - 30;
+    // 각 시간대의 평균값 계산
+    final hourlyAverage = <int, double>{};
+    hourlyData.forEach((hour, values) {
+      hourlyAverage[hour] = values.reduce((a, b) => a + b) / values.length;
+    });
 
-        return Column(
-          children: [
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Y축 레이블
-                  SizedBox(
-                    width: 35,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('${chartMax.toInt()}',
-                            style: TextStyle(
-                                fontSize: 10, color: context.colors.textSecondary)),
-                        Text('${(chartMax / 2).toInt()}',
-                            style: TextStyle(
-                                fontSize: 10, color: context.colors.textSecondary)),
-                        Text('0',
-                            style: TextStyle(
-                                fontSize: 10, color: context.colors.textSecondary)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  // 차트 영역
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        // 기준선들
-                        ..._buildGuideLines(chartHeight, chartMax),
-                        // 막대 그래프
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: _todayEntries.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final data = entry.value;
-                            final barHeight =
-                                (data.value / chartMax) * chartHeight;
-                            final isSelected = _selectedEntryIndex == index;
+    // 설정에서 목표 혈당 범위 가져오기
+    final settings = context.watch<SettingsService>();
+    final glucoseRange = settings.glucoseRange;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final averageLineColor = isDarkMode ? context.colors.textPrimary : Colors.black;
 
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedEntryIndex =
-                                      isSelected ? null : index;
-                                });
-                              },
-                              child: Container(
-                                width: barWidth - 8,
-                                height: barHeight,
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppTheme.getGlucoseColor(data.value)
-                                      : AppTheme.getGlucoseColor(data.value)
-                                          .withValues(alpha: 0.6),
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(4),
-                                  ),
-                                  border: isSelected
-                                      ? Border.all(
-                                          color: AppTheme.primaryColor,
-                                          width: 2,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        // 선 그래프
-                        CustomPaint(
-                          size: Size(constraints.maxWidth - 40, chartHeight),
-                          painter: _LineChartPainter(
-                            entries: _todayEntries,
-                            maxValue: chartMax,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            // X축 레이블
-            Padding(
-              padding: const EdgeInsets.only(left: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: _todayEntries.map((entry) {
-                  return SizedBox(
-                    width: barWidth - 8,
-                    child: Text(
-                      entry.time.substring(0, 5),
-                      style: TextStyle(fontSize: 9, color: context.colors.textSecondary),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }).toList(),
+    // Y축 범위 계산: 실제 데이터와 설정값 중 더 큰 범위 사용
+    final maxValue = _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.max);
+    final minValue = _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.min);
+
+    final chartMaxY = math.max(glucoseRange.veryHigh, maxValue + 20).toDouble();
+    final chartMinY = math.min(glucoseRange.veryLow, minValue - 20).toDouble();
+
+    // 하루 전체 평균 혈당
+    final averageGlucose = _averageGlucose;
+
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: chartMaxY,
+        minY: chartMinY,
+        // 평균 혈당 수평선 추가
+        extraLinesData: ExtraLinesData(
+          horizontalLines: [
+            HorizontalLine(
+              y: averageGlucose,
+              color: averageLineColor.withValues(alpha: 0.4),
+              strokeWidth: 2,
+              dashArray: [8, 4], // 점선 패턴
+              label: HorizontalLineLabel(
+                show: true,
+                alignment: Alignment.topRight,
+                padding: const EdgeInsets.only(right: 8, bottom: 4),
+                style: TextStyle(
+                  color: averageLineColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+                labelResolver: (line) => '오늘 평균 ${averageGlucose.toInt()}',
               ),
             ),
           ],
-        );
-      },
+        ),
+        // 목표 범위 배경색
+        rangeAnnotations: RangeAnnotations(
+          horizontalRangeAnnotations: [
+            HorizontalRangeAnnotation(
+              y1: glucoseRange.targetLow,
+              y2: glucoseRange.targetHigh,
+              color: Colors.green.withValues(alpha: 0.08),
+            ),
+          ],
+        ),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (group) => context.colors.card.withValues(alpha: 0.9),
+            tooltipBorder: BorderSide(color: context.colors.divider),
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final hour = group.x.toInt();
+              final value = rod.toY;
+              return BarTooltipItem(
+                '${hour.toString().padLeft(2, '0')}:00\n',
+                TextStyle(
+                  color: context.colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${value.toInt()} mg/dL',
+                    style: TextStyle(
+                      color: _getGlucoseColorForValue(value),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                final hour = value.toInt();
+                // 0, 6, 12, 18, 24시만 표시
+                if (hour % 6 == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      hour.toString().padLeft(2, '0'),
+                      style: TextStyle(
+                        color: context.colors.textSecondary,
+                        fontSize: 10,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+              reservedSize: 24,
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: TextStyle(
+                    color: context.colors.textSecondary,
+                    fontSize: 10,
+                  ),
+                );
+              },
+              reservedSize: 35,
+              interval: (chartMaxY - chartMinY) / 4,
+            ),
+          ),
+        ),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: (chartMaxY - chartMinY) / 4,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: context.colors.divider.withValues(alpha: 0.3),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        barGroups: List.generate(24, (hour) {
+          final value = hourlyAverage[hour];
+          if (value == null) {
+            // 데이터가 없는 시간대
+            return BarChartGroupData(
+              x: hour,
+              barRods: [
+                BarChartRodData(
+                  toY: 0,
+                  color: Colors.transparent,
+                  width: 8,
+                ),
+              ],
+            );
+          }
+
+          return BarChartGroupData(
+            x: hour,
+            barRods: [
+              BarChartRodData(
+                toY: value,
+                color: _getGlucoseColorForValue(value),
+                width: 8,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(4),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
     );
   }
 
-  List<Widget> _buildGuideLines(double height, double maxValue) {
-    return [
-      // 140 mg/dL 라인 (고혈당 기준)
-      if (140 < maxValue)
-        Positioned(
-          bottom: (140 / maxValue) * height,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 1,
-            color: AppTheme.glucoseHigh.withValues(alpha: 0.3),
-          ),
-        ),
-      // 70 mg/dL 라인 (저혈당 기준)
-      Positioned(
-        bottom: (70 / maxValue) * height,
-        left: 0,
-        right: 0,
-        child: Container(
-          height: 1,
-          color: AppTheme.glucoseLow.withValues(alpha: 0.3),
-        ),
-      ),
-    ];
+  /// 혈당 값에 따른 색상 반환 (6단계)
+  Color _getGlucoseColorForValue(double value) {
+    const defaultTarget = 100.0;
+    final targetHigh = defaultTarget + 20; // 120
+
+    if (value < 60) {
+      return AppTheme.glucoseVeryLow;
+    } else if (value < 80) {
+      return AppTheme.glucoseLow;
+    } else if (value <= targetHigh) {
+      return AppTheme.glucoseNormal;
+    } else if (value < 160) {
+      return AppTheme.glucoseHigh; // 주의 (warning)
+    } else if (value < 180) {
+      return AppTheme.glucoseHigh; // 높음 (high)
+    } else {
+      return AppTheme.glucoseVeryHigh;
+    }
   }
 
   Widget _buildStatsCard(BuildContext context, AppLocalizations l10n) {
@@ -595,66 +781,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-class _GlucoseEntry {
-  final String time;
-  final double value;
-  final String label;
-
-  _GlucoseEntry({
-    required this.time,
-    required this.value,
-    required this.label,
-  });
-}
-
-class _LineChartPainter extends CustomPainter {
-  final List<_GlucoseEntry> entries;
-  final double maxValue;
-  final Color color;
-
-  _LineChartPainter({
-    required this.entries,
-    required this.maxValue,
-    required this.color,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (entries.isEmpty) return;
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    final dotPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final path = Path();
-    final barWidth = size.width / entries.length;
-
-    for (int i = 0; i < entries.length; i++) {
-      final x = barWidth * i + barWidth / 2;
-      final y = size.height - (entries[i].value / maxValue) * size.height;
-
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-
-      // 점 그리기
-      canvas.drawCircle(Offset(x, y), 4, dotPaint);
-    }
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 class _PieChartPainter extends CustomPainter {

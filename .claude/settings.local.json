@@ -6,7 +6,11 @@
       "Bash(pod install)",
       "Bash(flutter run:*)",
       "Bash(flutter analyze:*)",
-      "Bash(flutter gen-l10n:*)"
+      "Bash(flutter gen-l10n:*)",
+      "Bash(killall flutter:*)",
+      "Bash(xargs kill:*)",
+      "Bash(open:*)",
+      "Bash(flutter pub add:*)"
     ]
   }
 }
