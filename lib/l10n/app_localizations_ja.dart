@@ -75,7 +75,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get normal => '正常';
 
   @override
-  String get high => '高血糖';
+  String get high => '高い';
 
   @override
   String get breakfast => '朝食';
@@ -547,7 +547,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get veryHigh => '非常に高い';
 
   @override
-  String get elevated => '高い';
+  String get warning => '注意';
 
   @override
   String get target => '目標';

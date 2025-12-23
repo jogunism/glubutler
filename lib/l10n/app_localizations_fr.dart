@@ -554,7 +554,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get veryHigh => 'Très Élevé';
 
   @override
-  String get elevated => 'Élevé';
+  String get warning => 'Attention';
 
   @override
   String get target => 'Cible';

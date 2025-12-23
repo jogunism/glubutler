@@ -189,7 +189,8 @@
 
   "targetGlucoseRange": "Plage de glycémie cible",
   "veryHigh": "Très Élevé",
-  "elevated": "Élevé",
+  "high": "Élevé",
+  "warning": "Attention",
   "target": "Cible",
   "veryLow": "Très Bas",
 

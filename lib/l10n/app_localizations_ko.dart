@@ -75,7 +75,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get normal => '정상';
 
   @override
-  String get high => '고혈당';
+  String get high => '높음';
 
   @override
   String get breakfast => '아침';
@@ -546,7 +546,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get veryHigh => '매우 높음';
 
   @override
-  String get elevated => '높음';
+  String get warning => '주의';
 
   @override
   String get target => '목표';

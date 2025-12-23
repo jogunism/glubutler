@@ -553,7 +553,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get veryHigh => 'Muy Alto';
 
   @override
-  String get elevated => 'Alto';
+  String get warning => 'Advertencia';
 
   @override
   String get target => 'Objetivo';

@@ -197,7 +197,8 @@
   "targetGlucoseRange": "목표 혈당 범위",
   "targetGlucoseRangeDescription": "설정된 목표수치를 바탕으로 피드에서 보이는 혈당 정보를 더 정확하게 분석할 수 있습니다.",
   "veryHigh": "매우 높음",
-  "elevated": "높음",
+  "high": "높음",
+  "warning": "주의",
   "target": "목표",
   "veryLow": "매우 낮음",
 

@@ -189,7 +189,8 @@
 
   "targetGlucoseRange": "目标血糖范围",
   "veryHigh": "非常高",
-  "elevated": "高",
+  "high": "高",
+  "warning": "注意",
   "target": "目标",
   "veryLow": "非常低",
 

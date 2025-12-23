@@ -189,7 +189,8 @@
 
   "targetGlucoseRange": "Intervallo glicemico target",
   "veryHigh": "Molto Alto",
-  "elevated": "Alto",
+  "high": "Alto",
+  "warning": "Attenzione",
   "target": "Target",
   "veryLow": "Molto Basso",
 

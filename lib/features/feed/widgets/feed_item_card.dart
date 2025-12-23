@@ -305,7 +305,9 @@ class _FeedItemCardState extends State<FeedItemCard>
           : baseDecoration,
       child: IntrinsicHeight(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: isLargeItem
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
           children: [
             _buildIcon(context, theme, settings),
             SizedBox(width: iconSpacing),
@@ -771,8 +773,10 @@ class _FeedItemCardState extends State<FeedItemCard>
         return AppTheme.glucoseVeryLow;
       case 'low':
         return AppTheme.glucoseLow;
+      case 'warning':
+        return AppTheme.glucoseHigh; // 주의 - 주황색
       case 'high':
-        return AppTheme.glucoseHigh;
+        return AppTheme.glucoseHigh; // 높음 - 주황색
       case 'veryHigh':
         return AppTheme.glucoseVeryHigh;
       default:
@@ -782,21 +786,28 @@ class _FeedItemCardState extends State<FeedItemCard>
 
   /// Calculate 5-level glucose status based on target ± 20 range
   String _getGlucoseStatus(double mgDlValue, GlucoseRangeSettings range) {
-    // target ± 20 범위를 Normal로 설정
-    final normalLow = range.target - 20;
-    final normalHigh = range.target + 20;
+    // 6단계 분류:
+    // veryLow: < range.veryLow (60)
+    // low: range.veryLow ~ range.low (60 ~ 80)
+    // normal: range.low ~ targetHigh (80 ~ 120, target ± 20)
+    // warning: targetHigh ~ range.high (120 ~ 160)
+    // high: range.high ~ range.veryHigh (160 ~ 180)
+    // veryHigh: >= range.veryHigh (180+)
 
-    // 5단계 분류
-    if (mgDlValue < normalLow - 20) {
-      return 'veryLow'; // target - 40 미만
-    } else if (mgDlValue < normalLow) {
-      return 'low'; // target - 40 ~ target - 20
-    } else if (mgDlValue <= normalHigh) {
-      return 'normal'; // target - 20 ~ target + 20
-    } else if (mgDlValue <= normalHigh + 20) {
-      return 'high'; // target + 20 ~ target + 40
+    final targetHigh = range.target + 20; // 120 (목표 100 기준)
+
+    if (mgDlValue < range.veryLow) {
+      return 'veryLow'; // < 60
+    } else if (mgDlValue < range.low) {
+      return 'low'; // 60 ~ 80
+    } else if (mgDlValue <= targetHigh) {
+      return 'normal'; // 80 ~ 120
+    } else if (mgDlValue < range.high) {
+      return 'warning'; // 120 ~ 160 (주의)
+    } else if (mgDlValue < range.veryHigh) {
+      return 'high'; // 160 ~ 180 (높음)
     } else {
-      return 'veryHigh'; // target + 40 초과
+      return 'veryHigh'; // >= 180 (매우 높음)
     }
   }
 
@@ -851,9 +862,12 @@ class _FeedItemCardState extends State<FeedItemCard>
       case 'low':
         color = AppTheme.glucoseLow;
         label = l10n.low;
+      case 'warning':
+        color = AppTheme.glucoseHigh;
+        label = l10n.warning; // 주의
       case 'high':
         color = AppTheme.glucoseHigh;
-        label = l10n.elevated;
+        label = l10n.high; // 높음
       case 'veryHigh':
         color = AppTheme.glucoseVeryHigh;
         label = l10n.veryHigh;

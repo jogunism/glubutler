@@ -1178,11 +1178,11 @@ abstract class AppLocalizations {
   /// **'Very High'**
   String get veryHigh;
 
-  /// No description provided for @elevated.
+  /// No description provided for @warning.
   ///
   /// In en, this message translates to:
-  /// **'High'**
-  String get elevated;
+  /// **'Warning'**
+  String get warning;
 
   /// No description provided for @target.
   ///

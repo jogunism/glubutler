@@ -46,10 +46,7 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
     return valueMgDl.toStringAsFixed(0);
   }
 
-  void _updateValue({
-    required String field,
-    required bool increment,
-  }) {
+  void _updateValue({required String field, required bool increment}) {
     final settings = context.read<SettingsService>();
     final range = settings.glucoseRange;
     final unit = settings.unit;
@@ -122,7 +119,7 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
                     _buildRangeRow(
                       context: context,
                       theme: theme,
-                      label: l10n.elevated,
+                      label: l10n.high,
                       color: AppTheme.iconOrange,
                       value: range.high,
                       unit: unit,
@@ -168,7 +165,11 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
     );
   }
 
-  Widget _buildHeroSection(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildHeroSection(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -242,10 +243,7 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
               child: Container(
                 width: 10,
                 height: 10,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
             ),
           ),
@@ -309,11 +307,7 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
                   ),
                 ),
                 // Divider
-                Container(
-                  width: 1,
-                  height: 20,
-                  color: context.colors.divider,
-                ),
+                Container(width: 1, height: 20, color: context.colors.divider),
                 // Plus button
                 GestureDetector(
                   onTap: () => _updateValue(field: field, increment: true),
@@ -344,10 +338,7 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
   Widget _buildDivider(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 52),
-      child: Divider(
-        height: 1,
-        color: context.colors.divider,
-      ),
+      child: Divider(height: 1, color: context.colors.divider),
     );
   }
 }

@@ -189,7 +189,8 @@
 
   "targetGlucoseRange": "Zielbereich Blutzucker",
   "veryHigh": "Sehr Hoch",
-  "elevated": "Hoch",
+  "high": "Hoch",
+  "warning": "Warnung",
   "target": "Ziel",
   "veryLow": "Sehr Niedrig",
 

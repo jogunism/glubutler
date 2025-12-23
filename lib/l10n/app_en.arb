@@ -197,7 +197,8 @@
   "targetGlucoseRange": "Target Glucose Range",
   "targetGlucoseRangeDescription": "Your target values are used to analyze glucose data more accurately in the feed.",
   "veryHigh": "Very High",
-  "elevated": "High",
+  "high": "High",
+  "warning": "Warning",
   "target": "Target",
   "veryLow": "Very Low",
 

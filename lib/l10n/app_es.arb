@@ -189,7 +189,8 @@
 
   "targetGlucoseRange": "Rango objetivo de glucosa",
   "veryHigh": "Muy Alto",
-  "elevated": "Alto",
+  "high": "Alto",
+  "warning": "Advertencia",
   "target": "Objetivo",
   "veryLow": "Muy Bajo",
 
