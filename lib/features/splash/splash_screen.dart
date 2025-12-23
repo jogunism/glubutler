@@ -205,16 +205,19 @@ class _SplashScreenState extends State<SplashScreen>
                       width: 240,
                       height: 240,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 4),
                     // 앱 슬로건
                     Text(
                       AppLocalizations.of(context)!.appSlogan,
                       style: TextStyle(
-                        fontSize: 16,
-                        color: AppTheme.textPrimary(context).withValues(alpha: 0.6),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.textPrimary(
+                          context,
+                        ).withValues(alpha: 0.7),
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 30),
                     // 로딩 인디케이터
                     AnimatedOpacity(
                       opacity: _showLoading ? 1.0 : 0.0,
@@ -230,7 +233,9 @@ class _SplashScreenState extends State<SplashScreen>
                         key: ValueKey(_currentStep),
                         style: TextStyle(
                           fontSize: 11,
-                          color: AppTheme.textPrimary(context).withValues(alpha: 0.4),
+                          color: AppTheme.textPrimary(
+                            context,
+                          ).withValues(alpha: 0.4),
                         ),
                       ),
                     ),
