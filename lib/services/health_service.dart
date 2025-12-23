@@ -252,9 +252,6 @@ class HealthService {
           final calories = (map['totalEnergyBurned'] as num?)?.toInt();
           final startTime = DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt());
 
-          // Debug log to check workout type mapping with details
-          debugPrint('[HealthService] Workout: $sourceName, ${startTime.toString()}, ${durationMinutes}min, ${calories}kcal, raw type: $workoutTypeRaw -> $exerciseType');
-
           records.add(ExerciseRecord(
             id: 'hk_workout_${(map['startTime'] as num).toInt()}',
             timestamp: startTime,

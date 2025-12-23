@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:intl/intl.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
-import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
-import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/models/feed_item.dart';
-import 'package:glu_butler/models/cgm_glucose_group.dart';
-import 'package:glu_butler/models/sleep_group.dart';
 import 'package:glu_butler/features/feed/widgets/feed_item_card.dart';
 import 'package:glu_butler/features/feed/widgets/cgm_group_card.dart';
-import 'package:glu_butler/features/feed/widgets/sleep_group_card.dart';
-import 'package:glu_butler/features/feed/widgets/water_group_card.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -123,93 +116,6 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  Widget _buildStepsSummary(BuildContext context, DailyActivityData activity, AppLocalizations l10n) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.all(11),
-      decoration: context.decorations.card.copyWith(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              width: 31,
-              height: 31,
-              decoration: BoxDecoration(
-                color: AppTheme.iconGreen.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.directions_walk,
-                color: AppTheme.iconGreen,
-                size: 17,
-              ),
-            ),
-            const SizedBox(width: 11),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        l10n.steps,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: context.colors.textSecondary,
-                          fontSize: 11,
-                        ),
-                      ),
-                      Text(
-                        ' · Health',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: context.colors.textSecondary.withValues(alpha: 0.7),
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Row(
-                      children: [
-                        Text(
-                          _formatNumber(activity.steps),
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        if (activity.distanceKm != null) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            '${activity.distanceKm!.toStringAsFixed(1)} km',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: context.colors.textSecondary,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatNumber(int number) {
-    final locale = Localizations.localeOf(context).toString();
-    return NumberFormat.decimalPattern(locale).format(number);
-  }
-
   Widget _buildEmptyState(ThemeData theme, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 80),
@@ -244,58 +150,18 @@ class _FeedScreenState extends State<FeedScreen> {
   List<Widget> _buildFeedContent(BuildContext context, FeedProvider provider, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final itemsByDate = provider.itemsByDate;
-    final cgmGroupsByDate = provider.cgmGroupsByDate;
-    final sleepGroupsByDate = provider.sleepGroupsByDate;
-    final waterGroupsByDate = provider.waterGroupsByDate;
 
-    // Combine dates from feed items, activity data, CGM groups, sleep groups, and water groups
-    // Normalize all dates to midnight to ensure proper deduplication
-    final allDatesSet = <DateTime>{};
-    for (final date in itemsByDate.keys) {
-      allDatesSet.add(DateTime(date.year, date.month, date.day));
-    }
-    for (final date in provider.activityByDate.keys) {
-      allDatesSet.add(DateTime(date.year, date.month, date.day));
-    }
-    for (final date in cgmGroupsByDate.keys) {
-      allDatesSet.add(DateTime(date.year, date.month, date.day));
-    }
-    for (final date in sleepGroupsByDate.keys) {
-      allDatesSet.add(DateTime(date.year, date.month, date.day));
-    }
-    for (final date in waterGroupsByDate.keys) {
-      allDatesSet.add(DateTime(date.year, date.month, date.day));
-    }
-    final allDates = allDatesSet.toList()..sort((a, b) => b.compareTo(a));
+    // Get all dates from feed items
+    final allDates = itemsByDate.keys.toList()..sort((a, b) => b.compareTo(a));
 
     final List<Widget> slivers = [];
 
     for (final date in allDates) {
-      // Find items/groups/activity matching this date (comparing year, month, day only)
-      final items = itemsByDate.entries
-          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
-          .expand((e) => e.value)
-          .where((item) => item.type != FeedItemType.sleep && item.type != FeedItemType.water) // Exclude sleep and water items (they are shown as groups)
-          .toList();
-      final cgmGroups = cgmGroupsByDate.entries
-          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
-          .expand((e) => e.value)
-          .toList();
-      final sleepGroups = sleepGroupsByDate.entries
-          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
-          .expand((e) => e.value)
-          .toList();
-      final waterGroups = waterGroupsByDate.entries
-          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
-          .expand((e) => e.value)
-          .toList();
-      final activityEntry = provider.activityByDate.entries
-          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
-          .firstOrNull;
-      final activityForDate = activityEntry?.value;
+      // Get items for this date
+      final items = itemsByDate[date] ?? [];
 
-      // Skip if no items, no CGM groups, no sleep groups, no water groups, and no activity for this date
-      if (items.isEmpty && cgmGroups.isEmpty && sleepGroups.isEmpty && waterGroups.isEmpty && activityForDate == null) continue;
+      // Skip if no items for this date
+      if (items.isEmpty) continue;
 
       // Date header
       slivers.add(
@@ -313,45 +179,21 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       );
 
-      // Steps summary for this date (show if we have read access and data exists)
-      if (provider.hasHealthReadAccess && activityForDate != null) {
-        slivers.add(
-          SliverToBoxAdapter(
-            child: _buildStepsSummary(context, activityForDate, l10n),
-          ),
-        );
-      }
-
-      // Water summary for this date (show if we have water groups)
-      if (waterGroups.isNotEmpty) {
-        for (final waterGroup in waterGroups) {
-          slivers.add(
-            SliverToBoxAdapter(
-              child: WaterGroupCard(group: waterGroup),
-            ),
-          );
-        }
-      }
-
-      // Build combined list of sleep groups, CGM groups and feed items, sorted by time
-      final combinedItems = _buildCombinedItems(items, cgmGroups, sleepGroups);
-
-      // Render combined items
-      if (combinedItems.isNotEmpty) {
+      // Render items (already sorted by timestamp)
+      if (items.isNotEmpty) {
         slivers.add(
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final item = combinedItems[index];
-                if (item is CgmGlucoseGroup) {
-                  return CgmGroupCard(group: item);
-                } else if (item is SleepGroup) {
-                  return SleepGroupCard(group: item);
+                final item = items[index];
+                // Check if this is a CGM group type
+                if (item.type == FeedItemType.cgmGroup) {
+                  return CgmGroupCard(group: item.cgmGroup!);
                 } else {
                   return FeedItemCard(item: item);
                 }
               },
-              childCount: combinedItems.length,
+              childCount: items.length,
             ),
           ),
         );
@@ -386,49 +228,4 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
-  /// Combine feed items, sleep groups, and CGM groups, sorted by time (newest first)
-  List<dynamic> _buildCombinedItems(List items, List<CgmGlucoseGroup> cgmGroups, List<SleepGroup> sleepGroups) {
-    final List<dynamic> combined = [];
-
-    // Add feed items with their timestamps
-    for (final item in items) {
-      combined.add(item);
-    }
-
-    // Add CGM groups with their start times
-    for (final group in cgmGroups) {
-      combined.add(group);
-    }
-
-    // Add sleep groups with their start times
-    for (final group in sleepGroups) {
-      combined.add(group);
-    }
-
-    // Sort by timestamp (newest first)
-    combined.sort((a, b) {
-      final DateTime timeA;
-      final DateTime timeB;
-
-      if (a is CgmGlucoseGroup) {
-        timeA = a.startTime;
-      } else if (a is SleepGroup) {
-        timeA = a.startTime;
-      } else {
-        timeA = a.timestamp;
-      }
-
-      if (b is CgmGlucoseGroup) {
-        timeB = b.startTime;
-      } else if (b is SleepGroup) {
-        timeB = b.startTime;
-      } else {
-        timeB = b.timestamp;
-      }
-
-      return timeB.compareTo(timeA);
-    });
-
-    return combined;
-  }
 }

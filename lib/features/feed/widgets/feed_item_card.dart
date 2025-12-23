@@ -93,7 +93,12 @@ class _FeedItemCardState extends State<FeedItemCard>
       widget.item.timestamp,
     ).format(pattern: 'HH:mm');
     final title = _getItemTitle(l10n);
-    final sourceName = widget.item.sourceName;
+
+    // Hide source name for steps and water group items
+    final sourceName = (widget.item.type == FeedItemType.steps ||
+                        widget.item.type == FeedItemType.waterGroup)
+        ? null
+        : widget.item.sourceName;
 
     // Only glucose items can be deleted with swipe
     if (widget.item.type == FeedItemType.glucose) {
@@ -223,6 +228,13 @@ class _FeedItemCardState extends State<FeedItemCard>
     final baseDecoration = context.decorations.card;
     final isGlucose = widget.item.type == FeedItemType.glucose;
 
+    // Hide time for steps and water group items
+    final shouldShowTime = widget.item.type != FeedItemType.steps &&
+                           widget.item.type != FeedItemType.waterGroup;
+
+    // For sleep group, show time range instead of single time
+    final isSleepGroup = widget.item.type == FeedItemType.sleepGroup;
+
     // Non-glucose items: 70% size (reduced padding and spacing)
     final verticalMargin = isGlucose ? 6.0 : 4.0;
     final cardPadding = isGlucose ? 16.0 : 11.0;
@@ -279,18 +291,22 @@ class _FeedItemCardState extends State<FeedItemCard>
                 ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  time,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: context.colors.textSecondary,
-                    fontSize: isGlucose ? null : 11,
-                  ),
-                ),
-              ],
-            ),
+            if (shouldShowTime)
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (isSleepGroup)
+                    _buildSleepTimeRange(theme)
+                  else
+                    Text(
+                      time,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: context.colors.textSecondary,
+                        fontSize: isGlucose ? null : 11,
+                      ),
+                    ),
+                ],
+              ),
           ],
         ),
       ),
@@ -314,6 +330,14 @@ class _FeedItemCardState extends State<FeedItemCard>
         return l10n.insulin;
       case FeedItemType.mindfulness:
         return l10n.mindfulness;
+      case FeedItemType.steps:
+        return l10n.steps;
+      case FeedItemType.sleepGroup:
+        return l10n.sleep;
+      case FeedItemType.waterGroup:
+        return l10n.waterIntake;
+      case FeedItemType.cgmGroup:
+        return l10n.bloodGlucose; // CGM groups are handled separately in feed_screen
     }
   }
 
@@ -337,6 +361,14 @@ class _FeedItemCardState extends State<FeedItemCard>
         return _buildInsulinValue(theme);
       case FeedItemType.mindfulness:
         return _buildMindfulnessValue(theme);
+      case FeedItemType.steps:
+        return _buildStepsValue(theme, l10n);
+      case FeedItemType.sleepGroup:
+        return _buildSleepGroupValue(theme);
+      case FeedItemType.waterGroup:
+        return _buildWaterGroupValue(theme);
+      case FeedItemType.cgmGroup:
+        return const SizedBox.shrink(); // CGM groups are handled separately
     }
   }
 
@@ -484,6 +516,71 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
+  Widget _buildStepsValue(ThemeData theme, AppLocalizations l10n) {
+    final stepsData = widget.item.stepsData!;
+    final steps = stepsData['steps'] as int;
+    final distanceKm = stepsData['distanceKm'] as double?;
+
+    // Build the display text
+    final stepsText = steps.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    final distanceText = (distanceKm != null && distanceKm > 0)
+        ? ' · ${distanceKm.toStringAsFixed(2)} km'
+        : '';
+
+    return Text(
+      '$stepsText$distanceText',
+      style: theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+    );
+  }
+
+  Widget _buildSleepGroupValue(ThemeData theme) {
+    final sleepGroup = widget.item.sleepGroup!;
+
+    return Text(
+      sleepGroup.formattedDuration,
+      style: theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+    );
+  }
+
+  Widget _buildSleepTimeRange(ThemeData theme) {
+    final sleepGroup = widget.item.sleepGroup!;
+
+    // Format time as HH:mm (24-hour format)
+    String formatTime(DateTime time) {
+      final hour = time.hour.toString().padLeft(2, '0');
+      final minute = time.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
+    }
+
+    final timeRange = '${formatTime(sleepGroup.startTime)} ~ ${formatTime(sleepGroup.endTime)}';
+
+    return Text(
+      timeRange,
+      style: theme.textTheme.bodySmall?.copyWith(
+        color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+        fontSize: 11,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildWaterGroupValue(ThemeData theme) {
+    final waterGroup = widget.item.waterGroup!;
+    return Text(
+      waterGroup.formattedAmount(),
+      style: theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+    );
+  }
+
   Widget _buildIcon(BuildContext context, ThemeData theme, SettingsService settings) {
     IconData icon;
     Color color;
@@ -530,6 +627,22 @@ class _FeedItemCardState extends State<FeedItemCard>
         icon = Icons.self_improvement;
         color = AppTheme.iconTeal;
         backgroundColor = color;
+      case FeedItemType.steps:
+        icon = Icons.directions_walk;
+        color = AppTheme.iconGreen;
+        backgroundColor = color;
+      case FeedItemType.sleepGroup:
+        icon = Icons.bedtime;
+        color = AppTheme.iconIndigo;
+        backgroundColor = color;
+      case FeedItemType.waterGroup:
+        icon = Icons.local_drink;
+        color = AppTheme.iconBlue;
+        backgroundColor = color;
+      case FeedItemType.cgmGroup:
+        icon = Icons.water_drop;
+        color = AppTheme.iconRed;
+        backgroundColor = AppTheme.primaryColor; // CGM groups handled separately
     }
 
     // Non-glucose items: 70% size

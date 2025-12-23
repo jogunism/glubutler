@@ -87,8 +87,8 @@ class MainScreenState extends State<MainScreen> {
                 ),
                 CNTabBarItem(
                   label: l10n.feed,
-                  customIcon: Icons.list_alt_outlined,
-                  activeCustomIcon: Icons.list_alt,
+                  customIcon: Icons.view_agenda_outlined,
+                  activeCustomIcon: Icons.view_agenda,
                 ),
                 CNTabBarItem(
                   label: l10n.diary,

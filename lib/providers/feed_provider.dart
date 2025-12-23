@@ -4,13 +4,8 @@ import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
-import 'package:glu_butler/models/sleep_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
-import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
-import 'package:glu_butler/models/cgm_glucose_group.dart';
-import 'package:glu_butler/models/sleep_group.dart';
-import 'package:glu_butler/models/water_group.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
@@ -59,15 +54,6 @@ class FeedProvider extends ChangeNotifier {
 
   List<FeedItem> _items = [];
   List<FeedItem> get items => _items;
-
-  List<CgmGlucoseGroup> _cgmGroups = [];
-  List<CgmGlucoseGroup> get cgmGroups => _cgmGroups;
-
-  List<SleepGroup> _sleepGroups = [];
-  List<SleepGroup> get sleepGroups => _sleepGroups;
-
-  List<WaterGroup> _waterGroups = [];
-  List<WaterGroup> get waterGroups => _waterGroups;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -413,8 +399,6 @@ class FeedProvider extends ChangeNotifier {
       final Map<DateTime, DailyActivityData> newActivityByDate = {};
       int? newTodaySteps;
       double? newTodayWaterMl;
-      List<SleepGroup> sleepGroups = [];
-      List<WaterGroup> waterGroups = [];
 
       // Fetch glucose records via repository (handles HealthKit + Local merge)
       final allGlucoseRecords = await _glucoseRepository.fetch(
@@ -443,23 +427,19 @@ class FeedProvider extends ChangeNotifier {
           endDate: now,
         );
 
-        // Group sleep records
+        // Group sleep records and add to feed items
         final (groupedSleep, individualSleep) =
             SleepGroupingService.groupSleepRecords(sleepRecords);
-        sleepGroups = groupedSleep;
-
-        // Sleep records are only shown as groups, not individual items
-        // Individual sleep records (if any) are excluded from the feed
+        allItems.addAll(groupedSleep.map(FeedItem.fromSleepGroup));
 
         final waterRecords = await _healthService.fetchWaterData(
           startDate: startDate,
           endDate: now,
         );
 
-        // Group water records by date
-        waterGroups = WaterGroupingService.groupWaterRecords(waterRecords);
-
-        // Water records are only shown as groups, not individual items
+        // Group water records by date and add to feed items
+        final waterGroups = WaterGroupingService.groupWaterRecords(waterRecords);
+        allItems.addAll(waterGroups.map(FeedItem.fromWaterGroup));
 
         final mindfulnessRecords = await _healthService.fetchMindfulnessData(
           startDate: startDate,
@@ -476,6 +456,19 @@ class FeedProvider extends ChangeNotifier {
           endDate: now,
         );
         newActivityByDate.addAll(activityData);
+
+        // Add steps data to feed items
+        for (final entry in activityData.entries) {
+          final date = entry.key;
+          final activity = entry.value;
+          if (activity.steps > 0) {
+            allItems.add(FeedItem.fromSteps(
+              date: date,
+              steps: activity.steps,
+              distanceKm: activity.distanceKm,
+            ));
+          }
+        }
       }
 
       // Add local meal records from database
@@ -496,6 +489,9 @@ class FeedProvider extends ChangeNotifier {
       final rangeSettings = _settingsService?.glucoseRange ?? const GlucoseRangeSettings();
       final (cgmGroups, individualGlucose) =
           CgmGroupingService.groupGlucoseRecords(allGlucoseRecords, rangeSettings: rangeSettings);
+
+      // Add CGM groups to feed items
+      allItems.addAll(cgmGroups.map(FeedItem.fromCgmGroup));
 
       // Add individual glucose records (non-CGM) to feed items
       allItems.addAll(individualGlucose.map(FeedItem.fromGlucose));
@@ -532,9 +528,6 @@ class FeedProvider extends ChangeNotifier {
 
       // Update all state at once to prevent partial UI updates
       _items = allItems;
-      _cgmGroups = cgmGroups;
-      _sleepGroups = sleepGroups;
-      _waterGroups = waterGroups;
       _activityByDate.clear();
       _activityByDate.addAll(newActivityByDate);
       _todaySteps = newTodaySteps;
@@ -601,57 +594,6 @@ class FeedProvider extends ChangeNotifier {
         item.timestamp.day,
       );
       grouped.putIfAbsent(dateKey, () => []).add(item);
-    }
-    return grouped;
-  }
-
-  // Get CGM groups for a specific date
-  List<CgmGlucoseGroup> getCgmGroupsForDate(DateTime date) {
-    return _cgmGroups.where((group) {
-      return group.startTime.year == date.year &&
-          group.startTime.month == date.month &&
-          group.startTime.day == date.day;
-    }).toList();
-  }
-
-  // Get CGM groups grouped by date
-  Map<DateTime, List<CgmGlucoseGroup>> get cgmGroupsByDate {
-    final Map<DateTime, List<CgmGlucoseGroup>> grouped = {};
-    for (final group in _cgmGroups) {
-      final dateKey = DateTime(
-        group.startTime.year,
-        group.startTime.month,
-        group.startTime.day,
-      );
-      grouped.putIfAbsent(dateKey, () => []).add(group);
-    }
-    return grouped;
-  }
-
-  // Get Sleep groups grouped by date
-  Map<DateTime, List<SleepGroup>> get sleepGroupsByDate {
-    final Map<DateTime, List<SleepGroup>> grouped = {};
-    for (final group in _sleepGroups) {
-      final dateKey = DateTime(
-        group.date.year,
-        group.date.month,
-        group.date.day,
-      );
-      grouped.putIfAbsent(dateKey, () => []).add(group);
-    }
-    return grouped;
-  }
-
-  // Get Water groups grouped by date
-  Map<DateTime, List<WaterGroup>> get waterGroupsByDate {
-    final Map<DateTime, List<WaterGroup>> grouped = {};
-    for (final group in _waterGroups) {
-      final dateKey = DateTime(
-        group.date.year,
-        group.date.month,
-        group.date.day,
-      );
-      grouped.putIfAbsent(dateKey, () => []).add(group);
     }
     return grouped;
   }
