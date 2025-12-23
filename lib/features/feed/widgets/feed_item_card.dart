@@ -563,7 +563,7 @@ class _FeedItemCardState extends State<FeedItemCard>
     return Text(
       timeRange,
       style: theme.textTheme.bodySmall?.copyWith(
-        color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+        color: context.colors.textSecondary,
         fontSize: 11,
       ),
       textAlign: TextAlign.center,

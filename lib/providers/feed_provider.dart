@@ -390,6 +390,9 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Small delay to let UI thread breathe
+      await Future.delayed(const Duration(milliseconds: 1));
+
       final now = DateTime.now();
       final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
       final startDate = now.subtract(Duration(days: syncDays));
@@ -428,6 +431,8 @@ class FeedProvider extends ChangeNotifier {
         );
 
         // Group sleep records and add to feed items
+        // Yield to UI thread between operations
+        await Future.delayed(Duration.zero);
         final (groupedSleep, individualSleep) =
             SleepGroupingService.groupSleepRecords(sleepRecords);
         allItems.addAll(groupedSleep.map(FeedItem.fromSleepGroup));
@@ -438,6 +443,7 @@ class FeedProvider extends ChangeNotifier {
         );
 
         // Group water records by date and add to feed items
+        await Future.delayed(Duration.zero);
         final waterGroups = WaterGroupingService.groupWaterRecords(waterRecords);
         allItems.addAll(waterGroups.map(FeedItem.fromWaterGroup));
 
@@ -486,6 +492,8 @@ class FeedProvider extends ChangeNotifier {
       allItems.addAll(localExercise.map(FeedItem.fromExercise));
 
       // Group glucose records using CGM grouping service
+      // Yield to UI thread before heavy processing
+      await Future.delayed(Duration.zero);
       final rangeSettings = _settingsService?.glucoseRange ?? const GlucoseRangeSettings();
       final (cgmGroups, individualGlucose) =
           CgmGroupingService.groupGlucoseRecords(allGlucoseRecords, rangeSettings: rangeSettings);
@@ -497,6 +505,8 @@ class FeedProvider extends ChangeNotifier {
       allItems.addAll(individualGlucose.map(FeedItem.fromGlucose));
 
       // Sort by timestamp (newest first)
+      // Yield to UI thread before sorting
+      await Future.delayed(Duration.zero);
       allItems.sort();
 
       // Find top 10 deletable glucose items for bounce animation
