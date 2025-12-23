@@ -596,10 +596,10 @@ class HealthService {
           }
         }
 
-        debugPrint('[HealthService] Writing glucose: value=${record.value}, mealContext=${record.mealContext}, mealTime=${arguments['mealTime']}');
+        // debugPrint('[HealthService] Writing glucose: value=${record.value}, mealContext=${record.mealContext}, mealTime=${arguments['mealTime']}');
 
         final success = await _healthKitChannel.invokeMethod('writeBloodGlucose', arguments);
-        debugPrint('[HealthService] Native iOS glucose write result: $success');
+        // debugPrint('[HealthService] Native iOS glucose write result: $success');
         return success as bool;
       } catch (e) {
         debugPrint('[HealthService] Error writing glucose to native iOS: $e');
@@ -623,10 +623,10 @@ class HealthService {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-      debugPrint('[HealthService] Deleting glucose at timestamp: ${timestamp.toIso8601String()}');
+      // debugPrint('[HealthService] Deleting glucose at timestamp: ${timestamp.toIso8601String()}');
 
       final success = await _healthKitChannel.invokeMethod('deleteBloodGlucose', arguments);
-      debugPrint('[HealthService] Native iOS glucose delete result: $success');
+      // debugPrint('[HealthService] Native iOS glucose delete result: $success');
       return success as bool;
     } catch (e) {
       debugPrint('[HealthService] Error deleting glucose from native iOS: $e');
@@ -645,10 +645,10 @@ class HealthService {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-      debugPrint('[HealthService] Deleting insulin at timestamp: ${timestamp.toIso8601String()}');
+      // debugPrint('[HealthService] Deleting insulin at timestamp: ${timestamp.toIso8601String()}');
 
       final success = await _healthKitChannel.invokeMethod('deleteInsulinDelivery', arguments);
-      debugPrint('[HealthService] Native iOS insulin delete result: $success');
+      // debugPrint('[HealthService] Native iOS insulin delete result: $success');
       return success as bool;
     } catch (e) {
       debugPrint('[HealthService] Error deleting insulin from native iOS: $e');
@@ -675,7 +675,7 @@ class HealthService {
         };
 
         final success = await _healthKitChannel.invokeMethod('writeInsulin', arguments);
-        debugPrint('[HealthService] Native iOS insulin write result: $success (reason: $deliveryReason)');
+        // debugPrint('[HealthService] Native iOS insulin write result: $success (reason: $deliveryReason)');
         return success as bool;
       } catch (e) {
         debugPrint('[HealthService] Error writing insulin to native iOS: $e');

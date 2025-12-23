@@ -465,7 +465,6 @@ class HealthKitBridge {
           ]
         }
 
-        print("[HealthKitBridge] Fetched \(data.count) sleep records (filtered from \(samples.count) total samples)")
         result(data)
       }
     }
