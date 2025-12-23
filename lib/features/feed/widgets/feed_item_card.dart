@@ -63,8 +63,14 @@ class _FeedItemCardState extends State<FeedItemCard>
 
   @override
   void dispose() {
-    // Unregister callback
-    context.read<FeedProvider>().unregisterBounceCallback(widget.item.id);
+    // Unregister callback - use try-catch to handle cases where context is no longer valid
+    try {
+      if (mounted) {
+        context.read<FeedProvider>().unregisterBounceCallback(widget.item.id);
+      }
+    } catch (e) {
+      // Context may not be available during disposal, ignore
+    }
     _bounceController.dispose();
     super.dispose();
   }
@@ -82,6 +88,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final settings = context.watch<SettingsService>();
     final time = Jiffy.parseFromDateTime(
       widget.item.timestamp,
     ).format(pattern: 'HH:mm');
@@ -131,6 +138,7 @@ class _FeedItemCardState extends State<FeedItemCard>
                     context,
                     theme,
                     l10n,
+                    settings,
                     time,
                     title,
                     sourceName,
@@ -149,6 +157,7 @@ class _FeedItemCardState extends State<FeedItemCard>
       context,
       theme,
       l10n,
+      settings,
       time,
       title,
       sourceName,
@@ -205,6 +214,7 @@ class _FeedItemCardState extends State<FeedItemCard>
     BuildContext context,
     ThemeData theme,
     AppLocalizations l10n,
+    SettingsService settings,
     String time,
     String title,
     String? sourceName, {
@@ -223,7 +233,7 @@ class _FeedItemCardState extends State<FeedItemCard>
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildIcon(context, theme),
+            _buildIcon(context, theme, settings),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -446,7 +456,7 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
-  Widget _buildIcon(BuildContext context, ThemeData theme) {
+  Widget _buildIcon(BuildContext context, ThemeData theme, SettingsService settings) {
     IconData icon;
     Color color;
     Color backgroundColor;
@@ -459,7 +469,6 @@ class _FeedItemCardState extends State<FeedItemCard>
         final glucose = widget.item.glucoseRecord;
         if (glucose != null) {
           // Calculate 5-level status for background color
-          final settings = context.watch<SettingsService>();
           final glucoseRange = settings.glucoseRange;
           final mgDlValue = glucose.valueIn('mg/dL');
           final status = _getGlucoseStatus(mgDlValue, glucoseRange);
