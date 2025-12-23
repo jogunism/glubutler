@@ -8,6 +8,7 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
@@ -20,7 +21,8 @@ class FeedItemCard extends StatefulWidget {
   State<FeedItemCard> createState() => _FeedItemCardState();
 }
 
-class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderStateMixin {
+class _FeedItemCardState extends State<FeedItemCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _bounceController;
   late Animation<Offset> _bounceAnimation;
 
@@ -32,20 +34,37 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
       vsync: this,
     );
 
-    // Very short, simple bounce: just a quick nudge left and back
-    _bounceAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(-0.02, 0),
-    ).animate(
-      CurvedAnimation(
-        parent: _bounceController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _bounceAnimation =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(-0.04, 0)).animate(
+          CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
+        );
+
+    // Register bounce callback with provider if this item is bouncable
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<FeedProvider>();
+      if (provider.bouncableItemIds.contains(widget.item.id)) {
+        provider.registerBounceCallback(widget.item.id, _performBounce);
+      }
+    });
+  }
+
+  void _performBounce() {
+    if (!mounted) return;
+
+    final provider = context.read<FeedProvider>();
+    if (!provider.bouncableItemIds.contains(widget.item.id)) return;
+
+    _bounceController.forward().then((_) {
+      if (mounted) {
+        _bounceController.reverse();
+      }
+    });
   }
 
   @override
   void dispose() {
+    // Unregister callback
+    context.read<FeedProvider>().unregisterBounceCallback(widget.item.id);
     _bounceController.dispose();
     super.dispose();
   }
@@ -63,7 +82,9 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final time = Jiffy.parseFromDateTime(widget.item.timestamp).format(pattern: 'HH:mm');
+    final time = Jiffy.parseFromDateTime(
+      widget.item.timestamp,
+    ).format(pattern: 'HH:mm');
     final title = _getItemTitle(l10n);
     final sourceName = widget.item.sourceName;
 
@@ -84,14 +105,10 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
             padding: const EdgeInsets.only(right: 20),
             alignment: Alignment.centerRight,
             decoration: BoxDecoration(
-              color: Colors.red,
+              color: AppTheme.iconRed,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
-              Icons.delete,
-              color: Colors.white,
-              size: 28,
-            ),
+            child: const Icon(Icons.delete, color: Colors.white, size: 28),
           ),
           child: SlideTransition(
             position: _bounceAnimation,
@@ -110,7 +127,15 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: _buildCardContent(context, theme, l10n, time, title, sourceName, includeMargin: false),
+                  child: _buildCardContent(
+                    context,
+                    theme,
+                    l10n,
+                    time,
+                    title,
+                    sourceName,
+                    includeMargin: false,
+                  ),
                 ),
               ),
             ),
@@ -120,10 +145,21 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     }
 
     // Non-glucose items: no swipe delete
-    return _buildCardContent(context, theme, l10n, time, title, sourceName, includeMargin: true);
+    return _buildCardContent(
+      context,
+      theme,
+      l10n,
+      time,
+      title,
+      sourceName,
+      includeMargin: true,
+    );
   }
 
-  Future<bool?> _showDeleteConfirmation(BuildContext context, AppLocalizations l10n) {
+  Future<bool?> _showDeleteConfirmation(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -136,7 +172,7 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.iconRed),
             child: Text(l10n.delete),
           ),
         ],
@@ -156,10 +192,8 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            success ? l10n.glucoseDeleted : l10n.deleteFailed,
-          ),
-          backgroundColor: success ? Colors.green : Colors.red,
+          content: Text(success ? l10n.glucoseDeleted : l10n.deleteFailed),
+          backgroundColor: success ? AppTheme.iconGreen : AppTheme.iconRed,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),
@@ -176,22 +210,15 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     String? sourceName, {
     bool includeMargin = true,
   }) {
+    final baseDecoration = context.decorations.card;
     return Container(
-      margin: includeMargin ? const EdgeInsets.symmetric(horizontal: 16, vertical: 6) : EdgeInsets.zero,
+      margin: includeMargin
+          ? const EdgeInsets.symmetric(horizontal: 16, vertical: 6)
+          : EdgeInsets.zero,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        // For glucose items (includeMargin=false), don't add borderRadius as it's handled by ClipRRect
-        borderRadius: includeMargin ? BorderRadius.circular(16) : null,
-        // Only show shadow for non-glucose items (glucose items are in ClipRRect which clips shadows)
-        boxShadow: includeMargin ? [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ] : null,
-      ),
+      decoration: includeMargin
+          ? baseDecoration.copyWith(borderRadius: BorderRadius.circular(16))
+          : baseDecoration,
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -216,7 +243,9 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
                         Text(
                           ' · $sourceName',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: context.colors.textSecondary.withValues(alpha: 0.7),
+                            color: context.colors.textSecondary.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
                         ),
                       ],
@@ -266,7 +295,11 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     }
   }
 
-  Widget _buildValue(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildValue(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     switch (widget.item.type) {
       case FeedItemType.glucose:
         return _buildGlucoseValue(context, theme);
@@ -324,8 +357,8 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
         _buildMealContextChip(
           context,
           (glucose.mealContext == null || glucose.mealContext!.isEmpty)
-            ? 'fasting'
-            : glucose.mealContext!,
+              ? 'fasting'
+              : glucose.mealContext!,
           theme,
           l10n,
         ),
@@ -347,10 +380,7 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
         ),
         if (exercise.calories != null) ...[
           const SizedBox(width: 12),
-          Text(
-            '${exercise.calories} kcal',
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text('${exercise.calories} kcal', style: theme.textTheme.bodyMedium),
         ],
       ],
     );
@@ -360,9 +390,7 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     final sleep = widget.item.sleepRecord!;
     return Text(
       sleep.formattedDuration,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -385,9 +413,7 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     final water = widget.item.waterRecord!;
     return Text(
       water.formattedAmount(),
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -416,9 +442,7 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     final mindfulness = widget.item.mindfulnessRecord!;
     return Text(
       mindfulness.formattedDuration,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -431,7 +455,7 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
       case FeedItemType.glucose:
         icon = Icons.water_drop;
         // Always use red for glucose drop icon
-        color = Colors.red;
+        color = AppTheme.iconRed;
         final glucose = widget.item.glucoseRecord;
         if (glucose != null) {
           // Calculate 5-level status for background color
@@ -445,27 +469,27 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
         }
       case FeedItemType.exercise:
         icon = Icons.fitness_center;
-        color = Colors.orange;
+        color = AppTheme.iconOrange;
         backgroundColor = color;
       case FeedItemType.sleep:
         icon = Icons.bedtime;
-        color = Colors.indigo;
+        color = AppTheme.iconIndigo;
         backgroundColor = color;
       case FeedItemType.meal:
         icon = Icons.restaurant;
-        color = Colors.green;
+        color = AppTheme.iconGreen;
         backgroundColor = color;
       case FeedItemType.water:
         icon = Icons.local_drink;
-        color = Colors.lightBlue;
+        color = AppTheme.iconLightBlue;
         backgroundColor = color;
       case FeedItemType.insulin:
         icon = Icons.vaccines;
-        color = Colors.purple;
+        color = AppTheme.iconPurple;
         backgroundColor = color;
       case FeedItemType.mindfulness:
         icon = Icons.self_improvement;
-        color = Colors.teal;
+        color = AppTheme.iconTeal;
         backgroundColor = color;
     }
 
@@ -483,15 +507,15 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
   Color _getGlucoseColor(String status) {
     switch (status) {
       case 'veryLow':
-        return Colors.purple;
+        return AppTheme.glucoseVeryLow;
       case 'low':
-        return Colors.blue;
+        return AppTheme.glucoseLow;
       case 'high':
-        return Colors.yellow.shade700;
+        return AppTheme.glucoseHigh;
       case 'veryHigh':
-        return Colors.red;
+        return AppTheme.glucoseVeryHigh;
       default:
-        return AppTheme.glucoseNormal;  // Green color for normal range
+        return AppTheme.glucoseNormal;
     }
   }
 
@@ -503,19 +527,24 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
 
     // 5단계 분류
     if (mgDlValue < normalLow - 20) {
-      return 'veryLow';  // target - 40 미만
+      return 'veryLow'; // target - 40 미만
     } else if (mgDlValue < normalLow) {
-      return 'low';  // target - 40 ~ target - 20
+      return 'low'; // target - 40 ~ target - 20
     } else if (mgDlValue <= normalHigh) {
-      return 'normal';  // target - 20 ~ target + 20
+      return 'normal'; // target - 20 ~ target + 20
     } else if (mgDlValue <= normalHigh + 20) {
-      return 'high';  // target + 20 ~ target + 40
+      return 'high'; // target + 20 ~ target + 40
     } else {
-      return 'veryHigh';  // target + 40 초과
+      return 'veryHigh'; // target + 40 초과
     }
   }
 
-  Widget _buildMealContextChip(BuildContext context, String mealContext, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildMealContextChip(
+    BuildContext context,
+    String mealContext,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     String label;
     switch (mealContext) {
       case 'before_meal':
@@ -546,25 +575,29 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildStatusChip(String status, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildStatusChip(
+    String status,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     Color color;
     String label;
 
     switch (status) {
       case 'veryLow':
-        color = Colors.purple;
+        color = AppTheme.glucoseVeryLow;
         label = l10n.veryLow;
       case 'low':
-        color = Colors.blue;
+        color = AppTheme.glucoseLow;
         label = l10n.low;
       case 'high':
-        color = Colors.yellow.shade700;
+        color = AppTheme.glucoseHigh;
         label = l10n.elevated;
       case 'veryHigh':
-        color = Colors.red;
+        color = AppTheme.glucoseVeryHigh;
         label = l10n.veryHigh;
       default:
-        color = AppTheme.glucoseNormal;  // Green color for normal range
+        color = AppTheme.glucoseNormal;
         label = l10n.normal;
     }
 
@@ -620,5 +653,4 @@ class _FeedItemCardState extends State<FeedItemCard> with SingleTickerProviderSt
         return 'Meal';
     }
   }
-
 }

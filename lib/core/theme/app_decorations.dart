@@ -68,11 +68,11 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
   /// Dark theme decorations (Glu Sight palette)
   static final dark = AppDecorations(
     card: BoxDecoration(
-      color: const Color(0xFF2D2D44), // Lighter Navy
+      color: const Color(0xFF3A3A55), // Brighter Navy (increased from 2D2D44)
       borderRadius: BorderRadius.circular(12),
     ),
     cardElevated: BoxDecoration(
-      color: const Color(0xFF2D2D44),
+      color: const Color(0xFF3A3A55), // Brighter Navy (increased from 2D2D44)
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
         BoxShadow(
@@ -91,7 +91,7 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
       ),
     ),
     inputField: BoxDecoration(
-      color: const Color(0xFF2D2D44), // Lighter Navy
+      color: const Color(0xFF3A3A55), // Brighter Navy (increased from 2D2D44)
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
         color: const Color(0xFF3D3D5C), // Navy Border

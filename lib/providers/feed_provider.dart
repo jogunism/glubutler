@@ -84,6 +84,27 @@ class FeedProvider extends ChangeNotifier {
   double? _todayWaterMl;
   double? get todayWaterMl => _todayWaterMl;
 
+  // IDs of top 10 deletable glucose items to bounce after refresh
+  final Set<String> _bouncableItemIds = {};
+  Set<String> get bouncableItemIds => _bouncableItemIds;
+
+  // Map of item ID to bounce callback
+  final Map<String, void Function()> _bounceCallbacks = {};
+
+  void registerBounceCallback(String itemId, void Function() callback) {
+    _bounceCallbacks[itemId] = callback;
+  }
+
+  void unregisterBounceCallback(String itemId) {
+    _bounceCallbacks.remove(itemId);
+  }
+
+  void triggerBounce() {
+    for (final callback in _bounceCallbacks.values) {
+      callback();
+    }
+  }
+
   void setSettingsService(SettingsService settingsService) {
     _settingsService = settingsService;
   }
@@ -458,6 +479,33 @@ class FeedProvider extends ChangeNotifier {
 
       // Sort by timestamp (newest first)
       allItems.sort();
+
+      // Find top 10 deletable glucose items for bounce animation
+      _bouncableItemIds.clear();
+
+      // Find deletable glucose items:
+      // 1. Local records (!isFromHealthKit)
+      // 2. HealthKit records created by this app (sourceName contains 'Glu Butler')
+      final deletableGlucoseItems = allItems
+          .where((item) {
+            if (item.type != FeedItemType.glucose || item.glucoseRecord == null) {
+              return false;
+            }
+            final record = item.glucoseRecord!;
+            // Include local records
+            if (!record.isFromHealthKit) {
+              return true;
+            }
+            // Include HealthKit records created by this app
+            if (record.sourceName != null && record.sourceName!.contains('Glu Butler')) {
+              return true;
+            }
+            return false;
+          })
+          .take(10)
+          .map((item) => item.id)
+          .toList();
+      _bouncableItemIds.addAll(deletableGlucoseItems);
 
       // Update all state at once to prevent partial UI updates
       _items = allItems;

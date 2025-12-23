@@ -308,7 +308,6 @@ class HealthService {
           ));
         }
 
-        // debugPrint('[HealthService] Fetched ${records.length} sleep records from native iOS');
         return records;
       } catch (e) {
         debugPrint('[HealthService] Error fetching sleep data from native iOS: $e');

@@ -38,12 +38,12 @@ class HealthConnectBanner extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.1),
+              color: AppTheme.iconRed.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
               Icons.favorite,
-              color: Colors.red,
+              color: AppTheme.iconRed,
               size: 28,
             ),
           ),

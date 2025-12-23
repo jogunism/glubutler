@@ -68,7 +68,7 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Dark theme colors (Glu Sight palette)
   static const dark = AppColors(
     background: Color(0xFF1C1C2E), // Dark Navy
-    card: Color(0xFF2D2D44), // Lighter Navy
+    card: Color(0xFF3A3A55), // Brighter Navy (increased from 2D2D44)
     tabBar: Color(0xFF2D2D44), // Lighter Navy
     divider: Color(0xFF3D3D5C), // Navy Divider
     textPrimary: Color(0xFFFFFFFF), // White

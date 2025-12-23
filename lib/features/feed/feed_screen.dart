@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/screen_fab.dart';
@@ -54,15 +55,15 @@ class _FeedScreenState extends State<FeedScreen> {
     if (result.isFullSuccess) {
       // All records synced successfully
       message = l10n.syncCompleteMessage(result.successCount);
-      backgroundColor = Colors.green;
+      backgroundColor = AppTheme.iconGreen;
     } else if (result.hasFailures && result.successCount > 0) {
       // Partial success
       message = l10n.syncPartialMessage(result.successCount, result.totalAttempted);
-      backgroundColor = Colors.orange;
+      backgroundColor = AppTheme.iconOrange;
     } else {
       // All failed
       message = l10n.syncFailedMessage;
-      backgroundColor = Colors.red;
+      backgroundColor = AppTheme.iconRed;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -76,7 +77,13 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Future<void> _onRefresh() async {
-    await context.read<FeedProvider>().refreshData();
+    final provider = context.read<FeedProvider>();
+    await provider.refreshData();
+
+    // Trigger bounce animation after refresh completes
+    Future.delayed(const Duration(milliseconds: 700), () {
+      provider.triggerBounce();
+    });
   }
 
   @override
@@ -126,16 +133,8 @@ class _FeedScreenState extends State<FeedScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
+      decoration: context.decorations.card.copyWith(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: IntrinsicHeight(
         child: Row(

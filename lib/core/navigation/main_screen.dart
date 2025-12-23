@@ -169,7 +169,9 @@ class MainScreenState extends State<MainScreen> {
             // 이미 선택된 탭을 다시 탭하면 scroll to top
             // PrimaryScrollController를 통해 현재 활성 스크롤뷰에 접근
             final controller = PrimaryScrollController.of(context);
-            if (controller.hasClients && controller.offset > 0) {
+            if (controller.hasClients &&
+                controller.positions.length == 1 &&
+                controller.offset > 0) {
               HapticFeedback.lightImpact();
               controller.animateTo(
                 0,

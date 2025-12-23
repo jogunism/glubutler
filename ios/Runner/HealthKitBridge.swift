@@ -402,7 +402,7 @@ class HealthKitBridge {
             "duration": workout.duration,
             "totalEnergyBurned": workout.totalEnergyBurned?.doubleValue(for: .kilocalorie()) ?? 0,
             "totalDistance": workout.totalDistance?.doubleValue(for: .meter()) ?? 0,
-            "source": sourceName,
+            "dataSource": sourceName,
           ]
         }
 
@@ -431,7 +431,23 @@ class HealthKitBridge {
           return
         }
 
-        let data = samples.map { sample -> [String: Any] in
+        // Filter to only include "asleep" and "core" sleep stages
+        // Exclude "inBed" and "awake" states
+        let sleepSamples = samples.filter { sample in
+          let value = sample.value
+          // HKCategoryValueSleepAnalysis values:
+          // 0 = inBed (iOS 13+)
+          // 1 = asleep (deprecated but still used)
+          // 2 = awake (iOS 16+)
+          // 3 = core (iOS 16+)
+          // 4 = deep (iOS 16+)
+          // 5 = rem (iOS 16+)
+
+          // Include asleep, core, deep, and rem (exclude inBed and awake)
+          return value == 1 || value >= 3
+        }
+
+        let data = sleepSamples.map { sample -> [String: Any] in
           let source = sample.sourceRevision.source
           var sourceName: String
           if !source.name.isEmpty {
@@ -445,10 +461,11 @@ class HealthKitBridge {
             "startTime": sample.startDate.timeIntervalSince1970 * 1000,
             "endTime": sample.endDate.timeIntervalSince1970 * 1000,
             "value": sample.value,
-            "source": sourceName,
+            "dataSource": sourceName,
           ]
         }
 
+        print("[HealthKitBridge] Fetched \(data.count) sleep records (filtered from \(samples.count) total samples)")
         result(data)
       }
     }
@@ -488,7 +505,7 @@ class HealthKitBridge {
             "startTime": sample.startDate.timeIntervalSince1970 * 1000,
             "endTime": sample.endDate.timeIntervalSince1970 * 1000,
             "value": sample.value,
-            "source": sourceName,
+            "dataSource": sourceName,
           ]
         }
 
@@ -531,7 +548,7 @@ class HealthKitBridge {
             "startTime": sample.startDate.timeIntervalSince1970 * 1000,
             "endTime": sample.endDate.timeIntervalSince1970 * 1000,
             "value": sample.value,
-            "source": sourceName,
+            "dataSource": sourceName,
           ]
         }
 

@@ -16,11 +16,13 @@ class AppTheme {
   static const Color accentColorDark = Color(0xFF9B8FE4); // Lavender/Purple (Dark mode)
 
   // ==========================================================================
-  // Blood Glucose Status Colors
+  // Blood Glucose Status Colors (5 levels)
   // ==========================================================================
-  static const Color glucoseLow = Color(0xFFFFB74D); // Yellow/Orange
-  static const Color glucoseNormal = Color(0xFF4CAF50); // Green
-  static const Color glucoseHigh = Color(0xFFF44336); // Red
+  static const Color glucoseVeryLow = Colors.purple; // Very Low (<target-40)
+  static const Color glucoseLow = Colors.blue; // Low (target-40 to target-20)
+  static const Color glucoseNormal = Color(0xFF4CAF50); // Green (target±20)
+  static const Color glucoseHigh = Color(0xFFF9A825); // Yellow/Amber (target+20 to target+40)
+  static const Color glucoseVeryHigh = Colors.red; // Very High (>target+40)
 
   // ==========================================================================
   // iOS Style Background Colors
@@ -28,7 +30,7 @@ class AppTheme {
   static const Color iosBackgroundLight = Color(0xFFF2F2F7); // iOS Default Light
   static const Color iosBackgroundDark = Color(0xFF1C1C2E); // Dark Navy
   static const Color iosCardLight = Colors.white;
-  static const Color iosCardDark = Color(0xFF2D2D44); // Lighter Navy
+  static const Color iosCardDark = Color(0xFF3A3A55); // Brighter Navy (increased from 2D2D44)
 
   // Tab Bar Colors
   static const Color tabBarLight = Color(0xFFF2F2F7); // iOS Default Light
@@ -59,6 +61,7 @@ class AppTheme {
   static const Color iconIndigo = Colors.indigo;
   static const Color iconAmber = Colors.amber;
   static const Color iconTeal = Colors.teal;
+  static const Color iconLightBlue = Colors.lightBlue;
 
   // ==========================================================================
   // Subscription Badge Gradients
@@ -283,7 +286,7 @@ class AppTheme {
     ),
     cardTheme: CardThemeData(
       elevation: 2,
-      color: Colors.grey.shade900,
+      color: iosCardDark, // Use brighter navy color instead of grey.shade900
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),

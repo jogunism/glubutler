@@ -7,6 +7,7 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/services/settings_service.dart';
 
 class CgmGroupCard extends StatefulWidget {
@@ -64,16 +65,8 @@ class _CgmGroupCardState extends State<CgmGroupCard>
       onTap: _toggleExpanded,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
+        decoration: context.decorations.card.copyWith(
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           children: [
@@ -288,9 +281,9 @@ class _CgmGroupCardState extends State<CgmGroupCard>
   Color _getGlucoseColor(String status) {
     switch (status) {
       case 'low':
-        return Colors.orange;
+        return AppTheme.iconOrange;
       case 'high':
-        return Colors.red;
+        return AppTheme.iconRed;
       default:
         return AppTheme.primaryColor;
     }
@@ -356,14 +349,14 @@ class _CgmGroupCardState extends State<CgmGroupCard>
     final group = widget.group;
     // groupType 기준으로 색상 결정 (fluctuation: 주황색, baseline: 녹색)
     return group.groupType == CgmGroupType.fluctuation
-        ? Colors.orange
+        ? AppTheme.iconOrange
         : AppTheme.primaryColor;
   }
 
   Widget _buildGroupTypeChip(ThemeData theme, AppLocalizations l10n) {
     final group = widget.group;
     final isFluctuation = group.groupType == CgmGroupType.fluctuation;
-    final color = isFluctuation ? Colors.orange : AppTheme.primaryColor;
+    final color = isFluctuation ? AppTheme.iconOrange : AppTheme.primaryColor;
     final label = isFluctuation ? l10n.cgmFluctuation : l10n.cgmBaseline;
 
     return Container(
