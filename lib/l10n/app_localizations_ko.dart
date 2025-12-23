@@ -446,6 +446,48 @@ class AppLocalizationsKo extends AppLocalizations {
   String get workouts => '운동';
 
   @override
+  String get running => '달리기';
+
+  @override
+  String get walking => '걷기';
+
+  @override
+  String get cycling => '자전거';
+
+  @override
+  String get swimming => '수영';
+
+  @override
+  String get yoga => '요가';
+
+  @override
+  String get strength => '근력 운동';
+
+  @override
+  String get hiit => '고강도 인터벌';
+
+  @override
+  String get stairs => '계단 오르기';
+
+  @override
+  String get dance => '댄스';
+
+  @override
+  String get functional => '기능성 운동';
+
+  @override
+  String get core => '코어 운동';
+
+  @override
+  String get flexibility => '유연성 운동';
+
+  @override
+  String get cardio => '유산소 운동';
+
+  @override
+  String get other => '기타 운동';
+
+  @override
   String get sleep => '수면';
 
   @override

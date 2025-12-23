@@ -291,7 +291,8 @@ class _FeedItemCardState extends State<FeedItemCard>
       case FeedItemType.glucose:
         return l10n.bloodGlucose;
       case FeedItemType.exercise:
-        return _formatExerciseType(widget.item.exerciseRecord!.exerciseType);
+        final exerciseType = widget.item.exerciseRecord?.exerciseType ?? 'other';
+        return _formatExerciseType(exerciseType, l10n);
       case FeedItemType.sleep:
         return l10n.sleep;
       case FeedItemType.meal:
@@ -477,7 +478,8 @@ class _FeedItemCardState extends State<FeedItemCard>
           backgroundColor = AppTheme.primaryColor;
         }
       case FeedItemType.exercise:
-        icon = Icons.fitness_center;
+        final exerciseType = widget.item.exerciseRecord?.exerciseType ?? 'other';
+        icon = _getExerciseIcon(exerciseType);
         color = AppTheme.iconOrange;
         backgroundColor = color;
       case FeedItemType.sleep:
@@ -627,27 +629,6 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
-  String _formatExerciseType(String type) {
-    switch (type) {
-      case 'running':
-        return 'Running';
-      case 'walking':
-        return 'Walking';
-      case 'cycling':
-        return 'Cycling';
-      case 'swimming':
-        return 'Swimming';
-      case 'yoga':
-        return 'Yoga';
-      case 'strength':
-        return 'Strength Training';
-      case 'hiit':
-        return 'HIIT';
-      default:
-        return 'Workout';
-    }
-  }
-
   String _formatMealType(String type) {
     switch (type) {
       case 'breakfast':
@@ -660,6 +641,71 @@ class _FeedItemCardState extends State<FeedItemCard>
         return 'Snack';
       default:
         return 'Meal';
+    }
+  }
+
+  String _formatExerciseType(String type, AppLocalizations l10n) {
+    switch (type) {
+      case 'running':
+        return l10n.running;
+      case 'walking':
+        return l10n.walking;
+      case 'cycling':
+        return l10n.cycling;
+      case 'swimming':
+        return l10n.swimming;
+      case 'yoga':
+        return l10n.yoga;
+      case 'strength':
+        return l10n.strength;
+      case 'hiit':
+        return l10n.hiit;
+      case 'stairs':
+        return l10n.stairs;
+      case 'dance':
+        return l10n.dance;
+      case 'functional':
+        return l10n.functional;
+      case 'core':
+        return l10n.core;
+      case 'flexibility':
+        return l10n.flexibility;
+      case 'cardio':
+        return l10n.cardio;
+      default:
+        return l10n.other;
+    }
+  }
+
+  IconData _getExerciseIcon(String exerciseType) {
+    switch (exerciseType) {
+      case 'running':
+        return Icons.directions_run;
+      case 'walking':
+        return Icons.directions_walk;
+      case 'cycling':
+        return Icons.directions_bike;
+      case 'swimming':
+        return Icons.pool;
+      case 'yoga':
+        return Icons.self_improvement;
+      case 'strength':
+        return Icons.fitness_center;
+      case 'hiit':
+        return Icons.local_fire_department;
+      case 'stairs':
+        return Icons.stairs;
+      case 'dance':
+        return Icons.music_note;
+      case 'functional':
+      case 'core':
+        return Icons.fitness_center;
+      case 'flexibility':
+        return Icons.accessibility_new;
+      case 'cardio':
+        return Icons.favorite;
+      default:
+        return Icons.fitness_center;
     }
   }
 }

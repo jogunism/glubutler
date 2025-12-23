@@ -395,6 +395,16 @@ class HealthKitBridge {
           } else {
             sourceName = "Unknown"
           }
+
+          // Debug log workout details
+          // print("[HealthKitBridge] Workout Details:")
+          // print("  - Source: \(sourceName)")
+          // print("  - Bundle ID: \(source.bundleIdentifier)")
+          // print("  - Start: \(workout.startDate)")
+          // print("  - Duration: \(workout.duration) seconds")
+          // print("  - Activity Type Raw Value: \(workout.workoutActivityType.rawValue)")
+          // print("  - Metadata: \(workout.metadata ?? [:])")
+
           return [
             "startTime": workout.startDate.timeIntervalSince1970 * 1000,
             "endTime": workout.endDate.timeIntervalSince1970 * 1000,
@@ -431,8 +441,8 @@ class HealthKitBridge {
           return
         }
 
-        // Filter to only include "asleep" and "core" sleep stages
-        // Exclude "inBed" and "awake" states
+        // Filter to only include "inBed" samples
+        // inBed represents the total time in bed, which includes all sleep stages
         let sleepSamples = samples.filter { sample in
           let value = sample.value
           // HKCategoryValueSleepAnalysis values:
@@ -443,8 +453,8 @@ class HealthKitBridge {
           // 4 = deep (iOS 16+)
           // 5 = rem (iOS 16+)
 
-          // Include asleep, core, deep, and rem (exclude inBed and awake)
-          return value == 1 || value >= 3
+          // Only include inBed (0) - this represents the total sleep session
+          return value == 0
         }
 
         let data = sleepSamples.map { sample -> [String: Any] in

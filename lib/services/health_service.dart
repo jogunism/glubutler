@@ -246,15 +246,23 @@ class HealthService {
         for (final item in data) {
           final map = item as Map<dynamic, dynamic>;
           final durationMinutes = ((map['duration'] as num).toDouble() / 60).round();
+          final workoutTypeRaw = map['workoutActivityType'] as int?;
+          final exerciseType = _mapWorkoutActivityType(workoutTypeRaw ?? 0);
+          final sourceName = map['dataSource'] as String?;
+          final calories = (map['totalEnergyBurned'] as num?)?.toInt();
+          final startTime = DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt());
+
+          // Debug log to check workout type mapping with details
+          debugPrint('[HealthService] Workout: $sourceName, ${startTime.toString()}, ${durationMinutes}min, ${calories}kcal, raw type: $workoutTypeRaw -> $exerciseType');
 
           records.add(ExerciseRecord(
             id: 'hk_workout_${(map['startTime'] as num).toInt()}',
-            timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
-            exerciseType: 'other', // TODO: Map workoutActivityType from native
+            timestamp: startTime,
+            exerciseType: exerciseType,
             durationMinutes: durationMinutes,
-            calories: (map['totalEnergyBurned'] as num?)?.toInt(),
+            calories: calories,
             isFromHealthKit: true,
-            sourceName: map['dataSource'] as String?,  // Changed from 'sourceName' to 'source'
+            sourceName: sourceName,
           ));
         }
 
@@ -731,6 +739,49 @@ class HealthService {
     // Platform not supported
     debugPrint('[HealthService] fetchInsulinData: Platform not supported (iOS only)');
     return [];
+  }
+
+  /// Map HKWorkoutActivityType raw value to exercise type string
+  /// Reference: https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype
+  String _mapWorkoutActivityType(int rawValue) {
+    switch (rawValue) {
+      case 12: // cycling
+        return 'cycling';
+      case 13: // running
+        return 'running';
+      case 16: // dance
+        return 'dance';
+      case 19: // flexibility
+        return 'flexibility';
+      case 20: // yoga
+        return 'yoga';
+      case 24: // functionalStrengthTraining
+        return 'functional';
+      case 35: // stairs
+        return 'stairs';
+      case 37: // traditionalStrengthTraining
+        return 'strength';
+      case 46: // swimming
+        return 'swimming';
+      case 52: // walking
+        return 'walking';
+      case 59: // mixedMetabolicCardioTraining
+        return 'cardio';
+      case 63: // highIntensityIntervalTraining
+        return 'hiit';
+      case 64: // mixedCardio
+        return 'cardio';
+      case 65: // handCycling
+        return 'hand_cycling';
+      case 66: // discSports
+        return 'disc_sports';
+      case 67: // fitnessGaming
+        return 'fitness_gaming';
+      case 71: // coreTraining
+        return 'core';
+      default:
+        return 'other';
+    }
   }
 
 }

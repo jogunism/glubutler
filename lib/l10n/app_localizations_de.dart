@@ -452,6 +452,48 @@ class AppLocalizationsDe extends AppLocalizations {
   String get workouts => 'Workouts';
 
   @override
+  String get running => 'Running';
+
+  @override
+  String get walking => 'Walking';
+
+  @override
+  String get cycling => 'Cycling';
+
+  @override
+  String get swimming => 'Swimming';
+
+  @override
+  String get yoga => 'Yoga';
+
+  @override
+  String get strength => 'Strength Training';
+
+  @override
+  String get hiit => 'HIIT';
+
+  @override
+  String get stairs => 'Stairs';
+
+  @override
+  String get dance => 'Dance';
+
+  @override
+  String get functional => 'Functional Training';
+
+  @override
+  String get core => 'Core Training';
+
+  @override
+  String get flexibility => 'Flexibility';
+
+  @override
+  String get cardio => 'Cardio';
+
+  @override
+  String get other => 'Workout';
+
+  @override
   String get sleep => 'Schlaf';
 
   @override

@@ -431,7 +431,23 @@ class HealthKitBridge {
           return
         }
 
-        let data = samples.map { sample -> [String: Any] in
+        // Filter to only include "inBed" samples
+        // inBed represents the total time in bed, which includes all sleep stages
+        let sleepSamples = samples.filter { sample in
+          let value = sample.value
+          // HKCategoryValueSleepAnalysis values:
+          // 0 = inBed (iOS 13+)
+          // 1 = asleep (deprecated but still used)
+          // 2 = awake (iOS 16+)
+          // 3 = core (iOS 16+)
+          // 4 = deep (iOS 16+)
+          // 5 = rem (iOS 16+)
+
+          // Only include inBed (0) - this represents the total sleep session
+          return value == 0
+        }
+
+        let data = sleepSamples.map { sample -> [String: Any] in
           let source = sample.sourceRevision.source
           var sourceName: String
           if !source.name.isEmpty {
@@ -445,10 +461,11 @@ class HealthKitBridge {
             "startTime": sample.startDate.timeIntervalSince1970 * 1000,
             "endTime": sample.endDate.timeIntervalSince1970 * 1000,
             "value": sample.value,
-            "source": sourceName,
+            "dataSource": sourceName,
           ]
         }
 
+        print("[HealthKitBridge] Fetched \(data.count) sleep records (filtered from \(samples.count) total samples)")
         result(data)
       }
     }

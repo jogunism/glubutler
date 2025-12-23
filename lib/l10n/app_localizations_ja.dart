@@ -447,6 +447,48 @@ class AppLocalizationsJa extends AppLocalizations {
   String get workouts => 'ワークアウト';
 
   @override
+  String get running => 'ランニング';
+
+  @override
+  String get walking => 'ウォーキング';
+
+  @override
+  String get cycling => 'サイクリング';
+
+  @override
+  String get swimming => '水泳';
+
+  @override
+  String get yoga => 'ヨガ';
+
+  @override
+  String get strength => '筋力トレーニング';
+
+  @override
+  String get hiit => 'HIIT';
+
+  @override
+  String get stairs => '階段';
+
+  @override
+  String get dance => 'ダンス';
+
+  @override
+  String get functional => 'ファンクショナルトレーニング';
+
+  @override
+  String get core => '体幹トレーニング';
+
+  @override
+  String get flexibility => '柔軟性トレーニング';
+
+  @override
+  String get cardio => '有酸素運動';
+
+  @override
+  String get other => 'ワークアウト';
+
+  @override
   String get sleep => '睡眠';
 
   @override

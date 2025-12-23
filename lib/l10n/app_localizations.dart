@@ -980,6 +980,90 @@ abstract class AppLocalizations {
   /// **'Workouts'**
   String get workouts;
 
+  /// No description provided for @running.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get running;
+
+  /// No description provided for @walking.
+  ///
+  /// In en, this message translates to:
+  /// **'Walking'**
+  String get walking;
+
+  /// No description provided for @cycling.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycling'**
+  String get cycling;
+
+  /// No description provided for @swimming.
+  ///
+  /// In en, this message translates to:
+  /// **'Swimming'**
+  String get swimming;
+
+  /// No description provided for @yoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga'**
+  String get yoga;
+
+  /// No description provided for @strength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength Training'**
+  String get strength;
+
+  /// No description provided for @hiit.
+  ///
+  /// In en, this message translates to:
+  /// **'HIIT'**
+  String get hiit;
+
+  /// No description provided for @stairs.
+  ///
+  /// In en, this message translates to:
+  /// **'Stairs'**
+  String get stairs;
+
+  /// No description provided for @dance.
+  ///
+  /// In en, this message translates to:
+  /// **'Dance'**
+  String get dance;
+
+  /// No description provided for @functional.
+  ///
+  /// In en, this message translates to:
+  /// **'Functional Training'**
+  String get functional;
+
+  /// No description provided for @core.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Training'**
+  String get core;
+
+  /// No description provided for @flexibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexibility'**
+  String get flexibility;
+
+  /// No description provided for @cardio.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get cardio;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout'**
+  String get other;
+
   /// No description provided for @sleep.
   ///
   /// In en, this message translates to:

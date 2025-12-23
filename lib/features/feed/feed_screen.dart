@@ -11,9 +11,13 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/services/health_service.dart';
+import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/cgm_glucose_group.dart';
+import 'package:glu_butler/models/sleep_group.dart';
 import 'package:glu_butler/features/feed/widgets/feed_item_card.dart';
 import 'package:glu_butler/features/feed/widgets/cgm_group_card.dart';
+import 'package:glu_butler/features/feed/widgets/sleep_group_card.dart';
+import 'package:glu_butler/features/feed/widgets/water_group_card.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -237,8 +241,10 @@ class _FeedScreenState extends State<FeedScreen> {
     final theme = Theme.of(context);
     final itemsByDate = provider.itemsByDate;
     final cgmGroupsByDate = provider.cgmGroupsByDate;
+    final sleepGroupsByDate = provider.sleepGroupsByDate;
+    final waterGroupsByDate = provider.waterGroupsByDate;
 
-    // Combine dates from feed items, activity data, and CGM groups
+    // Combine dates from feed items, activity data, CGM groups, sleep groups, and water groups
     // Normalize all dates to midnight to ensure proper deduplication
     final allDatesSet = <DateTime>{};
     for (final date in itemsByDate.keys) {
@@ -250,6 +256,12 @@ class _FeedScreenState extends State<FeedScreen> {
     for (final date in cgmGroupsByDate.keys) {
       allDatesSet.add(DateTime(date.year, date.month, date.day));
     }
+    for (final date in sleepGroupsByDate.keys) {
+      allDatesSet.add(DateTime(date.year, date.month, date.day));
+    }
+    for (final date in waterGroupsByDate.keys) {
+      allDatesSet.add(DateTime(date.year, date.month, date.day));
+    }
     final allDates = allDatesSet.toList()..sort((a, b) => b.compareTo(a));
 
     final List<Widget> slivers = [];
@@ -259,8 +271,17 @@ class _FeedScreenState extends State<FeedScreen> {
       final items = itemsByDate.entries
           .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
           .expand((e) => e.value)
+          .where((item) => item.type != FeedItemType.sleep && item.type != FeedItemType.water) // Exclude sleep and water items (they are shown as groups)
           .toList();
       final cgmGroups = cgmGroupsByDate.entries
+          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
+          .expand((e) => e.value)
+          .toList();
+      final sleepGroups = sleepGroupsByDate.entries
+          .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
+          .expand((e) => e.value)
+          .toList();
+      final waterGroups = waterGroupsByDate.entries
           .where((e) => e.key.year == date.year && e.key.month == date.month && e.key.day == date.day)
           .expand((e) => e.value)
           .toList();
@@ -269,8 +290,8 @@ class _FeedScreenState extends State<FeedScreen> {
           .firstOrNull;
       final activityForDate = activityEntry?.value;
 
-      // Skip if no items, no CGM groups, and no activity for this date
-      if (items.isEmpty && cgmGroups.isEmpty && activityForDate == null) continue;
+      // Skip if no items, no CGM groups, no sleep groups, no water groups, and no activity for this date
+      if (items.isEmpty && cgmGroups.isEmpty && sleepGroups.isEmpty && waterGroups.isEmpty && activityForDate == null) continue;
 
       // Date header
       slivers.add(
@@ -297,8 +318,19 @@ class _FeedScreenState extends State<FeedScreen> {
         );
       }
 
-      // Build combined list of CGM groups and feed items, sorted by time
-      final combinedItems = _buildCombinedItems(items, cgmGroups);
+      // Water summary for this date (show if we have water groups)
+      if (waterGroups.isNotEmpty) {
+        for (final waterGroup in waterGroups) {
+          slivers.add(
+            SliverToBoxAdapter(
+              child: WaterGroupCard(group: waterGroup),
+            ),
+          );
+        }
+      }
+
+      // Build combined list of sleep groups, CGM groups and feed items, sorted by time
+      final combinedItems = _buildCombinedItems(items, cgmGroups, sleepGroups);
 
       // Render combined items
       if (combinedItems.isNotEmpty) {
@@ -309,6 +341,8 @@ class _FeedScreenState extends State<FeedScreen> {
                 final item = combinedItems[index];
                 if (item is CgmGlucoseGroup) {
                   return CgmGroupCard(group: item);
+                } else if (item is SleepGroup) {
+                  return SleepGroupCard(group: item);
                 } else {
                   return FeedItemCard(item: item);
                 }
@@ -348,8 +382,8 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
-  /// Combine feed items and CGM groups, sorted by time (newest first)
-  List<dynamic> _buildCombinedItems(List items, List<CgmGlucoseGroup> cgmGroups) {
+  /// Combine feed items, sleep groups, and CGM groups, sorted by time (newest first)
+  List<dynamic> _buildCombinedItems(List items, List<CgmGlucoseGroup> cgmGroups, List<SleepGroup> sleepGroups) {
     final List<dynamic> combined = [];
 
     // Add feed items with their timestamps
@@ -362,6 +396,11 @@ class _FeedScreenState extends State<FeedScreen> {
       combined.add(group);
     }
 
+    // Add sleep groups with their start times
+    for (final group in sleepGroups) {
+      combined.add(group);
+    }
+
     // Sort by timestamp (newest first)
     combined.sort((a, b) {
       final DateTime timeA;
@@ -369,11 +408,15 @@ class _FeedScreenState extends State<FeedScreen> {
 
       if (a is CgmGlucoseGroup) {
         timeA = a.startTime;
+      } else if (a is SleepGroup) {
+        timeA = a.startTime;
       } else {
         timeA = a.timestamp;
       }
 
       if (b is CgmGlucoseGroup) {
+        timeB = b.startTime;
+      } else if (b is SleepGroup) {
         timeB = b.startTime;
       } else {
         timeB = b.timestamp;
