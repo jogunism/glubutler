@@ -56,15 +56,14 @@ class _RecordInputModalState extends State<RecordInputModal> {
   bool _glucoseHasFocus = false;
   String _selectedTiming = 'fasting'; // fasting, beforeMeal, afterMeal
   bool _isSaving = false;
-  DateTime _selectedTime = DateTime.now();
+  DateTime _selectedDateTime = DateTime.now();
 
   // 인슐린 관련 상태
   final _insulinDoseController = TextEditingController();
   final _insulinFocusNode = FocusNode();
   bool _insulinHasFocus = false;
-  String _selectedInsulinType = 'rapidActing';
-  String _selectedInjectionSite = 'abdomen';
-  DateTime _selectedInsulinTime = DateTime.now();
+  String _selectedDeliveryReason = 'bolus'; // bolus or basal
+  DateTime _selectedInsulinDateTime = DateTime.now();
 
   @override
   void initState() {
@@ -120,10 +119,10 @@ class _RecordInputModalState extends State<RecordInputModal> {
       setState(() => _isSaving = true);
 
       final record = GlucoseRecord(
-        id: 'manual_${_selectedTime.millisecondsSinceEpoch}',
+        id: 'manual_${_selectedDateTime.millisecondsSinceEpoch}',
         value: glucoseValue,
         unit: 'mg/dL',
-        timestamp: _selectedTime,
+        timestamp: _selectedDateTime,
         isFromHealthKit: false,
         mealContext: _selectedTiming,
       );
@@ -150,12 +149,21 @@ class _RecordInputModalState extends State<RecordInputModal> {
 
       setState(() => _isSaving = true);
 
+      // Map deliveryReason to appropriate InsulinType
+      final deliveryReason = _selectedDeliveryReason == 'basal'
+          ? InsulinDeliveryReason.basal
+          : InsulinDeliveryReason.bolus;
+
+      final insulinType = _selectedDeliveryReason == 'basal'
+          ? InsulinType.longActing
+          : InsulinType.rapidActing;
+
       final record = InsulinRecord(
-        id: 'manual_${_selectedInsulinTime.millisecondsSinceEpoch}',
-        timestamp: _selectedInsulinTime,
+        id: 'manual_${_selectedInsulinDateTime.millisecondsSinceEpoch}',
+        timestamp: _selectedInsulinDateTime,
         units: doseValue,
-        insulinType: _mapInsulinType(_selectedInsulinType),
-        injectionSite: _selectedInjectionSite,
+        insulinType: insulinType,
+        deliveryReason: deliveryReason,
         isFromHealthKit: false,
       );
 
@@ -176,20 +184,6 @@ class _RecordInputModalState extends State<RecordInputModal> {
     }
   }
 
-  InsulinType _mapInsulinType(String type) {
-    switch (type) {
-      case 'rapidActing':
-        return InsulinType.rapidActing;
-      case 'shortActing':
-        return InsulinType.shortActing;
-      case 'intermediateActing':
-        return InsulinType.intermediate;
-      case 'longActing':
-        return InsulinType.longActing;
-      default:
-        return InsulinType.rapidActing;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -483,8 +477,8 @@ class _RecordInputModalState extends State<RecordInputModal> {
           context,
           l10n,
           label: l10n.measurementTime,
-          time: _selectedTime,
-          onTimeChanged: (time) => setState(() => _selectedTime = time),
+          time: _selectedDateTime,
+          onTimeChanged: (time) => setState(() => _selectedDateTime = time),
         ),
       ],
     );
@@ -593,54 +587,26 @@ class _RecordInputModalState extends State<RecordInputModal> {
 
         const SizedBox(height: 24),
 
-        // 인슐린 종류 선택
+        // 인슐린 투여 유형 선택 (Delivery Reason)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                l10n.insulinType,
-                style: context.textStyles.tileSubtitle,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildInsulinTypeChip(context, l10n.rapidActing, 'rapidActing'),
-                  _buildInsulinTypeChip(context, l10n.shortActing, 'shortActing'),
-                  _buildInsulinTypeChip(
-                      context, l10n.intermediateActing, 'intermediateActing'),
-                  _buildInsulinTypeChip(context, l10n.longActing, 'longActing'),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 24),
-
-        // 주사 부위 선택
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.injectionSite,
+                l10n.deliveryType,
                 style: context.textStyles.tileSubtitle,
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _buildSiteChip(context, l10n.abdomen, 'abdomen'),
-                  const SizedBox(width: 8),
-                  _buildSiteChip(context, l10n.thigh, 'thigh'),
-                  const SizedBox(width: 8),
-                  _buildSiteChip(context, l10n.arm, 'arm'),
-                  const SizedBox(width: 8),
-                  _buildSiteChip(context, l10n.buttock, 'buttock'),
+                  Expanded(
+                    child: _buildDeliveryReasonChip(context, l10n.bolus, 'bolus'),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildDeliveryReasonChip(context, l10n.basal, 'basal'),
+                  ),
                 ],
               ),
             ],
@@ -654,8 +620,8 @@ class _RecordInputModalState extends State<RecordInputModal> {
           context,
           l10n,
           label: l10n.injectionTime,
-          time: _selectedInsulinTime,
-          onTimeChanged: (time) => setState(() => _selectedInsulinTime = time),
+          time: _selectedInsulinDateTime,
+          onTimeChanged: (time) => setState(() => _selectedInsulinDateTime = time),
         ),
       ],
     );
@@ -704,19 +670,18 @@ class _RecordInputModalState extends State<RecordInputModal> {
     );
   }
 
-  Widget _buildInsulinTypeChip(
-      BuildContext context, String label, String value) {
-    final isSelected = _selectedInsulinType == value;
+  Widget _buildDeliveryReasonChip(BuildContext context, String label, String value) {
+    final isSelected = _selectedDeliveryReason == value;
 
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         setState(() {
-          _selectedInsulinType = value;
+          _selectedDeliveryReason = value;
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
               ? AppTheme.primaryColor.withValues(alpha: 0.15)
@@ -729,51 +694,13 @@ class _RecordInputModalState extends State<RecordInputModal> {
         ),
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             color: isSelected
                 ? AppTheme.primaryColor
                 : context.textStyles.tileTitle.color,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSiteChip(BuildContext context, String label, String value) {
-    final isSelected = _selectedInjectionSite == value;
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          setState(() {
-            _selectedInjectionSite = value;
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppTheme.primaryColor.withValues(alpha: 0.15)
-                : context.colors.card,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: isSelected ? AppTheme.primaryColor : context.colors.divider,
-              width: isSelected ? 2 : 1,
-            ),
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              color: isSelected
-                  ? AppTheme.primaryColor
-                  : context.textStyles.tileTitle.color,
-            ),
           ),
         ),
       ),
@@ -798,7 +725,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
           ),
           const SizedBox(height: 8),
           GestureDetector(
-            onTap: () => _showTimePicker(context, time, onTimeChanged),
+            onTap: () => _showDateTimePicker(context, time, onTimeChanged),
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -814,11 +741,11 @@ class _RecordInputModalState extends State<RecordInputModal> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _formatTime(time),
+                    _formatDateTime(time),
                     style: context.textStyles.tileTitle,
                   ),
                   Icon(
-                    CupertinoIcons.time,
+                    CupertinoIcons.calendar_today,
                     color: Colors.grey[400],
                     size: 20,
                   ),
@@ -831,7 +758,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
     );
   }
 
-  void _showTimePicker(
+  void _showDateTimePicker(
     BuildContext context,
     DateTime currentTime,
     ValueChanged<DateTime> onTimeChanged,
@@ -870,10 +797,11 @@ class _RecordInputModalState extends State<RecordInputModal> {
             ),
             Expanded(
               child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.time,
+                mode: CupertinoDatePickerMode.dateAndTime,
                 initialDateTime: initialTime,
                 use24hFormat: true,
                 minuteInterval: 5,
+                maximumDate: DateTime.now().add(const Duration(days: 1)),
                 onDateTimeChanged: onTimeChanged,
               ),
             ),
@@ -883,11 +811,31 @@ class _RecordInputModalState extends State<RecordInputModal> {
     );
   }
 
-  String _formatTime(DateTime time) {
+  String _formatDateTime(DateTime time) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final tomorrow = today.add(const Duration(days: 1));
+    final timeDate = DateTime(time.year, time.month, time.day);
+
+    String dateStr;
+    if (timeDate == today) {
+      dateStr = 'Today';
+    } else if (timeDate == yesterday) {
+      dateStr = 'Yesterday';
+    } else if (timeDate == tomorrow) {
+      dateStr = 'Tomorrow';
+    } else {
+      // Format as "Mon Dec 23"
+      final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      dateStr = '${weekdays[time.weekday - 1]} ${months[time.month - 1]} ${time.day}';
+    }
+
     final hour = time.hour.toString().padLeft(2, '0');
-    // 5분 단위로 반올림해서 표시
     final roundedMinute = (time.minute / 5).round() * 5;
     final minute = (roundedMinute >= 60 ? 0 : roundedMinute).toString().padLeft(2, '0');
-    return '$hour:$minute';
+
+    return '$dateStr  $hour:$minute';
   }
 }

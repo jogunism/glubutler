@@ -77,6 +77,12 @@ import HealthKit
         } else {
           result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
         }
+      case "deleteInsulinDelivery":
+        if let args = call.arguments as? [String: Any] {
+          self.healthKitBridge.deleteInsulinDelivery(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
       default:
         result(FlutterMethodNotImplemented)
       }

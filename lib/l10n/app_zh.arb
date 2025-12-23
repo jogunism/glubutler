@@ -121,6 +121,29 @@
   "addGlucose": "添加血糖",
   "addDiaryEntry": "添加日记",
 
+  "insulin": "胰岛素",
+  "addInsulin": "添加胰岛素",
+  "insulinType": "胰岛素类型",
+  "rapidActing": "速效型",
+  "longActing": "长效型",
+  "insulinDose": "剂量",
+  "units": "单位",
+  "injectionSite": "注射部位",
+  "abdomen": "腹部",
+  "thigh": "大腿",
+  "arm": "手臂",
+  "buttock": "臀部",
+  "measurementTime": "时间",
+  "injectionTime": "注射时间",
+  "deliveryType": "胰岛素类型",
+  "bolus": "速效型",
+  "basal": "长效型",
+  "measurementTiming": "测量时机",
+  "addRecord": "添加记录",
+  "glucoseSaved": "血糖已保存",
+  "insulinSaved": "胰岛素已保存",
+  "saveFailed": "保存失败",
+
   "appleHealth": "Apple 健康",
   "appleHealthDescription": "连接健康 App，查看运动、睡眠、体重等可能有助于血糖管理的数据。",
   "syncedData": "同步数据",
@@ -184,5 +207,6 @@
 
   "deleteGlucoseConfirmation": "确定要删除吗？\n此操作无法撤销。",
   "glucoseDeleted": "血糖记录已删除",
+  "insulinDeleted": "胰岛素记录已删除",
   "deleteFailed": "删除失败"
 }

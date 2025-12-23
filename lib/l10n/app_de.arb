@@ -121,6 +121,29 @@
   "addGlucose": "Blutzucker hinzufügen",
   "addDiaryEntry": "Tagebucheintrag hinzufügen",
 
+  "insulin": "Insulin",
+  "addInsulin": "Insulin hinzufügen",
+  "insulinType": "Insulintyp",
+  "rapidActing": "Schnellwirksam",
+  "longActing": "Langwirksam",
+  "insulinDose": "Dosis",
+  "units": "E",
+  "injectionSite": "Injektionsstelle",
+  "abdomen": "Bauch",
+  "thigh": "Oberschenkel",
+  "arm": "Arm",
+  "buttock": "Gesäß",
+  "measurementTime": "Zeit",
+  "injectionTime": "Injektionszeit",
+  "deliveryType": "Insulintyp",
+  "bolus": "Schnellwirksam",
+  "basal": "Langwirksam",
+  "measurementTiming": "Messzeitpunkt",
+  "addRecord": "Eintrag hinzufügen",
+  "glucoseSaved": "Blutzucker gespeichert",
+  "insulinSaved": "Insulin gespeichert",
+  "saveFailed": "Speichern fehlgeschlagen",
+
   "appleHealth": "Apple Health",
   "appleHealthDescription": "Verbinden Sie sich mit der Health-App, um Workouts, Schlaf, Gewicht und andere Daten anzuzeigen, die bei der Blutzuckerkontrolle helfen können.",
   "syncedData": "Synchronisierte Daten",
@@ -184,5 +207,6 @@
 
   "deleteGlucoseConfirmation": "Möchten Sie wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.",
   "glucoseDeleted": "Blutzucker gelöscht",
+  "insulinDeleted": "Insulin gelöscht",
   "deleteFailed": "Löschen fehlgeschlagen"
 }

@@ -355,25 +355,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addDiaryEntry => 'Aggiungi voce al diario';
 
   @override
-  String get insulin => 'Insulin';
+  String get insulin => 'Insulina';
 
   @override
-  String get addInsulin => 'Add Insulin';
+  String get addInsulin => 'Aggiungi Insulina';
 
   @override
-  String get insulinType => 'Insulin Type';
+  String get insulinType => 'Tipo di insulina';
 
   @override
-  String get rapidActing => 'Rapid-acting';
+  String get rapidActing => 'Azione rapida';
 
   @override
-  String get shortActing => 'Short-acting';
-
-  @override
-  String get intermediateActing => 'Intermediate';
-
-  @override
-  String get longActing => 'Long-acting';
+  String get longActing => 'Azione prolungata';
 
   @override
   String get insulinDose => 'Dose';
@@ -382,31 +376,40 @@ class AppLocalizationsIt extends AppLocalizations {
   String get units => 'U';
 
   @override
-  String get injectionSite => 'Injection Site';
+  String get injectionSite => 'Sito di iniezione';
 
   @override
-  String get abdomen => 'Abdomen';
+  String get abdomen => 'Addome';
 
   @override
-  String get thigh => 'Thigh';
+  String get thigh => 'Coscia';
 
   @override
-  String get arm => 'Arm';
+  String get arm => 'Braccio';
 
   @override
-  String get buttock => 'Buttock';
+  String get buttock => 'Gluteo';
 
   @override
-  String get measurementTime => 'Time';
+  String get measurementTime => 'Ora';
 
   @override
-  String get injectionTime => 'Injection Time';
+  String get injectionTime => 'Ora di iniezione';
 
   @override
-  String get measurementTiming => 'Timing';
+  String get deliveryType => 'Tipo di insulina';
 
   @override
-  String get addRecord => 'Add Record';
+  String get bolus => 'Azione rapida';
+
+  @override
+  String get basal => 'Azione prolungata';
+
+  @override
+  String get measurementTiming => 'Momento';
+
+  @override
+  String get addRecord => 'Aggiungi registrazione';
 
   @override
   String get glucoseSaved => 'Glicemia salvata';
@@ -595,6 +598,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get glucoseDeleted => 'Glicemia eliminata';
+
+  @override
+  String get insulinDeleted => 'Insulina eliminata';
 
   @override
   String get deleteFailed => 'Eliminazione fallita';

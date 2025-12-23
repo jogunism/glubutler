@@ -785,6 +785,89 @@ class HealthKitBridge {
     healthStore.execute(query)
   }
 
+  func deleteInsulinDelivery(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard HKHealthStore.isHealthDataAvailable() else {
+      result(FlutterError(code: "UNAVAILABLE", message: "HealthKit not available", details: nil))
+      return
+    }
+
+    guard let timestamp = arguments["timestamp"] as? Double else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing timestamp", details: nil))
+      return
+    }
+
+    let date = Date(timeIntervalSince1970: timestamp / 1000.0)
+    let insulinType = HKQuantityType.quantityType(forIdentifier: .insulinDelivery)!
+
+    // Create predicate to find samples at the exact timestamp
+    // Allow 1 second tolerance for matching
+    let startDate = date.addingTimeInterval(-1)
+    let endDate = date.addingTimeInterval(1)
+    let predicate = HKQuery.predicateForSamples(
+      withStart: startDate,
+      end: endDate,
+      options: .strictStartDate
+    )
+
+    let query = HKSampleQuery(
+      sampleType: insulinType,
+      predicate: predicate,
+      limit: HKObjectQueryNoLimit,
+      sortDescriptors: nil
+    ) { _, samples, error in
+      if let error = error {
+        DispatchQueue.main.async {
+          result(FlutterError(
+            code: "QUERY_ERROR",
+            message: error.localizedDescription,
+            details: nil
+          ))
+        }
+        return
+      }
+
+      guard let samples = samples, !samples.isEmpty else {
+        DispatchQueue.main.async {
+          result(FlutterError(
+            code: "NOT_FOUND",
+            message: "No insulin delivery sample found at timestamp",
+            details: nil
+          ))
+        }
+        return
+      }
+
+      // Filter to find the sample that matches our app as source
+      let ourBundleId = Bundle.main.bundleIdentifier ?? ""
+      let samplesToDelete = samples.filter { sample in
+        let source = sample.sourceRevision.source
+        return source.bundleIdentifier == ourBundleId
+      }
+
+      if samplesToDelete.isEmpty {
+        // If no samples from our app, delete the closest sample
+        if let closestSample = samples.min(by: { sample1, sample2 in
+          abs(sample1.startDate.timeIntervalSince(date)) < abs(sample2.startDate.timeIntervalSince(date))
+        }) {
+          self.deleteSamples([closestSample], result: result)
+        } else {
+          DispatchQueue.main.async {
+            result(FlutterError(
+              code: "NOT_FOUND",
+              message: "No matching sample found",
+              details: nil
+            ))
+          }
+        }
+      } else {
+        // Delete all samples from our app at this timestamp
+        self.deleteSamples(samplesToDelete, result: result)
+      }
+    }
+
+    healthStore.execute(query)
+  }
+
   private func deleteSamples(_ samples: [HKSample], result: @escaping FlutterResult) {
     healthStore.delete(samples) { success, error in
       DispatchQueue.main.async {

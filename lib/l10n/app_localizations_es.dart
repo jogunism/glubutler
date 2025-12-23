@@ -355,58 +355,61 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addDiaryEntry => 'Añadir entrada al diario';
 
   @override
-  String get insulin => 'Insulin';
+  String get insulin => 'Insulina';
 
   @override
-  String get addInsulin => 'Add Insulin';
+  String get addInsulin => 'Añadir Insulina';
 
   @override
-  String get insulinType => 'Insulin Type';
+  String get insulinType => 'Tipo de Insulina';
 
   @override
-  String get rapidActing => 'Rapid-acting';
+  String get rapidActing => 'Acción rápida';
 
   @override
-  String get shortActing => 'Short-acting';
+  String get longActing => 'Acción prolongada';
 
   @override
-  String get intermediateActing => 'Intermediate';
-
-  @override
-  String get longActing => 'Long-acting';
-
-  @override
-  String get insulinDose => 'Dose';
+  String get insulinDose => 'Dosis';
 
   @override
   String get units => 'U';
 
   @override
-  String get injectionSite => 'Injection Site';
+  String get injectionSite => 'Sitio de inyección';
 
   @override
   String get abdomen => 'Abdomen';
 
   @override
-  String get thigh => 'Thigh';
+  String get thigh => 'Muslo';
 
   @override
-  String get arm => 'Arm';
+  String get arm => 'Brazo';
 
   @override
-  String get buttock => 'Buttock';
+  String get buttock => 'Glúteo';
 
   @override
-  String get measurementTime => 'Time';
+  String get measurementTime => 'Hora';
 
   @override
-  String get injectionTime => 'Injection Time';
+  String get injectionTime => 'Hora de inyección';
 
   @override
-  String get measurementTiming => 'Timing';
+  String get deliveryType => 'Tipo de Insulina';
 
   @override
-  String get addRecord => 'Add Record';
+  String get bolus => 'Acción rápida';
+
+  @override
+  String get basal => 'Acción prolongada';
+
+  @override
+  String get measurementTiming => 'Momento';
+
+  @override
+  String get addRecord => 'Añadir registro';
 
   @override
   String get glucoseSaved => 'Glucosa guardada';
@@ -595,6 +598,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get glucoseDeleted => 'Glucosa eliminada';
+
+  @override
+  String get insulinDeleted => 'Insulina eliminada';
 
   @override
   String get deleteFailed => 'Error al eliminar';

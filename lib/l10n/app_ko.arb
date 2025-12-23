@@ -131,9 +131,7 @@
   "insulin": "인슐린",
   "addInsulin": "인슐린 추가",
   "insulinType": "인슐린 종류",
-  "rapidActing": "초속효성",
-  "shortActing": "속효성",
-  "intermediateActing": "중간형",
+  "rapidActing": "속효형",
   "longActing": "지속형",
   "insulinDose": "투여량",
   "units": "U",
@@ -144,6 +142,9 @@
   "buttock": "엉덩이",
   "measurementTime": "측정 시간",
   "injectionTime": "투여 시간",
+  "deliveryType": "인슐린 종류",
+  "bolus": "속효성",
+  "basal": "지속형",
   "measurementTiming": "측정 시점",
   "addRecord": "기록 추가",
   "glucoseSaved": "혈당 기록이 저장되었습니다",
@@ -214,5 +215,6 @@
 
   "deleteGlucoseConfirmation": "정말 삭제하시겠습니까?\n삭제하면 되돌릴 수 없습니다.",
   "glucoseDeleted": "혈당 기록이 삭제되었습니다",
+  "insulinDeleted": "인슐린 기록이 삭제되었습니다",
   "deleteFailed": "삭제에 실패했습니다"
 }

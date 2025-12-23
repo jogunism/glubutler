@@ -337,10 +337,6 @@ class FeedProvider extends ChangeNotifier {
     // Check if ANY permission (write or read) is granted
     final hasAnyPermission = _categoryPermissions.values.any((status) => status == true);
 
-    debugPrint('[FeedProvider] Category permissions: $_categoryPermissions');
-    debugPrint('[FeedProvider] Has any permission: $hasAnyPermission');
-    debugPrint('[FeedProvider] Is health connected: $_isHealthConnected');
-
     bool? statusChanged;
 
     // If previously connected but now no permissions, mark as disconnected
@@ -396,6 +392,8 @@ class FeedProvider extends ChangeNotifier {
       final now = DateTime.now();
       final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
       final startDate = now.subtract(Duration(days: syncDays));
+      // Allow future dates (up to 1 day ahead) in case user enters future time
+      final endDate = now.add(const Duration(days: 1));
 
       // Use local variables to collect all data first, then update state once at the end
       final List<FeedItem> allItems = [];
@@ -406,13 +404,13 @@ class FeedProvider extends ChangeNotifier {
       // Fetch glucose records via repository (handles HealthKit + Local merge)
       final allGlucoseRecords = await _glucoseRepository.fetch(
         startDate: startDate,
-        endDate: now,
+        endDate: endDate,
       );
 
       // Fetch insulin records via repository (handles HealthKit + Local merge)
       final insulinRecords = await _insulinRepository.fetch(
         startDate: startDate,
-        endDate: now,
+        endDate: endDate,
       );
       allItems.addAll(insulinRecords.map(FeedItem.fromInsulin));
 
@@ -480,14 +478,14 @@ class FeedProvider extends ChangeNotifier {
       // Add local meal records from database
       final localMeals = await _databaseService.getMealRecords(
         startDate: startDate,
-        endDate: now,
+        endDate: endDate,
       );
       allItems.addAll(localMeals.map(FeedItem.fromMeal));
 
       // Add local exercise records from database
       final localExercise = await _databaseService.getExerciseRecords(
         startDate: startDate,
-        endDate: now,
+        endDate: endDate,
       );
       allItems.addAll(localExercise.map(FeedItem.fromExercise));
 
@@ -509,32 +507,44 @@ class FeedProvider extends ChangeNotifier {
       await Future.delayed(Duration.zero);
       allItems.sort();
 
-      // Find top 10 deletable glucose items for bounce animation
+      // Find top 10 deletable glucose and insulin items for bounce animation
       _bouncableItemIds.clear();
 
-      // Find deletable glucose items:
+      // Find deletable items (glucose and insulin only, NOT CGM groups):
       // 1. Local records (!isFromHealthKit)
       // 2. HealthKit records created by this app (sourceName contains 'Glu Butler')
-      final deletableGlucoseItems = allItems
+      final deletableItems = allItems
           .where((item) {
-            if (item.type != FeedItemType.glucose || item.glucoseRecord == null) {
-              return false;
+            // Check individual glucose items (NOT CGM groups)
+            if (item.type == FeedItemType.glucose && item.glucoseRecord != null) {
+              final record = item.glucoseRecord!;
+              // Include local records
+              if (!record.isFromHealthKit) {
+                return true;
+              }
+              // Include HealthKit records created by this app
+              if (record.sourceName != null && record.sourceName!.contains('Glu Butler')) {
+                return true;
+              }
             }
-            final record = item.glucoseRecord!;
-            // Include local records
-            if (!record.isFromHealthKit) {
-              return true;
-            }
-            // Include HealthKit records created by this app
-            if (record.sourceName != null && record.sourceName!.contains('Glu Butler')) {
-              return true;
+            // Check insulin items
+            if (item.type == FeedItemType.insulin && item.insulinRecord != null) {
+              final record = item.insulinRecord!;
+              // Include local records
+              if (!record.isFromHealthKit) {
+                return true;
+              }
+              // Include HealthKit records created by this app
+              if (record.sourceName != null && record.sourceName!.contains('Glu Butler')) {
+                return true;
+              }
             }
             return false;
           })
           .take(10)
           .map((item) => item.id)
           .toList();
-      _bouncableItemIds.addAll(deletableGlucoseItems);
+      _bouncableItemIds.addAll(deletableItems);
 
       // Update all state at once to prevent partial UI updates
       _items = allItems;
@@ -612,13 +622,11 @@ class FeedProvider extends ChangeNotifier {
   Future<bool> deleteGlucoseRecord(String id, DateTime timestamp) async {
     try {
       // Delete from local database
-      final dbResult = await _databaseService.deleteGlucose(id);
-      debugPrint('[FeedProvider] Deleted glucose from DB: $id, result: $dbResult');
+      await _databaseService.deleteGlucose(id);
 
       // Delete from Apple Health if connected
       if (_healthService.hasRequestedPermissions) {
-        final healthResult = await _healthService.deleteBloodGlucose(timestamp);
-        debugPrint('[FeedProvider] Deleted glucose from Apple Health: $healthResult');
+        await _healthService.deleteBloodGlucose(timestamp);
       }
 
       // Refresh feed data
@@ -626,8 +634,29 @@ class FeedProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      debugPrint('[FeedProvider] Error deleting glucose record: $e');
       _error = 'Failed to delete glucose record';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Delete an insulin record from both local DB and Apple Health
+  Future<bool> deleteInsulinRecord(String id, DateTime timestamp) async {
+    try {
+      // Delete from local database
+      await _databaseService.deleteInsulin(id);
+
+      // Delete from Apple Health if connected
+      if (_healthService.hasRequestedPermissions) {
+        await _healthService.deleteInsulinDelivery(timestamp);
+      }
+
+      // Refresh feed data
+      await refreshData();
+
+      return true;
+    } catch (e) {
+      _error = 'Failed to delete insulin record';
       notifyListeners();
       return false;
     }

@@ -360,13 +360,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get insulinType => '인슐린 종류';
 
   @override
-  String get rapidActing => '초속효성';
-
-  @override
-  String get shortActing => '속효성';
-
-  @override
-  String get intermediateActing => '중간형';
+  String get rapidActing => '속효형';
 
   @override
   String get longActing => '지속형';
@@ -397,6 +391,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get injectionTime => '투여 시간';
+
+  @override
+  String get deliveryType => '인슐린 종류';
+
+  @override
+  String get bolus => '속효성';
+
+  @override
+  String get basal => '지속형';
 
   @override
   String get measurementTiming => '측정 시점';
@@ -587,6 +590,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get glucoseDeleted => '혈당 기록이 삭제되었습니다';
+
+  @override
+  String get insulinDeleted => '인슐린 기록이 삭제되었습니다';
 
   @override
   String get deleteFailed => '삭제에 실패했습니다';

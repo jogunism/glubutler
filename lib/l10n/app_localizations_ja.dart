@@ -352,58 +352,61 @@ class AppLocalizationsJa extends AppLocalizations {
   String get addDiaryEntry => '日記を追加';
 
   @override
-  String get insulin => 'Insulin';
+  String get insulin => 'インスリン';
 
   @override
-  String get addInsulin => 'Add Insulin';
+  String get addInsulin => 'インスリンを追加';
 
   @override
-  String get insulinType => 'Insulin Type';
+  String get insulinType => 'インスリンの種類';
 
   @override
-  String get rapidActing => 'Rapid-acting';
+  String get rapidActing => '超速効型';
 
   @override
-  String get shortActing => 'Short-acting';
+  String get longActing => '持効型';
 
   @override
-  String get intermediateActing => 'Intermediate';
+  String get insulinDose => '投与量';
 
   @override
-  String get longActing => 'Long-acting';
+  String get units => '単位';
 
   @override
-  String get insulinDose => 'Dose';
+  String get injectionSite => '注射部位';
 
   @override
-  String get units => 'U';
+  String get abdomen => '腹部';
 
   @override
-  String get injectionSite => 'Injection Site';
+  String get thigh => '太もも';
 
   @override
-  String get abdomen => 'Abdomen';
+  String get arm => '腕';
 
   @override
-  String get thigh => 'Thigh';
+  String get buttock => '臀部';
 
   @override
-  String get arm => 'Arm';
+  String get measurementTime => '時間';
 
   @override
-  String get buttock => 'Buttock';
+  String get injectionTime => '投与時間';
 
   @override
-  String get measurementTime => 'Time';
+  String get deliveryType => 'インスリンの種類';
 
   @override
-  String get injectionTime => 'Injection Time';
+  String get bolus => '超速効型';
 
   @override
-  String get measurementTiming => 'Timing';
+  String get basal => '持効型';
 
   @override
-  String get addRecord => 'Add Record';
+  String get measurementTiming => '測定タイミング';
+
+  @override
+  String get addRecord => '記録を追加';
 
   @override
   String get glucoseSaved => '血糖値を保存しました';
@@ -588,6 +591,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get glucoseDeleted => '血糖値を削除しました';
+
+  @override
+  String get insulinDeleted => 'インスリンを削除しました';
 
   @override
   String get deleteFailed => '削除に失敗しました';

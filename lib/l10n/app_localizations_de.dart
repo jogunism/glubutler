@@ -359,55 +359,58 @@ class AppLocalizationsDe extends AppLocalizations {
   String get insulin => 'Insulin';
 
   @override
-  String get addInsulin => 'Add Insulin';
+  String get addInsulin => 'Insulin hinzufügen';
 
   @override
-  String get insulinType => 'Insulin Type';
+  String get insulinType => 'Insulintyp';
 
   @override
-  String get rapidActing => 'Rapid-acting';
+  String get rapidActing => 'Schnellwirksam';
 
   @override
-  String get shortActing => 'Short-acting';
+  String get longActing => 'Langwirksam';
 
   @override
-  String get intermediateActing => 'Intermediate';
+  String get insulinDose => 'Dosis';
 
   @override
-  String get longActing => 'Long-acting';
+  String get units => 'E';
 
   @override
-  String get insulinDose => 'Dose';
+  String get injectionSite => 'Injektionsstelle';
 
   @override
-  String get units => 'U';
+  String get abdomen => 'Bauch';
 
   @override
-  String get injectionSite => 'Injection Site';
-
-  @override
-  String get abdomen => 'Abdomen';
-
-  @override
-  String get thigh => 'Thigh';
+  String get thigh => 'Oberschenkel';
 
   @override
   String get arm => 'Arm';
 
   @override
-  String get buttock => 'Buttock';
+  String get buttock => 'Gesäß';
 
   @override
-  String get measurementTime => 'Time';
+  String get measurementTime => 'Zeit';
 
   @override
-  String get injectionTime => 'Injection Time';
+  String get injectionTime => 'Injektionszeit';
 
   @override
-  String get measurementTiming => 'Timing';
+  String get deliveryType => 'Insulintyp';
 
   @override
-  String get addRecord => 'Add Record';
+  String get bolus => 'Schnellwirksam';
+
+  @override
+  String get basal => 'Langwirksam';
+
+  @override
+  String get measurementTiming => 'Messzeitpunkt';
+
+  @override
+  String get addRecord => 'Eintrag hinzufügen';
 
   @override
   String get glucoseSaved => 'Blutzucker gespeichert';
@@ -595,6 +598,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get glucoseDeleted => 'Blutzucker gelöscht';
+
+  @override
+  String get insulinDeleted => 'Insulin gelöscht';
 
   @override
   String get deleteFailed => 'Löschen fehlgeschlagen';

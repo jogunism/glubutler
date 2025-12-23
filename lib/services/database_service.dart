@@ -60,6 +60,8 @@ class DatabaseService {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _databaseName);
 
+    debugPrint('[DatabaseService] Database path: $path');
+
     _database = await openDatabase(
       path,
       version: DatabaseSchema.version,

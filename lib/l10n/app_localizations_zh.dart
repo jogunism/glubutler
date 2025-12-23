@@ -352,58 +352,61 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addDiaryEntry => '添加日记';
 
   @override
-  String get insulin => 'Insulin';
+  String get insulin => '胰岛素';
 
   @override
-  String get addInsulin => 'Add Insulin';
+  String get addInsulin => '添加胰岛素';
 
   @override
-  String get insulinType => 'Insulin Type';
+  String get insulinType => '胰岛素类型';
 
   @override
-  String get rapidActing => 'Rapid-acting';
+  String get rapidActing => '速效型';
 
   @override
-  String get shortActing => 'Short-acting';
+  String get longActing => '长效型';
 
   @override
-  String get intermediateActing => 'Intermediate';
+  String get insulinDose => '剂量';
 
   @override
-  String get longActing => 'Long-acting';
+  String get units => '单位';
 
   @override
-  String get insulinDose => 'Dose';
+  String get injectionSite => '注射部位';
 
   @override
-  String get units => 'U';
+  String get abdomen => '腹部';
 
   @override
-  String get injectionSite => 'Injection Site';
+  String get thigh => '大腿';
 
   @override
-  String get abdomen => 'Abdomen';
+  String get arm => '手臂';
 
   @override
-  String get thigh => 'Thigh';
+  String get buttock => '臀部';
 
   @override
-  String get arm => 'Arm';
+  String get measurementTime => '时间';
 
   @override
-  String get buttock => 'Buttock';
+  String get injectionTime => '注射时间';
 
   @override
-  String get measurementTime => 'Time';
+  String get deliveryType => '胰岛素类型';
 
   @override
-  String get injectionTime => 'Injection Time';
+  String get bolus => '速效型';
 
   @override
-  String get measurementTiming => 'Timing';
+  String get basal => '长效型';
 
   @override
-  String get addRecord => 'Add Record';
+  String get measurementTiming => '测量时机';
+
+  @override
+  String get addRecord => '添加记录';
 
   @override
   String get glucoseSaved => '血糖记录已保存';
@@ -587,6 +590,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get glucoseDeleted => '血糖记录已删除';
+
+  @override
+  String get insulinDeleted => '胰岛素记录已删除';
 
   @override
   String get deleteFailed => '删除失败';

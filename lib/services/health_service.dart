@@ -634,6 +634,28 @@ class HealthService {
     }
   }
 
+  Future<bool> deleteInsulinDelivery(DateTime timestamp) async {
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] deleteInsulinDelivery: Platform not supported (iOS only)');
+      return false;
+    }
+
+    try {
+      final Map<String, dynamic> arguments = {
+        'timestamp': timestamp.millisecondsSinceEpoch,
+      };
+
+      debugPrint('[HealthService] Deleting insulin at timestamp: ${timestamp.toIso8601String()}');
+
+      final success = await _healthKitChannel.invokeMethod('deleteInsulinDelivery', arguments);
+      debugPrint('[HealthService] Native iOS insulin delete result: $success');
+      return success as bool;
+    } catch (e) {
+      debugPrint('[HealthService] Error deleting insulin from native iOS: $e');
+      return false;
+    }
+  }
+
   Future<bool> writeInsulinRecord(InsulinRecord record) async {
     if (!Platform.isIOS) {
       debugPrint('[HealthService] writeInsulinRecord: Platform not supported (iOS only)');
@@ -643,21 +665,8 @@ class HealthService {
     if (Platform.isIOS) {
       // Use native iOS HealthKit with delivery reason metadata (required)
       try {
-        // Map InsulinType to HealthKit delivery reason
-        // longActing and intermediate -> basal
-        // rapidActing, shortActing, mixed -> bolus
-        String deliveryReason;
-        switch (record.insulinType) {
-          case InsulinType.longActing:
-          case InsulinType.intermediate:
-            deliveryReason = 'basal';
-            break;
-          case InsulinType.rapidActing:
-          case InsulinType.shortActing:
-          case InsulinType.mixed:
-            deliveryReason = 'bolus';
-            break;
-        }
+        // Use the explicit deliveryReason from the record
+        final deliveryReason = record.deliveryReason.name;
 
         final Map<String, dynamic> arguments = {
           'value': record.units,
@@ -702,14 +711,18 @@ class HealthService {
         for (final item in data) {
           final map = item as Map<dynamic, dynamic>;
 
-          // Map HealthKit delivery reason back to InsulinType
+          // Parse delivery reason from HealthKit
+          InsulinDeliveryReason deliveryReason = InsulinDeliveryReason.bolus; // Default
           InsulinType insulinType = InsulinType.rapidActing; // Default
+
           if (map['reason'] != null) {
             switch (map['reason']) {
               case 'basal':
+                deliveryReason = InsulinDeliveryReason.basal;
                 insulinType = InsulinType.longActing;
                 break;
               case 'bolus':
+                deliveryReason = InsulinDeliveryReason.bolus;
                 insulinType = InsulinType.rapidActing;
                 break;
             }
@@ -720,6 +733,7 @@ class HealthService {
             timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
             units: (map['value'] as num).toDouble(),
             insulinType: insulinType,
+            deliveryReason: deliveryReason,
             isFromHealthKit: true,
             sourceName: map['dataSource'] as String?,
           ));

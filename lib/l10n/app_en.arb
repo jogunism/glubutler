@@ -132,8 +132,6 @@
   "addInsulin": "Add Insulin",
   "insulinType": "Insulin Type",
   "rapidActing": "Rapid-acting",
-  "shortActing": "Short-acting",
-  "intermediateActing": "Intermediate",
   "longActing": "Long-acting",
   "insulinDose": "Dose",
   "units": "U",
@@ -144,6 +142,9 @@
   "buttock": "Buttock",
   "measurementTime": "Time",
   "injectionTime": "Injection Time",
+  "deliveryType": "Insulin Type",
+  "bolus": "Rapid-acting",
+  "basal": "Long-acting",
   "measurementTiming": "Timing",
   "addRecord": "Add Record",
   "glucoseSaved": "Blood glucose saved",
@@ -225,5 +226,6 @@
 
   "deleteGlucoseConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
   "glucoseDeleted": "Glucose record deleted",
+  "insulinDeleted": "Insulin record deleted",
   "deleteFailed": "Delete failed"
 }

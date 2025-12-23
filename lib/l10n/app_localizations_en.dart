@@ -368,12 +368,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rapidActing => 'Rapid-acting';
 
   @override
-  String get shortActing => 'Short-acting';
-
-  @override
-  String get intermediateActing => 'Intermediate';
-
-  @override
   String get longActing => 'Long-acting';
 
   @override
@@ -402,6 +396,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get injectionTime => 'Injection Time';
+
+  @override
+  String get deliveryType => 'Insulin Type';
+
+  @override
+  String get bolus => 'Rapid-acting';
+
+  @override
+  String get basal => 'Long-acting';
 
   @override
   String get measurementTiming => 'Timing';
@@ -595,6 +598,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get glucoseDeleted => 'Glucose record deleted';
+
+  @override
+  String get insulinDeleted => 'Insulin record deleted';
 
   @override
   String get deleteFailed => 'Delete failed';

@@ -67,6 +67,7 @@ class GlucoseRepository {
       startDate: startDate,
       endDate: endDate,
     );
+    debugPrint('[GlucoseRepository] Fetched ${localRecords.length} local glucose records');
     for (final record in localRecords) {
       recordsById[record.id] = record;
     }
@@ -77,6 +78,7 @@ class GlucoseRepository {
         startDate: startDate,
         endDate: endDate,
       );
+      debugPrint('[GlucoseRepository] Fetched ${healthRecords.length} HealthKit glucose records');
       for (final record in healthRecords) {
         // HealthKit records override local records with same ID
         // (in case of migration where we wrote local to HealthKit)
@@ -87,6 +89,7 @@ class GlucoseRepository {
     // Sort by timestamp (newest first)
     final allRecords = recordsById.values.toList();
     allRecords.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    debugPrint('[GlucoseRepository] Total merged glucose records: ${allRecords.length}');
     return allRecords;
   }
 

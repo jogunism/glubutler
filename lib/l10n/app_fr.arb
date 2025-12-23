@@ -121,6 +121,29 @@
   "addGlucose": "Ajouter Glycémie",
   "addDiaryEntry": "Ajouter une entrée",
 
+  "insulin": "Insuline",
+  "addInsulin": "Ajouter Insuline",
+  "insulinType": "Type d'insuline",
+  "rapidActing": "Action rapide",
+  "longActing": "Action prolongée",
+  "insulinDose": "Dose",
+  "units": "U",
+  "injectionSite": "Site d'injection",
+  "abdomen": "Abdomen",
+  "thigh": "Cuisse",
+  "arm": "Bras",
+  "buttock": "Fesse",
+  "measurementTime": "Heure",
+  "injectionTime": "Heure d'injection",
+  "deliveryType": "Type d'insuline",
+  "bolus": "Action rapide",
+  "basal": "Action prolongée",
+  "measurementTiming": "Moment",
+  "addRecord": "Ajouter un enregistrement",
+  "glucoseSaved": "Glycémie enregistrée",
+  "insulinSaved": "Insuline enregistrée",
+  "saveFailed": "Échec de l'enregistrement",
+
   "appleHealth": "Apple Santé",
   "appleHealthDescription": "Connectez-vous à l'app Santé pour consulter vos entraînements, sommeil, poids et autres données pouvant vous aider à gérer votre glycémie.",
   "syncedData": "Données synchronisées",
@@ -184,5 +207,6 @@
 
   "deleteGlucoseConfirmation": "Êtes-vous sûr de vouloir supprimer ?\nCette action ne peut pas être annulée.",
   "glucoseDeleted": "Glycémie supprimée",
+  "insulinDeleted": "Insuline supprimée",
   "deleteFailed": "Échec de la suppression"
 }

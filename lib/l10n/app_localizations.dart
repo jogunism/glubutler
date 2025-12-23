@@ -818,18 +818,6 @@ abstract class AppLocalizations {
   /// **'Rapid-acting'**
   String get rapidActing;
 
-  /// No description provided for @shortActing.
-  ///
-  /// In en, this message translates to:
-  /// **'Short-acting'**
-  String get shortActing;
-
-  /// No description provided for @intermediateActing.
-  ///
-  /// In en, this message translates to:
-  /// **'Intermediate'**
-  String get intermediateActing;
-
   /// No description provided for @longActing.
   ///
   /// In en, this message translates to:
@@ -889,6 +877,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Injection Time'**
   String get injectionTime;
+
+  /// No description provided for @deliveryType.
+  ///
+  /// In en, this message translates to:
+  /// **'Insulin Type'**
+  String get deliveryType;
+
+  /// No description provided for @bolus.
+  ///
+  /// In en, this message translates to:
+  /// **'Rapid-acting'**
+  String get bolus;
+
+  /// No description provided for @basal.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-acting'**
+  String get basal;
 
   /// No description provided for @measurementTiming.
   ///
@@ -1255,6 +1261,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Glucose record deleted'**
   String get glucoseDeleted;
+
+  /// No description provided for @insulinDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Insulin record deleted'**
+  String get insulinDeleted;
 
   /// No description provided for @deleteFailed.
   ///

@@ -40,6 +40,14 @@ class CgmGroupingService {
     'Senseonics',
   ];
 
+  /// Manual entry app sources that should NOT be grouped as CGM
+  /// These are apps where users manually enter glucose readings
+  static const List<String> manualEntrySources = [
+    'Glu Butler',
+    'Glu Sight',
+    'Health2Sync',
+  ];
+
   /// CGM 데이터 최대 간격 (분) - 알려진 CGM 소스용
   static const int cgmKnownSourceMaxInterval = 20;
 
@@ -58,6 +66,15 @@ class CgmGroupingService {
     final lowerSource = sourceName.toLowerCase();
     return knownCgmSources.any(
       (known) => lowerSource.contains(known.toLowerCase()),
+    );
+  }
+
+  /// 소스명이 수동 입력 앱인지 확인
+  static bool isManualEntrySource(String? sourceName) {
+    if (sourceName == null) return false;
+    final lowerSource = sourceName.toLowerCase();
+    return manualEntrySources.any(
+      (manual) => lowerSource.contains(manual.toLowerCase()),
     );
   }
 
@@ -92,6 +109,13 @@ class CgmGroupingService {
     for (final entry in bySource.entries) {
       final sourceName = entry.key;
       final sourceRecords = entry.value;
+
+      // Manual entry sources should never be grouped as CGM
+      if (isManualEntrySource(sourceName)) {
+        individualRecords.addAll(sourceRecords);
+        continue;
+      }
+
       final isKnownCgm = isKnownCgmSource(sourceName);
 
       _processSourceRecords(
