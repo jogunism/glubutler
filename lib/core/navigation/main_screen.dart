@@ -4,6 +4,9 @@ import 'package:cupertino_native_plus/cupertino_native.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
+import 'package:glu_butler/core/widgets/screen_fab.dart';
+import 'package:glu_butler/core/widgets/modals/record_input_modal.dart';
+import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
 import 'package:glu_butler/features/home/home_screen.dart';
 import 'package:glu_butler/features/feed/feed_screen.dart';
 import 'package:glu_butler/features/diary/diary_screen.dart';
@@ -43,6 +46,8 @@ class MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // FAB should be visible on feed (1) and diary (2) tabs
+    final showFab = _currentIndex == 1 || _currentIndex == 2;
 
     // 각 탭의 LargeTitleScrollView가 Scaffold를 내장하므로 여기서는 Material 사용
     return Material(
@@ -54,6 +59,18 @@ class MainScreenState extends State<MainScreen> {
           _buildOffstageTab(1, const FeedScreen()),
           _buildOffstageTab(2, const DiaryScreen()),
           _buildOffstageTab(3, const ReportScreen()),
+
+          // Floating Action Button with animation
+          ScreenFab(
+            visible: showFab,
+            onPressed: () {
+              if (_currentIndex == 1) {
+                RecordInputModal.show(context);
+              } else if (_currentIndex == 2) {
+                DiaryInputModal.show(context);
+              }
+            },
+          ),
 
           // CNTabBar를 Positioned로 배치
           Positioned(

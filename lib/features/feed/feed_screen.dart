@@ -9,8 +9,6 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
-import 'package:glu_butler/core/widgets/screen_fab.dart';
-import 'package:glu_butler/core/widgets/modals/record_input_modal.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/models/cgm_glucose_group.dart';
@@ -93,35 +91,28 @@ class _FeedScreenState extends State<FeedScreen> {
 
     return Consumer<FeedProvider>(
       builder: (context, provider, child) {
-        return Stack(
-          children: [
-            LargeTitleScrollView(
-              title: l10n.feed,
-              onRefresh: _onRefresh,
-              trailing: const SettingsIconButton(),
-              slivers: [
-                  // Loading indicator
-                if (provider.isLoading && provider.items.isEmpty && provider.activityByDate.isEmpty)
-                  const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                // Empty state
-                else if (provider.items.isEmpty && provider.activityByDate.isEmpty)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _buildEmptyState(theme, l10n),
-                  )
-                // Feed items grouped by date
-                else
-                  ..._buildFeedContent(context, provider, l10n),
-              ],
-            ),
-            ScreenFab(
-              onPressed: () => RecordInputModal.show(context),
-            ),
+        return LargeTitleScrollView(
+          title: l10n.feed,
+          onRefresh: _onRefresh,
+          trailing: const SettingsIconButton(),
+          slivers: [
+              // Loading indicator
+            if (provider.isLoading && provider.items.isEmpty && provider.activityByDate.isEmpty)
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            // Empty state
+            else if (provider.items.isEmpty && provider.activityByDate.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _buildEmptyState(theme, l10n),
+              )
+            // Feed items grouped by date
+            else
+              ..._buildFeedContent(context, provider, l10n),
           ],
         );
       },

@@ -4,8 +4,6 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
-import 'package:glu_butler/core/widgets/screen_fab.dart';
-import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
 
 /// 일기 화면
 ///
@@ -42,45 +40,38 @@ class _DiaryScreenState extends State<DiaryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return Stack(
-      children: [
-        LargeTitleScrollView(
-          title: l10n.diary,
-          onRefresh: _onRefresh,
-          trailing: const SettingsIconButton(),
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 80),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.book_outlined,
-                        size: 80,
-                        color: AppTheme.primaryColor,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.noRecords,
-                        style: theme.textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.startTracking,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ],
+    return LargeTitleScrollView(
+      title: l10n.diary,
+      onRefresh: _onRefresh,
+      trailing: const SettingsIconButton(),
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.book_outlined,
+                    size: 80,
+                    color: AppTheme.primaryColor,
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.noRecords,
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.startTracking,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-        ScreenFab(
-          onPressed: () => DiaryInputModal.show(context),
+          ),
         ),
       ],
     );
