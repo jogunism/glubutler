@@ -126,8 +126,8 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget _buildStepsSummary(BuildContext context, DailyActivityData activity, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.all(11),
       decoration: context.decorations.card.copyWith(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -136,19 +136,19 @@ class _FeedScreenState extends State<FeedScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: 31,
+              height: 31,
               decoration: BoxDecoration(
                 color: AppTheme.iconGreen.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.directions_walk,
                 color: AppTheme.iconGreen,
-                size: 24,
+                size: 17,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 11),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,32 +160,36 @@ class _FeedScreenState extends State<FeedScreen> {
                         l10n.steps,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: context.colors.textSecondary,
+                          fontSize: 11,
                         ),
                       ),
                       Text(
                         ' · Health',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: context.colors.textSecondary.withValues(alpha: 0.7),
+                          fontSize: 10,
                         ),
                       ),
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: 4),
                     child: Row(
                       children: [
                         Text(
                           _formatNumber(activity.steps),
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                         if (activity.distanceKm != null) ...[
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 8),
                           Text(
                             '${activity.distanceKm!.toStringAsFixed(1)} km',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: context.colors.textSecondary,
+                              fontSize: 13,
                             ),
                           ),
                         ],

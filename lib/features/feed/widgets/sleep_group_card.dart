@@ -17,29 +17,29 @@ class SleepGroupCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: context.decorations.card.copyWith(
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(11),
         child: Row(
           children: [
             // Icon
             Container(
-              width: 44,
-              height: 44,
+              width: 31,
+              height: 31,
               decoration: BoxDecoration(
                 color: AppTheme.iconIndigo.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.bedtime,
                 color: AppTheme.iconIndigo,
-                size: 24,
+                size: 17,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 11),
 
             // Content
             Expanded(
@@ -52,18 +52,18 @@ class SleepGroupCard extends StatelessWidget {
                     l10n.sleep,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                      fontSize: 12,
+                      fontSize: 11,
                     ),
                   ),
 
                   // Duration
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       group.formattedDuration,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        fontSize: 18,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -79,7 +79,7 @@ class SleepGroupCard extends StatelessWidget {
                   '${_formatTime(group.startTime)} - ${_formatTime(group.endTime)}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
                 ),
               ],

@@ -17,29 +17,29 @@ class WaterGroupCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: context.decorations.card.copyWith(
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(11),
         child: Row(
           children: [
             // Icon
             Container(
-              width: 44,
-              height: 44,
+              width: 31,
+              height: 31,
               decoration: BoxDecoration(
                 color: AppTheme.iconBlue.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.local_drink,
                 color: AppTheme.iconBlue,
-                size: 24,
+                size: 17,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 11),
 
             // Content
             Expanded(
@@ -52,18 +52,18 @@ class WaterGroupCard extends StatelessWidget {
                     l10n.waterIntake,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                      fontSize: 12,
+                      fontSize: 11,
                     ),
                   ),
 
                   // Amount
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       group.formattedAmount(),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        fontSize: 18,
+                        fontSize: 16,
                       ),
                     ),
                   ),

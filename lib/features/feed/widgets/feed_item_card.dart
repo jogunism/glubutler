@@ -221,11 +221,19 @@ class _FeedItemCardState extends State<FeedItemCard>
     bool includeMargin = true,
   }) {
     final baseDecoration = context.decorations.card;
+    final isGlucose = widget.item.type == FeedItemType.glucose;
+
+    // Non-glucose items: 70% size (reduced padding and spacing)
+    final verticalMargin = isGlucose ? 6.0 : 4.0;
+    final cardPadding = isGlucose ? 16.0 : 11.0;
+    final iconSpacing = isGlucose ? 16.0 : 11.0;
+    final titleValueSpacing = isGlucose ? 8.0 : 4.0;
+
     return Container(
       margin: includeMargin
-          ? const EdgeInsets.symmetric(horizontal: 16, vertical: 6)
+          ? EdgeInsets.symmetric(horizontal: 16, vertical: verticalMargin)
           : EdgeInsets.zero,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(cardPadding),
       decoration: includeMargin
           ? baseDecoration.copyWith(borderRadius: BorderRadius.circular(16))
           : baseDecoration,
@@ -234,7 +242,7 @@ class _FeedItemCardState extends State<FeedItemCard>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildIcon(context, theme, settings),
-            const SizedBox(width: 16),
+            SizedBox(width: iconSpacing),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,6 +255,7 @@ class _FeedItemCardState extends State<FeedItemCard>
                         title,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: context.colors.textSecondary,
+                          fontSize: isGlucose ? null : 11,
                         ),
                       ),
                       if (sourceName != null) ...[
@@ -256,6 +265,7 @@ class _FeedItemCardState extends State<FeedItemCard>
                             color: context.colors.textSecondary.withValues(
                               alpha: 0.7,
                             ),
+                            fontSize: isGlucose ? null : 10,
                           ),
                         ),
                       ],
@@ -263,7 +273,7 @@ class _FeedItemCardState extends State<FeedItemCard>
                   ),
                   // Value - below icon bottom
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: EdgeInsets.only(top: titleValueSpacing),
                     child: _buildValue(context, theme, l10n),
                   ),
                 ],
@@ -276,6 +286,7 @@ class _FeedItemCardState extends State<FeedItemCard>
                   time,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: context.colors.textSecondary,
+                    fontSize: isGlucose ? null : 11,
                   ),
                 ),
               ],
@@ -387,11 +398,15 @@ class _FeedItemCardState extends State<FeedItemCard>
           '${exercise.durationMinutes} min',
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
         if (exercise.calories != null) ...[
-          const SizedBox(width: 12),
-          Text('${exercise.calories} kcal', style: theme.textTheme.bodyMedium),
+          const SizedBox(width: 8),
+          Text(
+            '${exercise.calories} kcal',
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+          ),
         ],
       ],
     );
@@ -401,7 +416,10 @@ class _FeedItemCardState extends State<FeedItemCard>
     final sleep = widget.item.sleepRecord!;
     return Text(
       sleep.formattedDuration,
-      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
     );
   }
 
@@ -412,6 +430,7 @@ class _FeedItemCardState extends State<FeedItemCard>
         meal.description!,
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
+          fontSize: 16,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -424,7 +443,10 @@ class _FeedItemCardState extends State<FeedItemCard>
     final water = widget.item.waterRecord!;
     return Text(
       water.formattedAmount(),
-      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
     );
   }
 
@@ -436,13 +458,15 @@ class _FeedItemCardState extends State<FeedItemCard>
           insulin.formattedUnits,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
         Text(
           insulin.insulinType.displayName,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+            fontSize: 13,
           ),
         ),
       ],
@@ -453,7 +477,10 @@ class _FeedItemCardState extends State<FeedItemCard>
     final mindfulness = widget.item.mindfulnessRecord!;
     return Text(
       mindfulness.formattedDuration,
-      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
     );
   }
 
@@ -461,6 +488,7 @@ class _FeedItemCardState extends State<FeedItemCard>
     IconData icon;
     Color color;
     Color backgroundColor;
+    final isGlucose = widget.item.type == FeedItemType.glucose;
 
     switch (widget.item.type) {
       case FeedItemType.glucose:
@@ -504,14 +532,19 @@ class _FeedItemCardState extends State<FeedItemCard>
         backgroundColor = color;
     }
 
+    // Non-glucose items: 70% size
+    final iconSize = isGlucose ? 44.0 : 31.0;
+    final iconInnerSize = isGlucose ? 24.0 : 17.0;
+    final borderRadius = isGlucose ? 12.0 : 8.0;
+
     return Container(
-      width: 44,
-      height: 44,
+      width: iconSize,
+      height: iconSize,
       decoration: BoxDecoration(
         color: backgroundColor.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Icon(icon, color: color, size: 24),
+      child: Icon(icon, color: color, size: iconInnerSize),
     );
   }
 
