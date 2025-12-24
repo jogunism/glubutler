@@ -212,5 +212,21 @@
   "deleteGlucoseConfirmation": "本当に削除しますか？\nこの操作は元に戻せません。",
   "glucoseDeleted": "血糖値を削除しました",
   "insulinDeleted": "インスリンを削除しました",
-  "deleteFailed": "削除に失敗しました"
+  "deleteFailed": "削除に失敗しました",
+
+  "glucoseStatus": "血糖状態",
+  "scoreHint": "スコアについて詳しく",
+  "scoreInfoTitle": "血糖スコアガイド",
+  "scoreInfoQuality": "血糖管理の質",
+  "scoreInfoQualityDesc": "測定した血糖値が目標範囲に近いほど、スコアが高くなります。",
+  "scoreInfoConsistency": "測定の一貫性",
+  "scoreInfoConsistencyDesc": "1日を通して定期的に血糖値を測定するほど、スコアが高くなります。",
+  "scoreInfoRecommendation": "推奨測定回数",
+  "scoreInfoMorning": "朝（9時前）：空腹時1回",
+  "scoreInfoLunch": "昼食前（14時前）：合計3回",
+  "scoreInfoDinner": "夕食前（19時前）：合計5回",
+  "scoreInfoBedtime": "就寝前（22時以降）：合計6回",
+  "scoreInfoLifestyle": "生活習慣（ヘルスケア連携時）",
+  "scoreInfoLifestyleDesc": "睡眠時間、運動記録などのヘルスケアデータを一緒に評価してスコアを計算します。",
+  "scoreInfoPrivacy": "*アプリで使用されるすべての情報は、別途保存されたり外部に共有されることはありません。"
 }

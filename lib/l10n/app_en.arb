@@ -135,6 +135,7 @@
   "scoreInfoBedtime": "Before bed (after 10 PM): 6 total measurements",
   "scoreInfoLifestyle": "Lifestyle (with Health app)",
   "scoreInfoLifestyleDesc": "Sleep and exercise data from Apple Health are included for more accurate scoring.",
+  "scoreInfoPrivacy": "*All information used in the app is not stored separately or shared externally.",
   "times": "×",
   "viewReport": "View Report",
   "noData": "No data available",

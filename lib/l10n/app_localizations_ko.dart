@@ -373,7 +373,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get scoreInfoLifestyleDesc =>
-      '수면 시간과 운동 기록을 함께 평가하여 점수를 더욱 정확하게 계산합니다.';
+      '수면시간, 운동기록 등의 건강앱 데이터를 함께 평가하여 점수를 계산합니다.';
+
+  @override
+  String get scoreInfoPrivacy => '*앱에 사용되는 모든 정보는 따로 저장되거나 외부로 공유되지 않습니다.';
 
   @override
   String get times => '회';

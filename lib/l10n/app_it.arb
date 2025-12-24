@@ -214,5 +214,19 @@
   "insulinDeleted": "Insulina eliminata",
   "deleteFailed": "Eliminazione fallita",
 
-  "glucoseStatus": "Stato Glicemico"
+  "glucoseStatus": "Stato Glicemico",
+  "scoreHint": "Scopri di più sul punteggio",
+  "scoreInfoTitle": "Guida al punteggio glicemico",
+  "scoreInfoQuality": "Qualità della gestione glicemica",
+  "scoreInfoQualityDesc": "Più le tue misurazioni di glicemia sono vicine all'intervallo target, più alto è il tuo punteggio.",
+  "scoreInfoConsistency": "Coerenza delle misurazioni",
+  "scoreInfoConsistencyDesc": "Più regolarmente misuri la tua glicemia durante il giorno, più alto è il tuo punteggio.",
+  "scoreInfoRecommendation": "Frequenza di misurazione raccomandata",
+  "scoreInfoMorning": "Mattina (prima delle 9): 1 misurazione a digiuno",
+  "scoreInfoLunch": "Prima di pranzo (prima delle 14): 3 misurazioni in totale",
+  "scoreInfoDinner": "Prima di cena (prima delle 19): 5 misurazioni in totale",
+  "scoreInfoBedtime": "Prima di dormire (dopo le 22): 6 misurazioni in totale",
+  "scoreInfoLifestyle": "Stile di vita (con app Salute)",
+  "scoreInfoLifestyleDesc": "I dati sul sonno e l'esercizio fisico da Apple Salute sono inclusi per un punteggio più preciso.",
+  "scoreInfoPrivacy": "*Tutte le informazioni utilizzate nell'app non vengono memorizzate separatamente né condivise esternamente."
 }

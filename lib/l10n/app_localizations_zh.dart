@@ -334,52 +334,49 @@ class AppLocalizationsZh extends AppLocalizations {
   String get glucoseDistribution => '血糖分布';
 
   @override
-  String get glucoseStatus => 'Glucose Status';
+  String get glucoseStatus => '血糖状态';
 
   @override
-  String get scoreHint => 'Learn about the score';
+  String get scoreHint => '了解评分';
 
   @override
-  String get scoreInfoTitle => 'Glucose Score Guide';
+  String get scoreInfoTitle => '血糖评分指南';
 
   @override
-  String get scoreInfoQuality => 'Glucose Management Quality';
+  String get scoreInfoQuality => '血糖管理质量';
 
   @override
-  String get scoreInfoQualityDesc =>
-      'The closer your glucose measurements are to the target range, the higher your score.';
+  String get scoreInfoQualityDesc => '血糖测量值越接近目标范围，评分越高。';
 
   @override
-  String get scoreInfoConsistency => 'Measurement Consistency';
+  String get scoreInfoConsistency => '测量一致性';
 
   @override
-  String get scoreInfoConsistencyDesc =>
-      'The more regularly you measure your glucose throughout the day, the higher your score.';
+  String get scoreInfoConsistencyDesc => '全天定期测量血糖，评分越高。';
 
   @override
-  String get scoreInfoRecommendation => 'Recommended Measurement Frequency';
+  String get scoreInfoRecommendation => '建议测量次数';
 
   @override
-  String get scoreInfoMorning => 'Morning (before 9 AM): 1 fasting measurement';
+  String get scoreInfoMorning => '早上（9点前）：空腹1次';
 
   @override
-  String get scoreInfoLunch =>
-      'Before lunch (before 2 PM): 3 total measurements';
+  String get scoreInfoLunch => '午餐前（14点前）：共3次';
 
   @override
-  String get scoreInfoDinner =>
-      'Before dinner (before 7 PM): 5 total measurements';
+  String get scoreInfoDinner => '晚餐前（19点前）：共5次';
 
   @override
-  String get scoreInfoBedtime =>
-      'Before bed (after 10 PM): 6 total measurements';
+  String get scoreInfoBedtime => '睡前（22点后）：共6次';
 
   @override
-  String get scoreInfoLifestyle => 'Lifestyle (with Health app)';
+  String get scoreInfoLifestyle => '生活习惯（连接健康App时）';
 
   @override
-  String get scoreInfoLifestyleDesc =>
-      'Sleep and exercise data from Apple Health are included for more accurate scoring.';
+  String get scoreInfoLifestyleDesc => '结合睡眠时间、运动记录等健康App数据计算评分。';
+
+  @override
+  String get scoreInfoPrivacy => '*应用中使用的所有信息不会单独存储或分享到外部。';
 
   @override
   String get times => '次';

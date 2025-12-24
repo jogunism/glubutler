@@ -214,5 +214,19 @@
   "insulinDeleted": "Insulin gelöscht",
   "deleteFailed": "Löschen fehlgeschlagen",
 
-  "glucoseStatus": "Blutzuckerstatus"
+  "glucoseStatus": "Blutzuckerstatus",
+  "scoreHint": "Mehr über die Bewertung erfahren",
+  "scoreInfoTitle": "Blutzucker-Bewertungsleitfaden",
+  "scoreInfoQuality": "Blutzuckermanagement-Qualität",
+  "scoreInfoQualityDesc": "Je näher Ihre Blutzuckermessungen am Zielbereich liegen, desto höher ist Ihre Bewertung.",
+  "scoreInfoConsistency": "Messungskonsistenz",
+  "scoreInfoConsistencyDesc": "Je regelmäßiger Sie Ihren Blutzucker über den Tag messen, desto höher ist Ihre Bewertung.",
+  "scoreInfoRecommendation": "Empfohlene Messhäufigkeit",
+  "scoreInfoMorning": "Morgens (vor 9 Uhr): 1 Nüchternmessung",
+  "scoreInfoLunch": "Vor dem Mittagessen (vor 14 Uhr): 3 Messungen insgesamt",
+  "scoreInfoDinner": "Vor dem Abendessen (vor 19 Uhr): 5 Messungen insgesamt",
+  "scoreInfoBedtime": "Vor dem Schlafengehen (nach 22 Uhr): 6 Messungen insgesamt",
+  "scoreInfoLifestyle": "Lebensstil (mit Health-App)",
+  "scoreInfoLifestyleDesc": "Schlaf- und Bewegungsdaten aus der Health-App werden für eine genauere Bewertung berücksichtigt.",
+  "scoreInfoPrivacy": "*Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben."
 }

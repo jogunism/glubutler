@@ -1025,11 +1025,19 @@ class _HomeScreenState extends State<HomeScreen>
                   _buildRecommendationItem(context, l10n.scoreInfoLunch),
                   _buildRecommendationItem(context, l10n.scoreInfoDinner),
                   _buildRecommendationItem(context, l10n.scoreInfoBedtime),
+                  const SizedBox(height: 24),
+                  // 개인정보 안내
+                  Text(
+                    l10n.scoreInfoPrivacy,
+                    style: context.textStyles.tileSubtitle.copyWith(
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
           ],
         ),
       ),

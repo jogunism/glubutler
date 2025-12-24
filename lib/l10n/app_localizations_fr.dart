@@ -338,49 +338,53 @@ class AppLocalizationsFr extends AppLocalizations {
   String get glucoseStatus => 'État Glycémique';
 
   @override
-  String get scoreHint => 'Learn about the score';
+  String get scoreHint => 'En savoir plus sur le score';
 
   @override
-  String get scoreInfoTitle => 'Glucose Score Guide';
+  String get scoreInfoTitle => 'Guide du score glycémique';
 
   @override
-  String get scoreInfoQuality => 'Glucose Management Quality';
+  String get scoreInfoQuality => 'Qualité de la gestion glycémique';
 
   @override
   String get scoreInfoQualityDesc =>
-      'The closer your glucose measurements are to the target range, the higher your score.';
+      'Plus vos mesures de glycémie sont proches de la plage cible, plus votre score est élevé.';
 
   @override
-  String get scoreInfoConsistency => 'Measurement Consistency';
+  String get scoreInfoConsistency => 'Cohérence des mesures';
 
   @override
   String get scoreInfoConsistencyDesc =>
-      'The more regularly you measure your glucose throughout the day, the higher your score.';
+      'Plus vous mesurez régulièrement votre glycémie tout au long de la journée, plus votre score est élevé.';
 
   @override
-  String get scoreInfoRecommendation => 'Recommended Measurement Frequency';
+  String get scoreInfoRecommendation => 'Fréquence de mesure recommandée';
 
   @override
-  String get scoreInfoMorning => 'Morning (before 9 AM): 1 fasting measurement';
+  String get scoreInfoMorning => 'Matin (avant 9h) : 1 mesure à jeun';
 
   @override
   String get scoreInfoLunch =>
-      'Before lunch (before 2 PM): 3 total measurements';
+      'Avant le déjeuner (avant 14h) : 3 mesures au total';
 
   @override
   String get scoreInfoDinner =>
-      'Before dinner (before 7 PM): 5 total measurements';
+      'Avant le dîner (avant 19h) : 5 mesures au total';
 
   @override
   String get scoreInfoBedtime =>
-      'Before bed (after 10 PM): 6 total measurements';
+      'Avant de dormir (après 22h) : 6 mesures au total';
 
   @override
-  String get scoreInfoLifestyle => 'Lifestyle (with Health app)';
+  String get scoreInfoLifestyle => 'Mode de vie (avec app Santé)';
 
   @override
   String get scoreInfoLifestyleDesc =>
-      'Sleep and exercise data from Apple Health are included for more accurate scoring.';
+      'Les données de sommeil et d\'exercice d\'Apple Santé sont incluses pour un score plus précis.';
+
+  @override
+  String get scoreInfoPrivacy =>
+      '*Toutes les informations utilisées dans l\'app ne sont pas stockées séparément ni partagées en externe.';
 
   @override
   String get times => '×';

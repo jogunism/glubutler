@@ -383,6 +383,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sleep and exercise data from Apple Health are included for more accurate scoring.';
 
   @override
+  String get scoreInfoPrivacy =>
+      '*All information used in the app is not stored separately or shared externally.';
+
+  @override
   String get times => '×';
 
   @override

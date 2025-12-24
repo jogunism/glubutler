@@ -842,6 +842,12 @@ abstract class AppLocalizations {
   /// **'Sleep and exercise data from Apple Health are included for more accurate scoring.'**
   String get scoreInfoLifestyleDesc;
 
+  /// No description provided for @scoreInfoPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'*All information used in the app is not stored separately or shared externally.'**
+  String get scoreInfoPrivacy;
+
   /// No description provided for @times.
   ///
   /// In en, this message translates to:
