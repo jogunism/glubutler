@@ -246,5 +246,7 @@
   "diaryDeleted": "已删除",
   "diaryDeleteFailed": "删除失败",
   "diaryUpdated": "日记已更新",
-  "editDiary": "编辑日记"
+  "editDiary": "编辑日记",
+  "showMore": "展开",
+  "showLess": "收起"
 }

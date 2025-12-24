@@ -1483,6 +1483,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Diary'**
   String get editDiary;
+
+  /// No description provided for @showMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
 }
 
 class _AppLocalizationsDelegate

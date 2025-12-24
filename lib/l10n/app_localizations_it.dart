@@ -719,4 +719,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get editDiary => 'Modifica diario';
+
+  @override
+  String get showMore => 'Mostra di più';
+
+  @override
+  String get showLess => 'Mostra meno';
 }

@@ -246,5 +246,7 @@
   "diaryDeleted": "削除されました",
   "diaryDeleteFailed": "削除に失敗しました",
   "diaryUpdated": "日記が更新されました",
-  "editDiary": "日記を編集"
+  "editDiary": "日記を編集",
+  "showMore": "もっと見る",
+  "showLess": "閉じる"
 }

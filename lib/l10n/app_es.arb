@@ -246,5 +246,7 @@
   "diaryDeleted": "Eliminado",
   "diaryDeleteFailed": "Error al eliminar",
   "diaryUpdated": "Diario actualizado",
-  "editDiary": "Editar diario"
+  "editDiary": "Editar diario",
+  "showMore": "Ver más",
+  "showLess": "Ver menos"
 }

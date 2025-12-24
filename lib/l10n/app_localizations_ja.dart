@@ -702,4 +702,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get editDiary => '日記を編集';
+
+  @override
+  String get showMore => 'もっと見る';
+
+  @override
+  String get showLess => '閉じる';
 }

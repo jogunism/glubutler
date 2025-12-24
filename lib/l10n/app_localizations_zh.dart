@@ -701,4 +701,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get editDiary => '编辑日记';
+
+  @override
+  String get showMore => '展开';
+
+  @override
+  String get showLess => '收起';
 }

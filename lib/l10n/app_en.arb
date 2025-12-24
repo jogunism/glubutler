@@ -264,5 +264,7 @@
   "diaryDeleted": "Deleted",
   "diaryDeleteFailed": "Delete failed",
   "diaryUpdated": "Diary updated",
-  "editDiary": "Edit Diary"
+  "editDiary": "Edit Diary",
+  "showMore": "Show more",
+  "showLess": "Show less"
 }

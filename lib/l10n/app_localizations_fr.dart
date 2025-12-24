@@ -724,4 +724,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get editDiary => 'Modifier le journal';
+
+  @override
+  String get showMore => 'Afficher plus';
+
+  @override
+  String get showLess => 'Afficher moins';
 }

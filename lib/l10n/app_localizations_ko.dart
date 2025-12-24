@@ -702,4 +702,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get editDiary => '일기 수정';
+
+  @override
+  String get showMore => '더보기';
+
+  @override
+  String get showLess => '줄이기';
 }

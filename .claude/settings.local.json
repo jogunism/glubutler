@@ -24,7 +24,10 @@
       "Bash(printenv:*)",
       "Bash(unalias:*)",
       "Bash(source ~/.zshrc)",
-      "Bash(killall:*)"
+      "Bash(killall:*)",
+      "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter gen-l10n:*)",
+      "Bash(fvm flutter gen-l10n:*)",
+      "Bash(nc:*)"
     ]
   }
 }
