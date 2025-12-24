@@ -278,7 +278,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disclaimer =>
-      'This app is for reference only and does not provide medical advice.';
+      'This app is for reference only. Please consult with your doctor directly for medical advice.';
 
   @override
   String get enterGlucose => 'Enter Blood Glucose';

@@ -67,8 +67,8 @@
   "notificationTime": "알림 시간",
   "sync": "연동",
   "healthConnect": "건강 앱 연동",
-  "iCloudSync": "iCloud 동기화",
-  "iCloudSyncDescription": "여러 기기에서 데이터 동기화",
+  "iCloudSync": "iCloud",
+  "iCloudSyncDescription": "여러기기와 동기화",
   "connected": "연결됨",
   "notConnected": "연결 안됨",
   "connect": "연결하기",
@@ -98,7 +98,7 @@
   "monthlyPlan": "월간",
   "manageSubscription": "구독 관리",
 
-  "disclaimer": "이 앱은 참고용이며 의료적 조언을 제공하지 않습니다.",
+  "disclaimer": "이 앱은 참고용이며, 의료적인 조언은 반드시 의사와 직접 상의하시기 바랍니다.",
 
   "enterGlucose": "혈당 입력",
   "enterMeal": "식사 추가",

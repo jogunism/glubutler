@@ -74,7 +74,7 @@
   "connect": "Verbinden",
   "disconnect": "Trennen",
 
-  "disclaimer": "Diese App dient nur als Referenz und bietet keine medizinische Beratung.",
+  "disclaimer": "Diese App dient nur als Referenz. Bitte konsultieren Sie Ihren Arzt direkt für medizinische Beratung.",
 
   "enterGlucose": "Blutzucker eingeben",
   "enterMeal": "Mahlzeit hinzufügen",

@@ -74,7 +74,7 @@
   "connect": "Connetti",
   "disconnect": "Disconnetti",
 
-  "disclaimer": "Questa app è solo a scopo informativo e non fornisce consulenza medica.",
+  "disclaimer": "Questa app è solo a scopo informativo. Si prega di consultare direttamente il medico per consigli medici.",
 
   "enterGlucose": "Inserisci glicemia",
   "enterMeal": "Aggiungi pasto",

@@ -207,9 +207,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: CupertinoIcons.cloud,
                     iconColor: CupertinoColors.activeBlue,
                     title: l10n.iCloudSync,
-                    subtitle: _cloudKitAvailable
-                        ? l10n.connected
-                        : 'iCloud에 로그인하여 자동 동기화 활성화',
+                    subtitle: l10n.iCloudSyncDescription,
                     trailing: Icon(
                       _cloudKitAvailable
                           ? CupertinoIcons.checkmark_circle_fill

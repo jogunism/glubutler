@@ -277,7 +277,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get manageSubscription => 'Manage Subscription';
 
   @override
-  String get disclaimer => 'このアプリは参考用であり、医療アドバイスを提供するものではありません。';
+  String get disclaimer => 'このアプリは参考用です。医療アドバイスについては必ず医師に直接ご相談ください。';
 
   @override
   String get enterGlucose => '血糖値を入力';

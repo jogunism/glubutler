@@ -647,7 +647,7 @@ abstract class AppLocalizations {
   /// No description provided for @disclaimer.
   ///
   /// In en, this message translates to:
-  /// **'This app is for reference only and does not provide medical advice.'**
+  /// **'This app is for reference only. Please consult with your doctor directly for medical advice.'**
   String get disclaimer;
 
   /// No description provided for @enterGlucose.

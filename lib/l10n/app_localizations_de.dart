@@ -279,7 +279,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get disclaimer =>
-      'Diese App dient nur als Referenz und bietet keine medizinische Beratung.';
+      'Diese App dient nur als Referenz. Bitte konsultieren Sie Ihren Arzt direkt für medizinische Beratung.';
 
   @override
   String get enterGlucose => 'Blutzucker eingeben';

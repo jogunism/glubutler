@@ -526,7 +526,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                         ),
                       ),
                       Text(
-                        widget.entry != null ? '일기 수정' : l10n.addDiaryEntry,
+                        widget.entry != null ? l10n.editDiary : l10n.addDiaryEntry,
                         style: context.textStyles.tileTitle.copyWith(
                           fontWeight: FontWeight.w600,
                         ),

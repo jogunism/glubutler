@@ -277,7 +277,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get manageSubscription => 'Manage Subscription';
 
   @override
-  String get disclaimer => '本应用仅供参考，不提供医疗建议。';
+  String get disclaimer => '本应用仅供参考，医疗建议请务必直接咨询医生。';
 
   @override
   String get enterGlucose => '输入血糖';

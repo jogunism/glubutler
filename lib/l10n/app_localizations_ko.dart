@@ -189,10 +189,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get healthConnect => '건강 앱 연동';
 
   @override
-  String get iCloudSync => 'iCloud 동기화';
+  String get iCloudSync => 'iCloud';
 
   @override
-  String get iCloudSyncDescription => '여러 기기에서 데이터 동기화';
+  String get iCloudSyncDescription => '여러기기와 동기화';
 
   @override
   String get connected => '연결됨';
@@ -276,7 +276,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get manageSubscription => '구독 관리';
 
   @override
-  String get disclaimer => '이 앱은 참고용이며 의료적 조언을 제공하지 않습니다.';
+  String get disclaimer => '이 앱은 참고용이며, 의료적인 조언은 반드시 의사와 직접 상의하시기 바랍니다.';
 
   @override
   String get enterGlucose => '혈당 입력';

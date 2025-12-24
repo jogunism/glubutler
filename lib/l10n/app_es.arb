@@ -74,7 +74,7 @@
   "connect": "Conectar",
   "disconnect": "Desconectar",
 
-  "disclaimer": "Esta aplicación es solo de referencia y no proporciona consejos médicos.",
+  "disclaimer": "Esta aplicación es solo de referencia. Por favor, consulte directamente con su médico para consejos médicos.",
 
   "enterGlucose": "Introducir glucosa",
   "enterMeal": "Añadir comida",

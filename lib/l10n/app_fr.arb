@@ -74,7 +74,7 @@
   "connect": "Connecter",
   "disconnect": "Déconnecter",
 
-  "disclaimer": "Cette application est fournie à titre indicatif et ne fournit pas de conseils médicaux.",
+  "disclaimer": "Cette application est fournie à titre indicatif. Veuillez consulter directement votre médecin pour des conseils médicaux.",
 
   "enterGlucose": "Saisir la glycémie",
   "enterMeal": "Ajouter un repas",

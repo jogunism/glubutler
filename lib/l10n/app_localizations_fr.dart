@@ -279,7 +279,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get disclaimer =>
-      'Cette application est fournie à titre indicatif et ne fournit pas de conseils médicaux.';
+      'Cette application est fournie à titre indicatif. Veuillez consulter directement votre médecin pour des conseils médicaux.';
 
   @override
   String get enterGlucose => 'Saisir la glycémie';

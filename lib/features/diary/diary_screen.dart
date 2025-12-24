@@ -302,15 +302,15 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
               children: [
                 CustomSlidableAction(
                   onPressed: (context) => widget.onEdit(),
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: CupertinoColors.systemBlue,
+                  foregroundColor: CupertinoColors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: const Icon(CupertinoIcons.pencil, size: 24),
                 ),
                 CustomSlidableAction(
                   onPressed: (context) => widget.onDelete(),
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+                  backgroundColor: CupertinoColors.systemRed,
+                  foregroundColor: CupertinoColors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: const Icon(CupertinoIcons.delete, size: 24),
                 ),
@@ -330,7 +330,7 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
                     _formatDate(widget.entry.timestamp),
                     style: context.textStyles.tileSubtitle.copyWith(
                       fontSize: 12,
-                      color: Colors.grey[600],
+                      color: context.colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -386,8 +386,11 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
                                   return Container(
                                     width: 60,
                                     height: 60,
-                                    color: Colors.grey[300],
-                                    child: const Icon(Icons.broken_image),
+                                    color: context.colors.divider,
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: context.colors.iconGrey,
+                                    ),
                                   );
                                 },
                               ),
@@ -399,14 +402,14 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: context.colors.divider,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Center(
                               child: Text(
                                 '+$remainingPhotos',
                                 style: context.textStyles.tileTitle.copyWith(
-                                  color: Colors.grey[700],
+                                  color: context.colors.textSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

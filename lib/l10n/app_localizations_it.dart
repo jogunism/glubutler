@@ -278,7 +278,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get disclaimer =>
-      'Questa app è solo a scopo informativo e non fornisce consulenza medica.';
+      'Questa app è solo a scopo informativo. Si prega di consultare direttamente il medico per consigli medici.';
 
   @override
   String get enterGlucose => 'Inserisci glicemia';
