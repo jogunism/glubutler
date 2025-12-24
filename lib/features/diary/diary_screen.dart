@@ -337,17 +337,24 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
 
                   // 내용
                   if (widget.entry.content.isNotEmpty) ...[
-                    AnimatedSize(
+                    AnimatedCrossFade(
                       duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOutCubic,
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        _isExpanded
-                            ? widget.entry.content
-                            : _getPreviewText(widget.entry.content),
+                      firstCurve: Curves.easeInOutCubic,
+                      secondCurve: Curves.easeInOutCubic,
+                      sizeCurve: Curves.easeInOutCubic,
+                      crossFadeState: _isExpanded
+                          ? CrossFadeState.showSecond
+                          : CrossFadeState.showFirst,
+                      alignment: Alignment.topLeft,
+                      firstChild: Text(
+                        _getPreviewText(widget.entry.content),
                         style: context.textStyles.bodyText,
-                        maxLines: _isExpanded ? null : 2,
-                        overflow: _isExpanded ? null : TextOverflow.ellipsis,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      secondChild: Text(
+                        widget.entry.content,
+                        style: context.textStyles.bodyText,
                       ),
                     ),
                     // 더보기/줄이기 버튼
