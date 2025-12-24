@@ -164,6 +164,12 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get save;
 
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
   /// No description provided for @delete.
   ///
   /// In en, this message translates to:
@@ -901,6 +907,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Diary Entry'**
   String get addDiaryEntry;
+
+  /// No description provided for @diaryPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your glucose management diary'**
+  String get diaryPlaceholder;
+
+  /// No description provided for @attachPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach Photo'**
+  String get attachPhoto;
 
   /// No description provided for @insulin.
   ///

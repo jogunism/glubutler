@@ -36,6 +36,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get save => 'Speichern';
 
   @override
+  String get done => 'Fertig';
+
+  @override
   String get delete => 'Löschen';
 
   @override
@@ -415,6 +418,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addDiaryEntry => 'Tagebucheintrag hinzufügen';
+
+  @override
+  String get diaryPlaceholder => 'Schreiben Sie Ihr Blutzucker-Tagebuch';
+
+  @override
+  String get attachPhoto => 'Foto anhängen';
 
   @override
   String get insulin => 'Insulin';

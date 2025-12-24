@@ -9,6 +9,7 @@
   "cancel": "Cancelar",
   "close": "Cerrar",
   "save": "Guardar",
+  "done": "Hecho",
   "delete": "Eliminar",
   "edit": "Editar",
   "selectDate": "Seleccionar fecha",
@@ -123,6 +124,8 @@
   "noGlucoseToday": "Sin registros de glucosa hoy",
   "addGlucose": "Añadir Glucosa",
   "addDiaryEntry": "Añadir entrada al diario",
+  "diaryPlaceholder": "Escribe tu diario de control de glucosa",
+  "attachPhoto": "Adjuntar foto",
 
   "insulin": "Insulina",
   "addInsulin": "Añadir Insulina",

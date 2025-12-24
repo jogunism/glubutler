@@ -4,6 +4,8 @@ import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
+import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_file.dart';
 
 import 'database_schema.dart';
 
@@ -300,6 +302,96 @@ class RecordDao {
     );
   }
 
+  // ============ Diary Records ============
+
+  Future<int> insertDiary(DiaryEntry entry) async {
+    return await db.insert(
+      DatabaseSchema.tableDiary,
+      entry.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<DiaryEntry>> getDiaryEntries({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    String? where;
+    List<dynamic>? whereArgs;
+
+    if (startDate != null && endDate != null) {
+      where = 'timestamp >= ? AND timestamp <= ?';
+      whereArgs = [startDate.toIso8601String(), endDate.toIso8601String()];
+    }
+
+    final maps = await db.query(
+      DatabaseSchema.tableDiary,
+      where: where,
+      whereArgs: whereArgs,
+      orderBy: 'timestamp DESC',
+    );
+
+    return maps.map((map) => DiaryEntry.fromMap(map)).toList();
+  }
+
+  Future<DiaryEntry?> getDiaryEntry(String id) async {
+    final maps = await db.query(
+      DatabaseSchema.tableDiary,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isEmpty) return null;
+    return DiaryEntry.fromMap(maps.first);
+  }
+
+  Future<int> updateDiary(DiaryEntry entry) async {
+    return await db.update(
+      DatabaseSchema.tableDiary,
+      entry.toMap(),
+      where: 'id = ?',
+      whereArgs: [entry.id],
+    );
+  }
+
+  Future<int> deleteDiary(String id) async {
+    // Cascade delete will automatically delete related files
+    return await db.delete(
+      DatabaseSchema.tableDiary,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // ============ Diary Files ============
+
+  Future<int> insertDiaryFile(DiaryFile file) async {
+    return await db.insert(
+      DatabaseSchema.tableDiaryFiles,
+      file.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<DiaryFile>> getDiaryFiles(String diaryId) async {
+    final maps = await db.query(
+      DatabaseSchema.tableDiaryFiles,
+      where: 'diary_id = ?',
+      whereArgs: [diaryId],
+      orderBy: 'created_at ASC',
+    );
+
+    return maps.map((map) => DiaryFile.fromMap(map)).toList();
+  }
+
+  Future<int> deleteDiaryFile(String id) async {
+    return await db.delete(
+      DatabaseSchema.tableDiaryFiles,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   // ============ Utility ============
 
   /// Clear all record tables
@@ -308,5 +400,7 @@ class RecordDao {
     await db.delete(DatabaseSchema.tableMeal);
     await db.delete(DatabaseSchema.tableExercise);
     await db.delete(DatabaseSchema.tableInsulin);
+    await db.delete(DatabaseSchema.tableDiary);
+    await db.delete(DatabaseSchema.tableDiaryFiles);
   }
 }

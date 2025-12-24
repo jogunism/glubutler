@@ -1,0 +1,6 @@
+/* Health permissions */
+"NSHealthShareUsageDescription" = "Glu Butler需要访问您的健康数据以显示血糖、运动和睡眠信息。";
+"NSHealthUpdateUsageDescription" = "Glu Butler需要权限以将您的血糖读数保存到Apple Health。";
+
+/* Photo library permission */
+"NSPhotoLibraryUsageDescription" = "Glu Butler需要访问您的照片库以将照片附加到日记条目中。";

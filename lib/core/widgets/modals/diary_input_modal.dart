@@ -1,11 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:uuid/uuid.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
+import 'dart:io';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_file.dart';
+import 'package:glu_butler/repositories/diary_repository.dart';
+import 'package:glu_butler/services/image_service.dart';
 
 /// 일기 입력 모달 팝업
 ///
@@ -19,8 +29,8 @@ import 'package:glu_butler/core/theme/app_decorations.dart';
 class DiaryInputModal extends StatefulWidget {
   const DiaryInputModal({super.key});
 
-  static Future<void> show(BuildContext context) {
-    return showModalBottomSheet(
+  static Future<bool?> show(BuildContext context) {
+    return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -35,32 +45,301 @@ class DiaryInputModal extends StatefulWidget {
 
 class _DiaryInputModalState extends State<DiaryInputModal> {
   final _contentController = TextEditingController();
+  final _contentFocusNode = FocusNode();
   DateTime _selectedDate = DateTime.now();
-  final List<String> _attachedFiles = [];
+  final List<File> _selectedImages = [];
+  final _imagePicker = ImagePicker();
+  final _imageService = ImageService();
+  final _diaryRepository = DiaryRepository();
+  bool _isSaving = false;
+  static const int _maxImages = 5;
+
+  OverlayEntry? _keyboardToolbarOverlay;
+
+  @override
+  void initState() {
+    super.initState();
+    _contentFocusNode.addListener(_onFocusChange);
+  }
 
   @override
   void dispose() {
+    _keyboardToolbarOverlay?.remove();
+    _keyboardToolbarOverlay = null;
+    _contentFocusNode.removeListener(_onFocusChange);
+    _contentFocusNode.dispose();
     _contentController.dispose();
     super.dispose();
   }
 
-  void _save() {
+  void _onFocusChange() {
+    if (_contentFocusNode.hasFocus) {
+      _showKeyboardToolbar();
+    } else {
+      _hideKeyboardToolbar();
+    }
+  }
+
+  void _showKeyboardToolbar() {
+    if (_keyboardToolbarOverlay != null) return;
+
+    _keyboardToolbarOverlay = OverlayEntry(
+      builder: (context) {
+        final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+        final brightness = MediaQuery.of(context).platformBrightness;
+        final isDark = brightness == Brightness.dark;
+
+        return Positioned(
+          bottom: bottomPadding,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF1C1C1E)  // iOS 다크모드 키보드 색상
+                  : const Color(0xFFD1D5DB),  // iOS 라이트모드 키보드 색상
+              border: Border(
+                top: BorderSide(
+                  color: isDark
+                      ? const Color(0xFF38383A)
+                      : const Color(0xFFB8B8B8),
+                  width: 0.5,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CupertinoButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.keyboard,
+                        size: 20,
+                        color: isDark
+                            ? const Color(0xFF98989D)
+                            : const Color(0xFF6B7280),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 20,
+                        color: isDark
+                            ? const Color(0xFF98989D)
+                            : const Color(0xFF6B7280),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    Overlay.of(context).insert(_keyboardToolbarOverlay!);
+  }
+
+  void _hideKeyboardToolbar() {
+    _keyboardToolbarOverlay?.remove();
+    _keyboardToolbarOverlay = null;
+  }
+
+  Future<void> _save() async {
     final content = _contentController.text.trim();
 
-    if (content.isEmpty && _attachedFiles.isEmpty) {
-      // TODO: Show validation error
+    if (content.isEmpty && _selectedImages.isEmpty) {
+      _showError('내용을 입력하거나 사진을 첨부해주세요.');
       return;
     }
 
-    // TODO: Save to service/database
-    debugPrint('Saving diary with ${_attachedFiles.length} files');
+    setState(() {
+      _isSaving = true;
+    });
 
-    Navigator.of(context).pop();
+    try {
+      final entryId = const Uuid().v4();
+      final now = DateTime.now();
+
+      // Process images
+      final diaryFiles = <DiaryFile>[];
+      for (int i = 0; i < _selectedImages.length; i++) {
+        final imageFile = _selectedImages[i];
+
+        // Extract metadata
+        final metadata = await _imageService.extractMetadata(imageFile);
+
+        // Resize image
+        final resizedBytes = await _imageService.resizeImage(imageFile);
+
+        // Save to documents
+        final fileName = '${entryId}_$i.jpg';
+        final savedPath = await _imageService.saveToDocuments(resizedBytes, fileName);
+
+        // Get file size
+        final fileSize = resizedBytes.length;
+
+        // Create DiaryFile
+        diaryFiles.add(DiaryFile(
+          id: const Uuid().v4(),
+          diaryId: entryId,
+          filePath: savedPath,
+          latitude: metadata.latitude,
+          longitude: metadata.longitude,
+          capturedAt: metadata.capturedAt,
+          fileSize: fileSize,
+          createdAt: now,
+        ));
+      }
+
+      // Create diary entry
+      final entry = DiaryEntry(
+        id: entryId,
+        content: content,
+        timestamp: _selectedDate,
+        createdAt: now,
+        files: diaryFiles,
+      );
+
+      // Save to database
+      final success = await _diaryRepository.save(entry);
+
+      if (success) {
+        if (mounted) {
+          Navigator.of(context).pop(true); // Return true to indicate success
+        }
+      } else {
+        _showError('저장에 실패했습니다.');
+      }
+    } catch (e) {
+      debugPrint('[DiaryInputModal] Error saving diary: $e');
+      _showError('저장 중 오류가 발생했습니다.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
   }
 
-  void _pickFile() {
-    // TODO: Implement file picker (image_picker package)
-    debugPrint('Pick file');
+  Future<void> _pickImage() async {
+    try {
+      // 최대 5장 제한 체크
+      if (_selectedImages.length >= _maxImages) {
+        _showError('사진은 최대 $_maxImages장까지 첨부할 수 있습니다.');
+        return;
+      }
+
+      // Request photo library permission - this shows the system dialog
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+
+      if (ps != PermissionState.authorized && ps != PermissionState.limited) {
+        _showPermissionError();
+        return;
+      }
+
+      // 여러 장 선택 가능
+      final pickedFiles = await _imagePicker.pickMultiImage(
+        requestFullMetadata: true, // Request full metadata including EXIF
+      );
+
+      if (pickedFiles.isNotEmpty) {
+        // 선택 가능한 최대 개수 계산
+        final remainingSlots = _maxImages - _selectedImages.length;
+        final filesToAdd = pickedFiles.take(remainingSlots).toList();
+
+        // 각 파일 형식 검증
+        final validFiles = <File>[];
+        for (final pickedFile in filesToAdd) {
+          final extension = pickedFile.path.toLowerCase();
+          if (extension.endsWith('.jpg') ||
+              extension.endsWith('.jpeg') ||
+              extension.endsWith('.png') ||
+              extension.endsWith('.heic')) {
+            validFiles.add(File(pickedFile.path));
+          }
+        }
+
+        if (validFiles.isEmpty) {
+          _showError('이미지 파일만 선택할 수 있습니다.');
+          return;
+        }
+
+        setState(() {
+          _selectedImages.addAll(validFiles);
+        });
+
+        // 최대 개수 초과 시 알림
+        if (pickedFiles.length > remainingSlots) {
+          _showError('최대 $_maxImages장까지만 첨부 가능합니다. ${validFiles.length}장이 추가되었습니다.');
+        }
+      }
+    } catch (e) {
+      debugPrint('[DiaryInputModal] Error picking image: $e');
+      _showError('사진을 불러오는데 실패했습니다.');
+    }
+  }
+
+  void _showPermissionError() {
+    if (!mounted) return;
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('사진 접근 권한 필요'),
+        content: const Text(
+          '사진을 첨부하려면 사진 라이브러리 접근 권한이 필요합니다.\n\n설정 > Glu Butler에서 사진 접근을 허용해주세요.',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('취소'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('설정으로 이동'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              // Open iOS app settings
+              final Uri url = Uri.parse('app-settings:');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('오류'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('확인'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -68,13 +347,18 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
     final l10n = AppLocalizations.of(context)!;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colors.card,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: EdgeInsets.only(bottom: bottomPadding),
-      child: SafeArea(
+    return GestureDetector(
+      onTap: () {
+        // 키보드 닫기
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: context.colors.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        child: SafeArea(
         top: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -115,15 +399,19 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                   ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: _save,
-                    child: Text(
-                      l10n.save,
-                      style: const TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    onPressed: _isSaving ? null : _save,
+                    child: _isSaving
+                        ? const CupertinoActivityIndicator()
+                        : Text(
+                            l10n.save,
+                            style: TextStyle(
+                              color: _isSaving
+                                  ? Colors.grey
+                                  : AppTheme.primaryColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ],
               ),
@@ -180,13 +468,14 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                 ),
                 child: TextField(
                   controller: _contentController,
+                  focusNode: _contentFocusNode,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
                   style: context.textStyles.bodyText,
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: '오늘 하루를 기록해보세요...',
+                    hintText: l10n.diaryPlaceholder,
                     hintStyle: context.textStyles.tileSubtitle,
                     contentPadding: const EdgeInsets.all(16),
                   ),
@@ -200,7 +489,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: GestureDetector(
-                onTap: _pickFile,
+                onTap: _isSaving ? null : _pickImage,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -215,29 +504,92 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                   child: Row(
                     children: [
                       Icon(
-                        CupertinoIcons.paperclip,
+                        CupertinoIcons.photo,
                         color: Colors.grey[500],
                         size: 20,
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        '파일 첨부',
+                        l10n.attachPhoto,
                         style: context.textStyles.tileSubtitle,
                       ),
+                      if (_selectedImages.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '(${_selectedImages.length})',
+                          style: context.textStyles.tileSubtitle.copyWith(
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
             ),
 
+            // 선택된 이미지 목록
+            if (_selectedImages.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  itemCount: _selectedImages.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.file(
+                              _selectedImages[index],
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          if (!_isSaving)
+                            Positioned(
+                              top: 2,
+                              right: 2,
+                              child: GestureDetector(
+                                onTap: () => _removeImage(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    CupertinoIcons.xmark,
+                                    color: Colors.white,
+                                    size: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+
             const SizedBox(height: 32),
           ],
+        ),
         ),
       ),
     );
   }
 
   void _showDatePicker(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showCupertinoModalPopup(
       context: context,
       builder: (context) => Container(
@@ -249,20 +601,22 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CupertinoButton(
-                  child: const Text('취소'),
+                  child: Text(l10n.cancel),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 CupertinoButton(
-                  child: const Text('완료'),
+                  child: Text(l10n.done),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
             Expanded(
               child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
+                mode: CupertinoDatePickerMode.dateAndTime,
                 initialDateTime: _selectedDate,
                 maximumDate: DateTime.now(),
+                minuteInterval: 5,
+                use24hFormat: true,
                 onDateTimeChanged: (DateTime newDate) {
                   setState(() {
                     _selectedDate = newDate;
@@ -277,16 +631,8 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   }
 
   String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final dateOnly = DateTime(date.year, date.month, date.day);
-
-    if (dateOnly == today) {
-      return '오늘';
-    } else if (dateOnly == today.subtract(const Duration(days: 1))) {
-      return '어제';
-    } else {
-      return '${date.year}년 ${date.month}월 ${date.day}일';
-    }
+    // Use locale-aware date formatting
+    final dateFormat = DateFormat.yMMMd().add_Hm();
+    return dateFormat.format(date);
   }
 }

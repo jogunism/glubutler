@@ -1,0 +1,6 @@
+/* Health permissions */
+"NSHealthShareUsageDescription" = "血糖値、運動、睡眠情報を表示するために、ヘルスケアデータへのアクセスが必要です。";
+"NSHealthUpdateUsageDescription" = "血糖値の測定値をApple Healthに保存するために、権限が必要です。";
+
+/* Photo library permission */
+"NSPhotoLibraryUsageDescription" = "日記に写真を添付するために、フォトライブラリへのアクセスが必要です。";

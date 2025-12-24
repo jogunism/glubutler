@@ -1,0 +1,6 @@
+/* Health permissions */
+"NSHealthShareUsageDescription" = "Glu Butler ha bisogno di accedere ai tuoi dati sanitari per visualizzare le informazioni su glicemia, esercizi e sonno.";
+"NSHealthUpdateUsageDescription" = "Glu Butler ha bisogno dell'autorizzazione per salvare le tue letture di glicemia in Apple Health.";
+
+/* Photo library permission */
+"NSPhotoLibraryUsageDescription" = "Glu Butler ha bisogno di accedere alla tua libreria foto per allegare foto alle tue voci del diario.";

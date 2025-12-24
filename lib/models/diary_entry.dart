@@ -1,63 +1,58 @@
+import 'package:glu_butler/models/diary_file.dart';
+
+/// 일기 엔트리 모델
+///
+/// 사용자가 작성한 일기를 나타냅니다.
+/// 여러 개의 파일 첨부를 가질 수 있습니다 (1:N 관계)
 class DiaryEntry {
   final String id;
-  final DateTime date;
-  final String? content;
-  final String? aiGeneratedContent;
-  final List<String>? photoUrls;
+  final String content;
+  final DateTime timestamp;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final List<DiaryFile> files;
 
   DiaryEntry({
     required this.id,
-    required this.date,
-    this.content,
-    this.aiGeneratedContent,
-    this.photoUrls,
+    required this.content,
+    required this.timestamp,
     required this.createdAt,
-    required this.updatedAt,
+    this.files = const [],
   });
 
-  DiaryEntry copyWith({
-    String? id,
-    DateTime? date,
-    String? content,
-    String? aiGeneratedContent,
-    List<String>? photoUrls,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
+  /// SQLite 맵으로부터 생성
+  factory DiaryEntry.fromMap(Map<String, dynamic> map, {List<DiaryFile>? files}) {
     return DiaryEntry(
-      id: id ?? this.id,
-      date: date ?? this.date,
-      content: content ?? this.content,
-      aiGeneratedContent: aiGeneratedContent ?? this.aiGeneratedContent,
-      photoUrls: photoUrls ?? this.photoUrls,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      id: map['id'] as String,
+      content: map['content'] as String,
+      timestamp: DateTime.parse(map['timestamp'] as String),
+      createdAt: DateTime.parse(map['created_at'] as String),
+      files: files ?? [],
     );
   }
 
-  Map<String, dynamic> toJson() {
+  /// SQLite 맵으로 변환
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'date': date.toIso8601String(),
       'content': content,
-      'aiGeneratedContent': aiGeneratedContent,
-      'photoUrls': photoUrls,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'timestamp': timestamp.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
     };
   }
 
-  factory DiaryEntry.fromJson(Map<String, dynamic> json) {
+  DiaryEntry copyWith({
+    String? id,
+    String? content,
+    DateTime? timestamp,
+    DateTime? createdAt,
+    List<DiaryFile>? files,
+  }) {
     return DiaryEntry(
-      id: json['id'] as String,
-      date: DateTime.parse(json['date'] as String),
-      content: json['content'] as String?,
-      aiGeneratedContent: json['aiGeneratedContent'] as String?,
-      photoUrls: (json['photoUrls'] as List<dynamic>?)?.cast<String>(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      id: id ?? this.id,
+      content: content ?? this.content,
+      timestamp: timestamp ?? this.timestamp,
+      createdAt: createdAt ?? this.createdAt,
+      files: files ?? this.files,
     );
   }
 }

@@ -36,6 +36,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get save => '保存';
 
   @override
+  String get done => '完了';
+
+  @override
   String get delete => '削除';
 
   @override
@@ -404,6 +407,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get addDiaryEntry => '日記を追加';
+
+  @override
+  String get diaryPlaceholder => '血糖管理日記を書いてみてください';
+
+  @override
+  String get attachPhoto => '写真を添付';
 
   @override
   String get insulin => 'インスリン';

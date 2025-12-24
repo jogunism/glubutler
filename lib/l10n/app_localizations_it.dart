@@ -36,6 +36,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get save => 'Salva';
 
   @override
+  String get done => 'Fatto';
+
+  @override
   String get delete => 'Elimina';
 
   @override
@@ -415,6 +418,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get addDiaryEntry => 'Aggiungi voce al diario';
+
+  @override
+  String get diaryPlaceholder => 'Scrivi il tuo diario di gestione glicemica';
+
+  @override
+  String get attachPhoto => 'Allega foto';
 
   @override
   String get insulin => 'Insulina';

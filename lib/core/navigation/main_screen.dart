@@ -64,7 +64,7 @@ class MainScreenState extends State<MainScreen> {
           // 비활성 탭들 - Offstage로 숨김, 상태 유지
           _buildOffstageTab(0, const HomeScreen()),
           _buildOffstageTab(1, const FeedScreen()),
-          _buildOffstageTab(2, const DiaryScreen()),
+          _buildOffstageTab(2, DiaryScreen(key: DiaryScreen.globalKey)),
           _buildOffstageTab(3, const ReportScreen()),
 
           // Floating Action Button with animation
@@ -77,7 +77,11 @@ class MainScreenState extends State<MainScreen> {
               if (_currentIndex == 1) {
                 await RecordInputModal.show(context);
               } else if (_currentIndex == 2) {
-                await DiaryInputModal.show(context);
+                final result = await DiaryInputModal.show(context);
+                // 일기가 성공적으로 추가되면 DiaryScreen 새로고침
+                if (result == true) {
+                  DiaryScreen.globalKey.currentState?.loadEntries();
+                }
               }
 
               // 모달이 닫히면 탭바 다시 보임

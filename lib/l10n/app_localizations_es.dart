@@ -36,6 +36,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get save => 'Guardar';
 
   @override
+  String get done => 'Hecho';
+
+  @override
   String get delete => 'Eliminar';
 
   @override
@@ -415,6 +418,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addDiaryEntry => 'Añadir entrada al diario';
+
+  @override
+  String get diaryPlaceholder => 'Escribe tu diario de control de glucosa';
+
+  @override
+  String get attachPhoto => 'Adjuntar foto';
 
   @override
   String get insulin => 'Insulina';

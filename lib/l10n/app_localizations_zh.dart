@@ -36,6 +36,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get save => '保存';
 
   @override
+  String get done => '完成';
+
+  @override
   String get delete => '删除';
 
   @override
@@ -404,6 +407,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get addDiaryEntry => '添加日记';
+
+  @override
+  String get diaryPlaceholder => '写下您的血糖管理日记';
+
+  @override
+  String get attachPhoto => '附加照片';
 
   @override
   String get insulin => '胰岛素';

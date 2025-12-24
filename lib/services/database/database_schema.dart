@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database schema definition and migration logic
 class DatabaseSchema {
-  static const int version = 2;
+  static const int version = 3;
 
   // Table names
   static const String tableGlucose = 'glucose_records';
@@ -12,6 +12,8 @@ class DatabaseSchema {
   static const String tableInsulin = 'insulin_records';
   static const String tableHealthConnection = 'health_connection';
   static const String tableHealthPermissions = 'health_permissions';
+  static const String tableDiary = 'diary_entries';
+  static const String tableDiaryFiles = 'diary_files';
 
   /// Create all tables (called on first install)
   static Future<void> onCreate(Database db, int version) async {
@@ -23,6 +25,8 @@ class DatabaseSchema {
     await _createInsulinTable(db);
     await _createHealthConnectionTable(db);
     await _createHealthPermissionsTable(db);
+    await _createDiaryTable(db);
+    await _createDiaryFilesTable(db);
     await _createIndexes(db);
 
     debugPrint('[DatabaseSchema] Database tables created successfully');
@@ -39,8 +43,17 @@ class DatabaseSchema {
       await _createHealthPermissionsTable(db);
     }
 
+    if (oldVersion < 3) {
+      await _createDiaryTable(db);
+      await _createDiaryFilesTable(db);
+      await db.execute(
+          'CREATE INDEX idx_diary_timestamp ON $tableDiary (timestamp)');
+      await db.execute(
+          'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
+    }
+
     // Add future migrations here:
-    // if (oldVersion < 3) { ... }
+    // if (oldVersion < 4) { ... }
   }
 
   // ============ Table Creation ============
@@ -124,6 +137,33 @@ class DatabaseSchema {
     ''');
   }
 
+  static Future<void> _createDiaryTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE $tableDiary (
+        id TEXT PRIMARY KEY,
+        content TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+  }
+
+  static Future<void> _createDiaryFilesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE $tableDiaryFiles (
+        id TEXT PRIMARY KEY,
+        diary_id TEXT NOT NULL,
+        file_path TEXT NOT NULL,
+        latitude REAL,
+        longitude REAL,
+        captured_at TEXT,
+        file_size INTEGER,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (diary_id) REFERENCES $tableDiary (id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
   // ============ Index Creation ============
 
   static Future<void> _createIndexes(Database db) async {
@@ -135,5 +175,9 @@ class DatabaseSchema {
         'CREATE INDEX idx_exercise_timestamp ON $tableExercise (timestamp)');
     await db.execute(
         'CREATE INDEX idx_insulin_timestamp ON $tableInsulin (timestamp)');
+    await db.execute(
+        'CREATE INDEX idx_diary_timestamp ON $tableDiary (timestamp)');
+    await db.execute(
+        'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
   }
 }

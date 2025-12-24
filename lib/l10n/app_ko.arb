@@ -9,6 +9,7 @@
   "cancel": "취소",
   "close": "닫기",
   "save": "저장",
+  "done": "완료",
   "delete": "삭제",
   "edit": "수정",
   "selectDate": "날짜 선택",
@@ -145,6 +146,8 @@
   "noGlucoseToday": "오늘 기록된 혈당이 없습니다",
   "addGlucose": "혈당 추가",
   "addDiaryEntry": "일기 추가",
+  "diaryPlaceholder": "혈당 관리 일기를 작성해보세요",
+  "attachPhoto": "사진 첨부",
 
   "insulin": "인슐린",
   "addInsulin": "인슐린 추가",

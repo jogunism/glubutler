@@ -36,6 +36,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get save => '저장';
 
   @override
+  String get done => '완료';
+
+  @override
   String get delete => '삭제';
 
   @override
@@ -404,6 +407,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get addDiaryEntry => '일기 추가';
+
+  @override
+  String get diaryPlaceholder => '혈당 관리 일기를 작성해보세요';
+
+  @override
+  String get attachPhoto => '사진 첨부';
 
   @override
   String get insulin => '인슐린';

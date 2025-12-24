@@ -1,0 +1,6 @@
+/* Health permissions */
+"NSHealthShareUsageDescription" = "혈당, 운동, 수면 정보를 표시하기 위해 건강 데이터 접근 권한이 필요합니다.";
+"NSHealthUpdateUsageDescription" = "혈당 측정값을 Apple Health에 저장하기 위해 권한이 필요합니다.";
+
+/* Photo library permission */
+"NSPhotoLibraryUsageDescription" = "일기에 사진을 첨부하기 위해 사진 라이브러리 접근 권한이 필요합니다.";

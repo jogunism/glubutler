@@ -57,9 +57,11 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Glu Butler needs access to your health data to display blood glucose, workouts, and sleep information.</string>
+	<string>$(PRODUCT_NAME) needs access to your health data.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Glu Butler needs permission to save your blood glucose readings to Apple Health.</string>
+	<string>$(PRODUCT_NAME) needs permission to save health data.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your photo library.</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>x-apple-health</string>

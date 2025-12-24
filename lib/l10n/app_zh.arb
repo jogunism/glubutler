@@ -9,6 +9,7 @@
   "cancel": "取消",
   "close": "关闭",
   "save": "保存",
+  "done": "完成",
   "delete": "删除",
   "edit": "编辑",
   "selectDate": "选择日期",
@@ -123,6 +124,8 @@
   "noGlucoseToday": "今天没有血糖记录",
   "addGlucose": "添加血糖",
   "addDiaryEntry": "添加日记",
+  "diaryPlaceholder": "写下您的血糖管理日记",
+  "attachPhoto": "附加照片",
 
   "insulin": "胰岛素",
   "addInsulin": "添加胰岛素",

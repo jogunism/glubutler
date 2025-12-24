@@ -9,6 +9,7 @@
   "cancel": "Abbrechen",
   "close": "Schließen",
   "save": "Speichern",
+  "done": "Fertig",
   "delete": "Löschen",
   "edit": "Bearbeiten",
   "selectDate": "Datum auswählen",
@@ -123,6 +124,8 @@
   "noGlucoseToday": "Heute keine Blutzuckerwerte",
   "addGlucose": "Blutzucker hinzufügen",
   "addDiaryEntry": "Tagebucheintrag hinzufügen",
+  "diaryPlaceholder": "Schreiben Sie Ihr Blutzucker-Tagebuch",
+  "attachPhoto": "Foto anhängen",
 
   "insulin": "Insulin",
   "addInsulin": "Insulin hinzufügen",

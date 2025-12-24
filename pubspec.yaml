@@ -42,6 +42,21 @@ dependencies:
   # Image Picker (for diary photos)
   image_picker: ^1.1.2
 
+  # Photo Manager (for photo library access with proper permissions)
+  photo_manager: ^3.5.2
+
+  # Image processing
+  image: ^4.3.0
+
+  # EXIF metadata extraction
+  exif: ^3.3.0
+
+  # Path provider for documents directory
+  path_provider: ^2.1.5
+
+  # UUID generation
+  uuid: ^4.5.1
+
   # Date/Time formatting
   jiffy: ^6.3.1
 
@@ -50,6 +65,7 @@ dependencies:
 
   # URL Launcher (for opening external apps)
   url_launcher: ^6.3.1
+
   toastification: ^3.0.3
   cupertino_native_plus: ^0.0.6
   table_calendar: ^3.2.0

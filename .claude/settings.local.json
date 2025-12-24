@@ -10,7 +10,12 @@
       "Bash(killall flutter:*)",
       "Bash(xargs kill:*)",
       "Bash(open:*)",
-      "Bash(flutter pub add:*)"
+      "Bash(flutter pub add:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(xcodebuild clean:*)",
+      "Bash(pod install:*)",
+      "Bash(flutter build:*)",
+      "Bash(dart run build_runner build:*)"
     ]
   }
 }
