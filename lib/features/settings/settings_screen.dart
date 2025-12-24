@@ -40,8 +40,22 @@ import 'package:glu_butler/providers/feed_provider.dart';
 /// - [SettingsService] - 설정 상태 관리
 /// - [LargeTitleScrollView] - iOS 스타일 스크롤뷰
 /// - [AppTheme] - 디자인 상수
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _iCloudEnabled = false;
+
+  void _toggleiCloudSync(bool value) {
+    setState(() {
+      _iCloudEnabled = value;
+    });
+    // TODO: Implement iCloud sync logic
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +186,20 @@ class SettingsScreen extends StatelessWidget {
                         onTap: () => AppRoutes.goToHealthConnect(context),
                       );
                     },
+                  ),
+
+                  // iCloud Sync
+                  _buildSettingsTile(
+                    context: context,
+                    icon: CupertinoIcons.cloud,
+                    iconColor: CupertinoColors.activeBlue,
+                    title: l10n.iCloudSync,
+                    subtitle: l10n.iCloudSyncDescription,
+                    trailing: CupertinoSwitch(
+                      value: _iCloudEnabled,
+                      onChanged: _toggleiCloudSync,
+                    ),
+                    onTap: () {}, // 스위치가 탭을 처리하므로 빈 함수
                   ),
                 ],
               ),

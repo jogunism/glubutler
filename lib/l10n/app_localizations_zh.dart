@@ -189,6 +189,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get healthConnect => '健康连接';
 
   @override
+  String get iCloudSync => 'iCloud同步';
+
+  @override
+  String get iCloudSyncDescription => '跨设备同步数据';
+
+  @override
   String get connected => '已连接';
 
   @override
@@ -413,6 +419,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get attachPhoto => '附加照片';
+
+  @override
+  String get discardDiaryTitle => '取消编写';
+
+  @override
+  String get discardDiaryMessage => '正在编写的内容将消失。\n要取消写作吗？';
+
+  @override
+  String get diarySaved => '日记已保存';
+
+  @override
+  String get diarySaveFailed => '保存日记失败';
+
+  @override
+  String get yes => '是';
+
+  @override
+  String get no => '否';
 
   @override
   String get insulin => '胰岛素';

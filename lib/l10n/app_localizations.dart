@@ -470,6 +470,18 @@ abstract class AppLocalizations {
   /// **'Health Connect'**
   String get healthConnect;
 
+  /// No description provided for @iCloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud Sync'**
+  String get iCloudSync;
+
+  /// No description provided for @iCloudSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync data across devices'**
+  String get iCloudSyncDescription;
+
   /// No description provided for @connected.
   ///
   /// In en, this message translates to:
@@ -919,6 +931,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Attach Photo'**
   String get attachPhoto;
+
+  /// No description provided for @discardDiaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard Entry'**
+  String get discardDiaryTitle;
+
+  /// No description provided for @discardDiaryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your unsaved changes will be lost.\nDiscard this entry?'**
+  String get discardDiaryMessage;
+
+  /// No description provided for @diarySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary entry saved'**
+  String get diarySaved;
+
+  /// No description provided for @diarySaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save diary entry'**
+  String get diarySaveFailed;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
 
   /// No description provided for @insulin.
   ///

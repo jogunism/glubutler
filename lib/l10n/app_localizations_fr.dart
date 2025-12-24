@@ -189,6 +189,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get healthConnect => 'Connexion santé';
 
   @override
+  String get iCloudSync => 'Synchronisation iCloud';
+
+  @override
+  String get iCloudSyncDescription =>
+      'Synchroniser les données sur plusieurs appareils';
+
+  @override
   String get connected => 'Connecté';
 
   @override
@@ -425,6 +432,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get attachPhoto => 'Joindre une photo';
+
+  @override
+  String get discardDiaryTitle => 'Annuler l\'entrée';
+
+  @override
+  String get discardDiaryMessage =>
+      'Vos modifications non enregistrées seront perdues.\nAbandonner cette entrée?';
+
+  @override
+  String get diarySaved => 'Entrée enregistrée';
+
+  @override
+  String get diarySaveFailed => 'Échec de l\'enregistrement de l\'entrée';
+
+  @override
+  String get yes => 'Oui';
+
+  @override
+  String get no => 'Non';
 
   @override
   String get insulin => 'Insuline';

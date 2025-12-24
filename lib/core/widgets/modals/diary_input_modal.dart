@@ -12,6 +12,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/models/diary_entry.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
@@ -35,6 +36,8 @@ class DiaryInputModal extends StatefulWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       useRootNavigator: true,
+      isDismissible: false, // 외부 탭으로 닫기 방지
+      enableDrag: false, // 드래그로 닫기 방지 (커스텀 처리)
       builder: (context) => const DiaryInputModal(),
     );
   }
@@ -213,14 +216,28 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
       if (success) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           Navigator.of(context).pop(true); // Return true to indicate success
+
+          // Show success toast
+          TopBanner.show(
+            context,
+            message: l10n.diarySaved,
+            isSuccess: true,
+          );
         }
       } else {
-        _showError('저장에 실패했습니다.');
+        if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          _showError(l10n.diarySaveFailed);
+        }
       }
     } catch (e) {
       debugPrint('[DiaryInputModal] Error saving diary: $e');
-      _showError('저장 중 오류가 발생했습니다.');
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        _showError(l10n.diarySaveFailed);
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -342,27 +359,70 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
     );
   }
 
+  bool get _hasUnsavedChanges {
+    return _contentController.text.trim().isNotEmpty || _selectedImages.isNotEmpty;
+  }
+
+  Future<bool> _confirmDiscard(BuildContext context) async {
+    if (!_hasUnsavedChanges) {
+      return true; // 변경사항 없으면 바로 닫기
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+
+    final result = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(l10n.discardDiaryTitle),
+        content: Text(l10n.discardDiaryMessage),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false), // 아니오 - 모달 유지
+            child: Text(l10n.no),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true), // 예 - 닫기
+            child: Text(l10n.yes),
+          ),
+        ],
+      ),
+    );
+
+    return result ?? false; // null이면 false (모달 유지)
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
-    return GestureDetector(
-      onTap: () {
-        // 키보드 닫기
-        FocusScope.of(context).unfocus();
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+
+        final shouldPop = await _confirmDiscard(context);
+        if (shouldPop && context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.colors.card,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: EdgeInsets.only(bottom: bottomPadding),
-        child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      child: GestureDetector(
+        onTap: () {
+          // 키보드 닫기
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.colors.card,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: EdgeInsets.only(bottom: bottomPadding),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
             // 드래그 핸들
             Container(
               width: 36,
@@ -382,7 +442,12 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                 children: [
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () async {
+                      final shouldClose = await _confirmDiscard(context);
+                      if (shouldClose && context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    },
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
@@ -577,11 +642,12 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                   },
                 ),
               ),
-            ],
+              ],
 
-            const SizedBox(height: 32),
-          ],
-        ),
+              const SizedBox(height: 32),
+              ],
+            ),
+          ),
         ),
       ),
     );

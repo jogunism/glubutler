@@ -189,6 +189,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get healthConnect => '건강 앱 연동';
 
   @override
+  String get iCloudSync => 'iCloud 동기화';
+
+  @override
+  String get iCloudSyncDescription => '여러 기기에서 데이터 동기화';
+
+  @override
   String get connected => '연결됨';
 
   @override
@@ -413,6 +419,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get attachPhoto => '사진 첨부';
+
+  @override
+  String get discardDiaryTitle => '작성 취소';
+
+  @override
+  String get discardDiaryMessage => '작성중인 내용이 사라집니다.\n글쓰기를 취소하시겠습니까?';
+
+  @override
+  String get diarySaved => '일기가 저장되었습니다';
+
+  @override
+  String get diarySaveFailed => '일기 저장에 실패했습니다';
+
+  @override
+  String get yes => '예';
+
+  @override
+  String get no => '아니오';
 
   @override
   String get insulin => '인슐린';
