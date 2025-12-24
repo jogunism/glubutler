@@ -237,48 +237,109 @@ class _DatePickerModalState extends State<DatePickerModal> {
                 markersMaxCount: 1,
               ),
               calendarBuilders: CalendarBuilders(
+                // 일반 날짜 빌더 (데이터 마커 포함)
+                defaultBuilder: (context, day, focusedDay) {
+                  final normalizedDate = DateTime(day.year, day.month, day.day);
+                  final hasData = _datesWithData.contains(normalizedDate);
+
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('${day.day}', style: context.textStyles.tileSubtitle),
+                        const SizedBox(height: 4),
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: hasData ? Colors.red : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                // 선택된 날짜 커스텀 빌더 (오늘이 아닌 날짜)
+                selectedBuilder: (context, day, focusedDay) {
+                  final normalizedDate = DateTime(day.year, day.month, day.day);
+                  final hasData = _datesWithData.contains(normalizedDate);
+
+                  return Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${day.day}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: hasData
+                                ? Colors.white.withValues(alpha: 0.9)
+                                : Colors.transparent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
                 // 오늘 날짜 커스텀 빌더
                 todayBuilder: (context, day, focusedDay) {
                   final isSelected = isSameDay(_selectedDate, day);
+                  final normalizedDate = DateTime(day.year, day.month, day.day);
+                  final hasData = _datesWithData.contains(normalizedDate);
+
                   return Container(
-                    margin: const EdgeInsets.all(6),
-                    alignment: Alignment.center,
+                    margin: const EdgeInsets.all(8),
                     decoration: isSelected
                         ? const BoxDecoration(
                             color: AppTheme.primaryColor,
                             shape: BoxShape.circle,
                           )
                         : null,
-                    child: Text(
-                      '${day.day}',
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.red,
-                        fontWeight: FontWeight.bold,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${day.day}',
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: hasData
+                                  ? (isSelected
+                                      ? Colors.white.withValues(alpha: 0.9)
+                                      : Colors.red)
+                                  : Colors.transparent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
-                },
-                // 데이터가 있는 날짜에 빨간 점 표시
-                markerBuilder: (context, date, events) {
-                  final normalizedDate = DateTime(
-                    date.year,
-                    date.month,
-                    date.day,
-                  );
-                  if (_datesWithData.contains(normalizedDate)) {
-                    return Positioned(
-                      bottom: -6,
-                      child: Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    );
-                  }
-                  return null;
                 },
               ),
             ),

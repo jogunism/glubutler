@@ -271,10 +271,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               GestureDetector(
                 onTap: () async {
+                  // 모달을 열기 전에 탭바 숨김
+                  MainScreen.globalKey.currentState?.setTabBarVisibility(false);
+
                   final pickedDate = await DatePickerModal.show(
                     context,
                     initialDate: _selectedDate,
                   );
+
+                  // 모달이 닫히면 탭바 다시 보임
+                  MainScreen.globalKey.currentState?.setTabBarVisibility(true);
+
                   if (pickedDate != null && pickedDate != _selectedDate) {
                     setState(() {
                       _selectedDate = pickedDate;

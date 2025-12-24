@@ -33,6 +33,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  bool _isTabBarVisible = true;
 
   void switchToTab(int index) {
     if (index >= 0 && index < 4 && index != _currentIndex) {
@@ -41,6 +42,12 @@ class MainScreenState extends State<MainScreen> {
         _currentIndex = index;
       });
     }
+  }
+
+  void setTabBarVisibility(bool visible) {
+    setState(() {
+      _isTabBarVisible = visible;
+    });
   }
 
   @override
@@ -63,12 +70,18 @@ class MainScreenState extends State<MainScreen> {
           // Floating Action Button with animation
           ScreenFab(
             visible: showFab,
-            onPressed: () {
+            onPressed: () async {
+              // 모달을 열기 전에 탭바 숨김
+              setTabBarVisibility(false);
+
               if (_currentIndex == 1) {
-                RecordInputModal.show(context);
+                await RecordInputModal.show(context);
               } else if (_currentIndex == 2) {
-                DiaryInputModal.show(context);
+                await DiaryInputModal.show(context);
               }
+
+              // 모달이 닫히면 탭바 다시 보임
+              setTabBarVisibility(true);
             },
           ),
 
@@ -77,49 +90,55 @@ class MainScreenState extends State<MainScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: CNTabBar(
-              tint: AppTheme.primaryColor,
-              items: [
-                CNTabBarItem(
-                  label: l10n.home,
-                  customIcon: Icons.water_drop_outlined,
-                  activeCustomIcon: Icons.water_drop,
+            child: Opacity(
+              opacity: _isTabBarVisible ? 1.0 : 0.0,
+              child: IgnorePointer(
+                ignoring: !_isTabBarVisible,
+                child: CNTabBar(
+                  tint: AppTheme.primaryColor,
+                  items: [
+                    CNTabBarItem(
+                      label: l10n.home,
+                      customIcon: Icons.water_drop_outlined,
+                      activeCustomIcon: Icons.water_drop,
+                    ),
+                    CNTabBarItem(
+                      label: l10n.feed,
+                      customIcon: Icons.view_agenda_outlined,
+                      activeCustomIcon: Icons.view_agenda,
+                    ),
+                    CNTabBarItem(
+                      label: l10n.diary,
+                      customIcon: Icons.book_outlined,
+                      activeCustomIcon: Icons.book,
+                    ),
+                    CNTabBarItem(
+                      label: l10n.report,
+                      customIcon: Icons.bar_chart_outlined,
+                      activeCustomIcon: Icons.bar_chart,
+                    ),
+                  ],
+                  currentIndex: _currentIndex,
+                  onTap: (index) {
+                    if (index == _currentIndex) {
+                      // 이미 선택된 탭을 다시 탭하면 scroll to top
+                      final controller = PrimaryScrollController.of(context);
+                      if (controller.hasClients &&
+                          controller.positions.length == 1 &&
+                          controller.offset > 0) {
+                        HapticFeedback.lightImpact();
+                        controller.animateTo(
+                          0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    } else {
+                      switchToTab(index);
+                    }
+                  },
                 ),
-                CNTabBarItem(
-                  label: l10n.feed,
-                  customIcon: Icons.view_agenda_outlined,
-                  activeCustomIcon: Icons.view_agenda,
-                ),
-                CNTabBarItem(
-                  label: l10n.diary,
-                  customIcon: Icons.book_outlined,
-                  activeCustomIcon: Icons.book,
-                ),
-                CNTabBarItem(
-                  label: l10n.report,
-                  customIcon: Icons.bar_chart_outlined,
-                  activeCustomIcon: Icons.bar_chart,
-                ),
-              ],
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                if (index == _currentIndex) {
-                  // 이미 선택된 탭을 다시 탭하면 scroll to top
-                  final controller = PrimaryScrollController.of(context);
-                  if (controller.hasClients &&
-                      controller.positions.length == 1 &&
-                      controller.offset > 0) {
-                    HapticFeedback.lightImpact();
-                    controller.animateTo(
-                      0,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  }
-                } else {
-                  switchToTab(index);
-                }
-              },
+              ),
             ),
           ),
         ],
