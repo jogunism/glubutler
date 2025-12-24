@@ -30,6 +30,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get cancel => 'Annulla';
 
   @override
+  String get close => 'Chiudi';
+
+  @override
   String get save => 'Salva';
 
   @override
@@ -37,6 +40,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get edit => 'Modifica';
+
+  @override
+  String get selectDate => 'Seleziona data';
 
   @override
   String get today => 'Oggi';

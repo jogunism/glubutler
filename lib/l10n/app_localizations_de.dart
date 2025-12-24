@@ -30,6 +30,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cancel => 'Abbrechen';
 
   @override
+  String get close => 'Schließen';
+
+  @override
   String get save => 'Speichern';
 
   @override
@@ -37,6 +40,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get edit => 'Bearbeiten';
+
+  @override
+  String get selectDate => 'Datum auswählen';
 
   @override
   String get today => 'Heute';

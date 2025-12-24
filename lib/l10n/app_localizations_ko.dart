@@ -30,6 +30,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cancel => '취소';
 
   @override
+  String get close => '닫기';
+
+  @override
   String get save => '저장';
 
   @override
@@ -37,6 +40,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get edit => '수정';
+
+  @override
+  String get selectDate => '날짜 선택';
 
   @override
   String get today => '오늘';

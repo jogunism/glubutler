@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -58,6 +59,11 @@ class _DatePickerModalState extends State<DatePickerModal> {
     _loadDatesWithData();
   }
 
+  bool get _isCurrentMonth {
+    final now = DateTime.now();
+    return _focusedDate.year == now.year && _focusedDate.month == now.month;
+  }
+
   Future<void> _loadDatesWithData() async {
     setState(() => _isLoading = true);
 
@@ -89,10 +95,6 @@ class _DatePickerModalState extends State<DatePickerModal> {
       debugPrint('[DatePickerModal] Error loading data: $e');
       setState(() => _isLoading = false);
     }
-  }
-
-  void _save() {
-    Navigator.of(context).pop(_selectedDate);
   }
 
   @override
@@ -130,21 +132,24 @@ class _DatePickerModalState extends State<DatePickerModal> {
                   padding: EdgeInsets.zero,
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    l10n.cancel,
+                    l10n.close,
                     style: TextStyle(color: Colors.grey[600], fontSize: 16),
                   ),
                 ),
                 Text(
-                  '날짜 선택',
+                  l10n.selectDate,
                   style: context.textStyles.tileTitle.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 CupertinoButton(
                   padding: EdgeInsets.zero,
-                  onPressed: _save,
+                  onPressed: () {
+                    // 오늘 날짜를 선택하고 모달 닫기
+                    Navigator.of(context).pop(DateTime.now());
+                  },
                   child: Text(
-                    '확인',
+                    l10n.today,
                     style: const TextStyle(
                       color: AppTheme.primaryColor,
                       fontSize: 16,
@@ -157,6 +162,67 @@ class _DatePickerModalState extends State<DatePickerModal> {
           ),
 
           const SizedBox(height: 16),
+
+          // 커스텀 헤더
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 왼쪽 버튼
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    final previousMonth = DateTime(
+                      _focusedDate.year,
+                      _focusedDate.month - 1,
+                    );
+                    setState(() {
+                      _focusedDate = previousMonth;
+                    });
+                    _loadDatesWithData();
+                  },
+                  child: Icon(
+                    Icons.chevron_left,
+                    color: context.colors.textPrimary,
+                  ),
+                ),
+                // 중앙 타이틀
+                Text(
+                  DateFormat.yMMMM(Localizations.localeOf(context).toString())
+                      .format(_focusedDate),
+                  style: context.textStyles.tileTitle.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                // 오른쪽 버튼 (현재 월이면 투명, 아니면 표시)
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: _isCurrentMonth
+                      ? null
+                      : () {
+                          final nextMonth = DateTime(
+                            _focusedDate.year,
+                            _focusedDate.month + 1,
+                          );
+                          setState(() {
+                            _focusedDate = nextMonth;
+                          });
+                          _loadDatesWithData();
+                        },
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: _isCurrentMonth
+                        ? Colors.transparent
+                        : context.colors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
 
           // 달력
           Padding(
@@ -178,22 +244,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
               },
               calendarFormat: CalendarFormat.month,
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: context.textStyles.tileTitle.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-                leftChevronIcon: Icon(
-                  Icons.chevron_left,
-                  color: context.colors.textPrimary,
-                ),
-                rightChevronIcon: Icon(
-                  Icons.chevron_right,
-                  color: context.colors.textPrimary,
-                ),
-              ),
+              headerVisible: false,
               daysOfWeekStyle: DaysOfWeekStyle(
                 weekdayStyle: context.textStyles.caption.copyWith(
                   color: context.colors.textSecondary,
@@ -246,7 +297,10 @@ class _DatePickerModalState extends State<DatePickerModal> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('${day.day}', style: context.textStyles.tileSubtitle),
+                        Text(
+                          '${day.day}',
+                          style: context.textStyles.tileSubtitle,
+                        ),
                         const SizedBox(height: 4),
                         Container(
                           width: 6,
@@ -266,7 +320,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
                   final hasData = _datesWithData.contains(normalizedDate);
 
                   return Container(
-                    margin: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(7),
                     decoration: const BoxDecoration(
                       color: AppTheme.primaryColor,
                       shape: BoxShape.circle,
@@ -288,8 +342,8 @@ class _DatePickerModalState extends State<DatePickerModal> {
                             height: 6,
                             decoration: BoxDecoration(
                               color: hasData
-                                ? Colors.white.withValues(alpha: 0.9)
-                                : Colors.transparent,
+                                  ? Colors.white.withValues(alpha: 0.9)
+                                  : Colors.transparent,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -305,7 +359,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
                   final hasData = _datesWithData.contains(normalizedDate);
 
                   return Container(
-                    margin: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(7),
                     decoration: isSelected
                         ? const BoxDecoration(
                             color: AppTheme.primaryColor,
@@ -330,8 +384,8 @@ class _DatePickerModalState extends State<DatePickerModal> {
                             decoration: BoxDecoration(
                               color: hasData
                                   ? (isSelected
-                                      ? Colors.white.withValues(alpha: 0.9)
-                                      : Colors.red)
+                                        ? Colors.white.withValues(alpha: 0.9)
+                                        : Colors.red)
                                   : Colors.transparent,
                               shape: BoxShape.circle,
                             ),

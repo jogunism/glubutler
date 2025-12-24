@@ -30,6 +30,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get cancel => 'キャンセル';
 
   @override
+  String get close => '閉じる';
+
+  @override
   String get save => '保存';
 
   @override
@@ -37,6 +40,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get edit => '編集';
+
+  @override
+  String get selectDate => '日付を選択';
 
   @override
   String get today => '今日';

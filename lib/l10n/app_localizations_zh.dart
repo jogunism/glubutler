@@ -30,6 +30,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cancel => '取消';
 
   @override
+  String get close => '关闭';
+
+  @override
   String get save => '保存';
 
   @override
@@ -37,6 +40,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get edit => '编辑';
+
+  @override
+  String get selectDate => '选择日期';
 
   @override
   String get today => '今天';
