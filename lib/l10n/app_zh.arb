@@ -81,6 +81,22 @@
   "enterExercise": "添加运动",
   "takePhoto": "拍照",
   "chooseFromGallery": "从相册选择",
+  "maxImagesReached": "最多只能附加{count}张。已添加{added}张。",
+  "@maxImagesReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "added": {
+        "type": "int"
+      }
+    }
+  },
+  "onlyImageFiles": "只能选择图片文件。",
+  "imageLoadFailed": "加载照片失败。",
+  "photoPermissionRequired": "需要照片访问权限",
+  "photoPermissionMessage": "要附加照片，需要允许访问照片库。\n\n请在设置 > Glu Butler中启用照片访问。",
+  "goToSettings": "前往设置",
 
   "noRecords": "暂无记录",
   "startTracking": "开始记录您的健康！",

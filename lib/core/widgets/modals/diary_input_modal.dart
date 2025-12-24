@@ -304,14 +304,22 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         return;
       }
 
-      // 여러 장 선택 가능
+      // 선택 가능한 최대 개수 계산
+      final remainingSlots = _maxImages - _selectedImages.length;
+
+      if (remainingSlots <= 0) {
+        final l10n = AppLocalizations.of(context)!;
+        _showError(l10n.maxImagesReached(0, _maxImages));
+        return;
+      }
+
+      // 여러 장 선택 가능 (최대 remainingSlots까지만)
       final pickedFiles = await _imagePicker.pickMultiImage(
-        requestFullMetadata: true, // Request full metadata including EXIF
+        requestFullMetadata: true,
+        limit: remainingSlots, // 최대 선택 개수 제한
       );
 
       if (pickedFiles.isNotEmpty) {
-        // 선택 가능한 최대 개수 계산
-        final remainingSlots = _maxImages - _selectedImages.length;
         final filesToAdd = pickedFiles.take(remainingSlots).toList();
 
         // 각 파일 형식 검증
@@ -327,7 +335,8 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         }
 
         if (validFiles.isEmpty) {
-          _showError('이미지 파일만 선택할 수 있습니다.');
+          final l10n = AppLocalizations.of(context)!;
+          _showError(l10n.onlyImageFiles);
           return;
         }
 
@@ -337,34 +346,33 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
         // 최대 개수 초과 시 알림
         if (pickedFiles.length > remainingSlots) {
-          _showError(
-            '최대 $_maxImages장까지만 첨부 가능합니다. ${validFiles.length}장이 추가되었습니다.',
-          );
+          final l10n = AppLocalizations.of(context)!;
+          _showError(l10n.maxImagesReached(validFiles.length, _maxImages));
         }
       }
     } catch (e) {
       debugPrint('[DiaryInputModal] Error picking image: $e');
-      _showError('사진을 불러오는데 실패했습니다.');
+      final l10n = AppLocalizations.of(context)!;
+      _showError(l10n.imageLoadFailed);
     }
   }
 
   void _showPermissionError() {
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('사진 접근 권한 필요'),
-        content: const Text(
-          '사진을 첨부하려면 사진 라이브러리 접근 권한이 필요합니다.\n\n설정 > Glu Butler에서 사진 접근을 허용해주세요.',
-        ),
+        title: Text(l10n.photoPermissionRequired),
+        content: Text(l10n.photoPermissionMessage),
         actions: [
           CupertinoDialogAction(
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: const Text('설정으로 이동'),
+            child: Text(l10n.goToSettings),
             onPressed: () async {
               Navigator.of(context).pop();
               // Open iOS app settings

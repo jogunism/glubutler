@@ -680,6 +680,42 @@ abstract class AppLocalizations {
   /// **'Choose from Gallery'**
   String get chooseFromGallery;
 
+  /// No description provided for @maxImagesReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can attach up to {count} images. {added} images have been added.'**
+  String maxImagesReached(int count, int added);
+
+  /// No description provided for @onlyImageFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Only image files can be selected.'**
+  String get onlyImageFiles;
+
+  /// No description provided for @imageLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load images.'**
+  String get imageLoadFailed;
+
+  /// No description provided for @photoPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Access Permission Required'**
+  String get photoPermissionRequired;
+
+  /// No description provided for @photoPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'To attach photos, you need to allow access to your photo library.\n\nGo to Settings > Glu Butler to enable photo access.'**
+  String get photoPermissionMessage;
+
+  /// No description provided for @goToSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get goToSettings;
+
   /// No description provided for @noRecords.
   ///
   /// In en, this message translates to:

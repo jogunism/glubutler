@@ -295,6 +295,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get chooseFromGallery => 'ギャラリーから選択';
 
   @override
+  String maxImagesReached(int count, int added) {
+    return '最大$count枚まで添付できます。$added枚が追加されました。';
+  }
+
+  @override
+  String get onlyImageFiles => '画像ファイルのみ選択できます。';
+
+  @override
+  String get imageLoadFailed => '写真の読み込みに失敗しました。';
+
+  @override
+  String get photoPermissionRequired => '写真アクセス権限が必要です';
+
+  @override
+  String get photoPermissionMessage =>
+      '写真を添付するには、フォトライブラリへのアクセス権限が必要です。\n\n設定 > Glu Butlerで写真アクセスを許可してください。';
+
+  @override
+  String get goToSettings => '設定へ移動';
+
+  @override
   String get noRecords => '記録がありません';
 
   @override

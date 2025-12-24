@@ -98,6 +98,22 @@
   "enterExercise": "運動を追加",
   "takePhoto": "写真を撮る",
   "chooseFromGallery": "ギャラリーから選択",
+  "maxImagesReached": "最大{count}枚まで添付できます。{added}枚が追加されました。",
+  "@maxImagesReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "added": {
+        "type": "int"
+      }
+    }
+  },
+  "onlyImageFiles": "画像ファイルのみ選択できます。",
+  "imageLoadFailed": "写真の読み込みに失敗しました。",
+  "photoPermissionRequired": "写真アクセス権限が必要です",
+  "photoPermissionMessage": "写真を添付するには、フォトライブラリへのアクセス権限が必要です。\n\n設定 > Glu Butlerで写真アクセスを許可してください。",
+  "goToSettings": "設定へ移動",
 
   "noRecords": "記録がありません",
   "startTracking": "健康記録を始めましょう！",

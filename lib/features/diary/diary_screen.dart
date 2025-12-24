@@ -261,10 +261,6 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final photos = widget.entry.files.take(3).toList();
-    final remainingPhotos = widget.entry.files.length > 3
-        ? widget.entry.files.length - 3
-        : 0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -377,55 +373,34 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
                       ),
                   ],
 
-                  // 사진 목록
-                  if (photos.isNotEmpty) ...[
+                  // 사진 목록 (모두 표시)
+                  if (widget.entry.files.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        ...photos.map(
-                          (file) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(6),
-                              child: Image.file(
-                                File(file.filePath),
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    width: 60,
-                                    height: 60,
-                                    color: context.colors.divider,
-                                    child: Icon(
-                                      Icons.broken_image,
-                                      color: context.colors.iconGrey,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (remainingPhotos > 0)
-                          Container(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: widget.entry.files.map(
+                        (file) => ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: Image.file(
+                            File(file.filePath),
                             width: 60,
                             height: 60,
-                            decoration: BoxDecoration(
-                              color: context.colors.divider,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '+$remainingPhotos',
-                                style: context.textStyles.tileTitle.copyWith(
-                                  color: context.colors.textSecondary,
-                                  fontWeight: FontWeight.w600,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 60,
+                                height: 60,
+                                color: context.colors.divider,
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: context.colors.iconGrey,
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
-                      ],
+                        ),
+                      ).toList(),
                     ),
                   ],
                 ],

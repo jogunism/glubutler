@@ -81,6 +81,22 @@
   "enterExercise": "Bewegung hinzufügen",
   "takePhoto": "Foto aufnehmen",
   "chooseFromGallery": "Aus Galerie wählen",
+  "maxImagesReached": "Sie können bis zu {count} Bilder anhängen. {added} Bilder wurden hinzugefügt.",
+  "@maxImagesReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "added": {
+        "type": "int"
+      }
+    }
+  },
+  "onlyImageFiles": "Es können nur Bilddateien ausgewählt werden.",
+  "imageLoadFailed": "Fehler beim Laden der Fotos.",
+  "photoPermissionRequired": "Fotoberechtigung erforderlich",
+  "photoPermissionMessage": "Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.\n\nGehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.",
+  "goToSettings": "Zu Einstellungen",
 
   "noRecords": "Keine Einträge vorhanden",
   "startTracking": "Beginnen Sie mit der Gesundheitsüberwachung!",

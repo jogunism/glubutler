@@ -294,6 +294,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get chooseFromGallery => '갤러리에서 선택';
 
   @override
+  String maxImagesReached(int count, int added) {
+    return '최대 $count장까지만 첨부 가능합니다. $added장이 추가되었습니다.';
+  }
+
+  @override
+  String get onlyImageFiles => '이미지 파일만 선택할 수 있습니다.';
+
+  @override
+  String get imageLoadFailed => '사진을 불러오는데 실패했습니다.';
+
+  @override
+  String get photoPermissionRequired => '사진 접근 권한 필요';
+
+  @override
+  String get photoPermissionMessage =>
+      '사진을 첨부하려면 사진 라이브러리 접근 권한이 필요합니다.\n\n설정 > Glu Butler에서 사진 접근을 허용해주세요.';
+
+  @override
+  String get goToSettings => '설정으로 이동';
+
+  @override
   String get noRecords => '기록이 없습니다';
 
   @override

@@ -295,6 +295,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chooseFromGallery => '从相册选择';
 
   @override
+  String maxImagesReached(int count, int added) {
+    return '最多只能附加$count张。已添加$added张。';
+  }
+
+  @override
+  String get onlyImageFiles => '只能选择图片文件。';
+
+  @override
+  String get imageLoadFailed => '加载照片失败。';
+
+  @override
+  String get photoPermissionRequired => '需要照片访问权限';
+
+  @override
+  String get photoPermissionMessage =>
+      '要附加照片，需要允许访问照片库。\n\n请在设置 > Glu Butler中启用照片访问。';
+
+  @override
+  String get goToSettings => '前往设置';
+
+  @override
   String get noRecords => '暂无记录';
 
   @override

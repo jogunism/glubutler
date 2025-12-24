@@ -105,6 +105,22 @@
   "enterExercise": "Add Exercise",
   "takePhoto": "Take Photo",
   "chooseFromGallery": "Choose from Gallery",
+  "maxImagesReached": "You can attach up to {count} images. {added} images have been added.",
+  "@maxImagesReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "added": {
+        "type": "int"
+      }
+    }
+  },
+  "onlyImageFiles": "Only image files can be selected.",
+  "imageLoadFailed": "Failed to load images.",
+  "photoPermissionRequired": "Photo Access Permission Required",
+  "photoPermissionMessage": "To attach photos, you need to allow access to your photo library.\n\nGo to Settings > Glu Butler to enable photo access.",
+  "goToSettings": "Go to Settings",
 
   "noRecords": "No records yet",
   "startTracking": "Start tracking your health!",
