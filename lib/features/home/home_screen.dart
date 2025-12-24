@@ -35,21 +35,40 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final _glucoseRepository = GlucoseRepository();
 
   List<GlucoseRecord> _todayRecords = [];
   bool _isLoading = true;
   DateTime _selectedDate = DateTime.now();
 
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    );
     _loadTodayData();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTodayData() async {
     setState(() => _isLoading = true);
+    _animationController.reset();
 
     try {
       final now = DateTime.now();
@@ -68,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _todayRecords = records;
         _isLoading = false;
       });
+      _animationController.forward();
     } catch (e) {
       debugPrint('[HomeScreen] Error loading data: $e');
       setState(() => _isLoading = false);
@@ -76,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadSelectedDateData() async {
     setState(() => _isLoading = true);
+    _animationController.reset();
 
     try {
       final startOfDay = DateTime(
@@ -94,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _todayRecords = records;
         _isLoading = false;
       });
+      _animationController.forward();
     } catch (e) {
       debugPrint('[HomeScreen] Error loading data: $e');
       setState(() => _isLoading = false);
@@ -176,7 +198,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
-    await _loadTodayData();
+    // 현재 선택된 날짜가 오늘이면 _loadTodayData, 아니면 _loadSelectedDateData
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selected = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+
+    if (selected == today) {
+      await _loadTodayData();
+    } else {
+      await _loadSelectedDateData();
+    }
   }
 
   @override
@@ -335,7 +370,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           // 차트
-          SizedBox(height: 200, child: _buildGlucoseChart(context, l10n)),
+          SizedBox(
+            height: 200,
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return _buildGlucoseChart(context, l10n);
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -555,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
             x: hour,
             barRods: [
               BarChartRodData(
-                toY: value,
+                toY: value * _animation.value,
                 color: _getGlucoseColorForValue(value),
                 width: 8,
                 borderRadius: const BorderRadius.vertical(
@@ -710,17 +753,23 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 width: 100,
                 height: 100,
-                child: CustomPaint(
-                  painter: _PieChartPainter(
-                    veryLowRatio: hasData ? dist['veryLow']! / total : 0,
-                    lowRatio: hasData ? dist['low']! / total : 0,
-                    normalRatio: hasData ? dist['normal']! / total : 0,
-                    highRatio: hasData ? dist['high']! / total : 0,
-                    veryHighRatio: hasData ? dist['veryHigh']! / total : 0,
-                    holeColor: context.colors.card,
-                    hasData: hasData,
-                    emptyColor: AppTheme.textSecondaryLight,
-                  ),
+                child: AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: _PieChartPainter(
+                        veryLowRatio: hasData ? dist['veryLow']! / total : 0,
+                        lowRatio: hasData ? dist['low']! / total : 0,
+                        normalRatio: hasData ? dist['normal']! / total : 0,
+                        highRatio: hasData ? dist['high']! / total : 0,
+                        veryHighRatio: hasData ? dist['veryHigh']! / total : 0,
+                        holeColor: context.colors.card,
+                        hasData: hasData,
+                        emptyColor: AppTheme.textSecondaryLight,
+                        animationValue: _animation.value,
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 24),
@@ -859,6 +908,7 @@ class _PieChartPainter extends CustomPainter {
   final Color holeColor;
   final bool hasData;
   final Color emptyColor;
+  final double animationValue;
 
   _PieChartPainter({
     required this.veryLowRatio,
@@ -869,6 +919,7 @@ class _PieChartPainter extends CustomPainter {
     required this.holeColor,
     required this.hasData,
     required this.emptyColor,
+    required this.animationValue,
   });
 
   @override
@@ -896,7 +947,7 @@ class _PieChartPainter extends CustomPainter {
 
     // 매우 저혈당
     if (veryLowRatio > 0) {
-      final sweepAngle = veryLowRatio * 2 * math.pi;
+      final sweepAngle = veryLowRatio * 2 * math.pi * animationValue;
       final paint = Paint()
         ..color = AppTheme.glucoseVeryLow
         ..style = PaintingStyle.fill;
@@ -906,7 +957,7 @@ class _PieChartPainter extends CustomPainter {
 
     // 저혈당
     if (lowRatio > 0) {
-      final sweepAngle = lowRatio * 2 * math.pi;
+      final sweepAngle = lowRatio * 2 * math.pi * animationValue;
       final paint = Paint()
         ..color = AppTheme.glucoseLow
         ..style = PaintingStyle.fill;
@@ -916,7 +967,7 @@ class _PieChartPainter extends CustomPainter {
 
     // 정상
     if (normalRatio > 0) {
-      final sweepAngle = normalRatio * 2 * math.pi;
+      final sweepAngle = normalRatio * 2 * math.pi * animationValue;
       final paint = Paint()
         ..color = AppTheme.glucoseNormal
         ..style = PaintingStyle.fill;
@@ -926,7 +977,7 @@ class _PieChartPainter extends CustomPainter {
 
     // 고혈당
     if (highRatio > 0) {
-      final sweepAngle = highRatio * 2 * math.pi;
+      final sweepAngle = highRatio * 2 * math.pi * animationValue;
       final paint = Paint()
         ..color = AppTheme.glucoseHigh
         ..style = PaintingStyle.fill;
@@ -936,7 +987,7 @@ class _PieChartPainter extends CustomPainter {
 
     // 매우 고혈당
     if (veryHighRatio > 0) {
-      final sweepAngle = veryHighRatio * 2 * math.pi;
+      final sweepAngle = veryHighRatio * 2 * math.pi * animationValue;
       final paint = Paint()
         ..color = AppTheme.glucoseVeryHigh
         ..style = PaintingStyle.fill;
