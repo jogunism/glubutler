@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'dart:io';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
@@ -228,7 +229,9 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
   }
 
   String _formatDate(DateTime date) {
-    return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    // 로케일에 맞는 날짜 형식 사용
+    final dateFormat = DateFormat.yMMMd().add_Hm();
+    return dateFormat.format(date);
   }
 
   String _getPreviewText(String content) {
