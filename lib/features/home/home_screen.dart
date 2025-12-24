@@ -149,20 +149,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.max);
   }
 
-  // 범위별 비율 계산
+  // 범위별 비율 계산 (5단계)
   Map<String, int> get _rangeDistribution {
-    int low = 0, normal = 0, high = 0;
+    int veryLow = 0, low = 0, normal = 0, high = 0, veryHigh = 0;
     for (final record in _todayRecords) {
       final value = record.valueIn('mg/dL');
-      if (value < 70) {
+      if (value < 60) {
+        veryLow++;
+      } else if (value < 80) {
         low++;
-      } else if (value <= 140) {
+      } else if (value <= 120) {
         normal++;
-      } else {
+      } else if (value < 180) {
         high++;
+      } else {
+        veryHigh++;
       }
     }
-    return {'low': low, 'normal': normal, 'high': high};
+    return {
+      'veryLow': veryLow,
+      'low': low,
+      'normal': normal,
+      'high': high,
+      'veryHigh': veryHigh,
+    };
   }
 
   Future<void> _onRefresh() async {
@@ -411,8 +421,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: averageLineColor,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
+                  backgroundColor: context.colors.card.withValues(alpha: 0.8),
                 ),
-                labelResolver: (line) => '${l10n.average} ${averageGlucose.toInt()}',
+                labelResolver: (line) => ' ${l10n.average} ${averageGlucose.toInt()} ',
               ),
             ),
           ],
@@ -579,6 +590,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildStatsCard(BuildContext context, AppLocalizations l10n) {
+    final settings = context.watch<SettingsService>();
+    final hasData = _todayRecords.isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: context.decorations.card,
@@ -591,10 +605,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildStatItem(
                   context,
                   label: l10n.normal,
-                  value: '${_averageGlucose.toInt()}',
-                  unit: 'mg/dL',
+                  value: hasData ? '${_averageGlucose.toInt()}' : '-',
+                  unit: settings.unit,
                   subtitle: l10n.average,
-                  color: AppTheme.getGlucoseColor(_averageGlucose),
+                  color: hasData
+                      ? _getGlucoseColorForValue(_averageGlucose)
+                      : context.colors.textSecondary.withValues(alpha: 0.5),
+                  hasData: hasData,
                 ),
               ),
               Container(width: 1, height: 60, color: context.colors.divider),
@@ -602,10 +619,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildStatItem(
                   context,
                   label: l10n.low,
-                  value: '${_minGlucose.toInt()}',
-                  unit: 'mg/dL',
+                  value: hasData ? '${_minGlucose.toInt()}' : '-',
+                  unit: settings.unit,
                   subtitle: l10n.lowest,
-                  color: AppTheme.getGlucoseColor(_minGlucose),
+                  color: hasData
+                      ? (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.grey[800]!)
+                      : context.colors.textSecondary.withValues(alpha: 0.5),
+                  hasData: hasData,
                 ),
               ),
               Container(width: 1, height: 60, color: context.colors.divider),
@@ -613,10 +635,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildStatItem(
                   context,
                   label: l10n.high,
-                  value: '${_maxGlucose.toInt()}',
-                  unit: 'mg/dL',
+                  value: hasData ? '${_maxGlucose.toInt()}' : '-',
+                  unit: settings.unit,
                   subtitle: l10n.highest,
-                  color: AppTheme.getGlucoseColor(_maxGlucose),
+                  color: hasData
+                      ? (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.grey[800]!)
+                      : context.colors.textSecondary.withValues(alpha: 0.5),
+                  hasData: hasData,
                 ),
               ),
             ],
@@ -633,6 +660,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String unit,
     required String subtitle,
     required Color color,
+    required bool hasData,
   }) {
     return Column(
       children: [
@@ -651,8 +679,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: color,
               ),
             ),
-            const SizedBox(width: 2),
-            Text(unit, style: TextStyle(fontSize: 12, color: color)),
+            if (hasData) ...[
+              const SizedBox(width: 2),
+              Text(unit, style: TextStyle(fontSize: 12, color: color)),
+            ],
           ],
         ),
       ],
@@ -661,7 +691,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDistributionCard(BuildContext context, AppLocalizations l10n) {
     final dist = _rangeDistribution;
-    final total = dist['low']! + dist['normal']! + dist['high']!;
+    final total = dist['veryLow']! +
+        dist['low']! +
+        dist['normal']! +
+        dist['high']! +
+        dist['veryHigh']!;
+    final hasData = total > 0;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -677,26 +712,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 100,
                 child: CustomPaint(
                   painter: _PieChartPainter(
-                    lowRatio: total > 0 ? dist['low']! / total : 0,
-                    normalRatio: total > 0 ? dist['normal']! / total : 0,
-                    highRatio: total > 0 ? dist['high']! / total : 0,
+                    veryLowRatio: hasData ? dist['veryLow']! / total : 0,
+                    lowRatio: hasData ? dist['low']! / total : 0,
+                    normalRatio: hasData ? dist['normal']! / total : 0,
+                    highRatio: hasData ? dist['high']! / total : 0,
+                    veryHighRatio: hasData ? dist['veryHigh']! / total : 0,
                     holeColor: context.colors.card,
+                    hasData: hasData,
+                    emptyColor: AppTheme.textSecondaryLight,
                   ),
                 ),
               ),
               const SizedBox(width: 24),
-              // 범례
+              // 범례 (매우높음, 높음, 보통, 낮음, 매우낮음 순)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 매우높음 - 데이터가 있을 때만 표시
+                    if (dist['veryHigh']! > 0) ...[
+                      _buildLegendItem(
+                        context,
+                        color: AppTheme.glucoseVeryHigh,
+                        label: l10n.veryHigh,
+                        value: '${dist['veryHigh']}${l10n.times}',
+                        percentage: hasData
+                            ? '${(dist['veryHigh']! / total * 100).toInt()}%'
+                            : '0%',
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     _buildLegendItem(
                       context,
-                      color: AppTheme.glucoseLow,
-                      label: l10n.low,
-                      value: '${dist['low']}${l10n.times}',
-                      percentage: total > 0
-                          ? '${(dist['low']! / total * 100).toInt()}%'
+                      color: AppTheme.glucoseHigh,
+                      label: l10n.high,
+                      value: '${dist['high']}${l10n.times}',
+                      percentage: hasData
+                          ? '${(dist['high']! / total * 100).toInt()}%'
                           : '0%',
                     ),
                     const SizedBox(height: 8),
@@ -705,20 +757,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: AppTheme.glucoseNormal,
                       label: l10n.normal,
                       value: '${dist['normal']}${l10n.times}',
-                      percentage: total > 0
+                      percentage: hasData
                           ? '${(dist['normal']! / total * 100).toInt()}%'
                           : '0%',
                     ),
                     const SizedBox(height: 8),
                     _buildLegendItem(
                       context,
-                      color: AppTheme.glucoseHigh,
-                      label: l10n.high,
-                      value: '${dist['high']}${l10n.times}',
-                      percentage: total > 0
-                          ? '${(dist['high']! / total * 100).toInt()}%'
+                      color: AppTheme.glucoseLow,
+                      label: l10n.low,
+                      value: '${dist['low']}${l10n.times}',
+                      percentage: hasData
+                          ? '${(dist['low']! / total * 100).toInt()}%'
                           : '0%',
                     ),
+                    // 매우낮음 - 데이터가 있을 때만 표시
+                    if (dist['veryLow']! > 0) ...[
+                      const SizedBox(height: 8),
+                      _buildLegendItem(
+                        context,
+                        color: AppTheme.glucoseVeryLow,
+                        label: l10n.veryLow,
+                        value: '${dist['veryLow']}${l10n.times}',
+                        percentage: hasData
+                            ? '${(dist['veryLow']! / total * 100).toInt()}%'
+                            : '0%',
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -786,16 +851,24 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _PieChartPainter extends CustomPainter {
+  final double veryLowRatio;
   final double lowRatio;
   final double normalRatio;
   final double highRatio;
+  final double veryHighRatio;
   final Color holeColor;
+  final bool hasData;
+  final Color emptyColor;
 
   _PieChartPainter({
+    required this.veryLowRatio,
     required this.lowRatio,
     required this.normalRatio,
     required this.highRatio,
+    required this.veryHighRatio,
     required this.holeColor,
+    required this.hasData,
+    required this.emptyColor,
   });
 
   @override
@@ -804,7 +877,32 @@ class _PieChartPainter extends CustomPainter {
     final radius = math.min(size.width, size.height) / 2;
     final rect = Rect.fromCircle(center: center, radius: radius);
 
+    // 데이터가 없으면 회색 원 그리기
+    if (!hasData) {
+      final greyPaint = Paint()
+        ..color = emptyColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(center, radius, greyPaint);
+
+      // 중앙 구멍 (도넛 차트)
+      final holePaint = Paint()
+        ..color = holeColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(center, radius * 0.6, holePaint);
+      return;
+    }
+
     double startAngle = -math.pi / 2;
+
+    // 매우 저혈당
+    if (veryLowRatio > 0) {
+      final sweepAngle = veryLowRatio * 2 * math.pi;
+      final paint = Paint()
+        ..color = AppTheme.glucoseVeryLow
+        ..style = PaintingStyle.fill;
+      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      startAngle += sweepAngle;
+    }
 
     // 저혈당
     if (lowRatio > 0) {
@@ -831,6 +929,16 @@ class _PieChartPainter extends CustomPainter {
       final sweepAngle = highRatio * 2 * math.pi;
       final paint = Paint()
         ..color = AppTheme.glucoseHigh
+        ..style = PaintingStyle.fill;
+      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      startAngle += sweepAngle;
+    }
+
+    // 매우 고혈당
+    if (veryHighRatio > 0) {
+      final sweepAngle = veryHighRatio * 2 * math.pi;
+      final paint = Paint()
+        ..color = AppTheme.glucoseVeryHigh
         ..style = PaintingStyle.fill;
       canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
     }
