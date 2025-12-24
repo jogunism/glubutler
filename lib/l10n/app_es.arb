@@ -239,5 +239,12 @@
   "scoreInfoBedtime": "Antes de dormir (después de las 22): 6 mediciones en total",
   "scoreInfoLifestyle": "Estilo de vida (con app Salud)",
   "scoreInfoLifestyleDesc": "Los datos de sueño y ejercicio de Apple Salud se incluyen para una puntuación más precisa.",
-  "scoreInfoPrivacy": "*Toda la información utilizada en la app no se almacena por separado ni se comparte externamente."
+  "scoreInfoPrivacy": "*Toda la información utilizada en la app no se almacena por separado ni se comparte externamente.",
+
+  "deleteDiary": "Eliminar diario",
+  "deleteDiaryConfirmation": "¿Está seguro de que desea eliminar?\nEsta acción no se puede deshacer.",
+  "diaryDeleted": "Eliminado",
+  "diaryDeleteFailed": "Error al eliminar",
+  "diaryUpdated": "Diario actualizado",
+  "editDiary": "Editar diario"
 }

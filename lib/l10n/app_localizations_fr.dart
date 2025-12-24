@@ -705,4 +705,23 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteFailed => 'Échec de la suppression';
+
+  @override
+  String get deleteDiary => 'Supprimer le journal';
+
+  @override
+  String get deleteDiaryConfirmation =>
+      'Voulez-vous vraiment supprimer ?\nCette action est irréversible.';
+
+  @override
+  String get diaryDeleted => 'Supprimé';
+
+  @override
+  String get diaryDeleteFailed => 'Échec de la suppression';
+
+  @override
+  String get diaryUpdated => 'Journal mis à jour';
+
+  @override
+  String get editDiary => 'Modifier le journal';
 }

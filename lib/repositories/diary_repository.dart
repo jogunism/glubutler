@@ -89,6 +89,14 @@ class DiaryRepository {
     try {
       await _databaseService.updateDiary(entry);
 
+      // Update files: delete all existing files and insert new ones
+      await _databaseService.deleteDiaryFiles(entry.id);
+      if (entry.files.isNotEmpty) {
+        for (final file in entry.files) {
+          await _databaseService.insertDiaryFile(file);
+        }
+      }
+
       // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
       // _cloudKitService.saveDiaryEntry(entry);
 

@@ -246,5 +246,12 @@
   "deleteGlucoseConfirmation": "정말 삭제하시겠습니까?\n삭제하면 되돌릴 수 없습니다.",
   "glucoseDeleted": "혈당 기록이 삭제되었습니다",
   "insulinDeleted": "인슐린 기록이 삭제되었습니다",
-  "deleteFailed": "삭제에 실패했습니다"
+  "deleteFailed": "삭제에 실패했습니다",
+
+  "deleteDiary": "일기 삭제",
+  "deleteDiaryConfirmation": "삭제하시겠습니까?\n되돌릴 수 없습니다.",
+  "diaryDeleted": "삭제되었습니다",
+  "diaryDeleteFailed": "삭제에 실패했습니다",
+  "diaryUpdated": "일기가 수정되었습니다",
+  "editDiary": "일기 수정"
 }

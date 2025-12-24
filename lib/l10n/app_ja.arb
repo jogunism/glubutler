@@ -239,5 +239,12 @@
   "scoreInfoBedtime": "就寝前（22時以降）：合計6回",
   "scoreInfoLifestyle": "生活習慣（ヘルスケア連携時）",
   "scoreInfoLifestyleDesc": "睡眠時間、運動記録などのヘルスケアデータを一緒に評価してスコアを計算します。",
-  "scoreInfoPrivacy": "*アプリで使用されるすべての情報は、別途保存されたり外部に共有されることはありません。"
+  "scoreInfoPrivacy": "*アプリで使用されるすべての情報は、別途保存されたり外部に共有されることはありません。",
+
+  "deleteDiary": "日記を削除",
+  "deleteDiaryConfirmation": "削除しますか？\n元に戻すことはできません。",
+  "diaryDeleted": "削除されました",
+  "diaryDeleteFailed": "削除に失敗しました",
+  "diaryUpdated": "日記が更新されました",
+  "editDiary": "日記を編集"
 }

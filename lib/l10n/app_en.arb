@@ -257,5 +257,12 @@
   "deleteGlucoseConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
   "glucoseDeleted": "Glucose record deleted",
   "insulinDeleted": "Insulin record deleted",
-  "deleteFailed": "Delete failed"
+  "deleteFailed": "Delete failed",
+
+  "deleteDiary": "Delete Diary",
+  "deleteDiaryConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
+  "diaryDeleted": "Deleted",
+  "diaryDeleteFailed": "Delete failed",
+  "diaryUpdated": "Diary updated",
+  "editDiary": "Edit Diary"
 }

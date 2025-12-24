@@ -683,4 +683,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deleteFailed => '删除失败';
+
+  @override
+  String get deleteDiary => '删除日记';
+
+  @override
+  String get deleteDiaryConfirmation => '确定要删除吗？\n此操作无法撤销。';
+
+  @override
+  String get diaryDeleted => '已删除';
+
+  @override
+  String get diaryDeleteFailed => '删除失败';
+
+  @override
+  String get diaryUpdated => '日记已更新';
+
+  @override
+  String get editDiary => '编辑日记';
 }

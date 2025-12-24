@@ -392,6 +392,14 @@ class RecordDao {
     );
   }
 
+  Future<int> deleteDiaryFiles(String diaryId) async {
+    return await db.delete(
+      DatabaseSchema.tableDiaryFiles,
+      where: 'diary_id = ?',
+      whereArgs: [diaryId],
+    );
+  }
+
   // ============ Utility ============
 
   /// Clear all record tables

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:io';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
@@ -8,6 +10,8 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
+import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
 import 'package:glu_butler/models/diary_entry.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
 
@@ -82,6 +86,64 @@ class DiaryScreenState extends State<DiaryScreen> {
     await _loadEntries();
   }
 
+  Future<void> _editEntry(DiaryEntry entry) async {
+    final result = await DiaryInputModal.show(
+      context,
+      entry: entry,
+    );
+
+    if (result == true) {
+      await _loadEntries();
+    }
+  }
+
+  Future<void> _deleteEntry(DiaryEntry entry) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(l10n.deleteDiary),
+        content: Text(l10n.deleteDiaryConfirmation),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _diaryRepository.delete(entry.id);
+
+        if (mounted) {
+          TopBanner.show(
+            context,
+            message: l10n.diaryDeleted,
+            isSuccess: true,
+          );
+          await _loadEntries();
+        }
+      } catch (e) {
+        debugPrint('[DiaryScreen] Error deleting entry: $e');
+        if (mounted) {
+          TopBanner.show(
+            context,
+            message: l10n.diaryDeleteFailed,
+            isSuccess: false,
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -135,7 +197,11 @@ class DiaryScreenState extends State<DiaryScreen> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final entry = _entries[index];
-                  return _DiaryEntryCard(entry: entry);
+                  return _DiaryEntryCard(
+                    entry: entry,
+                    onEdit: () => _editEntry(entry),
+                    onDelete: () => _deleteEntry(entry),
+                  );
                 },
                 childCount: _entries.length,
               ),
@@ -148,8 +214,14 @@ class DiaryScreenState extends State<DiaryScreen> {
 
 class _DiaryEntryCard extends StatelessWidget {
   final DiaryEntry entry;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-  const _DiaryEntryCard({required this.entry});
+  const _DiaryEntryCard({
+    required this.entry,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   String _formatDate(DateTime date) {
     return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
@@ -170,21 +242,54 @@ class _DiaryEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final photos = entry.files.take(3).toList();
     final remainingPhotos = entry.files.length > 3 ? entry.files.length - 3 : 0;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: context.decorations.card.copyWith(
-        border: Border.all(
-          color: context.colors.divider,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Slidable(
+          key: Key(entry.id),
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            extentRatio: 0.35,
+            children: [
+              CustomSlidableAction(
+                onPressed: (context) => onEdit(),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const Icon(
+                  CupertinoIcons.pencil,
+                  size: 24,
+                ),
+              ),
+              CustomSlidableAction(
+                onPressed: (context) => onDelete(),
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const Icon(
+                  CupertinoIcons.delete,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: context.decorations.card.copyWith(
+              border: Border.all(
+                color: context.colors.divider,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           // 날짜
           Text(
             _formatDate(entry.timestamp),
@@ -250,7 +355,10 @@ class _DiaryEntryCard extends StatelessWidget {
               ],
             ),
           ],
-        ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -239,5 +239,12 @@
   "scoreInfoBedtime": "睡前（22点后）：共6次",
   "scoreInfoLifestyle": "生活习惯（连接健康App时）",
   "scoreInfoLifestyleDesc": "结合睡眠时间、运动记录等健康App数据计算评分。",
-  "scoreInfoPrivacy": "*应用中使用的所有信息不会单独存储或分享到外部。"
+  "scoreInfoPrivacy": "*应用中使用的所有信息不会单独存储或分享到外部。",
+
+  "deleteDiary": "删除日记",
+  "deleteDiaryConfirmation": "确定要删除吗？\n此操作无法撤销。",
+  "diaryDeleted": "已删除",
+  "diaryDeleteFailed": "删除失败",
+  "diaryUpdated": "日记已更新",
+  "editDiary": "编辑日记"
 }

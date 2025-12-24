@@ -700,4 +700,23 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get deleteFailed => 'Eliminazione fallita';
+
+  @override
+  String get deleteDiary => 'Elimina diario';
+
+  @override
+  String get deleteDiaryConfirmation =>
+      'Sei sicuro di voler eliminare?\nQuesta azione non può essere annullata.';
+
+  @override
+  String get diaryDeleted => 'Eliminato';
+
+  @override
+  String get diaryDeleteFailed => 'Eliminazione fallita';
+
+  @override
+  String get diaryUpdated => 'Diario aggiornato';
+
+  @override
+  String get editDiary => 'Modifica diario';
 }

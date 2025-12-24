@@ -684,4 +684,22 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get deleteFailed => '削除に失敗しました';
+
+  @override
+  String get deleteDiary => '日記を削除';
+
+  @override
+  String get deleteDiaryConfirmation => '削除しますか？\n元に戻すことはできません。';
+
+  @override
+  String get diaryDeleted => '削除されました';
+
+  @override
+  String get diaryDeleteFailed => '削除に失敗しました';
+
+  @override
+  String get diaryUpdated => '日記が更新されました';
+
+  @override
+  String get editDiary => '日記を編集';
 }

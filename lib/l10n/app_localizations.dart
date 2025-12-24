@@ -1447,6 +1447,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete failed'**
   String get deleteFailed;
+
+  /// No description provided for @deleteDiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Diary'**
+  String get deleteDiary;
+
+  /// No description provided for @deleteDiaryConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete?\nThis action cannot be undone.'**
+  String get deleteDiaryConfirmation;
+
+  /// No description provided for @diaryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get diaryDeleted;
+
+  /// No description provided for @diaryDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete failed'**
+  String get diaryDeleteFailed;
+
+  /// No description provided for @diaryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary updated'**
+  String get diaryUpdated;
+
+  /// No description provided for @editDiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Diary'**
+  String get editDiary;
 }
 
 class _AppLocalizationsDelegate

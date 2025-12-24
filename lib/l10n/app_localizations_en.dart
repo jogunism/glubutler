@@ -699,4 +699,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteFailed => 'Delete failed';
+
+  @override
+  String get deleteDiary => 'Delete Diary';
+
+  @override
+  String get deleteDiaryConfirmation =>
+      'Are you sure you want to delete?\nThis action cannot be undone.';
+
+  @override
+  String get diaryDeleted => 'Deleted';
+
+  @override
+  String get diaryDeleteFailed => 'Delete failed';
+
+  @override
+  String get diaryUpdated => 'Diary updated';
+
+  @override
+  String get editDiary => 'Edit Diary';
 }

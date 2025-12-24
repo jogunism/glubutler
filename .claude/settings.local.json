@@ -20,7 +20,11 @@
       "Bash(do grep -n \"String get no =>\" \"$file\")",
       "Bash(done)",
       "Bash(ls:*)",
-      "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter clean:*)"
+      "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter clean:*)",
+      "Bash(printenv:*)",
+      "Bash(unalias:*)",
+      "Bash(source ~/.zshrc)",
+      "Bash(killall:*)"
     ]
   }
 }

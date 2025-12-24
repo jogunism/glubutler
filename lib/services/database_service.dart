@@ -137,6 +137,7 @@ class DatabaseService {
   Future<int> insertDiaryFile(DiaryFile file) => recordDao.insertDiaryFile(file);
   Future<List<DiaryFile>> getDiaryFiles(String diaryId) => recordDao.getDiaryFiles(diaryId);
   Future<int> deleteDiaryFile(String id) => recordDao.deleteDiaryFile(id);
+  Future<int> deleteDiaryFiles(String diaryId) => recordDao.deleteDiaryFiles(diaryId);
 
   // ============ Utility Methods ============
 

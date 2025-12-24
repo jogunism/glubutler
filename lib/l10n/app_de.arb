@@ -239,5 +239,12 @@
   "scoreInfoBedtime": "Vor dem Schlafengehen (nach 22 Uhr): 6 Messungen insgesamt",
   "scoreInfoLifestyle": "Lebensstil (mit Health-App)",
   "scoreInfoLifestyleDesc": "Schlaf- und Bewegungsdaten aus der Health-App werden für eine genauere Bewertung berücksichtigt.",
-  "scoreInfoPrivacy": "*Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben."
+  "scoreInfoPrivacy": "*Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.",
+
+  "deleteDiary": "Tagebuch löschen",
+  "deleteDiaryConfirmation": "Möchten Sie wirklich löschen?\nDies kann nicht rückgängig gemacht werden.",
+  "diaryDeleted": "Gelöscht",
+  "diaryDeleteFailed": "Löschen fehlgeschlagen",
+  "diaryUpdated": "Tagebuch aktualisiert",
+  "editDiary": "Tagebuch bearbeiten"
 }

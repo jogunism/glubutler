@@ -684,4 +684,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get deleteFailed => '삭제에 실패했습니다';
+
+  @override
+  String get deleteDiary => '일기 삭제';
+
+  @override
+  String get deleteDiaryConfirmation => '삭제하시겠습니까?\n되돌릴 수 없습니다.';
+
+  @override
+  String get diaryDeleted => '삭제되었습니다';
+
+  @override
+  String get diaryDeleteFailed => '삭제에 실패했습니다';
+
+  @override
+  String get diaryUpdated => '일기가 수정되었습니다';
+
+  @override
+  String get editDiary => '일기 수정';
 }

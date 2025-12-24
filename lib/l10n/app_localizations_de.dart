@@ -700,4 +700,23 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteFailed => 'Löschen fehlgeschlagen';
+
+  @override
+  String get deleteDiary => 'Tagebuch löschen';
+
+  @override
+  String get deleteDiaryConfirmation =>
+      'Möchten Sie wirklich löschen?\nDies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get diaryDeleted => 'Gelöscht';
+
+  @override
+  String get diaryDeleteFailed => 'Löschen fehlgeschlagen';
+
+  @override
+  String get diaryUpdated => 'Tagebuch aktualisiert';
+
+  @override
+  String get editDiary => 'Tagebuch bearbeiten';
 }
