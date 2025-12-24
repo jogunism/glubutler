@@ -10,8 +10,10 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/app_settings_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 앱 설정 화면
@@ -48,13 +50,24 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _iCloudEnabled = false;
+  final _cloudKitService = CloudKitService();
+  bool _cloudKitAvailable = false;
 
-  void _toggleiCloudSync(bool value) {
-    setState(() {
-      _iCloudEnabled = value;
-    });
-    // TODO: Implement iCloud sync logic
+  @override
+  void initState() {
+    super.initState();
+    _checkCloudKitStatus();
+  }
+
+  Future<void> _checkCloudKitStatus() async {
+    final isAvailable = await _cloudKitService.isAvailable();
+    final isSignedIn = await _cloudKitService.isUserSignedIn();
+
+    if (mounted) {
+      setState(() {
+        _cloudKitAvailable = isAvailable && isSignedIn;
+      });
+    }
   }
 
   @override
@@ -188,18 +201,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
 
-                  // iCloud Sync
+                  // CloudKit Sync (자동 동기화)
                   _buildSettingsTile(
                     context: context,
                     icon: CupertinoIcons.cloud,
                     iconColor: CupertinoColors.activeBlue,
                     title: l10n.iCloudSync,
-                    subtitle: l10n.iCloudSyncDescription,
-                    trailing: CupertinoSwitch(
-                      value: _iCloudEnabled,
-                      onChanged: _toggleiCloudSync,
+                    subtitle: _cloudKitAvailable
+                        ? l10n.connected
+                        : 'iCloud에 로그인하여 자동 동기화 활성화',
+                    trailing: Icon(
+                      _cloudKitAvailable
+                          ? CupertinoIcons.checkmark_circle_fill
+                          : CupertinoIcons.exclamationmark_circle,
+                      color: _cloudKitAvailable
+                          ? CupertinoColors.systemGreen
+                          : CupertinoColors.systemGrey,
                     ),
-                    onTap: () {}, // 스위치가 탭을 처리하므로 빈 함수
+                    onTap: () {
+                      // CloudKit은 자동 동기화이므로 설정 없음
+                      // 필요시 설정 앱으로 이동하는 기능 추가 가능
+                    },
                   ),
                 ],
               ),

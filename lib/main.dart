@@ -9,6 +9,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
 void main() async {
@@ -22,6 +23,11 @@ void main() async {
 
   final settingsService = SettingsService();
   await settingsService.init();
+
+  // TODO: CloudKit 동기화 - Apple Developer Program($99/년) 가입 후 활성화
+  // CloudKit requires a paid Apple Developer account to work
+  // final cloudKitService = CloudKitService();
+  // await cloudKitService.syncOnStartup();
 
   final feedProvider = FeedProvider();
   feedProvider.setSettingsService(settingsService);

@@ -3,20 +3,25 @@ import 'package:flutter/foundation.dart';
 import 'package:glu_butler/models/diary_entry.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 
 /// Repository for diary entries and files.
 ///
-/// Handles reading/writing diary data to local database.
+/// Handles reading/writing diary data to local database and CloudKit sync.
 class DiaryRepository {
   final DatabaseService _databaseService;
+  final CloudKitService _cloudKitService;
 
   DiaryRepository({
     DatabaseService? databaseService,
-  }) : _databaseService = databaseService ?? DatabaseService();
+    CloudKitService? cloudKitService,
+  })  : _databaseService = databaseService ?? DatabaseService(),
+        _cloudKitService = cloudKitService ?? CloudKitService();
 
   /// Save a diary entry with optional files.
   ///
   /// Returns true if save was successful.
+  /// Automatically syncs to CloudKit if enabled.
   Future<bool> save(DiaryEntry entry) async {
     try {
       await _databaseService.insertDiary(entry);
@@ -27,6 +32,9 @@ class DiaryRepository {
           await _databaseService.insertDiaryFile(file);
         }
       }
+
+      // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
+      // _cloudKitService.saveDiaryEntry(entry);
 
       return true;
     } catch (e) {
@@ -67,14 +75,23 @@ class DiaryRepository {
   }
 
   /// Delete a diary entry and its files (CASCADE).
+  /// Automatically syncs to CloudKit if enabled.
   Future<void> delete(String id) async {
     await _databaseService.deleteDiary(id);
+
+    // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
+    // _cloudKitService.deleteDiaryEntry(id);
   }
 
   /// Update a diary entry.
+  /// Automatically syncs to CloudKit if enabled.
   Future<bool> update(DiaryEntry entry) async {
     try {
       await _databaseService.updateDiary(entry);
+
+      // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
+      // _cloudKitService.saveDiaryEntry(entry);
+
       return true;
     } catch (e) {
       debugPrint('[DiaryRepository] Failed to update diary: $e');

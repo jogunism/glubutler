@@ -15,7 +15,12 @@
       "Bash(xcodebuild clean:*)",
       "Bash(pod install:*)",
       "Bash(flutter build:*)",
-      "Bash(dart run build_runner build:*)"
+      "Bash(dart run build_runner build:*)",
+      "Bash(for file in lib/l10n/app_localizations_{ja,zh,de,es,fr,it}.dart)",
+      "Bash(do grep -n \"String get no =>\" \"$file\")",
+      "Bash(done)",
+      "Bash(ls:*)",
+      "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter clean:*)"
     ]
   }
 }

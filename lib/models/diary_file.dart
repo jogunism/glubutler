@@ -53,6 +53,36 @@ class DiaryFile {
     };
   }
 
+  /// JSON으로부터 생성 (CloudKit 용)
+  factory DiaryFile.fromJson(Map<String, dynamic> json) {
+    return DiaryFile(
+      id: json['id'] as String,
+      diaryId: json['diaryId'] as String,
+      filePath: json['filePath'] as String,
+      latitude: json['latitude'] as double?,
+      longitude: json['longitude'] as double?,
+      capturedAt: json['capturedAt'] != null
+          ? DateTime.parse(json['capturedAt'] as String)
+          : null,
+      fileSize: json['fileSize'] as int?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+
+  /// JSON으로 변환 (CloudKit 용)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'diaryId': diaryId,
+      'filePath': filePath,
+      'latitude': latitude,
+      'longitude': longitude,
+      'capturedAt': capturedAt?.toIso8601String(),
+      'fileSize': fileSize,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
   DiaryFile copyWith({
     String? id,
     String? diaryId,

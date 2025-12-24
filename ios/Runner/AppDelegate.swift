@@ -1,9 +1,11 @@
 import UIKit
 import HealthKit
+import CloudKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   private let healthKitBridge = HealthKitBridge()
+  private let cloudKitBridge = CloudKitBridge()
 
   override func application(
     _ application: UIApplication,
@@ -26,6 +28,58 @@ import HealthKit
           result(FlutterError(code: "UNAVAILABLE", message: "Cannot open settings", details: nil))
         }
       } else {
+        result(FlutterMethodNotImplemented)
+      }
+    }
+
+    // CloudKit Channel
+    let cloudKitChannel = FlutterMethodChannel(
+      name: "cloudkit",
+      binaryMessenger: controller.binaryMessenger
+    )
+
+    cloudKitChannel.setMethodCallHandler { [weak self] (call, result) in
+      guard let self = self else { return }
+
+      switch call.method {
+      case "isAvailable":
+        self.cloudKitBridge.isAvailable(result: result)
+
+      case "isUserSignedIn":
+        self.cloudKitBridge.isUserSignedIn(result: result)
+
+      case "saveDiaryEntry":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.saveDiaryEntry(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
+
+      case "fetchDiaryEntries":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.fetchDiaryEntries(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
+
+      case "fetchDiaryFiles":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.fetchDiaryFiles(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
+
+      case "deleteDiaryEntry":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.deleteDiaryEntry(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
+
+      case "syncOnStartup":
+        self.cloudKitBridge.syncOnStartup(result: result)
+
+      default:
         result(FlutterMethodNotImplemented)
       }
     }

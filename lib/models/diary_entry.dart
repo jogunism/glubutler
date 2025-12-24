@@ -40,6 +40,31 @@ class DiaryEntry {
     };
   }
 
+  /// JSON으로부터 생성 (CloudKit 용)
+  factory DiaryEntry.fromJson(Map<String, dynamic> json) {
+    return DiaryEntry(
+      id: json['id'] as String,
+      content: json['content'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      files: (json['files'] as List<dynamic>?)
+              ?.map((f) => DiaryFile.fromJson(f as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+
+  /// JSON으로 변환 (CloudKit 용)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'content': content,
+      'timestamp': timestamp.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'files': files.map((f) => f.toJson()).toList(),
+    };
+  }
+
   DiaryEntry copyWith({
     String? id,
     String? content,
