@@ -764,6 +764,84 @@ abstract class AppLocalizations {
   /// **'Glucose Status'**
   String get glucoseStatus;
 
+  /// No description provided for @scoreHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn about the score'**
+  String get scoreHint;
+
+  /// No description provided for @scoreInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Glucose Score Guide'**
+  String get scoreInfoTitle;
+
+  /// No description provided for @scoreInfoQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Glucose Management Quality'**
+  String get scoreInfoQuality;
+
+  /// No description provided for @scoreInfoQualityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The closer your glucose measurements are to the target range, the higher your score.'**
+  String get scoreInfoQualityDesc;
+
+  /// No description provided for @scoreInfoConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement Consistency'**
+  String get scoreInfoConsistency;
+
+  /// No description provided for @scoreInfoConsistencyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The more regularly you measure your glucose throughout the day, the higher your score.'**
+  String get scoreInfoConsistencyDesc;
+
+  /// No description provided for @scoreInfoRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Measurement Frequency'**
+  String get scoreInfoRecommendation;
+
+  /// No description provided for @scoreInfoMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning (before 9 AM): 1 fasting measurement'**
+  String get scoreInfoMorning;
+
+  /// No description provided for @scoreInfoLunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Before lunch (before 2 PM): 3 total measurements'**
+  String get scoreInfoLunch;
+
+  /// No description provided for @scoreInfoDinner.
+  ///
+  /// In en, this message translates to:
+  /// **'Before dinner (before 7 PM): 5 total measurements'**
+  String get scoreInfoDinner;
+
+  /// No description provided for @scoreInfoBedtime.
+  ///
+  /// In en, this message translates to:
+  /// **'Before bed (after 10 PM): 6 total measurements'**
+  String get scoreInfoBedtime;
+
+  /// No description provided for @scoreInfoLifestyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifestyle (with Health app)'**
+  String get scoreInfoLifestyle;
+
+  /// No description provided for @scoreInfoLifestyleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep and exercise data from Apple Health are included for more accurate scoring.'**
+  String get scoreInfoLifestyleDesc;
+
   /// No description provided for @times.
   ///
   /// In en, this message translates to:

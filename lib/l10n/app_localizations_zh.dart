@@ -337,6 +337,51 @@ class AppLocalizationsZh extends AppLocalizations {
   String get glucoseStatus => 'Glucose Status';
 
   @override
+  String get scoreHint => 'Learn about the score';
+
+  @override
+  String get scoreInfoTitle => 'Glucose Score Guide';
+
+  @override
+  String get scoreInfoQuality => 'Glucose Management Quality';
+
+  @override
+  String get scoreInfoQualityDesc =>
+      'The closer your glucose measurements are to the target range, the higher your score.';
+
+  @override
+  String get scoreInfoConsistency => 'Measurement Consistency';
+
+  @override
+  String get scoreInfoConsistencyDesc =>
+      'The more regularly you measure your glucose throughout the day, the higher your score.';
+
+  @override
+  String get scoreInfoRecommendation => 'Recommended Measurement Frequency';
+
+  @override
+  String get scoreInfoMorning => 'Morning (before 9 AM): 1 fasting measurement';
+
+  @override
+  String get scoreInfoLunch =>
+      'Before lunch (before 2 PM): 3 total measurements';
+
+  @override
+  String get scoreInfoDinner =>
+      'Before dinner (before 7 PM): 5 total measurements';
+
+  @override
+  String get scoreInfoBedtime =>
+      'Before bed (after 10 PM): 6 total measurements';
+
+  @override
+  String get scoreInfoLifestyle => 'Lifestyle (with Health app)';
+
+  @override
+  String get scoreInfoLifestyleDesc =>
+      'Sleep and exercise data from Apple Health are included for more accurate scoring.';
+
+  @override
   String get times => '次';
 
   @override

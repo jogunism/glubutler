@@ -11,13 +11,13 @@ import 'package:glu_butler/core/navigation/main_screen.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
-import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/modals/date_picker_modal.dart';
 import 'package:glu_butler/repositories/glucose_repository.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/glucose_score_service.dart';
 
 /// 홈 대시보드 화면
 ///
@@ -268,7 +268,17 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildChartCard(BuildContext context, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: context.decorations.card,
+      decoration: BoxDecoration(
+        color: context.colors.card,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           // 타이틀
@@ -551,7 +561,17 @@ class _HomeScreenState extends State<HomeScreen>
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: context.decorations.card,
+      decoration: BoxDecoration(
+        color: context.colors.card,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -646,6 +666,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildDistributionCard(BuildContext context, AppLocalizations l10n) {
+    final settings = context.watch<SettingsService>();
     final dist = _rangeDistribution;
     final total = dist['veryLow']! +
         dist['low']! +
@@ -654,9 +675,27 @@ class _HomeScreenState extends State<HomeScreen>
         dist['veryHigh']!;
     final hasData = total > 0;
 
+    // 점수 계산
+    final score = hasData
+        ? GlucoseScoreService.calculateScore(
+            records: _todayRecords,
+            glucoseRange: settings.glucoseRange,
+          )
+        : 0;
+
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: context.decorations.card,
+      decoration: BoxDecoration(
+        color: context.colors.card,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -701,7 +740,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     // 중앙 점수 표시
                     Text(
-                      hasData ? '72' : '-',
+                      hasData ? score.toString() : '-',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -781,6 +820,245 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          // 점수 정보 버튼
+          GestureDetector(
+            onTap: () => _showScoreInfoModal(context),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  CupertinoIcons.info_circle,
+                  size: 14,
+                  color: context.colors.textSecondary.withValues(alpha: 0.7),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  l10n.scoreHint,
+                  style: context.textStyles.tileSubtitle.copyWith(
+                    fontSize: 11,
+                    color: context.colors.textSecondary.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showScoreInfoModal(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    // 모달 열기 전 탭바 숨김
+    MainScreen.globalKey.currentState?.setTabBarVisibility(false);
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      useRootNavigator: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: context.colors.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.only(bottom: bottomPadding + 30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 드래그 핸들
+            Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // 헤더
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      l10n.close,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    ),
+                  ),
+                  Text(
+                    l10n.scoreInfoTitle,
+                    style: context.textStyles.tileTitle.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 60), // 균형 맞추기
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // 컨텐츠
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 혈당 관리 품질
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.checkmark_circle_fill,
+                        size: 20,
+                        color: CupertinoColors.systemGreen,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.scoreInfoQuality,
+                              style: context.textStyles.tileTitle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              l10n.scoreInfoQualityDesc,
+                              style: context.textStyles.tileSubtitle.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // 측정 일관성
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.checkmark_circle_fill,
+                        size: 20,
+                        color: CupertinoColors.systemGreen,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.scoreInfoConsistency,
+                              style: context.textStyles.tileTitle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              l10n.scoreInfoConsistencyDesc,
+                              style: context.textStyles.tileSubtitle.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // 생활습관 (건강 앱 연동시)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.checkmark_circle_fill,
+                        size: 20,
+                        color: CupertinoColors.systemGreen,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.scoreInfoLifestyle,
+                              style: context.textStyles.tileTitle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              l10n.scoreInfoLifestyleDesc,
+                              style: context.textStyles.tileSubtitle.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // 권장 측정 횟수
+                  Text(
+                    l10n.scoreInfoRecommendation,
+                    style: context.textStyles.tileTitle.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildRecommendationItem(context, l10n.scoreInfoMorning),
+                  _buildRecommendationItem(context, l10n.scoreInfoLunch),
+                  _buildRecommendationItem(context, l10n.scoreInfoDinner),
+                  _buildRecommendationItem(context, l10n.scoreInfoBedtime),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+
+    // 모달 닫힌 후 탭바 다시 표시
+    MainScreen.globalKey.currentState?.setTabBarVisibility(true);
+  }
+
+  Widget _buildRecommendationItem(BuildContext context, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: context.textStyles.tileSubtitle.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: context.textStyles.tileSubtitle.copyWith(
+                color: context.colors.textSecondary,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -817,27 +1095,6 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildReportButton(BuildContext context, AppLocalizations l10n) {
-    return CupertinoButton(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      color: AppTheme.primaryColor,
-      borderRadius: BorderRadius.circular(12),
-      onPressed: () => MainScreen.switchToTab(3), // Report tab
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(l10n.viewReport, style: context.textStyles.buttonText),
-          const SizedBox(width: 8),
-          const Icon(
-            CupertinoIcons.chevron_right,
-            color: Colors.white,
-            size: 18,
-          ),
-        ],
-      ),
     );
   }
 }

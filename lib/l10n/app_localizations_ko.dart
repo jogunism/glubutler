@@ -315,7 +315,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get points => '점';
 
   @override
-  String get todaysGlucose => '혈당 추이';
+  String get todaysGlucose => '혈당추이';
 
   @override
   String get todaysStats => '오늘의 통계';
@@ -334,6 +334,46 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get glucoseStatus => '혈당상태';
+
+  @override
+  String get scoreHint => '점수에 대해 알아보세요';
+
+  @override
+  String get scoreInfoTitle => '혈당 점수 안내';
+
+  @override
+  String get scoreInfoQuality => '혈당 관리 품질';
+
+  @override
+  String get scoreInfoQualityDesc => '측정한 혈당이 목표 범위에 가까울수록 점수가 높아집니다.';
+
+  @override
+  String get scoreInfoConsistency => '측정 일관성';
+
+  @override
+  String get scoreInfoConsistencyDesc => '하루 동안 규칙적으로 혈당을 측정할수록 점수가 높아집니다.';
+
+  @override
+  String get scoreInfoRecommendation => '권장 측정 횟수';
+
+  @override
+  String get scoreInfoMorning => '아침 (9시 전): 공복 1회';
+
+  @override
+  String get scoreInfoLunch => '점심 전 (2시 전): 총 3회';
+
+  @override
+  String get scoreInfoDinner => '저녁 전 (7시 전): 총 5회';
+
+  @override
+  String get scoreInfoBedtime => '자기 전 (10시 후): 총 6회';
+
+  @override
+  String get scoreInfoLifestyle => '생활습관 (건강 앱 연동시)';
+
+  @override
+  String get scoreInfoLifestyleDesc =>
+      '수면 시간과 운동 기록을 함께 평가하여 점수를 더욱 정확하게 계산합니다.';
 
   @override
   String get times => '회';
