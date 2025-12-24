@@ -335,6 +335,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get glucoseDistribution => 'Glucose Distribution';
 
   @override
+  String get glucoseStatus => 'Glucose Status';
+
+  @override
   String get times => '×';
 
   @override

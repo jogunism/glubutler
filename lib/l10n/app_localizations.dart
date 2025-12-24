@@ -758,6 +758,12 @@ abstract class AppLocalizations {
   /// **'Glucose Distribution'**
   String get glucoseDistribution;
 
+  /// No description provided for @glucoseStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Glucose Status'**
+  String get glucoseStatus;
+
   /// No description provided for @times.
   ///
   /// In en, this message translates to:

@@ -334,6 +334,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get glucoseDistribution => '血糖分布';
 
   @override
+  String get glucoseStatus => 'Glucose Status';
+
+  @override
   String get times => '次';
 
   @override

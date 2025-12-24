@@ -212,5 +212,7 @@
   "deleteGlucoseConfirmation": "Sei sicuro di voler eliminare?\nQuesta azione non può essere annullata.",
   "glucoseDeleted": "Glicemia eliminata",
   "insulinDeleted": "Insulina eliminata",
-  "deleteFailed": "Eliminazione fallita"
+  "deleteFailed": "Eliminazione fallita",
+
+  "glucoseStatus": "Stato Glicemico"
 }

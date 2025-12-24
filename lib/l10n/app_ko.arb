@@ -121,6 +121,7 @@
   "lowest": "최저",
   "highest": "최고",
   "glucoseDistribution": "혈당 범위 분포",
+  "glucoseStatus": "혈당상태",
   "times": "회",
   "viewReport": "리포트 보기",
   "noData": "데이터가 없습니다",

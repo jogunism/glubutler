@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/navigation/main_screen.dart';
@@ -137,22 +138,39 @@ class _HomeScreenState extends State<HomeScreen>
     } else if (selected == today.subtract(const Duration(days: 1))) {
       return l10n.yesterday;
     } else {
-      return '${_selectedDate.month}/${_selectedDate.day}';
+      // 국가별 날짜 형식 (예: "24 Dec 2025", "2025년 12월 24일")
+      return DateFormat.yMMMd(Localizations.localeOf(context).toString())
+          .format(_selectedDate);
     }
   }
 
-  int get _todayScore {
-    if (_todayRecords.isEmpty) return 0;
+  Widget _buildDateButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        // 모달을 열기 전에 탭바 숨김
+        MainScreen.globalKey.currentState?.setTabBarVisibility(false);
 
-    int inRange = 0;
-    for (final record in _todayRecords) {
-      final value = record.valueIn('mg/dL');
-      if (value >= 80 && value <= 160) {
-        inRange++;
-      }
-    }
+        final pickedDate = await DatePickerModal.show(
+          context,
+          initialDate: _selectedDate,
+        );
 
-    return ((inRange / _todayRecords.length) * 100).round();
+        // 모달이 닫히면 탭바 다시 보임
+        MainScreen.globalKey.currentState?.setTabBarVisibility(true);
+
+        if (pickedDate != null && pickedDate != _selectedDate) {
+          setState(() {
+            _selectedDate = pickedDate;
+          });
+          _loadSelectedDateData();
+        }
+      },
+      child: const Icon(
+        Icons.calendar_today,
+        size: 20,
+        color: AppTheme.primaryColor,
+      ),
+    );
   }
 
   double get _averageGlucose {
@@ -219,23 +237,16 @@ class _HomeScreenState extends State<HomeScreen>
     final l10n = AppLocalizations.of(context)!;
 
     return LargeTitleScrollView(
-      title: l10n.today,
+      title: _formatSelectedDate(),
       onRefresh: _onRefresh,
       trailing: const SettingsIconButton(),
+      titleTrailing: _buildDateButton(context),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              // 오늘의 점수
-              _buildScoreCard(context, l10n),
-              const SizedBox(height: 16),
-
-              // 시간대별 혈당 차트
-              _buildChartCard(context, l10n),
-              const SizedBox(height: 16),
-
-              // 일일 통계
+              // 일일 통계 (평균, 최저, 최고)
               _buildStatsCard(context, l10n),
               const SizedBox(height: 16),
 
@@ -243,8 +254,8 @@ class _HomeScreenState extends State<HomeScreen>
               _buildDistributionCard(context, l10n),
               const SizedBox(height: 16),
 
-              // 리포트 보기 버튼
-              _buildReportButton(context, l10n),
+              // 시간대별 혈당 차트
+              _buildChartCard(context, l10n),
               const SizedBox(height: 100), // 플로팅 탭바 높이만큼 여백
             ]),
           ),
@@ -253,120 +264,22 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildScoreCard(BuildContext context, AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      decoration: context.decorations.card,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        children: [
-          Text(
-            l10n.yourToday,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w500,
-              color: context.colors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            '$_todayScore',
-            style: const TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primaryColor,
-            ),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            l10n.points,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildChartCard(BuildContext context, AppLocalizations l10n) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final dateButtonColor = isDarkMode
-        ? context.colors.textPrimary
-        : AppTheme.primaryColor;
-
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: context.decorations.card,
       child: Column(
         children: [
-          // 타이틀과 날짜 선택 버튼
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l10n.todaysGlucose,
-                style: context.textStyles.tileTitle.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+          // 타이틀
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              l10n.todaysGlucose,
+              style: context.textStyles.tileTitle.copyWith(
+                fontWeight: FontWeight.w600,
               ),
-              GestureDetector(
-                onTap: () async {
-                  // 모달을 열기 전에 탭바 숨김
-                  MainScreen.globalKey.currentState?.setTabBarVisibility(false);
-
-                  final pickedDate = await DatePickerModal.show(
-                    context,
-                    initialDate: _selectedDate,
-                  );
-
-                  // 모달이 닫히면 탭바 다시 보임
-                  MainScreen.globalKey.currentState?.setTabBarVisibility(true);
-
-                  if (pickedDate != null && pickedDate != _selectedDate) {
-                    setState(() {
-                      _selectedDate = pickedDate;
-                    });
-                    _loadSelectedDateData();
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: dateButtonColor.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: dateButtonColor.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 14,
-                        color: dateButtonColor,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _formatSelectedDate(),
-                        style: context.textStyles.caption.copyWith(
-                          color: dateButtonColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
           const SizedBox(height: 16),
           // 차트
@@ -747,29 +660,59 @@ class _HomeScreenState extends State<HomeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 타이틀
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              l10n.glucoseStatus,
+              style: context.textStyles.tileTitle.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Row(
             children: [
               // 파이 차트
               SizedBox(
                 width: 100,
                 height: 100,
-                child: AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return CustomPaint(
-                      painter: _PieChartPainter(
-                        veryLowRatio: hasData ? dist['veryLow']! / total : 0,
-                        lowRatio: hasData ? dist['low']! / total : 0,
-                        normalRatio: hasData ? dist['normal']! / total : 0,
-                        highRatio: hasData ? dist['high']! / total : 0,
-                        veryHighRatio: hasData ? dist['veryHigh']! / total : 0,
-                        holeColor: context.colors.card,
-                        hasData: hasData,
-                        emptyColor: AppTheme.textSecondaryLight,
-                        animationValue: _animation.value,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _animation,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          size: const Size(100, 100),
+                          painter: _PieChartPainter(
+                            veryLowRatio: hasData ? dist['veryLow']! / total : 0,
+                            lowRatio: hasData ? dist['low']! / total : 0,
+                            normalRatio: hasData ? dist['normal']! / total : 0,
+                            highRatio: hasData ? dist['high']! / total : 0,
+                            veryHighRatio: hasData ? dist['veryHigh']! / total : 0,
+                            holeColor: context.colors.card,
+                            hasData: hasData,
+                            emptyColor: context.colors.textSecondary.withValues(alpha: 0.5),
+                            animationValue: hasData ? _animation.value : 1.0,
+                          ),
+                        );
+                      },
+                    ),
+                    // 중앙 점수 표시
+                    Text(
+                      hasData ? '72' : '-',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: hasData
+                            ? (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black)
+                            : context.colors.textSecondary.withValues(alpha: 0.5),
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 24),
@@ -926,7 +869,7 @@ class _PieChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2;
-    final rect = Rect.fromCircle(center: center, radius: radius);
+    final innerRadius = radius * 0.6;
 
     // 데이터가 없으면 회색 원 그리기
     if (!hasData) {
@@ -939,66 +882,72 @@ class _PieChartPainter extends CustomPainter {
       final holePaint = Paint()
         ..color = holeColor
         ..style = PaintingStyle.fill;
-      canvas.drawCircle(center, radius * 0.6, holePaint);
+      canvas.drawCircle(center, innerRadius, holePaint);
       return;
     }
 
     double startAngle = -math.pi / 2;
 
+    void drawRoundedArc(double sweepAngle, Color color) {
+      if (sweepAngle <= 0) return;
+
+      final paint = Paint()
+        ..color = color
+        ..style = PaintingStyle.fill;
+
+      final path = Path();
+
+      // 바깥쪽 호
+      final outerRect = Rect.fromCircle(center: center, radius: radius);
+      path.addArc(outerRect, startAngle, sweepAngle);
+
+      // 안쪽 호 (역방향)
+      final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
+      path.arcTo(innerRect, startAngle + sweepAngle, -sweepAngle, false);
+      path.close();
+
+      canvas.drawPath(path, paint);
+    }
+
     // 매우 저혈당
     if (veryLowRatio > 0) {
       final sweepAngle = veryLowRatio * 2 * math.pi * animationValue;
-      final paint = Paint()
-        ..color = AppTheme.glucoseVeryLow
-        ..style = PaintingStyle.fill;
-      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      drawRoundedArc(sweepAngle, AppTheme.glucoseVeryLow);
       startAngle += sweepAngle;
     }
 
     // 저혈당
     if (lowRatio > 0) {
       final sweepAngle = lowRatio * 2 * math.pi * animationValue;
-      final paint = Paint()
-        ..color = AppTheme.glucoseLow
-        ..style = PaintingStyle.fill;
-      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      drawRoundedArc(sweepAngle, AppTheme.glucoseLow);
       startAngle += sweepAngle;
     }
 
     // 정상
     if (normalRatio > 0) {
       final sweepAngle = normalRatio * 2 * math.pi * animationValue;
-      final paint = Paint()
-        ..color = AppTheme.glucoseNormal
-        ..style = PaintingStyle.fill;
-      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      drawRoundedArc(sweepAngle, AppTheme.glucoseNormal);
       startAngle += sweepAngle;
     }
 
     // 고혈당
     if (highRatio > 0) {
       final sweepAngle = highRatio * 2 * math.pi * animationValue;
-      final paint = Paint()
-        ..color = AppTheme.glucoseHigh
-        ..style = PaintingStyle.fill;
-      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      drawRoundedArc(sweepAngle, AppTheme.glucoseHigh);
       startAngle += sweepAngle;
     }
 
     // 매우 고혈당
     if (veryHighRatio > 0) {
       final sweepAngle = veryHighRatio * 2 * math.pi * animationValue;
-      final paint = Paint()
-        ..color = AppTheme.glucoseVeryHigh
-        ..style = PaintingStyle.fill;
-      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+      drawRoundedArc(sweepAngle, AppTheme.glucoseVeryHigh);
     }
 
     // 중앙 구멍 (도넛 차트)
     final holePaint = Paint()
       ..color = holeColor
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, radius * 0.6, holePaint);
+    canvas.drawCircle(center, innerRadius, holePaint);
   }
 
   @override

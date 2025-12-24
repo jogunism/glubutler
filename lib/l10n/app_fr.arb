@@ -212,5 +212,7 @@
   "deleteGlucoseConfirmation": "Êtes-vous sûr de vouloir supprimer ?\nCette action ne peut pas être annulée.",
   "glucoseDeleted": "Glycémie supprimée",
   "insulinDeleted": "Insuline supprimée",
-  "deleteFailed": "Échec de la suppression"
+  "deleteFailed": "Échec de la suppression",
+
+  "glucoseStatus": "État Glycémique"
 }

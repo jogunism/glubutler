@@ -335,6 +335,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get glucoseDistribution => 'Blutzucker-Verteilung';
 
   @override
+  String get glucoseStatus => 'Blutzuckerstatus';
+
+  @override
   String get times => '×';
 
   @override

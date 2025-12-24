@@ -54,6 +54,7 @@ class LargeTitleScrollView extends StatefulWidget {
     this.showBackButton = false,
     this.showLargeTitle = true,
     this.trailing,
+    this.titleTrailing,
   });
 
   /// 네비게이션바와 큰 타이틀에 표시될 텍스트
@@ -85,6 +86,9 @@ class LargeTitleScrollView extends StatefulWidget {
 
   /// 네비게이션바 우측에 표시될 위젯 (예: 설정 아이콘)
   final Widget? trailing;
+
+  /// 큰 타이틀 우측에 표시될 위젯 (예: 날짜 선택 버튼)
+  final Widget? titleTrailing;
 
   @override
   State<LargeTitleScrollView> createState() => _LargeTitleScrollViewState();
@@ -174,13 +178,21 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
                         right: 16,
                         bottom: 8,
                       ),
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary(context),
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimary(context),
+                            ),
+                          ),
+                          if (widget.titleTrailing != null)
+                            widget.titleTrailing!,
+                        ],
                       ),
                     ),
                   ),

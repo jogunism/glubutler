@@ -121,6 +121,7 @@
   "lowest": "Lowest",
   "highest": "Highest",
   "glucoseDistribution": "Glucose Distribution",
+  "glucoseStatus": "Glucose Status",
   "times": "×",
   "viewReport": "View Report",
   "noData": "No data available",

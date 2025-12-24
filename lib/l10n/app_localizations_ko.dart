@@ -333,6 +333,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get glucoseDistribution => '혈당 범위 분포';
 
   @override
+  String get glucoseStatus => '혈당상태';
+
+  @override
   String get times => '회';
 
   @override

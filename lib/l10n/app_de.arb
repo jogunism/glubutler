@@ -212,5 +212,7 @@
   "deleteGlucoseConfirmation": "Möchten Sie wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.",
   "glucoseDeleted": "Blutzucker gelöscht",
   "insulinDeleted": "Insulin gelöscht",
-  "deleteFailed": "Löschen fehlgeschlagen"
+  "deleteFailed": "Löschen fehlgeschlagen",
+
+  "glucoseStatus": "Blutzuckerstatus"
 }
