@@ -56,179 +56,156 @@ class _ReportScreenState extends State<ReportScreen> {
       _reportStartDate = DateTime.now().subtract(const Duration(days: 6));
       _reportEndDate = DateTime.now();
       _reportContent = '''
-# 혈당 관리 주간 리포트
+# 혈당 관리 리포트
 
-## 🎯 주요 지표
+## 📋 주요 지표
 
-- **혈당 수치(mg/dL)**: 평균 120, 최저 85, 최고 165
-- **목표 범위 내 비율**: 78%
-- **변동계수(CV)**: 28.3%
-- **혈당 측정 횟수**: 주 24회 (일 평균 3.4회)
-
-&nbsp;
-
-## 📊 현재 당뇨 상태 평가
-
-**진단**: 2형 당뇨 (조절 양호 단계)
-
-평균 혈당 120 mg/dL은 당뇨병 진단 기준(공복 126 mg/dL 이상, 식후 2시간 200 mg/dL 이상)보다 낮은 수준으로 **적극적인 관리가 효과를 보고 있습니다**. 목표 범위 내 비율 78%는 우수한 편이며, 이는 정상 범위로 돌아갈 수 있는 **매우 긍정적인 신호**입니다.
-
-**정상으로 가는 길**: 현재 수치를 유지하고 아래 제시된 개선 사항들을 실천하면, 3-6개월 내 당뇨 전단계 수준으로 개선될 가능성이 높습니다. 특히 체중 감량(5-10%)과 규칙적인 운동은 인슐린 저항성을 근본적으로 개선하여 정상 혈당 수준 회복에 핵심적인 역할을 합니다.
+| 항목 | 수치 | 평가 |
+|------|------|------|
+| 평균 혈당 | **120** mg/dL | 양호 |
+| 최저/최고 | **85** / **165** mg/dL | - |
+| 목표 범위 내 비율 | **78**% | 우수 |
+| 변동계수(CV) | **28.3**% | 양호 |
+| 공복 혈당 | **98** mg/dL | 정상 |
+| 식후 2시간 혈당 | **158** mg/dL | 개선 필요 |
 
 &nbsp;
 
-## 🏃 생활습관 분석
-
-- **수면**: 평균 7시간 30분 (권장 범위) ✓
-- **운동**: 주 4회, 평균 35분 (목표 달성)
-- **걸음 수**: 일평균 8,500걸음 (우수)
-- **식사 시간 규칙성**: 87% (우수)
-
-현재 생활습관은 전반적으로 양호합니다. 이를 꾸준히 유지하는 것만으로도 정상 혈당으로의 회복 가능성이 높아집니다.
+### 누락 데이터 안내
+다음 정보가 있으면 더 정확한 분석이 가능합니다:
+- **생리 주기** (여성): 호르몬 변화가 혈당에 영향을 줄 수 있습니다
+- **음주 기록**: 알코올 섭취는 혈당 변동에 영향을 줍니다
+- **질병/컨디션**: 감기, 염증 등은 혈당을 상승시킬 수 있습니다
 
 &nbsp;
 
-## 💡 상세 분석
+## 📊 혈당평가
 
-**혈당 변동성 - 안정적인 관리 상태**
+### 지난주 대비 개선 사항
+- **평균 혈당**: 125 → 120 mg/dL (5 mg/dL 개선) ✓
+- **목표 범위 내 비율**: 72% → 78% (6%p 증가) ✓
+- **운동 빈도**: 주 3회 → 주 4회 (1회 증가) ✓
+- **야간 간식**: 주 5회 → 주 3회 (2회 감소) ✓
 
-이번 주 변동계수(CV) 28.3%는 권장 기준(36% 미만)을 충족하는 우수한 수준입니다. 45세 연령대에서 이 정도의 안정성을 보이는 것은 **정상 범위 회복을 위한 훌륭한 기반**이 마련되었음을 의미합니다.
-
-공복 혈당 표준편차 12.4 mg/dL은 매우 안정적입니다. 체중 72kg에서 이러한 안정성은 현재 실천 중인 생활습관이 효과적이라는 증거입니다. 이 패턴을 유지하면서 아래 개선점들을 추가한다면, **정상 혈당 회복이 충분히 가능합니다**.
-
-&nbsp;
-
-**식후 혈당 - 개선 가능한 부분 발견**
-
-점심 식후 2시간 혈당이 평균 158 mg/dL로 측정되었습니다. 정상 범위(140 mg/dL 미만)보다 약간 높지만, **간단한 식습관 조정만으로도 개선 가능한 수준**입니다. 40대는 근육량이 감소하는 시기이지만, 이는 운동으로 충분히 보완할 수 있습니다.**¹**
-
-**실천 가능한 개선 방법**: 점심 식사 시 단백질(닭가슴살, 두부, 생선 등)을 25-30g으로 늘리고, 흰밥 대신 현미밥으로 바꾸면 식후 혈당을 15-20 mg/dL 낮출 수 있습니다. 이렇게 하면 **정상 범위(140 mg/dL 미만)에 도달**할 수 있습니다.
-
-주 2-3회 저항 운동(스쿼트, 팔굽혀펴기 등)을 추가하면 근육량이 증가하여 인슐린 감수성이 20-30% 향상됩니다. 이는 **당뇨를 근본적으로 개선하는 가장 효과적인 방법**입니다.
+지난주 리포트에서 권장했던 운동 증량과 야간 간식 줄이기를 성공적으로 실천하셨습니다. **매우 잘하고 계십니다!**
 
 &nbsp;
 
-**일중 혈당 리듬 - 야간만 주의하면 완벽**
+### 혈당 지표 분석
 
-새벽 3-5시 사이 혈당이 평균 92 mg/dL로 **정상 범위**입니다. 새벽 현상도 관찰되지 않아 야간 인슐린 기능이 잘 유지되고 있습니다. 이는 **당뇨가 심각하지 않다는 매우 긍정적인 신호**입니다.
+**평균 혈당 120 mg/dL - 양호한 관리 상태**
 
-저녁 22시 이후 간식 섭취 시에만 혈당 상승폭이 다소 높게(42 mg/dL) 나타났습니다. 40대 이후에는 야간 인슐린 감수성이 15-20% 낮아지는 것이 자연스러운 현상입니다.**²** 하지만 **저녁 21시 이후 간식만 피하면 이 문제는 완전히 해결**됩니다.
+현재 평균 혈당은 당뇨병 진단 기준(공복 126 mg/dL 이상)보다 낮은 수준입니다. 목표 범위 내 비율 78%는 우수한 편이며, 지속적인 관리로 정상 범위에 근접하고 있습니다.
 
-일일 칼로리를 1,800-2,000kcal로 조절하고 야간 간식을 자제하면, 체중 감량과 함께 **정상 혈당 수준에 한 걸음 더 가까워집니다**.
+**공복 혈당 98 mg/dL - 정상 범위**
 
-&nbsp;
+공복 혈당이 정상 범위(70-100 mg/dL) 내에 있습니다. 이는 야간 인슐린 기능이 잘 유지되고 있다는 긍정적인 신호입니다.
 
-**운동 효과 - 이미 정상 회복의 길 위에**
+**식후 혈당 158 mg/dL - 개선 필요**
 
-운동 후 2-4시간 동안 평균 혈당이 18 mg/dL 감소하는 **탁월한 반응**을 보이고 있습니다. 이는 당신의 몸이 운동에 매우 잘 반응하고 있으며, **인슐린 저항성이 개선되고 있다**는 강력한 증거입니다.
-
-걷기 운동 35분 이상 지속 시 혈당 감소 효과가 뚜렷합니다. 이는 근육의 GLUT4가 활성화되어 인슐린 없이도 포도당을 흡수하기 때문입니다.**³** **현재 운동 습관을 유지만 해도 정상 혈당 회복이 가능합니다**.
+점심 식후 2시간 혈당이 평균 158 mg/dL로 정상 범위(140 mg/dL 미만)보다 약간 높습니다. 하지만 간단한 식습관 조정으로 충분히 개선 가능한 수준입니다. 식사 순서를 변경하거나(채소 먼저 → 단백질 → 탄수화물) 흰밥을 현미밥으로 바꾸면 10-20 mg/dL 감소 효과를 기대할 수 있습니다.**¹**
 
 &nbsp;
 
-**정상으로 돌아가기 위한 구체적 목표**
+### 상세 분석
 
-- **체중**: 현재 72kg → 목표 65-68kg (3-6개월 내)
-  - 주당 0.5-1kg씩 감량 (급격한 감량은 금물)
-  - 체중 5-10% 감량 시 혈당 조절이 극적으로 개선됩니다
-  - BMI 정상 범위 도달 시 인슐린 필요량이 20-30% 감소
+**신체 정보 (남성, 45세, 72kg, BMI 24.2, 2형 당뇨)**
 
-- **HbA1c 목표**: 6개월 내 0.5-0.8% 개선
-  - 현재 수준 유지 + 아래 실천 과제 = 정상 범위(5.7% 미만) 도달 가능
+45세 남성으로 체중 72kg, BMI 24.2는 정상 범위에 가깝습니다. 2형 당뇨 진단 후 3년 2개월이 경과했으며, 현재 혈당 지표들이 양호한 것으로 보아 적극적인 관리가 효과를 보고 있습니다.
 
-- **스트레스 관리**: 하루 10-15분 명상이나 요가
-  - 스트레스 호르몬(코르티솔)이 혈당을 올리므로, 이완이 혈당 조절에 직접적 도움
+**수면 (평균 7시간 30분, 규칙성 85%)**
 
-- **정기 검진**: 연 1회 안저·신장 검사로 합병증 예방
-  - 조기 발견 시 대부분 회복 가능하므로 검진이 중요합니다
+수면 시간과 질이 모두 양호합니다. 충분한 수면은 인슐린 감수성을 유지하고 스트레스 호르몬(코르티솔)을 조절하여 혈당 관리에 도움이 됩니다.**²** 현재 취침 시간 규칙성 85%는 우수한 수준입니다.
 
-&nbsp;
+**운동 (주 4회, 일평균 8,500걸음)**
 
-## 💊 정상 회복을 위한 실천 가이드
+주 4회 유산소 운동(걷기)과 일평균 8,500걸음은 매우 우수합니다. 운동 후 평균 혈당이 18 mg/dL 감소하는 것으로 보아 운동 효과가 뚜렷합니다. 다만 저항 운동이 없는 점은 아쉽습니다. 유산소와 저항 운동을 병행하면 인슐린 감수성이 20-30% 더 향상될 수 있습니다.**³** 45세 연령대는 근육량이 감소하는 시기이므로 주 2-3회 저항 운동(스쿼트, 팔굽혀펴기 등) 추가를 권장합니다.
 
-**혈당 측정으로 변화 확인하기**
+**식습관 (규칙성 87%, 야간 간식 주 3회)**
 
-현재 일평균 3.4회 측정도 좋지만, 하루 4-5회로 늘리면 **개선되는 모습을 직접 확인**할 수 있습니다. 변화를 눈으로 보면 동기부여가 되어 실천이 더 쉬워집니다.
+식사 시간 규칙성 87%는 매우 우수합니다. 규칙적인 식사는 혈당 안정에 중요한 역할을 합니다. 다만 야간 간식(주 3회)이 혈당 상승에 영향을 주고 있습니다. 저녁 22시 이후 간식 섭취 시 혈당 상승폭이 42 mg/dL로 높게 나타났습니다. 40대 이후 야간 인슐린 감수성이 15-20% 낮아지므로 저녁 21시 이후 간식을 자제하면 개선될 것입니다.**²** 수분 섭취는 일평균 1.6L로 최소 권장량을 충족하나, 2L 이상으로 늘리면 더 좋습니다.**⁴**
 
-- **필수 측정**: 공복(기상 직후), 식후 2시간(주 3회 각 끼니별)
-- **추가 권장**: 취침 전, 운동 전후
-- **목표**: 주 28-35회로 증량 → 패턴 파악 → 정상 범위 도달 확인
+**스트레스 (중간 수준, 업무 스트레스 주 3-4회)**
 
-&nbsp;
+일기 분석 결과 업무 스트레스가 주 3-4회 언급되었습니다. 스트레스 호르몬은 혈당을 상승시키므로, 하루 10-15분 명상이나 요가 같은 이완 활동을 추천합니다.
 
-**정상 회복을 위한 운동 프로그램**
+**약물 복용 (메트포민 500mg, 복용 규칙성 95%)**
 
-유산소 운동과 저항 운동을 함께 하면 **당뇨를 근본적으로 개선**할 수 있습니다.**⁴** 운동은 약물보다 효과적인 경우가 많으며, 부작용도 없습니다.
+메트포민 복용 규칙성 95%는 매우 우수합니다. 이는 혈당 관리의 중요한 기반이 되며, 이 상태를 계속 유지하시면 좋겠습니다.
 
-**유산소 운동** (주 5회 이상) - 혈당을 즉시 낮춤
-- 빠르게 걷기, 자전거, 수영 중 선택
-- 1회 30-60분, 중강도 (약간 숨이 찬 정도)
-- 식후 1-2시간 내 실시 시 혈당 20-30 mg/dL 감소 효과
+**혈당 측정 (일평균 3.4회, 규칙성 82%)**
 
-**저항 운동** (주 2-3회) - 인슐린 감수성을 장기적으로 개선
-- 스쿼트, 팔굽혀펴기, 밴드 운동 등
-- 8-10가지 동작, 각 10-15회 반복
-- 3개월 후 근육량 증가 → 인슐린 감수성 20-30% 향상
-
-**핵심**: 현재 주 4회 운동 중이므로, 주 5회로 늘리고 저항 운동만 추가하면 됩니다!
+주 24회 측정(일평균 3.4회)은 패턴 파악에 충분하나, 하루 4-5회로 늘리면 더 정확한 분석이 가능합니다. 공복 7회, 식후 14회는 양호하나 취침 전 측정이 주 3회로 부족합니다. 취침 전 혈당은 야간 저혈당 예방에 중요하므로 주 7회로 증량을 권장합니다.
 
 &nbsp;
 
-**정상 혈당을 위한 식사 전략**
+## 📝 가이드
 
-**식사 구성** (정상 범위로 가는 가장 빠른 길)
-- 식사 간격: 4-6시간 (간식 줄이기)
-- 탄수화물:단백질:지방 = 50:20:30
-- 매 끼니 식이섬유 5-7g (채소, 통곡물) → 혈당 상승 완화
+### 지난 리포트 대비 개선 현황
 
-&nbsp;
+**✓ 평균 혈당 5 mg/dL 감소 (125 → 120 mg/dL)**
+- 지난주 권장했던 운동 증량과 야간 간식 줄이기를 성공적으로 실천한 결과입니다
+- 이 추세를 유지하면 3개월 내 평균 혈당 115 mg/dL 이하 달성 가능합니다
 
-**공복혈당을 정상으로** (목표: 100 mg/dL 이하)
+**✓ 목표 범위 내 비율 6%p 증가 (72% → 78%)**
+- 혈당 조절이 더 안정적으로 이루어지고 있습니다
+- 목표는 85% 이상이며, 식후 혈당 관리를 개선하면 충분히 도달 가능합니다
 
-현재 공복 혈당이 안정적이므로, 아래만 지키면 **정상 범위(100 mg/dL 이하) 도달 가능**:
+**✓ 운동 빈도 증가 (주 3회 → 주 4회)**
+- 운동 후 평균 혈당이 18 mg/dL 감소하는 탁월한 효과를 보이고 있습니다
+- 꾸준히 유지하면서 저항 운동을 추가하면 더 큰 효과를 기대할 수 있습니다
 
-- 저녁 식사를 취침 3시간 전까지 완료
-- 취침 전 간식 자제 (배고프면 견과류 소량)
-- 수면 7-8시간 유지 (현재 잘 하고 계십니다!)
-- 저녁 과식 지양 (일일 칼로리의 30% 이내)
-
-&nbsp;
-
-**식후혈당을 정상으로** (목표: 140 mg/dL 미만)
-
-현재 158 mg/dL → **목표 140 mg/dL 미만은 충분히 달성 가능**합니다:
-
-- **식사 순서 변경**: 채소 먼저 → 단백질 → 탄수화물 마지막
-  - 이것만으로도 식후 혈당 10-15 mg/dL 감소
-- **통곡물로 바꾸기**: 흰밥 → 현미밥, 식빵 → 통밀빵
-  - 추가로 10-15 mg/dL 감소
-- **천천히 먹기**: 20분 이상 씹기 (포만감 증가 + 혈당 완만 상승)
-- **식후 걷기**: 15분만 걸어도 혈당 15-20 mg/dL 감소
-
-**결론**: 위 방법들을 실천하면 점심 식후 혈당 158 → 130 mg/dL 달성 가능 (**정상 범위**)
+**✓ 야간 간식 감소 (주 5회 → 주 3회)**
+- 야간 혈당 관리가 개선되고 있습니다
+- 주 1회 이하로 줄이면 공복 혈당이 더욱 안정될 것입니다
 
 &nbsp;
 
-## 📝 이번 주 실천 과제
+### 개선이 필요한 부분
 
-**정상으로 돌아가기 위한 5가지 실천** (모두 실천 가능한 간단한 것들입니다!)
+**1. 식후 혈당 관리 (우선순위: 높음)**
+- **현재**: 식후 2시간 혈당 158 mg/dL
+- **목표**: 140 mg/dL 미만
+- **개선 방법**:
+  - 식사 순서 변경 (채소 먼저 → 단백질 → 탄수화물)
+  - 흰밥을 현미밥으로 교체
+  - 식후 15분 걷기
+- **다음 리포트에서 확인할 사항**: 식후 혈당 수치 변화
 
-- [ ] **점심 식사 개선**: 채소를 1.5배로 늘리고 현미밥으로 바꾸기
-  - 효과: 식후 혈당 158 → 140 mg/dL 미만 (정상 범위 도달!)
+**2. 저항 운동 추가 (우선순위: 높음)**
+- **현재**: 저항 운동 주 0회
+- **목표**: 주 2-3회
+- **개선 방법**:
+  - 스쿼트, 팔굽혀펴기 등 간단한 동작부터 시작
+  - 1회 15-20분, 8-10가지 동작
+- **기대 효과**: 인슐린 감수성 20-30% 향상
+- **다음 리포트에서 확인할 사항**: 저항 운동 실천 빈도 및 평균 혈당 변화
 
-- [ ] **야간 간식 자제**: 저녁 21시 이후 금식 (배고프면 견과류 한 줌)
-  - 효과: 야간 혈당 안정 + 체중 감량 효과
+**3. 야간 간식 자제 (우선순위: 중간)**
+- **현재**: 주 3회 야간 간식 (지난주 5회에서 개선됨)
+- **목표**: 주 0-1회
+- **개선 방법**:
+  - 저녁 21시 이후 금식
+  - 배고프면 견과류 소량 또는 물
+- **다음 리포트에서 확인할 사항**: 야간 간식 빈도 및 야간 혈당 안정성
 
-- [ ] **점심 식후 걷기**: 15분만 걸어도 OK (주 5회 이상)
-  - 효과: 식후 혈당 즉시 15-20 mg/dL 감소
+**4. 수분 섭취 증량 (우선순위: 낮음)**
+- **현재**: 일평균 1.6L
+- **목표**: 2L 이상
+- **개선 방법**: 매 식사 시 물 한 잔 추가
+- **다음 리포트에서 확인할 사항**: 수분 섭취량
 
-- [ ] **규칙적인 수면**: 매일 23시±30분 취침 (현재 잘하고 있어요!)
-  - 효과: 인슐린 감수성 유지 + 스트레스 감소
+**5. 스트레스 관리 (우선순위: 중간)**
+- **현재**: 업무 스트레스 주 3-4회 언급
+- **목표**: 스트레스 관리 루틴 확립
+- **개선 방법**: 하루 10-15분 명상, 요가, 심호흡
+- **다음 리포트에서 확인할 사항**: 스트레스 수준 변화 및 혈당 영향
 
-- [ ] **혈당 측정 증량**: 하루 4회로 (공복, 점심 식후, 저녁 식후, 취침 전)
-  - 효과: 개선되는 모습을 눈으로 확인 → 동기부여 상승
-
-**당신은 이미 잘하고 있습니다!** 위 과제들은 현재 생활에서 조금만 더 노력하면 되는 것들입니다. 3-6개월 후 정상 혈당 수준에 도달한 자신의 모습을 상상해보세요. **충분히 가능합니다!**
+**6. 혈당 측정 패턴 개선 (우선순위: 낮음)**
+- **현재**: 취침 전 측정 주 3회
+- **목표**: 취침 전 측정 주 7회
+- **개선 방법**: 취침 전 측정을 습관화
+- **다음 리포트에서 확인할 사항**: 측정 빈도 및 야간 저혈당 여부
 
 &nbsp;
 
@@ -242,7 +219,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
 **³** Richter EA, Hargreaves M. (2013). Exercise, GLUT4, and skeletal muscle glucose uptake. *Physiological Reviews*, 93(3), 993-1017.
 
-**⁴** Colberg SR, et al. (2016). Physical activity/exercise and diabetes: a position statement of the American Diabetes Association. *Diabetes Care*, 39(11), 2065-2079.
+**⁴** Johnson EC, et al. (2016). Water intake and hydration biomarkers in adults. *European Journal of Nutrition*, 55(2), 25-41.
 
 &nbsp;
 
@@ -368,54 +345,67 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildReportContent(ThemeData theme) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: theme.dividerColor,
           width: 1,
         ),
       ),
-      child: MarkdownBody(
-        data: _reportContent ?? '',
-        softLineBreak: true,
-        styleSheet: MarkdownStyleSheet(
-          h1: theme.textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+      child: Container(
+        margin: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(3),
+        child: CustomPaint(
+          painter: _DashedBorderPainter(
+            color: theme.dividerColor.withOpacity(0.4),
+            strokeWidth: 1,
+            dashWidth: 4,
+            dashSpace: 3,
           ),
-          h2: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: MarkdownBody(
+              data: _reportContent ?? '',
+              softLineBreak: true,
+              styleSheet: MarkdownStyleSheet(
+                h1: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+                h2: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+                h3: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+                p: theme.textTheme.bodyMedium?.copyWith(
+                  height: 1.6,
+                  fontSize: 15,
+                ),
+                listBullet: theme.textTheme.bodyMedium?.copyWith(
+                  height: 1.6,
+                  fontSize: 15,
+                ),
+                strong: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+                em: theme.textTheme.bodyMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                ),
+                a: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.none,
+                ),
+                blockSpacing: 12,
+                listIndent: 24,
+              ),
+            ),
           ),
-          h3: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-          p: theme.textTheme.bodyMedium?.copyWith(
-            height: 1.6,
-            fontSize: 15,
-          ),
-          listBullet: theme.textTheme.bodyMedium?.copyWith(
-            height: 1.6,
-            fontSize: 15,
-          ),
-          strong: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          em: theme.textTheme.bodyMedium?.copyWith(
-            fontStyle: FontStyle.italic,
-            fontSize: 15,
-          ),
-          a: TextStyle(
-            color: AppTheme.primaryColor,
-            fontWeight: FontWeight.w600,
-            decoration: TextDecoration.none,
-          ),
-          blockSpacing: 12,
-          listIndent: 24,
         ),
       ),
     );
@@ -444,4 +434,66 @@ class _ReportScreenState extends State<ReportScreen> {
     // 다른 월이면 둘 다 표시
     return '${start.month}월 ${start.day}일 ~ ${end.month}월 ${end.day}일';
   }
+}
+
+/// 점선 테두리를 그리는 CustomPainter
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double dashWidth;
+  final double dashSpace;
+
+  _DashedBorderPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.dashWidth,
+    required this.dashSpace,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+
+    // Top border
+    double startX = 0;
+    while (startX < size.width) {
+      path.moveTo(startX, 0);
+      path.lineTo(startX + dashWidth, 0);
+      startX += dashWidth + dashSpace;
+    }
+
+    // Right border
+    double startY = 0;
+    while (startY < size.height) {
+      path.moveTo(size.width, startY);
+      path.lineTo(size.width, startY + dashWidth);
+      startY += dashWidth + dashSpace;
+    }
+
+    // Bottom border
+    startX = size.width;
+    while (startX > 0) {
+      path.moveTo(startX, size.height);
+      path.lineTo(startX - dashWidth, size.height);
+      startX -= dashWidth + dashSpace;
+    }
+
+    // Left border
+    startY = size.height;
+    while (startY > 0) {
+      path.moveTo(0, startY);
+      path.lineTo(0, startY - dashWidth);
+      startY -= dashWidth + dashSpace;
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
