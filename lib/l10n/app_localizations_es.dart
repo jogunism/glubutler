@@ -748,6 +748,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get showLess => 'Ver menos';
 
   @override
+  String get diaryContentRequired =>
+      'Por favor, ingrese contenido o adjunte fotos.';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get confirm => 'Aceptar';
+
+  @override
   String dataSyncPeriodInfo(String period) {
     return 'Mostrando datos de $period recientes. El período se puede cambiar en la configuración de Apple Health';
   }

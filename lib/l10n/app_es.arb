@@ -265,6 +265,9 @@
   "editDiary": "Editar diario",
   "showMore": "Ver más",
   "showLess": "Ver menos",
+  "diaryContentRequired": "Por favor, ingrese contenido o adjunte fotos.",
+  "error": "Error",
+  "confirm": "Aceptar",
   "dataSyncPeriodInfo": "Mostrando datos de {period} recientes. El período se puede cambiar en la configuración de Apple Health",
   "@dataSyncPeriodInfo": {
     "placeholders": {

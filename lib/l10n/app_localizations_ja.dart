@@ -731,6 +731,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get showLess => '閉じる';
 
   @override
+  String get diaryContentRequired => '内容を入力するか、写真を添付してください。';
+
+  @override
+  String get error => 'エラー';
+
+  @override
+  String get confirm => '確認';
+
+  @override
   String dataSyncPeriodInfo(String period) {
     return '最近$periodのデータが表示されます。Apple Healthの設定で期間変更が可能です';
   }

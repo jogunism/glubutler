@@ -82,9 +82,6 @@ class _HomeScreenState extends State<HomeScreen>
       final startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
 
-      debugPrint('[HomeScreen] Loading data for: $startOfDay ~ $endOfDay');
-      debugPrint('[HomeScreen] _selectedDate: $_selectedDate');
-
       // GlucoseRepository.fetch() automatically handles:
       // - Fetches from local DB
       // - If HealthKit permissions exist, also fetches from HealthKit and merges
@@ -92,12 +89,6 @@ class _HomeScreenState extends State<HomeScreen>
         startDate: startOfDay,
         endDate: endOfDay,
       );
-
-      debugPrint('[HomeScreen] Loaded ${records.length} records');
-      if (records.isNotEmpty) {
-        debugPrint('[HomeScreen] First record: ${records.first.timestamp}');
-        debugPrint('[HomeScreen] Last record: ${records.last.timestamp}');
-      }
 
       // 건강 앱 데이터 로드
       await _loadHealthData(startOfDay, endOfDay);
@@ -108,7 +99,6 @@ class _HomeScreenState extends State<HomeScreen>
       });
       _animationController.forward();
     } catch (e) {
-      debugPrint('[HomeScreen] Error loading data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -133,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen>
 
       // 선택한 날짜가 연동 기간 밖이면 빈 데이터 반환
       if (startOfDay.isBefore(earliestDate)) {
-        debugPrint('[HomeScreen] Selected date is outside sync period');
         setState(() {
           _todayRecords = [];
           _sleepHours = null;
@@ -158,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen>
       });
       _animationController.forward();
     } catch (e) {
-      debugPrint('[HomeScreen] Error loading data: $e');
       setState(() => _isLoading = false);
     }
   }

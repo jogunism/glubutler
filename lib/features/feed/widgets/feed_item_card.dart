@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
@@ -209,19 +210,18 @@ class _FeedItemCardState extends State<FeedItemCard>
     BuildContext context,
     AppLocalizations l10n,
   ) {
-    return showDialog<bool>(
+    return showCupertinoDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.delete),
+      builder: (context) => CupertinoAlertDialog(
         content: Text(l10n.deleteGlucoseConfirmation),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(l10n.cancel),
           ),
-          TextButton(
+          CupertinoDialogAction(
+            isDestructiveAction: true,
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppTheme.iconRed),
             child: Text(l10n.delete),
           ),
         ],

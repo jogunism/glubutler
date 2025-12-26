@@ -731,6 +731,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get showLess => '줄이기';
 
   @override
+  String get diaryContentRequired => '내용을 입력하거나 사진을 첨부해주세요.';
+
+  @override
+  String get error => '오류';
+
+  @override
+  String get confirm => '확인';
+
+  @override
   String dataSyncPeriodInfo(String period) {
     return '최근 $period 데이터가 표시됩니다. 애플 건강앱 설정에서 기간변경이 가능합니다';
   }

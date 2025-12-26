@@ -1532,6 +1532,24 @@ abstract class AppLocalizations {
   /// **'Show Less'**
   String get showLess;
 
+  /// No description provided for @diaryContentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter content or attach photos.'**
+  String get diaryContentRequired;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get confirm;
+
   /// No description provided for @dataSyncPeriodInfo.
   ///
   /// In en, this message translates to:

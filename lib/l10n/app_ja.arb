@@ -265,6 +265,9 @@
   "editDiary": "日記を編集",
   "showMore": "もっと見る",
   "showLess": "閉じる",
+  "diaryContentRequired": "内容を入力するか、写真を添付してください。",
+  "error": "エラー",
+  "confirm": "確認",
   "dataSyncPeriodInfo": "最近{period}のデータが表示されます。Apple Healthの設定で期間変更が可能です",
   "@dataSyncPeriodInfo": {
     "placeholders": {

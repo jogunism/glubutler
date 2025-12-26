@@ -101,7 +101,6 @@ class DiaryScreenState extends State<DiaryScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.deleteDiary),
         content: Text(l10n.deleteDiaryConfirmation),
         actions: [
           CupertinoDialogAction(

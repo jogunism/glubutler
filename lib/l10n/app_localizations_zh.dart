@@ -730,6 +730,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get showLess => '收起';
 
   @override
+  String get diaryContentRequired => '请输入内容或附加照片。';
+
+  @override
+  String get error => '错误';
+
+  @override
+  String get confirm => '确定';
+
+  @override
   String dataSyncPeriodInfo(String period) {
     return '显示最近$period的数据。可在Apple Health设置中更改期间';
   }

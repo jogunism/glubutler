@@ -60,6 +60,10 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   bool _isSaving = false;
   static const int _maxImages = 5;
 
+  // 초기 상태 저장 (변경사항 감지용)
+  late String _initialContent;
+  late List<String> _initialImagePaths;
+
   OverlayEntry? _keyboardToolbarOverlay;
 
   @override
@@ -77,6 +81,10 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         _selectedImages.add(File(file.filePath));
       }
     }
+
+    // 초기 상태 저장
+    _initialContent = _contentController.text;
+    _initialImagePaths = _selectedImages.map((f) => f.path).toList();
   }
 
   @override
@@ -171,9 +179,10 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
   Future<void> _save() async {
     final content = _contentController.text.trim();
+    final l10n = AppLocalizations.of(context)!;
 
     if (content.isEmpty && _selectedImages.isEmpty) {
-      _showError('내용을 입력하거나 사진을 첨부해주세요.');
+      _showError(l10n.diaryContentRequired);
       return;
     }
 
@@ -395,14 +404,14 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
   void _showError(String message) {
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('오류'),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('확인'),
+            child: Text(l10n.confirm),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -411,8 +420,18 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   }
 
   bool get _hasUnsavedChanges {
-    return _contentController.text.trim().isNotEmpty ||
-        _selectedImages.isNotEmpty;
+    // 현재 상태
+    final currentContent = _contentController.text.trim();
+    final currentImagePaths = _selectedImages.map((f) => f.path).toList();
+
+    // 내용이 변경되었는지 확인
+    final contentChanged = currentContent != _initialContent;
+
+    // 이미지가 변경되었는지 확인 (순서 상관없이 비교)
+    final imagesChanged = currentImagePaths.length != _initialImagePaths.length ||
+        !currentImagePaths.every((path) => _initialImagePaths.contains(path));
+
+    return contentChanged || imagesChanged;
   }
 
   Future<bool> _confirmDiscard(BuildContext context) async {
@@ -425,7 +444,6 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
     final result = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.discardDiaryTitle),
         content: Text(l10n.discardDiaryMessage),
         actions: [
           CupertinoDialogAction(

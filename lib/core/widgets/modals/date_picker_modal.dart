@@ -405,7 +405,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
 
           // 연동 기간 안내 메시지
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 40, 16, 0),
+            padding: const EdgeInsets.fromLTRB(32, 40, 16, 0),
             child: Consumer<SettingsService>(
               builder: (context, settings, child) {
                 final syncPeriod = settings.syncPeriod;
@@ -436,25 +436,28 @@ class _DatePickerModalState extends State<DatePickerModal> {
 
                 final parts = firstLine.split(periodText);
 
-                return RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      color: AppTheme.primaryColor,
-                      fontSize: 14,
-                    ),
-                    children: [
-                      if (parts.isNotEmpty) TextSpan(text: parts[0]),
-                      TextSpan(
-                        text: periodText,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: RichText(
+                    textAlign: TextAlign.left,
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: context.colors.textSecondary,
+                        fontSize: 12,
                       ),
-                      if (parts.length > 1) TextSpan(text: parts[1]),
-                      if (secondLine.isNotEmpty) ...[
-                        const TextSpan(text: '\n'),
-                        TextSpan(text: secondLine),
+                      children: [
+                        if (parts.isNotEmpty) TextSpan(text: parts[0]),
+                        TextSpan(
+                          text: periodText,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        if (parts.length > 1) TextSpan(text: parts[1]),
+                        if (secondLine.isNotEmpty) ...[
+                          const TextSpan(text: '\n'),
+                          TextSpan(text: secondLine),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 );
               },
