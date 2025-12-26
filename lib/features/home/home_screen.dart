@@ -18,6 +18,7 @@ import 'package:glu_butler/repositories/glucose_repository.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/glucose_score_service.dart';
+import 'package:glu_butler/services/health_service.dart';
 
 /// 홈 대시보드 화면
 ///
@@ -39,10 +40,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final _glucoseRepository = GlucoseRepository();
+  final _healthService = HealthService();
 
   List<GlucoseRecord> _todayRecords = [];
   bool _isLoading = true;
   DateTime _selectedDate = DateTime.now();
+
+  // 건강 앱 데이터
+  double? _sleepHours;
+  int? _exerciseMinutes;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -84,6 +90,9 @@ class _HomeScreenState extends State<HomeScreen>
         endDate: endOfDay,
       );
 
+      // 건강 앱 데이터 로드
+      await _loadHealthData(startOfDay, endOfDay);
+
       setState(() {
         _todayRecords = records;
         _isLoading = false;
@@ -112,6 +121,9 @@ class _HomeScreenState extends State<HomeScreen>
         endDate: endOfDay,
       );
 
+      // 건강 앱 데이터 로드
+      await _loadHealthData(startOfDay, endOfDay);
+
       setState(() {
         _todayRecords = records;
         _isLoading = false;
@@ -120,6 +132,59 @@ class _HomeScreenState extends State<HomeScreen>
     } catch (e) {
       debugPrint('[HomeScreen] Error loading data: $e');
       setState(() => _isLoading = false);
+    }
+  }
+
+  /// 건강 앱 데이터 로드 (수면, 운동)
+  Future<void> _loadHealthData(DateTime startOfDay, DateTime endOfDay) async {
+    try {
+      // 수면 데이터 가져오기 - 전날 저녁부터 검색 (수면은 보통 전날 밤부터 시작)
+      final sleepStartDate = startOfDay.subtract(const Duration(hours: 12));
+      final sleepRecords = await _healthService.fetchSleepData(
+        startDate: sleepStartDate,
+        endDate: endOfDay,
+      );
+
+      // 해당 날짜의 총 수면 시간 계산 (시간 단위)
+      // 수면 종료 시간이 오늘인 것만 포함 (어제 밤 ~ 오늘 아침 수면)
+      if (sleepRecords.isNotEmpty) {
+        final todaySleepRecords = sleepRecords.where((record) {
+          final endDay = DateTime(record.endTime.year, record.endTime.month, record.endTime.day);
+          final targetDay = DateTime(startOfDay.year, startOfDay.month, startOfDay.day);
+          return endDay == targetDay;
+        }).toList();
+
+        if (todaySleepRecords.isNotEmpty) {
+          final totalSleepMinutes = todaySleepRecords.fold<int>(
+            0,
+            (sum, record) => sum + record.durationMinutes,
+          );
+          _sleepHours = totalSleepMinutes / 60.0;
+        } else {
+          _sleepHours = null;
+        }
+      } else {
+        _sleepHours = null;
+      }
+
+      // 운동 데이터 가져오기
+      final workoutRecords = await _healthService.fetchWorkoutData(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
+
+      // 해당 날짜의 총 운동 시간 계산 (분 단위)
+      if (workoutRecords.isNotEmpty) {
+        _exerciseMinutes = workoutRecords.fold<int>(
+          0,
+          (sum, record) => sum + record.durationMinutes,
+        );
+      } else {
+        _exerciseMinutes = null;
+      }
+    } catch (e) {
+      _sleepHours = null;
+      _exerciseMinutes = null;
     }
   }
 
@@ -675,11 +740,35 @@ class _HomeScreenState extends State<HomeScreen>
         dist['veryHigh']!;
     final hasData = total > 0;
 
-    // 점수 계산
+    // 점수 계산 - 과거 날짜는 해당 날의 마지막 시점 기준
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selectedDay = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+    final isToday = selectedDay == today;
+
+    // 오늘이 아니면 해당 날짜의 23:59:59 기준으로 점수 계산
+    final scoreCalculationTime = isToday
+        ? now
+        : DateTime(
+            _selectedDate.year,
+            _selectedDate.month,
+            _selectedDate.day,
+            23,
+            59,
+            59,
+          );
+
     final score = hasData
         ? GlucoseScoreService.calculateScore(
             records: _todayRecords,
             glucoseRange: settings.glucoseRange,
+            currentTime: scoreCalculationTime,
+            sleepHours: _sleepHours,
+            exerciseMinutes: _exerciseMinutes,
           )
         : 0;
 

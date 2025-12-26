@@ -294,6 +294,7 @@ class HealthService {
         };
 
         final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+
         final records = <SleepRecord>[];
 
         for (final item in data) {

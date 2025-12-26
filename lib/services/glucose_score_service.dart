@@ -4,8 +4,8 @@ import 'package:glu_butler/models/glucose_range_settings.dart';
 /// 혈당 관리 점수 계산 서비스
 ///
 /// 총 100점 만점으로 다음 요소를 평가:
-/// - 기본: 혈당 품질(70점) + 측정 일관성(30점)
-/// - 건강 앱 연동시: 혈당 품질(50점) + 측정 일관성(25점) + 생활습관(25점)
+/// - 기본: 혈당 품질(50점) + 측정 일관성(50점)
+/// - 건강 앱 연동시: 혈당 품질(40점) + 측정 일관성(30점) + 생활습관(30점)
 class GlucoseScoreService {
   /// 혈당 관리 점수 계산
   ///
@@ -27,19 +27,22 @@ class GlucoseScoreService {
     final hasHealthData = sleepHours != null || exerciseMinutes != null;
 
     if (hasHealthData) {
-      // 건강 앱 연동시: 50 + 25 + 25
-      final qualityScore = _calculateQualityScore(records, glucoseRange, 50);
-      final consistencyScore = _calculateConsistencyScore(records, now, 25);
+      // 건강 앱 연동시: 40 + 30 + 30 = 100
+      final qualityScore = _calculateQualityScore(records, glucoseRange, 40);
+      final consistencyScore = _calculateConsistencyScore(records, now, 30);
       final lifestyleScore = _calculateLifestyleScore(
         sleepHours: sleepHours,
         exerciseMinutes: exerciseMinutes,
+        maxScore: 30,
         currentTime: now,
       );
+
       return qualityScore + consistencyScore + lifestyleScore;
     } else {
-      // 기본: 70 + 30
-      final qualityScore = _calculateQualityScore(records, glucoseRange, 70);
-      final consistencyScore = _calculateConsistencyScore(records, now, 30);
+      // 기본: 50 + 50 = 100
+      final qualityScore = _calculateQualityScore(records, glucoseRange, 50);
+      final consistencyScore = _calculateConsistencyScore(records, now, 50);
+
       return qualityScore + consistencyScore;
     }
   }
@@ -122,16 +125,18 @@ class GlucoseScoreService {
 
   /// 생활습관 점수 계산 (건강 앱 연동시)
   ///
-  /// - 수면: 7-8시간 만점 (12.5점)
-  /// - 운동: 30분 이상 만점 (12.5점), 오후 10시 이후만 계산
+  /// - 오후 10시 이전: 수면만으로 maxScore 만점
+  /// - 오후 10시 이후: 수면 + 운동 각각 maxScore의 50%씩
   static int _calculateLifestyleScore({
     double? sleepHours,
     int? exerciseMinutes,
+    required int maxScore,
     required DateTime currentTime,
   }) {
     int score = 0;
+    final isAfter10PM = currentTime.hour >= 22;
 
-    // 수면 점수 (12.5점)
+    // 수면 점수
     if (sleepHours != null) {
       double sleepScore;
       if (sleepHours >= 7 && sleepHours <= 8) {
@@ -143,11 +148,15 @@ class GlucoseScoreService {
       } else {
         sleepScore = 0.2; // 20%
       }
-      score += (sleepScore * 12.5).round();
+
+      // 10시 이전: 수면만으로 전체 점수, 10시 이후: 절반만
+      final sleepMaxScore = isAfter10PM ? maxScore / 2 : maxScore.toDouble();
+      final sleepPoints = (sleepScore * sleepMaxScore).round();
+      score += sleepPoints;
     }
 
-    // 운동 점수 (12.5점) - 오후 10시 이후에만 계산
-    if (exerciseMinutes != null && currentTime.hour >= 22) {
+    // 운동 점수 - 오후 10시 이후에만 계산
+    if (exerciseMinutes != null && isAfter10PM) {
       double exerciseScore;
       if (exerciseMinutes >= 30) {
         exerciseScore = 1.0; // 만점
@@ -158,7 +167,8 @@ class GlucoseScoreService {
       } else {
         exerciseScore = 0.1; // 10%
       }
-      score += (exerciseScore * 12.5).round();
+      final exercisePoints = (exerciseScore * maxScore / 2).round();
+      score += exercisePoints;
     }
 
     return score;
