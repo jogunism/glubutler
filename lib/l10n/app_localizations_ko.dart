@@ -732,6 +732,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return '최근 $period 데이터만 표시됩니다. 애플 건강앱 설정에서 기간변경이 가능합니다';
+    return '최근 $period 데이터가 표시됩니다. 애플 건강앱 설정에서 기간변경이 가능합니다';
   }
 }

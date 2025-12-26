@@ -731,6 +731,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return '仅显示最近$period的数据。可在Apple Health设置中更改期间';
+    return '显示最近$period的数据。可在Apple Health设置中更改期间';
   }
 }

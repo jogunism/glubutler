@@ -265,7 +265,7 @@
   "editDiary": "Modifier le journal",
   "showMore": "Afficher plus",
   "showLess": "Afficher moins",
-  "dataSyncPeriodInfo": "Affichage des données de {period} récentes uniquement. La période peut être modifiée dans les paramètres Apple Health",
+  "dataSyncPeriodInfo": "Affichage des données de {period} récentes. La période peut être modifiée dans les paramètres Apple Health",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {

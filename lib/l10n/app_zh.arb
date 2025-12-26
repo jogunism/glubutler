@@ -265,7 +265,7 @@
   "editDiary": "编辑日记",
   "showMore": "展开",
   "showLess": "收起",
-  "dataSyncPeriodInfo": "仅显示最近{period}的数据。可在Apple Health设置中更改期间",
+  "dataSyncPeriodInfo": "显示最近{period}的数据。可在Apple Health设置中更改期间",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {

@@ -1535,7 +1535,7 @@ abstract class AppLocalizations {
   /// No description provided for @dataSyncPeriodInfo.
   ///
   /// In en, this message translates to:
-  /// **'Showing recent {period} data only. Period can be changed in Apple Health settings'**
+  /// **'Showing recent {period} data. Period can be changed in Apple Health settings'**
   String dataSyncPeriodInfo(String period);
 }
 

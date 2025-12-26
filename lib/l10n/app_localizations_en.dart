@@ -748,6 +748,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return 'Showing recent $period data only. Period can be changed in Apple Health settings';
+    return 'Showing recent $period data. Period can be changed in Apple Health settings';
   }
 }
