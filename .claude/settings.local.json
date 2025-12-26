@@ -29,7 +29,8 @@
       "Bash(fvm flutter gen-l10n:*)",
       "Bash(nc:*)",
       "Bash(grep:*)",
-      "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter analyze:*)"
+      "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter analyze:*)",
+      "Bash(fvm flutter pub:*)"
     ]
   }
 }

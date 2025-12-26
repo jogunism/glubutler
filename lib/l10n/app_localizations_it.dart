@@ -320,6 +320,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noRecords => 'Nessuna registrazione';
 
   @override
+  String get noReportYet => 'Nessun rapporto ancora.';
+
+  @override
   String get startTracking => 'Inizia a monitorare la tua salute!';
 
   @override
@@ -761,4 +764,23 @@ class AppLocalizationsIt extends AppLocalizations {
   String dataSyncPeriodInfo(String period) {
     return 'Mostrando i dati di $period recenti. Il periodo può essere modificato nelle impostazioni di Apple Health';
   }
+
+  @override
+  String get generateReport => 'Genera rapporto';
+
+  @override
+  String get reportGuideTitle => 'Informazioni sui rapporti';
+
+  @override
+  String get reportGuideMessage =>
+      '• I rapporti sono generati dall\'IA analizzando i tuoi dati di glucosio.\n\n• Sebbene tu possa generare ora, avere almeno un giorno di dati sul glucosio fornirà un\'analisi più accurata.\n\n• Dopo il tuo primo rapporto, puoi generare nuovi rapporti settimanalmente.\n\n• I rapporti forniscono informazioni dettagliate basate su sonno, esercizio fisico e altri dati sanitari dall\'app Salute.\n\n• Scrivere voci giornaliere nel diario del glucosio aiuta a identificare i modelli quotidiani.\n\n• Prova a implementare i miglioramenti dello stile di vita suggeriti nei rapporti e annota eventuali osservazioni insolite nel tuo diario.';
+
+  @override
+  String get doNotShowAgain => 'Non mostrare più';
+
+  @override
+  String get viewPastReports => 'Vedi rapporti precedenti';
+
+  @override
+  String get reportPeriod => 'Periodo del rapporto';
 }

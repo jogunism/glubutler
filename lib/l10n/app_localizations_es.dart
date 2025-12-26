@@ -320,6 +320,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noRecords => 'No hay registros';
 
   @override
+  String get noReportYet => 'Aún no hay informe.';
+
+  @override
   String get startTracking => '¡Comienza a registrar tu salud!';
 
   @override
@@ -761,4 +764,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String dataSyncPeriodInfo(String period) {
     return 'Mostrando datos de $period recientes. El período se puede cambiar en la configuración de Apple Health';
   }
+
+  @override
+  String get generateReport => 'Generar informe';
+
+  @override
+  String get reportGuideTitle => 'Acerca de los informes';
+
+  @override
+  String get reportGuideMessage =>
+      '• Los informes son generados por IA analizando sus datos de glucosa.\n\n• Aunque puede generar ahora, tener al menos un día de datos de glucosa proporcionará un análisis más preciso.\n\n• Después de su primer informe, puede generar nuevos informes semanalmente.\n\n• Los informes proporcionan información detallada basada en el sueño, el ejercicio y otros datos de salud de la aplicación Salud.\n\n• Escribir entradas diarias en el diario de glucosa ayuda a identificar patrones diarios.\n\n• Intente implementar las mejoras de estilo de vida sugeridas en los informes y anote cualquier observación inusual en su diario.';
+
+  @override
+  String get doNotShowAgain => 'No mostrar de nuevo';
+
+  @override
+  String get viewPastReports => 'Ver informes anteriores';
+
+  @override
+  String get reportPeriod => 'Período del informe';
 }

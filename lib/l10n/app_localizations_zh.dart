@@ -319,6 +319,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get noRecords => '暂无记录';
 
   @override
+  String get noReportYet => '暂无报告';
+
+  @override
   String get startTracking => '开始记录您的健康！';
 
   @override
@@ -742,4 +745,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String dataSyncPeriodInfo(String period) {
     return '显示最近$period的数据。可在Apple Health设置中更改期间';
   }
+
+  @override
+  String get generateReport => '生成报告';
+
+  @override
+  String get reportGuideTitle => '关于报告';
+
+  @override
+  String get reportGuideMessage =>
+      '• 报告由AI分析您的血糖数据生成。\n\n• 虽然现在可以生成，但至少有一天的血糖数据时分析结果会更准确。\n\n• 首次报告生成后，可以每周生成新报告。\n\n• 报告基于健康应用中的睡眠、运动等信息提供详细分析。\n\n• 每天写血糖日记有助于识别日常模式。\n\n• 尝试实施报告中建议的生活方式改善，并在日记中记录任何异常观察。';
+
+  @override
+  String get doNotShowAgain => '不再显示';
+
+  @override
+  String get viewPastReports => '查看过去的报告';
+
+  @override
+  String get reportPeriod => '报告期间';
 }

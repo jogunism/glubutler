@@ -323,6 +323,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noRecords => 'Aucun enregistrement';
 
   @override
+  String get noReportYet => 'Pas encore de rapport.';
+
+  @override
   String get startTracking => 'Commencez à suivre votre santé !';
 
   @override
@@ -768,4 +771,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String dataSyncPeriodInfo(String period) {
     return 'Affichage des données de $period récentes. La période peut être modifiée dans les paramètres Apple Health';
   }
+
+  @override
+  String get generateReport => 'Générer un rapport';
+
+  @override
+  String get reportGuideTitle => 'À propos des rapports';
+
+  @override
+  String get reportGuideMessage =>
+      '• Les rapports sont générés par l\'IA en analysant vos données de glucose.\n\n• Bien que vous puissiez générer maintenant, avoir au moins un jour de données de glucose fournira une analyse plus précise.\n\n• Après votre premier rapport, vous pouvez générer de nouveaux rapports chaque semaine.\n\n• Les rapports fournissent des informations détaillées basées sur le sommeil, l\'exercice et d\'autres données de santé de l\'application Santé.\n\n• Rédiger des entrées quotidiennes dans le journal de glucose aide à identifier les schémas quotidiens.\n\n• Essayez de mettre en œuvre les améliorations de style de vie suggérées dans les rapports et notez toute observation inhabituelle dans votre journal.';
+
+  @override
+  String get doNotShowAgain => 'Ne plus afficher';
+
+  @override
+  String get viewPastReports => 'Voir les rapports précédents';
+
+  @override
+  String get reportPeriod => 'Période du rapport';
 }

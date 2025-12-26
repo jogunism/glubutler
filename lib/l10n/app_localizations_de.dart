@@ -321,6 +321,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noRecords => 'Keine Einträge vorhanden';
 
   @override
+  String get noReportYet => 'Noch kein Bericht.';
+
+  @override
   String get startTracking => 'Beginnen Sie mit der Gesundheitsüberwachung!';
 
   @override
@@ -761,4 +764,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String dataSyncPeriodInfo(String period) {
     return 'Zeigt Daten der letzten $period. Zeitraum kann in Apple Health Einstellungen geändert werden';
   }
+
+  @override
+  String get generateReport => 'Bericht erstellen';
+
+  @override
+  String get reportGuideTitle => 'Über Berichte';
+
+  @override
+  String get reportGuideMessage =>
+      '• Berichte werden von KI durch Analyse Ihrer Glukosedaten erstellt.\n\n• Sie können jetzt generieren, aber mit mindestens einem Tag Glukosedaten erhalten Sie genauere Analysen.\n\n• Nach Ihrem ersten Bericht können Sie wöchentlich neue Berichte erstellen.\n\n• Berichte bieten detaillierte Einblicke basierend auf Schlaf, Bewegung und anderen Gesundheitsdaten aus der Health-App.\n\n• Das tägliche Schreiben von Glukose-Tagebucheinträgen hilft, tägliche Muster zu erkennen.\n\n• Versuchen Sie, die in Berichten vorgeschlagenen Lebensstilverbesserungen umzusetzen und ungewöhnliche Beobachtungen in Ihrem Tagebuch zu notieren.';
+
+  @override
+  String get doNotShowAgain => 'Nicht mehr anzeigen';
+
+  @override
+  String get viewPastReports => 'Frühere Berichte';
+
+  @override
+  String get reportPeriod => 'Berichtszeitraum';
 }

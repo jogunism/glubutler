@@ -123,6 +123,7 @@
   "currentPlan": "Aktueller Plan",
   "freePlan": "Kostenlos",
   "proPlan": "Pro",
+  "noReportYet": "Noch kein Bericht.",
 
   "home": "Heute",
   "yourToday": "Dein Heute",
@@ -275,5 +276,12 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "generateReport": "Bericht erstellen",
+  "reportGuideTitle": "Über Berichte",
+  "reportGuideMessage": "• Berichte werden von KI durch Analyse Ihrer Glukosedaten erstellt.\n\n• Sie können jetzt generieren, aber mit mindestens einem Tag Glukosedaten erhalten Sie genauere Analysen.\n\n• Nach Ihrem ersten Bericht können Sie wöchentlich neue Berichte erstellen.\n\n• Berichte bieten detaillierte Einblicke basierend auf Schlaf, Bewegung und anderen Gesundheitsdaten aus der Health-App.\n\n• Das tägliche Schreiben von Glukose-Tagebucheinträgen hilft, tägliche Muster zu erkennen.\n\n• Versuchen Sie, die in Berichten vorgeschlagenen Lebensstilverbesserungen umzusetzen und ungewöhnliche Beobachtungen in Ihrem Tagebuch zu notieren.",
+  "doNotShowAgain": "Nicht mehr anzeigen",
+  "viewPastReports": "Frühere Berichte",
+  "reportPeriod": "Berichtszeitraum"
 }

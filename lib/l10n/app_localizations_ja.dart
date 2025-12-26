@@ -319,6 +319,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noRecords => '記録がありません';
 
   @override
+  String get noReportYet => 'レポートがありません';
+
+  @override
   String get startTracking => '健康記録を始めましょう！';
 
   @override
@@ -743,4 +746,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String dataSyncPeriodInfo(String period) {
     return '最近$periodのデータが表示されます。Apple Healthの設定で期間変更が可能です';
   }
+
+  @override
+  String get generateReport => 'レポート生成';
+
+  @override
+  String get reportGuideTitle => 'レポートについて';
+
+  @override
+  String get reportGuideMessage =>
+      '• レポートはAIが血糖データを分析して生成します。\n\n• 今すぐ生成できますが、最低1日分の血糖データがあるとより正確な分析結果が得られます。\n\n• 初回レポート生成後、次のレポートは1週間間隔で生成できます。\n\n• Health appに連携された睡眠、運動などの情報に基づいて詳細な分析を提供します。\n\n• 毎日血糖日記を書くと、日々のパターンを把握するのに役立ちます。\n\n• レポートで提案される生活習慣の改善を実践し、特記事項は日記に記録してください。';
+
+  @override
+  String get doNotShowAgain => '今後表示しない';
+
+  @override
+  String get viewPastReports => '過去のレポート';
+
+  @override
+  String get reportPeriod => 'レポート期間';
 }
