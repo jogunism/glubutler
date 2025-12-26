@@ -264,5 +264,13 @@
   "diaryUpdated": "Diario aggiornato",
   "editDiary": "Modifica diario",
   "showMore": "Mostra di più",
-  "showLess": "Mostra meno"
+  "showLess": "Mostra meno",
+  "dataSyncPeriodInfo": "Mostrando solo i dati di {period} recenti. Il periodo può essere modificato nelle impostazioni di Apple Health",
+  "@dataSyncPeriodInfo": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -741,8 +741,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editDiary => 'Edit Diary';
 
   @override
-  String get showMore => 'Show more';
+  String get showMore => 'Show More';
 
   @override
-  String get showLess => 'Show less';
+  String get showLess => 'Show Less';
+
+  @override
+  String dataSyncPeriodInfo(String period) {
+    return 'Showing recent $period data only. Period can be changed in Apple Health settings';
+  }
 }

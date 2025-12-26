@@ -78,9 +78,12 @@ class _HomeScreenState extends State<HomeScreen>
     _animationController.reset();
 
     try {
-      final now = DateTime.now();
-      final startOfDay = DateTime(now.year, now.month, now.day);
+      // _selectedDate를 사용하여 선택한 날짜의 데이터 로드
+      final startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
+
+      debugPrint('[HomeScreen] Loading data for: $startOfDay ~ $endOfDay');
+      debugPrint('[HomeScreen] _selectedDate: $_selectedDate');
 
       // GlucoseRepository.fetch() automatically handles:
       // - Fetches from local DB
@@ -89,6 +92,12 @@ class _HomeScreenState extends State<HomeScreen>
         startDate: startOfDay,
         endDate: endOfDay,
       );
+
+      debugPrint('[HomeScreen] Loaded ${records.length} records');
+      if (records.isNotEmpty) {
+        debugPrint('[HomeScreen] First record: ${records.first.timestamp}');
+        debugPrint('[HomeScreen] Last record: ${records.last.timestamp}');
+      }
 
       // 건강 앱 데이터 로드
       await _loadHealthData(startOfDay, endOfDay);
@@ -115,6 +124,25 @@ class _HomeScreenState extends State<HomeScreen>
         _selectedDate.day,
       );
       final endOfDay = startOfDay.add(const Duration(days: 1));
+
+      // 건강 앱 연동 기간 체크
+      final settings = context.read<SettingsService>();
+      final syncPeriod = settings.syncPeriod;
+      final now = DateTime.now();
+      final earliestDate = now.subtract(Duration(days: syncPeriod));
+
+      // 선택한 날짜가 연동 기간 밖이면 빈 데이터 반환
+      if (startOfDay.isBefore(earliestDate)) {
+        debugPrint('[HomeScreen] Selected date is outside sync period');
+        setState(() {
+          _todayRecords = [];
+          _sleepHours = null;
+          _exerciseMinutes = null;
+          _isLoading = false;
+        });
+        _animationController.forward();
+        return;
+      }
 
       final records = await _glucoseRepository.fetch(
         startDate: startOfDay,

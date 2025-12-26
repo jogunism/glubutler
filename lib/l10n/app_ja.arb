@@ -264,5 +264,13 @@
   "diaryUpdated": "日記が更新されました",
   "editDiary": "日記を編集",
   "showMore": "もっと見る",
-  "showLess": "閉じる"
+  "showLess": "閉じる",
+  "dataSyncPeriodInfo": "最近{period}のデータのみ表示されます。Apple Healthの設定で期間変更が可能です",
+  "@dataSyncPeriodInfo": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -374,9 +374,7 @@ class _FeedItemCardState extends State<FeedItemCard>
       case FeedItemType.glucose:
         return l10n.bloodGlucose;
       case FeedItemType.exercise:
-        final exerciseType =
-            widget.item.exerciseRecord?.exerciseType ?? 'other';
-        return _formatExerciseType(exerciseType, l10n);
+        return l10n.exercise; // 모든 운동을 "운동"으로 통합
       case FeedItemType.sleep:
         return l10n.sleep;
       case FeedItemType.meal:
@@ -707,9 +705,7 @@ class _FeedItemCardState extends State<FeedItemCard>
           backgroundColor = AppTheme.primaryColor;
         }
       case FeedItemType.exercise:
-        final exerciseType =
-            widget.item.exerciseRecord?.exerciseType ?? 'other';
-        icon = _getExerciseIcon(exerciseType);
+        icon = Icons.local_fire_department; // 모든 운동을 불꽃 아이콘으로 통합
         color = AppTheme.iconOrange;
         backgroundColor = color;
       case FeedItemType.sleep:
@@ -905,71 +901,6 @@ class _FeedItemCardState extends State<FeedItemCard>
         return 'Snack';
       default:
         return 'Meal';
-    }
-  }
-
-  String _formatExerciseType(String type, AppLocalizations l10n) {
-    switch (type) {
-      case 'running':
-        return l10n.running;
-      case 'walking':
-        return l10n.walking;
-      case 'cycling':
-        return l10n.cycling;
-      case 'swimming':
-        return l10n.swimming;
-      case 'yoga':
-        return l10n.yoga;
-      case 'strength':
-        return l10n.strength;
-      case 'hiit':
-        return l10n.hiit;
-      case 'stairs':
-        return l10n.stairs;
-      case 'dance':
-        return l10n.dance;
-      case 'functional':
-        return l10n.functional;
-      case 'core':
-        return l10n.core;
-      case 'flexibility':
-        return l10n.flexibility;
-      case 'cardio':
-        return l10n.cardio;
-      default:
-        return l10n.other;
-    }
-  }
-
-  IconData _getExerciseIcon(String exerciseType) {
-    switch (exerciseType) {
-      case 'running':
-        return Icons.directions_run;
-      case 'walking':
-        return Icons.directions_walk;
-      case 'cycling':
-        return Icons.directions_bike;
-      case 'swimming':
-        return Icons.pool;
-      case 'yoga':
-        return Icons.self_improvement;
-      case 'strength':
-        return Icons.fitness_center;
-      case 'hiit':
-        return Icons.local_fire_department;
-      case 'stairs':
-        return Icons.stairs;
-      case 'dance':
-        return Icons.music_note;
-      case 'functional':
-      case 'core':
-        return Icons.fitness_center;
-      case 'flexibility':
-        return Icons.accessibility_new;
-      case 'cardio':
-        return Icons.favorite;
-      default:
-        return Icons.fitness_center;
     }
   }
 }

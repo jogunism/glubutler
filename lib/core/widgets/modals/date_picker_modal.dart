@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/repositories/glucose_repository.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// 날짜 선택 모달 팝업
 ///
@@ -68,13 +70,15 @@ class _DatePickerModalState extends State<DatePickerModal> {
     setState(() => _isLoading = true);
 
     try {
-      // 현재 보이는 달의 전후 3개월 데이터를 로드
-      final startDate = DateTime(_focusedDate.year, _focusedDate.month - 3, 1);
-      final endDate = DateTime(_focusedDate.year, _focusedDate.month + 4, 0);
+      // Provider를 통해 SettingsService 가져오기
+      final settings = context.read<SettingsService>();
+      final syncPeriod = settings.syncPeriod;
+      final now = DateTime.now();
+      final startDate = now.subtract(Duration(days: syncPeriod));
 
       final records = await _glucoseRepository.fetch(
         startDate: startDate,
-        endDate: endDate,
+        endDate: now,
       );
 
       final datesSet = <DateTime>{};
@@ -399,7 +403,65 @@ class _DatePickerModalState extends State<DatePickerModal> {
             ),
           ),
 
-          const SizedBox(height: 40),
+          // 연동 기간 안내 메시지
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 40, 16, 0),
+            child: Consumer<SettingsService>(
+              builder: (context, settings, child) {
+                final syncPeriod = settings.syncPeriod;
+                String periodText;
+                switch (syncPeriod) {
+                  case 7:
+                    periodText = l10n.syncPeriod1Week;
+                    break;
+                  case 14:
+                    periodText = l10n.syncPeriod2Weeks;
+                    break;
+                  case 30:
+                    periodText = l10n.syncPeriod1Month;
+                    break;
+                  case 90:
+                    periodText = l10n.syncPeriod3Months;
+                    break;
+                  default:
+                    periodText = l10n.syncPeriod1Week;
+                }
+
+                final message = l10n.dataSyncPeriodInfo(periodText);
+                // "최근 {기간} 데이터만..." 형태에서 기간 부분만 볼드 처리
+                // 메시지를 ". "로 분리하여 두 줄로 표시
+                final messageParts = message.split('. ');
+                final firstLine = messageParts.isNotEmpty ? messageParts[0] : '';
+                final secondLine = messageParts.length > 1 ? messageParts[1] : '';
+
+                final parts = firstLine.split(periodText);
+
+                return RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontSize: 14,
+                    ),
+                    children: [
+                      if (parts.isNotEmpty) TextSpan(text: parts[0]),
+                      TextSpan(
+                        text: periodText,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      if (parts.length > 1) TextSpan(text: parts[1]),
+                      if (secondLine.isNotEmpty) ...[
+                        const TextSpan(text: '\n'),
+                        TextSpan(text: secondLine),
+                      ],
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 8),
         ],
       ),
     );

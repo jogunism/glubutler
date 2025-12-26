@@ -1523,14 +1523,20 @@ abstract class AppLocalizations {
   /// No description provided for @showMore.
   ///
   /// In en, this message translates to:
-  /// **'Show more'**
+  /// **'Show More'**
   String get showMore;
 
   /// No description provided for @showLess.
   ///
   /// In en, this message translates to:
-  /// **'Show less'**
+  /// **'Show Less'**
   String get showLess;
+
+  /// No description provided for @dataSyncPeriodInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing recent {period} data only. Period can be changed in Apple Health settings'**
+  String dataSyncPeriodInfo(String period);
 }
 
 class _AppLocalizationsDelegate

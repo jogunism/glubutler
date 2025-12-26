@@ -281,6 +281,14 @@
   "diaryDeleteFailed": "Delete failed",
   "diaryUpdated": "Diary updated",
   "editDiary": "Edit Diary",
-  "showMore": "Show more",
-  "showLess": "Show less"
+  "showMore": "Show More",
+  "showLess": "Show Less",
+  "dataSyncPeriodInfo": "Showing recent {period} data only. Period can be changed in Apple Health settings",
+  "@dataSyncPeriodInfo": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  }
 }
