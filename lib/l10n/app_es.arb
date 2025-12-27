@@ -284,5 +284,10 @@
   "reportGuideMessage": "• Los informes son generados por IA analizando sus datos de glucosa.\n\n• Aunque puede generar ahora, tener al menos un día de datos de glucosa proporcionará un análisis más preciso.\n\n• Después de su primer informe, puede generar nuevos informes semanalmente.\n\n• Los informes proporcionan información detallada basada en el sueño, el ejercicio y otros datos de salud de la aplicación Salud.\n\n• Escribir entradas diarias en el diario de glucosa ayuda a identificar patrones diarios.\n\n• Intente implementar las mejoras de estilo de vida sugeridas en los informes y anote cualquier observación inusual en su diario.",
   "doNotShowAgain": "No mostrar de nuevo",
   "viewPastReports": "Ver informes anteriores",
-  "reportPeriod": "Período del informe"
+  "reportPeriod": "Período del informe",
+  "selectDateRange": "Seleccionar rango de fechas",
+  "selectStartAndEndDate": "Seleccione las fechas de inicio y fin",
+  "month": "mes",
+  "day": "día",
+  "newReport": "Crear nuevo informe"
 }

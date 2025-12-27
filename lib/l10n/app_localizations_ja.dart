@@ -768,4 +768,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get reportPeriod => 'レポート期間';
+
+  @override
+  String get selectDateRange => '日付範囲を選択';
+
+  @override
+  String get selectStartAndEndDate => '開始日と終了日を選択してください';
+
+  @override
+  String get month => '月';
+
+  @override
+  String get day => '日';
+
+  @override
+  String get newReport => '新しいレポートを作成';
 }

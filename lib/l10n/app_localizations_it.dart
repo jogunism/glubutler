@@ -787,4 +787,19 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reportPeriod => 'Periodo del rapporto';
+
+  @override
+  String get selectDateRange => 'Seleziona intervallo di date';
+
+  @override
+  String get selectStartAndEndDate => 'Seleziona le date di inizio e fine';
+
+  @override
+  String get month => 'mese';
+
+  @override
+  String get day => 'giorno';
+
+  @override
+  String get newReport => 'Crea nuovo rapporto';
 }

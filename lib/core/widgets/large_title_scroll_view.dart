@@ -56,6 +56,7 @@ class LargeTitleScrollView extends StatefulWidget {
     this.trailing,
     this.titleTrailing,
     this.fadeInNavTitle = false,
+    this.onScrollDirectionChanged,
   });
 
   /// 네비게이션바와 큰 타이틀에 표시될 텍스트
@@ -97,12 +98,20 @@ class LargeTitleScrollView extends StatefulWidget {
   /// Hero 섹션에 자체 타이틀이 있는 경우 사용합니다.
   final bool fadeInNavTitle;
 
+  /// 스크롤 방향 변경 콜백
+  ///
+  /// true: 아래로 스크롤 (탭바 숨김)
+  /// false: 위로 스크롤 (탭바 표시)
+  final void Function(bool scrollingDown)? onScrollDirectionChanged;
+
   @override
   State<LargeTitleScrollView> createState() => _LargeTitleScrollViewState();
 }
 
 class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
   double _navTitleOpacity = 0.0;
+  double _lastScrollOffset = 0.0;
+  bool _isScrollingDown = false;
 
   @override
   void initState() {
@@ -118,6 +127,23 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
   }
 
   void _onScroll(double offset) {
+    // 스크롤 방향 감지 (탭바 숨김/표시)
+    if (widget.onScrollDirectionChanged != null) {
+      final delta = offset - _lastScrollOffset;
+
+      // 최소 이동 거리 설정 (작은 스크롤은 무시)
+      if (delta.abs() > 5) {
+        final scrollingDown = delta > 0 && offset > 50; // 50px 이상일 때만
+
+        if (scrollingDown != _isScrollingDown) {
+          _isScrollingDown = scrollingDown;
+          widget.onScrollDirectionChanged!(scrollingDown);
+        }
+
+        _lastScrollOffset = offset;
+      }
+    }
+
     // fadeInNavTitle이 false이고 큰 타이틀이 없으면 스크롤에 따른 opacity 변경 불필요
     if (!widget.fadeInNavTitle && !widget.showLargeTitle) return;
 

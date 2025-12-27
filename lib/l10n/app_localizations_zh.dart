@@ -768,4 +768,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get reportPeriod => '报告期间';
+
+  @override
+  String get selectDateRange => '选择日期范围';
+
+  @override
+  String get selectStartAndEndDate => '选择开始和结束日期';
+
+  @override
+  String get month => '月';
+
+  @override
+  String get day => '日';
+
+  @override
+  String get newReport => '创建新报告';
 }

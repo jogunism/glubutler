@@ -284,5 +284,10 @@
   "reportGuideMessage": "• I rapporti sono generati dall'IA analizzando i tuoi dati di glucosio.\n\n• Sebbene tu possa generare ora, avere almeno un giorno di dati sul glucosio fornirà un'analisi più accurata.\n\n• Dopo il tuo primo rapporto, puoi generare nuovi rapporti settimanalmente.\n\n• I rapporti forniscono informazioni dettagliate basate su sonno, esercizio fisico e altri dati sanitari dall'app Salute.\n\n• Scrivere voci giornaliere nel diario del glucosio aiuta a identificare i modelli quotidiani.\n\n• Prova a implementare i miglioramenti dello stile di vita suggeriti nei rapporti e annota eventuali osservazioni insolite nel tuo diario.",
   "doNotShowAgain": "Non mostrare più",
   "viewPastReports": "Vedi rapporti precedenti",
-  "reportPeriod": "Periodo del rapporto"
+  "reportPeriod": "Periodo del rapporto",
+  "selectDateRange": "Seleziona intervallo di date",
+  "selectStartAndEndDate": "Seleziona le date di inizio e fine",
+  "month": "mese",
+  "day": "giorno",
+  "newReport": "Crea nuovo rapporto"
 }

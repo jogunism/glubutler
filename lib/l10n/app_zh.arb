@@ -284,5 +284,10 @@
   "reportGuideMessage": "• 报告由AI分析您的血糖数据生成。\n\n• 虽然现在可以生成，但至少有一天的血糖数据时分析结果会更准确。\n\n• 首次报告生成后，可以每周生成新报告。\n\n• 报告基于健康应用中的睡眠、运动等信息提供详细分析。\n\n• 每天写血糖日记有助于识别日常模式。\n\n• 尝试实施报告中建议的生活方式改善，并在日记中记录任何异常观察。",
   "doNotShowAgain": "不再显示",
   "viewPastReports": "查看过去的报告",
-  "reportPeriod": "报告期间"
+  "reportPeriod": "报告期间",
+  "selectDateRange": "选择日期范围",
+  "selectStartAndEndDate": "选择开始和结束日期",
+  "month": "月",
+  "day": "日",
+  "newReport": "创建新报告"
 }

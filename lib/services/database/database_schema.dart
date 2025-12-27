@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database schema definition and migration logic
 class DatabaseSchema {
-  static const int version = 3;
+  static const int version = 4;
 
   // Table names
   static const String tableGlucose = 'glucose_records';
@@ -14,6 +14,7 @@ class DatabaseSchema {
   static const String tableHealthPermissions = 'health_permissions';
   static const String tableDiary = 'diary_entries';
   static const String tableDiaryFiles = 'diary_files';
+  static const String tableReports = 'reports';
 
   /// Create all tables (called on first install)
   static Future<void> onCreate(Database db, int version) async {
@@ -27,6 +28,7 @@ class DatabaseSchema {
     await _createHealthPermissionsTable(db);
     await _createDiaryTable(db);
     await _createDiaryFilesTable(db);
+    await _createReportsTable(db);
     await _createIndexes(db);
 
     debugPrint('[DatabaseSchema] Database tables created successfully');
@@ -52,8 +54,14 @@ class DatabaseSchema {
           'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
     }
 
+    if (oldVersion < 4) {
+      await _createReportsTable(db);
+      await db.execute(
+          'CREATE INDEX idx_reports_created_at ON $tableReports (created_at)');
+    }
+
     // Add future migrations here:
-    // if (oldVersion < 4) { ... }
+    // if (oldVersion < 5) { ... }
   }
 
   // ============ Table Creation ============
@@ -164,6 +172,18 @@ class DatabaseSchema {
     ''');
   }
 
+  static Future<void> _createReportsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE $tableReports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        start_date TEXT NOT NULL,
+        end_date TEXT NOT NULL,
+        content TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+  }
+
   // ============ Index Creation ============
 
   static Future<void> _createIndexes(Database db) async {
@@ -179,5 +199,7 @@ class DatabaseSchema {
         'CREATE INDEX idx_diary_timestamp ON $tableDiary (timestamp)');
     await db.execute(
         'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
+    await db.execute(
+        'CREATE INDEX idx_reports_created_at ON $tableReports (created_at)');
   }
 }

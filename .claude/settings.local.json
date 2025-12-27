@@ -30,7 +30,10 @@
       "Bash(nc:*)",
       "Bash(grep:*)",
       "Bash(/Users/hyunwoo/fvm/versions/stable/bin/flutter analyze:*)",
-      "Bash(fvm flutter pub:*)"
+      "Bash(fvm flutter pub:*)",
+      "Bash(git checkout:*)",
+      "Bash(sqlite3:*)",
+      "Bash(fvm flutter run:*)"
     ]
   }
 }

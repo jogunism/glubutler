@@ -21,6 +21,7 @@ class SettingsService extends ChangeNotifier {
   DateTime? _subscriptionDate;
   int _syncPeriod = AppConstants.defaultSyncPeriod;
   GlucoseRangeSettings _glucoseRange = const GlucoseRangeSettings();
+  DateTime? _serviceStartDate;
 
   String get language => _language;
   String get unit => _unit;
@@ -32,6 +33,7 @@ class SettingsService extends ChangeNotifier {
   DateTime? get subscriptionDate => _subscriptionDate;
   int get syncPeriod => _syncPeriod;
   GlucoseRangeSettings get glucoseRange => _glucoseRange;
+  DateTime? get serviceStartDate => _serviceStartDate;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -87,6 +89,21 @@ class SettingsService extends ChangeNotifier {
       high: _prefs.getDouble(AppConstants.keyGlucoseHigh) ?? AppConstants.defaultHigh,
       veryHigh: _prefs.getDouble(AppConstants.keyGlucoseVeryHigh) ?? AppConstants.defaultVeryHigh,
     );
+
+    // Load or initialize service start date
+    final serviceStartDateString = _prefs.getString(AppConstants.keyServiceStartDate);
+    if (serviceStartDateString != null) {
+      _serviceStartDate = DateTime.tryParse(serviceStartDateString);
+    } else {
+      // 첫 실행: 현재 날짜를 서비스 시작일로 저장
+      final now = DateTime.now();
+      _serviceStartDate = DateTime(now.year, now.month, now.day);
+      await _prefs.setString(
+        AppConstants.keyServiceStartDate,
+        _serviceStartDate!.toIso8601String(),
+      );
+      debugPrint('[SettingsService] Service start date initialized: $_serviceStartDate');
+    }
 
     notifyListeners();
   }

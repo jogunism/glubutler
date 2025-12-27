@@ -8,10 +8,12 @@ import 'package:glu_butler/models/exercise_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/models/diary_entry.dart';
 import 'package:glu_butler/models/diary_file.dart';
+import 'package:glu_butler/models/report.dart';
 
 import 'database/database_schema.dart';
 import 'database/health_dao.dart';
 import 'database/record_dao.dart';
+import 'database/report_dao.dart';
 
 // Re-export models for convenience
 export 'database/health_dao.dart' show HealthConnectionInfo, HealthPermissionType;
@@ -31,6 +33,7 @@ class DatabaseService {
   // DAOs
   HealthDao? _healthDao;
   RecordDao? _recordDao;
+  ReportDao? _reportDao;
 
   HealthDao get healthDao {
     if (_healthDao == null) {
@@ -46,6 +49,13 @@ class DatabaseService {
     return _recordDao!;
   }
 
+  ReportDao get reportDao {
+    if (_reportDao == null) {
+      throw StateError('DatabaseService not initialized. Call initialize() first.');
+    }
+    return _reportDao!;
+  }
+
   /// Initialize database (call this at app startup)
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -53,6 +63,7 @@ class DatabaseService {
     final db = await _initDatabase();
     _healthDao = HealthDao(db);
     _recordDao = RecordDao(db);
+    _reportDao = ReportDao(db);
     _isInitialized = true;
   }
 
@@ -139,6 +150,13 @@ class DatabaseService {
   Future<int> deleteDiaryFile(String id) => recordDao.deleteDiaryFile(id);
   Future<int> deleteDiaryFiles(String diaryId) => recordDao.deleteDiaryFiles(diaryId);
 
+  // Reports
+  Future<int> insertReport(Report report) => reportDao.insertReport(report);
+  Future<Report?> getLatestReport() => reportDao.getLatestReport();
+  Future<List<Report>> getAllReports() => reportDao.getAllReports();
+  Future<Report?> getReportById(int id) => reportDao.getReportById(id);
+  Future<int> deleteReport(int id) => reportDao.deleteReport(id);
+
   // ============ Utility Methods ============
 
   /// Delete all data from all tables
@@ -155,6 +173,7 @@ class DatabaseService {
       _database = null;
       _healthDao = null;
       _recordDao = null;
+      _reportDao = null;
       _isInitialized = false;
       debugPrint('[DatabaseService] Database closed');
     }

@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:cupertino_native_plus/cupertino_native.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -12,9 +13,13 @@ import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/providers/report_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env file (for API keys)
+  await dotenv.load(fileName: ".env");
 
   // Lock orientation to portrait mode
   await SystemChrome.setPreferredOrientations([
@@ -40,11 +45,15 @@ void main() async {
   feedProvider.setSettingsService(settingsService);
   await feedProvider.initialize();
 
+  final reportProvider = ReportProvider();
+  await reportProvider.initialize();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: settingsService),
         ChangeNotifierProvider.value(value: feedProvider),
+        ChangeNotifierProvider.value(value: reportProvider),
       ],
       child: const GluButlerApp(),
     ),

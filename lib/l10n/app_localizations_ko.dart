@@ -768,4 +768,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get reportPeriod => '리포트 기간';
+
+  @override
+  String get selectDateRange => '날짜 범위 선택';
+
+  @override
+  String get selectStartAndEndDate => '시작일과 종료일을 선택하세요';
+
+  @override
+  String get month => '월';
+
+  @override
+  String get day => '일';
+
+  @override
+  String get newReport => '신규 리포트 생성';
 }

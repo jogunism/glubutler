@@ -284,5 +284,10 @@
   "reportGuideMessage": "• Les rapports sont générés par l'IA en analysant vos données de glucose.\n\n• Bien que vous puissiez générer maintenant, avoir au moins un jour de données de glucose fournira une analyse plus précise.\n\n• Après votre premier rapport, vous pouvez générer de nouveaux rapports chaque semaine.\n\n• Les rapports fournissent des informations détaillées basées sur le sommeil, l'exercice et d'autres données de santé de l'application Santé.\n\n• Rédiger des entrées quotidiennes dans le journal de glucose aide à identifier les schémas quotidiens.\n\n• Essayez de mettre en œuvre les améliorations de style de vie suggérées dans les rapports et notez toute observation inhabituelle dans votre journal.",
   "doNotShowAgain": "Ne plus afficher",
   "viewPastReports": "Voir les rapports précédents",
-  "reportPeriod": "Période du rapport"
+  "reportPeriod": "Période du rapport",
+  "selectDateRange": "Sélectionner la plage de dates",
+  "selectStartAndEndDate": "Sélectionnez les dates de début et de fin",
+  "month": "mois",
+  "day": "jour",
+  "newReport": "Créer un nouveau rapport"
 }

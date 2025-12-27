@@ -37,7 +37,7 @@ dependencies:
   intl: any
 
   # HTTP Client (for AI API)
-  http: ^1.2.2
+  dio: ^5.4.0
 
   # Image Picker (for diary photos)
   image_picker: ^1.1.2
@@ -96,3 +96,4 @@ flutter:
   assets:
     - assets/images/
     - .env
+    - lib/features/report/report_template_mock.md

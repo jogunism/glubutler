@@ -1603,6 +1603,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report Period'**
   String get reportPeriod;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date Range'**
+  String get selectDateRange;
+
+  /// No description provided for @selectStartAndEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select start and end dates'**
+  String get selectStartAndEndDate;
+
+  /// No description provided for @month.
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
+  String get month;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get day;
+
+  /// No description provided for @newReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Report'**
+  String get newReport;
 }
 
 class _AppLocalizationsDelegate

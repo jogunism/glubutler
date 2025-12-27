@@ -65,7 +65,16 @@ class MainScreenState extends State<MainScreen> {
           _buildOffstageTab(0, const HomeScreen()),
           _buildOffstageTab(1, const FeedScreen()),
           _buildOffstageTab(2, DiaryScreen(key: DiaryScreen.globalKey)),
-          _buildOffstageTab(3, const ReportScreen()),
+          _buildOffstageTab(
+            3,
+            ReportScreen(
+              onScrollDirectionChanged: (scrollingDown) {
+                setState(() {
+                  _isTabBarVisible = !scrollingDown;
+                });
+              },
+            ),
+          ),
 
           // Floating Action Button with animation
           ScreenFab(
@@ -90,100 +99,97 @@ class MainScreenState extends State<MainScreen> {
           ),
 
           // CNTabBar를 Positioned로 배치
-          Positioned(
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
             left: 0,
             right: 0,
-            bottom: 0,
-            child: Opacity(
-              opacity: _isTabBarVisible ? 1.0 : 0.0,
-              child: IgnorePointer(
-                ignoring: !_isTabBarVisible,
-                child: Stack(
-                  children: [
-                    CNTabBar(
-                      tint: AppTheme.primaryColor,
-                      items: [
-                        CNTabBarItem(
-                          label: l10n.home,
-                          customIcon: Icons.water_drop_outlined,
-                          activeCustomIcon: Icons.water_drop,
-                        ),
-                        CNTabBarItem(
-                          label: l10n.feed,
-                          customIcon: Icons.view_agenda_outlined,
-                          activeCustomIcon: Icons.view_agenda,
-                        ),
-                        CNTabBarItem(
-                          label: l10n.diary,
-                          customIcon: Icons.book_outlined,
-                          activeCustomIcon: Icons.book,
-                        ),
-                        CNTabBarItem(
-                          label: l10n.report,
-                          customIcon: Icons.leaderboard_outlined,
-                          activeCustomIcon: Icons.leaderboard,
-                        ),
-                      ],
-                      currentIndex: _currentIndex,
-                      onTap: (index) {
-                        if (index == _currentIndex) {
-                          // 이미 선택된 탭을 다시 탭하면 scroll to top
-                          final controller = PrimaryScrollController.of(
-                            context,
+            bottom: _isTabBarVisible ? 0 : -100,
+            child: IgnorePointer(
+              ignoring: !_isTabBarVisible,
+              child: Stack(
+                children: [
+                  CNTabBar(
+                    tint: AppTheme.primaryColor,
+                    items: [
+                      CNTabBarItem(
+                        label: l10n.home,
+                        customIcon: Icons.water_drop_outlined,
+                        activeCustomIcon: Icons.water_drop,
+                      ),
+                      CNTabBarItem(
+                        label: l10n.feed,
+                        customIcon: Icons.view_agenda_outlined,
+                        activeCustomIcon: Icons.view_agenda,
+                      ),
+                      CNTabBarItem(
+                        label: l10n.diary,
+                        customIcon: Icons.book_outlined,
+                        activeCustomIcon: Icons.book,
+                      ),
+                      CNTabBarItem(
+                        label: l10n.report,
+                        customIcon: Icons.leaderboard_outlined,
+                        activeCustomIcon: Icons.leaderboard,
+                      ),
+                    ],
+                    currentIndex: _currentIndex,
+                    onTap: (index) {
+                      if (index == _currentIndex) {
+                        // 이미 선택된 탭을 다시 탭하면 scroll to top
+                        final controller = PrimaryScrollController.of(context);
+                        if (controller.hasClients &&
+                            controller.positions.length == 1 &&
+                            controller.offset > 0) {
+                          HapticFeedback.lightImpact();
+                          controller.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
                           );
-                          if (controller.hasClients &&
-                              controller.positions.length == 1 &&
-                              controller.offset > 0) {
-                            HapticFeedback.lightImpact();
-                            controller.animateTo(
-                              0,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeOut,
-                            );
-                          }
-                        } else {
-                          switchToTab(index);
                         }
-                      },
-                    ),
-                    // AI 배지를 리포트 탭 아이콘 위에 오버레이
-                    Positioned(
-                      bottom: 60,
-                      right: MediaQuery.of(context).size.width / 8,
-                      child: IgnorePointer(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
+                      } else {
+                        switchToTab(index);
+                      }
+                    },
+                  ),
+                  // AI 배지를 리포트 탭 아이콘 위에 오버레이
+                  Positioned(
+                    bottom: 60,
+                    right: MediaQuery.of(context).size.width / 8,
+                    child: IgnorePointer(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _currentIndex == 3
+                              ? Colors.transparent
+                              : AppTheme.primaryColor,
+                          border: _currentIndex == 3
+                              ? Border.all(
+                                  color: AppTheme.primaryColor,
+                                  width: 1,
+                                )
+                              : null,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'AI',
+                          style: TextStyle(
                             color: _currentIndex == 3
-                                ? Colors.transparent
-                                : AppTheme.primaryColor,
-                            border: _currentIndex == 3
-                                ? Border.all(
-                                    color: AppTheme.primaryColor,
-                                    width: 1,
-                                  )
-                                : null,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'AI',
-                            style: TextStyle(
-                              color: _currentIndex == 3
-                                  ? AppTheme.primaryColor
-                                  : Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                              height: 1.0,
-                            ),
+                                ? AppTheme.primaryColor
+                                : Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            height: 1.0,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
