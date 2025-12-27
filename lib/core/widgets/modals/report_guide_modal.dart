@@ -26,8 +26,12 @@ class ReportGuideModal {
       return true;
     }
 
-    final result = await showCupertinoModalPopup<bool>(
+    final result = await showModalBottomSheet<bool>(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: true,
       builder: (context) => const _ReportGuideSheet(),
     );
 
@@ -73,12 +77,17 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
         children: [
           // 드래그 핸들
           Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 36,
-            height: 5,
-            decoration: BoxDecoration(
-              color: context.colors.divider,
-              borderRadius: BorderRadius.circular(2.5),
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 12, bottom: 8),
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: context.colors.divider,
+                  borderRadius: BorderRadius.circular(2.5),
+                ),
+              ),
             ),
           ),
 

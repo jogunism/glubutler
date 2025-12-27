@@ -60,10 +60,10 @@ class _ReportScreenState extends State<ReportScreen> {
 
 ## 📋 주요 지표
 
-| 항목 | 수치 | 평가 |
-|------|------|------|
+| 측정 항목 | 수치 | 평가 |
+|-----------|------|-----|
+| 최저/최고 혈당 | **85** / **165** mg/dL | |
 | 평균 혈당 | **120** mg/dL | 양호 |
-| 최저/최고 | **85** / **165** mg/dL | - |
 | 목표 범위 내 비율 | **78**% | 우수 |
 | 변동계수(CV) | **28.3**% | 양호 |
 | 공복 혈당 | **98** mg/dL | 정상 |
@@ -370,39 +370,47 @@ class _ReportScreenState extends State<ReportScreen> {
               styleSheet: MarkdownStyleSheet(
                 h1: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 20,
                 ),
                 h2: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 17,
                 ),
                 h3: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 18,
+                  fontSize: 15,
                 ),
                 p: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.6,
-                  fontSize: 15,
+                  fontSize: 13,
                 ),
                 listBullet: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.6,
-                  fontSize: 15,
+                  fontSize: 13,
                 ),
                 strong: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 13,
                 ),
                 em: theme.textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
-                  fontSize: 15,
+                  fontSize: 13,
                 ),
                 a: TextStyle(
                   color: AppTheme.primaryColor,
                   fontWeight: FontWeight.w600,
                   decoration: TextDecoration.none,
+                  fontSize: 13,
                 ),
-                blockSpacing: 12,
-                listIndent: 24,
+                tableHead: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+                tableBody: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 13,
+                ),
+                blockSpacing: 10,
+                listIndent: 20,
               ),
             ),
           ),

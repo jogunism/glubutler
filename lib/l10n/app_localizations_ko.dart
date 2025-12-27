@@ -751,14 +751,14 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get generateReport => '레포트 생성하기';
+  String get generateReport => '리포트 생성하기';
 
   @override
-  String get reportGuideTitle => '레포트 안내';
+  String get reportGuideTitle => '리포트 안내';
 
   @override
   String get reportGuideMessage =>
-      '• 레포트는 혈당 데이터를 분석하여 AI가 생성합니다.\n\n• 지금 생성해도 되지만, 최소 하루 이상의 혈당 데이터가 쌓여있을 때 더 정확한 분석 결과를 받을 수 있습니다.\n\n• 최초 리포트 생성 이후, 다음 리포트는 일주일 간격으로 생성할 수 있습니다.\n\n• 건강 앱에 연동된 수면, 운동 등의 정보를 바탕으로 더 상세한 분석을 제공합니다.\n\n• 매일 혈당 일기를 작성하면 하루 패턴을 파악하는데 도움이 됩니다.\n\n• 리포트에서 제안하는 생활습관 개선을 실천하고, 특이사항은 일기에 기록해보세요.';
+      '• 리포트는 혈당 데이터를 분석하여 AI가 생성합니다.\n\n• 지금 생성해도 되지만, 최소 하루 이상의 혈당 데이터가 쌓여있을 때 더 정확한 분석 결과를 받을 수 있습니다.\n\n• 최초 리포트 생성 이후, 다음 리포트는 일주일 간격으로 생성할 수 있습니다.\n\n• 건강 앱에 연동된 수면, 운동 등의 정보를 바탕으로 더 상세한 분석을 제공합니다.\n\n• 매일 혈당 일기를 작성하면 하루 패턴을 파악하는데 도움이 됩니다.\n\n• 리포트에서 제안하는 생활습관 개선을 실천하고, 특이사항은 일기에 기록해보세요.';
 
   @override
   String get doNotShowAgain => '다시 보지 않기';
