@@ -149,18 +149,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildDivider(context),
                   _buildSettingsTile(
                     context: context,
-                    icon: CupertinoIcons.drop_fill,
+                    icon: CupertinoIcons.gauge,
                     iconColor: AppTheme.iconRed,
                     title: l10n.glucoseUnit,
                     subtitle: settings.unit,
-                    onTap: () =>
-                        _showUnitActionSheet(context, settings, l10n),
+                    onTap: () => AppRoutes.goToUnitSelection(context),
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(
                     context: context,
-                    icon: CupertinoIcons.chart_bar_fill,
-                    iconColor: AppTheme.iconOrange,
+                    icon: CupertinoIcons.drop_fill,
+                    iconColor: AppTheme.iconGreen,
                     title: l10n.targetGlucoseRange,
                     subtitle: _getTargetRangeSubtitle(settings),
                     onTap: () => AppRoutes.goToGlucoseRange(context),
@@ -395,56 +394,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return '${formatValue(range.targetLow)} - ${formatValue(range.targetHigh)} $unit';
-  }
-
-  void _showUnitActionSheet(
-    BuildContext context,
-    SettingsService settings,
-    AppLocalizations l10n,
-  ) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (context) => CupertinoActionSheet(
-        title: Text(l10n.glucoseUnit),
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: () {
-              settings.setUnit(AppConstants.unitMgDl);
-              Navigator.pop(context);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(l10n.mgdl),
-                if (settings.unit == AppConstants.unitMgDl) ...[
-                  const SizedBox(width: 8),
-                  const Icon(CupertinoIcons.checkmark, size: 18),
-                ],
-              ],
-            ),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              settings.setUnit(AppConstants.unitMmolL);
-              Navigator.pop(context);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(l10n.mmoll),
-                if (settings.unit == AppConstants.unitMmolL) ...[
-                  const SizedBox(width: 8),
-                  const Icon(CupertinoIcons.checkmark, size: 18),
-                ],
-              ],
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-      ),
-    );
   }
 }

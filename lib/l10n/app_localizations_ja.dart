@@ -72,6 +72,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get glucoseUnit => '単位';
 
   @override
+  String get glucoseUnitDescription =>
+      'Select the unit for glucose measurement.';
+
+  @override
   String get mgdl => 'mg/dL';
 
   @override
@@ -532,8 +536,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appleHealth => 'Apple ヘルスケア';
 
   @override
-  String get appleHealthDescription =>
-      'ヘルスケアアプリと連携して、血糖管理に役立つ運動、睡眠、体重などのデータを確認できます。';
+  String get appleHealthDescription => 'ヘルスケアアプリと連携して、血糖管理に役立つ様々なデータを確認できます。';
 
   @override
   String get syncedData => '連携データ';

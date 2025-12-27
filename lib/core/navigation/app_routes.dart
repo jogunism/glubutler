@@ -7,6 +7,7 @@ import 'package:glu_butler/features/settings/display_settings_screen.dart';
 import 'package:glu_butler/features/settings/subscription_screen.dart';
 import 'package:glu_butler/features/settings/health_connect_screen.dart';
 import 'package:glu_butler/features/settings/glucose_range_screen.dart';
+import 'package:glu_butler/features/settings/unit_selection_screen.dart';
 import 'package:glu_butler/features/input/input_screen.dart';
 
 /// 앱 라우트 정의 (기본 Navigator 사용)
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String settingsSubscription = '/settings/subscription';
   static const String settingsHealth = '/settings/health';
   static const String settingsGlucoseRange = '/settings/glucose-range';
+  static const String settingsUnit = '/settings/unit';
   static const String input = '/input';
 
   /// Route generator
@@ -73,6 +75,12 @@ class AppRoutes {
           settings: settings,
         );
 
+      case settingsUnit:
+        return MaterialPageRoute(
+          builder: (_) => const UnitSelectionScreen(),
+          settings: settings,
+        );
+
       case input:
         return MaterialPageRoute(
           builder: (_) => const InputScreen(),
@@ -115,6 +123,11 @@ class AppRoutes {
   /// Navigate to glucose range settings
   static void goToGlucoseRange(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushNamed(settingsGlucoseRange);
+  }
+
+  /// Navigate to unit selection
+  static void goToUnitSelection(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pushNamed(settingsUnit);
   }
 
   /// Navigate to input screen

@@ -72,6 +72,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get glucoseUnit => '단위';
 
   @override
+  String get glucoseUnitDescription => '혈당 측정에 사용할 단위를 선택하세요.';
+
+  @override
   String get mgdl => 'mg/dL';
 
   @override
@@ -533,7 +536,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get appleHealthDescription =>
-      '건강 앱과 연동하여 혈당 관리에 도움이 되는 운동, 수면, 체중 등 다양한 데이터를 함께 확인할 수 있습니다.';
+      '건강 앱과 연동하여 혈당 관리에 도움이 되는 다양한 데이터를 함께 확인할 수 있습니다.';
 
   @override
   String get syncedData => '연동 데이터';

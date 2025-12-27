@@ -22,6 +22,7 @@
   "meal": "Meal",
   "exercise": "Exercise",
   "glucoseUnit": "Unit",
+  "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
 
@@ -198,7 +199,7 @@
   "saveFailed": "Failed to save",
 
   "appleHealth": "Apple Health",
-  "appleHealthDescription": "Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.",
+  "appleHealthDescription": "Connect with the Health app to view various data that can help you manage your blood glucose.",
   "syncedData": "Synced Data",
   "connectAppleHealth": "Connect Apple Health",
   "successfullyConnected": "Sync info has been updated",

@@ -50,7 +50,8 @@ class SubscriptionScreen extends StatelessWidget {
           LargeTitleScrollView(
             title: l10n.subscription,
             showBackButton: true,
-            showLargeTitle: false,
+            showLargeTitle: false, // Hero section has its own title
+            fadeInNavTitle: true, // Fade in nav title when hero title scrolls away
             onRefresh: null,
             slivers: [
               SliverPadding(
@@ -84,7 +85,7 @@ class SubscriptionScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 56,
                       child: CupertinoButton(
-                        color: theme.colorScheme.primary,
+                        color: AppTheme.primaryColor,
                         borderRadius: BorderRadius.circular(14),
                         onPressed: () => _showSubscriptionAlert(context),
                         child: Text(
@@ -114,20 +115,8 @@ class SubscriptionScreen extends StatelessWidget {
 
     return Column(
       children: [
-        const SizedBox(height: 20),
-        // Pro badge with checkmark
-        _buildProBadge(isActive: true),
-        const SizedBox(height: 24),
-        Text(
-          l10n.youArePro,
-          style: context.textStyles.largeTitle,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          l10n.proThankYou,
-          style: context.textStyles.bodyTextSecondary,
-          textAlign: TextAlign.center,
-        ),
+        // Hero Section
+        _buildHeroSection(context, l10n, theme, isActive: true),
         const SizedBox(height: 32),
 
         // Subscription info
@@ -214,19 +203,8 @@ class SubscriptionScreen extends StatelessWidget {
   ) {
     return Column(
       children: [
-        const SizedBox(height: 20),
-        // Pro badge
-        _buildProBadge(isActive: false),
-        const SizedBox(height: 24),
-        Text(
-          l10n.gluButlerPro,
-          style: context.textStyles.largeTitle,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          l10n.proDescription,
-          style: context.textStyles.bodyTextSecondary,
-        ),
+        // Hero Section
+        _buildHeroSection(context, l10n, theme, isActive: false),
         const SizedBox(height: 32),
 
         // Features list
@@ -302,30 +280,81 @@ class SubscriptionScreen extends StatelessWidget {
   // UI Components
   // ==========================================================================
 
-  Widget _buildProBadge({required bool isActive}) {
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isActive ? AppTheme.proActiveGradient : AppTheme.proGradient,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: isActive ? AppTheme.shadowGreen : AppTheme.shadowOrange,
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+  Widget _buildHeroSection(
+    BuildContext context,
+    AppLocalizations l10n,
+    ThemeData theme, {
+    required bool isActive,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isActive
+                ? [
+                    AppTheme.iconGreen.withValues(alpha: 0.1),
+                    AppTheme.iconGreen.withValues(alpha: 0.05),
+                  ]
+                : [
+                    AppTheme.iconOrange.withValues(alpha: 0.1),
+                    AppTheme.iconOrange.withValues(alpha: 0.05),
+                  ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      child: Center(
-        child: Icon(
-          isActive ? CupertinoIcons.checkmark_seal_fill : CupertinoIcons.star_fill,
-          color: Colors.white,
-          size: 40,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isActive ? AppTheme.proActiveGradient : AppTheme.proGradient,
+                ),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: isActive ? AppTheme.shadowGreen : AppTheme.shadowOrange,
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Icon(
+                  isActive ? CupertinoIcons.checkmark_seal_fill : CupertinoIcons.star_fill,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Title
+            Text(
+              isActive ? l10n.youArePro : l10n.subscription,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Description
+            Text(
+              isActive ? l10n.proThankYou : l10n.proDescription,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: context.colors.textSecondary,
+                height: 1.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -349,7 +378,7 @@ class SubscriptionScreen extends StatelessWidget {
     required String value,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           GlassIcon(icon: icon, color: iconColor, size: 28),
@@ -376,7 +405,7 @@ class SubscriptionScreen extends StatelessWidget {
     required String title,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           GlassIcon(icon: icon, color: iconColor, size: 28),

@@ -72,6 +72,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get glucoseUnit => '单位';
 
   @override
+  String get glucoseUnitDescription =>
+      'Select the unit for glucose measurement.';
+
+  @override
   String get mgdl => 'mg/dL';
 
   @override
@@ -532,7 +536,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appleHealth => 'Apple 健康';
 
   @override
-  String get appleHealthDescription => '连接健康 App，查看运动、睡眠、体重等可能有助于血糖管理的数据。';
+  String get appleHealthDescription => '连接健康 App，查看有助于血糖管理的各种数据。';
 
   @override
   String get syncedData => '同步数据';

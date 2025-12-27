@@ -22,6 +22,7 @@
   "meal": "Mahlzeit",
   "exercise": "Bewegung",
   "glucoseUnit": "Einheit",
+  "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
 
@@ -176,7 +177,7 @@
   "saveFailed": "Speichern fehlgeschlagen",
 
   "appleHealth": "Apple Health",
-  "appleHealthDescription": "Verbinden Sie sich mit der Health-App, um Workouts, Schlaf, Gewicht und andere Daten anzuzeigen, die bei der Blutzuckerkontrolle helfen können.",
+  "appleHealthDescription": "Verbinden Sie sich mit der Health-App, um verschiedene Daten anzuzeigen, die bei der Blutzuckerkontrolle helfen können.",
   "syncedData": "Synchronisierte Daten",
   "connectAppleHealth": "Apple Health verbinden",
   "successfullyConnected": "Sync-Informationen wurden aktualisiert",

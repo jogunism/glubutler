@@ -72,6 +72,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get glucoseUnit => 'Unité';
 
   @override
+  String get glucoseUnitDescription =>
+      'Select the unit for glucose measurement.';
+
+  @override
   String get mgdl => 'mg/dL';
 
   @override
@@ -549,7 +553,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get appleHealthDescription =>
-      'Connectez-vous à l\'app Santé pour consulter vos entraînements, sommeil, poids et autres données pouvant vous aider à gérer votre glycémie.';
+      'Connectez-vous à l\'app Santé pour consulter diverses données pouvant vous aider à gérer votre glycémie.';
 
   @override
   String get syncedData => 'Données synchronisées';

@@ -80,11 +80,12 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
         return LargeTitleScrollView(
           title: l10n.healthConnect,
           showBackButton: true,
-          showLargeTitle: false,
+          showLargeTitle: false, // Hero section has its own title
+          fadeInNavTitle: true, // Fade in nav title when hero title scrolls away
           onRefresh: () => _onRefresh(context, provider, l10n),
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   // Hero Section
@@ -135,13 +136,15 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Icon
           Container(
-            width: 72,
-            height: 72,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: context.colors.card,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
                   color: AppTheme.iconPink.withValues(alpha: 0.2),
@@ -155,17 +158,27 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
               child: Icon(
                 CupertinoIcons.heart_fill,
                 color: AppTheme.iconPink,
-                size: 28,
+                size: 24,
               ),
             ),
           ),
           const SizedBox(height: 20),
+          // Title
+          Text(
+            l10n.healthConnect,
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Description
           Text(
             l10n.appleHealthDescription,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: context.colors.textSecondary,
+              height: 1.5,
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),

@@ -22,6 +22,7 @@
   "meal": "餐食",
   "exercise": "运动",
   "glucoseUnit": "单位",
+  "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
 
@@ -176,7 +177,7 @@
   "saveFailed": "保存失败",
 
   "appleHealth": "Apple 健康",
-  "appleHealthDescription": "连接健康 App，查看运动、睡眠、体重等可能有助于血糖管理的数据。",
+  "appleHealthDescription": "连接健康 App，查看有助于血糖管理的各种数据。",
   "syncedData": "同步数据",
   "connectAppleHealth": "连接 Apple 健康",
   "successfullyConnected": "同步信息已更新",

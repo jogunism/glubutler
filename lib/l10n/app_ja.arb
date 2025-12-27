@@ -22,6 +22,7 @@
   "meal": "食事",
   "exercise": "運動",
   "glucoseUnit": "単位",
+  "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
 
@@ -176,7 +177,7 @@
   "saveFailed": "保存に失敗しました",
 
   "appleHealth": "Apple ヘルスケア",
-  "appleHealthDescription": "ヘルスケアアプリと連携して、血糖管理に役立つ運動、睡眠、体重などのデータを確認できます。",
+  "appleHealthDescription": "ヘルスケアアプリと連携して、血糖管理に役立つ様々なデータを確認できます。",
   "syncedData": "連携データ",
   "connectAppleHealth": "Apple ヘルスケアに接続",
   "successfullyConnected": "連携情報が更新されました",

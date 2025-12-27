@@ -236,6 +236,12 @@ abstract class AppLocalizations {
   /// **'Unit'**
   String get glucoseUnit;
 
+  /// No description provided for @glucoseUnitDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the unit for glucose measurement.'**
+  String get glucoseUnitDescription;
+
   /// No description provided for @mgdl.
   ///
   /// In en, this message translates to:
@@ -1151,7 +1157,7 @@ abstract class AppLocalizations {
   /// No description provided for @appleHealthDescription.
   ///
   /// In en, this message translates to:
-  /// **'Connect with the Health app to view workouts, sleep, weight, and other data that may help you manage your blood glucose.'**
+  /// **'Connect with the Health app to view various data that can help you manage your blood glucose.'**
   String get appleHealthDescription;
 
   /// No description provided for @syncedData.

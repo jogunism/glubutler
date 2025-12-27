@@ -22,6 +22,7 @@
   "meal": "식사",
   "exercise": "운동",
   "glucoseUnit": "단위",
+  "glucoseUnitDescription": "혈당 측정에 사용할 단위를 선택하세요.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
 
@@ -198,7 +199,7 @@
   "saveFailed": "저장에 실패했습니다",
 
   "appleHealth": "Apple 건강",
-  "appleHealthDescription": "건강 앱과 연동하여 혈당 관리에 도움이 되는 운동, 수면, 체중 등 다양한 데이터를 함께 확인할 수 있습니다.",
+  "appleHealthDescription": "건강 앱과 연동하여 혈당 관리에 도움이 되는 다양한 데이터를 함께 확인할 수 있습니다.",
   "syncedData": "연동 데이터",
   "connectAppleHealth": "Apple 건강 연결",
   "successfullyConnected": "연동 정보가 업데이트 되었습니다",

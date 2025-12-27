@@ -22,6 +22,7 @@
   "meal": "Pasto",
   "exercise": "Esercizio",
   "glucoseUnit": "Unità",
+  "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
 
@@ -176,7 +177,7 @@
   "saveFailed": "Salvataggio fallito",
 
   "appleHealth": "Apple Salute",
-  "appleHealthDescription": "Collegati all'app Salute per visualizzare allenamenti, sonno, peso e altri dati che possono aiutarti a gestire la glicemia.",
+  "appleHealthDescription": "Collegati all'app Salute per visualizzare vari dati che possono aiutarti a gestire la glicemia.",
   "syncedData": "Dati sincronizzati",
   "connectAppleHealth": "Connetti Apple Salute",
   "successfullyConnected": "Le informazioni di sincronizzazione sono state aggiornate",

@@ -89,11 +89,12 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
     return LargeTitleScrollView(
       title: l10n.targetGlucoseRange,
       showBackButton: true,
-      showLargeTitle: false,
+      showLargeTitle: false, // Hero section has its own title
+      fadeInNavTitle: true, // Fade in nav title when hero title scrolls away
       onRefresh: null,
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               // Hero Section
@@ -170,50 +171,65 @@ class _GlucoseRangeScreenState extends State<GlucoseRangeScreen> {
     ThemeData theme,
     AppLocalizations l10n,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.iconOrange.withValues(alpha: 0.1),
-            AppTheme.iconOrange.withValues(alpha: 0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppTheme.iconGreen.withValues(alpha: 0.1),
+              AppTheme.iconGreen.withValues(alpha: 0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: context.colors.card,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.iconOrange.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: context.colors.card,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.iconGreen.withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                CupertinoIcons.drop_fill,
+                color: AppTheme.iconGreen,
+                size: 24,
+              ),
             ),
-            child: const Icon(
-              CupertinoIcons.chart_bar_fill,
-              color: AppTheme.iconOrange,
-              size: 32,
+            const SizedBox(height: 20),
+            // Title
+            Text(
+              l10n.targetGlucoseRange,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.targetGlucoseRangeDescription,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: context.colors.textSecondary,
+            const SizedBox(height: 12),
+            // Description
+            Text(
+              l10n.targetGlucoseRangeDescription,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: context.colors.textSecondary,
+                height: 1.5,
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -55,6 +55,7 @@ class LargeTitleScrollView extends StatefulWidget {
     this.showLargeTitle = true,
     this.trailing,
     this.titleTrailing,
+    this.fadeInNavTitle = false,
   });
 
   /// 네비게이션바와 큰 타이틀에 표시될 텍스트
@@ -90,6 +91,12 @@ class LargeTitleScrollView extends StatefulWidget {
   /// 큰 타이틀 우측에 표시될 위젯 (예: 날짜 선택 버튼)
   final Widget? titleTrailing;
 
+  /// 스크롤에 따라 네비게이션 바 타이틀을 페이드 인 할지 여부
+  ///
+  /// true면 showLargeTitle이 false여도 스크롤 시 네비게이션바 타이틀이 페이드인됩니다.
+  /// Hero 섹션에 자체 타이틀이 있는 경우 사용합니다.
+  final bool fadeInNavTitle;
+
   @override
   State<LargeTitleScrollView> createState() => _LargeTitleScrollViewState();
 }
@@ -100,21 +107,29 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
   @override
   void initState() {
     super.initState();
-    // 큰 타이틀이 없으면 네비게이션바 타이틀을 항상 표시
-    if (!widget.showLargeTitle) {
+    // fadeInNavTitle이 true면 스크롤에 따라 페이드인 (초기값 0.0)
+    // fadeInNavTitle이 false이고 큰 타이틀이 없으면 네비게이션바 타이틀을 항상 표시 (초기값 1.0)
+    // fadeInNavTitle이 false이고 큰 타이틀이 있으면 스크롤에 따라 페이드인 (초기값 0.0)
+    if (!widget.fadeInNavTitle && !widget.showLargeTitle) {
       _navTitleOpacity = 1.0;
+    } else {
+      _navTitleOpacity = 0.0;
     }
   }
 
   void _onScroll(double offset) {
-    // 큰 타이틀이 없으면 스크롤에 따른 opacity 변경 불필요
-    if (!widget.showLargeTitle) return;
+    // fadeInNavTitle이 false이고 큰 타이틀이 없으면 스크롤에 따른 opacity 변경 불필요
+    if (!widget.fadeInNavTitle && !widget.showLargeTitle) return;
 
+    // fadeInNavTitle이 true이거나 showLargeTitle이 true면 스크롤에 따라 페이드인
     // 스크롤 위치에 따라 네비게이션바 타이틀 투명도 계산
-    // 10px부터 페이드 시작, 30px에서 완전히 표시
+    // 120px부터 페이드 시작 (hero 섹션의 아이콘+타이틀 높이 고려), 150px에서 완전히 표시
+    double startOffset = widget.fadeInNavTitle ? 120 : 10;
+    double endOffset = widget.fadeInNavTitle ? 150 : 30;
+
     double opacity = 0.0;
-    if (offset > 10) {
-      opacity = ((offset - 10) / 20).clamp(0.0, 1.0);
+    if (offset > startOffset) {
+      opacity = ((offset - startOffset) / (endOffset - startOffset)).clamp(0.0, 1.0);
     }
     if (opacity != _navTitleOpacity) {
       setState(() {
