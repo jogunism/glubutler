@@ -7,6 +7,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/modals/report_guide_modal.dart';
+import 'package:glu_butler/features/report/past_reports_screen.dart';
 
 /// 리포트 화면
 ///
@@ -229,8 +230,11 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   void _viewPastReports() {
-    // TODO: 지난 리포트 목록 화면으로 이동
-    debugPrint('[ReportScreen] View past reports');
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (context) => const PastReportsScreen(),
+      ),
+    );
   }
 
   @override
@@ -328,13 +332,24 @@ class _ReportScreenState extends State<ReportScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             minSize: 0,
             onPressed: _viewPastReports,
-            child: Text(
-              l10n.viewPastReports,
-              style: TextStyle(
-                color: theme.primaryColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.viewPastReports,
+                  style: const TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Icon(
+                  CupertinoIcons.chevron_right,
+                  size: 14,
+                  color: AppTheme.primaryColor,
+                ),
+              ],
             ),
           ),
         ],
@@ -370,47 +385,47 @@ class _ReportScreenState extends State<ReportScreen> {
               styleSheet: MarkdownStyleSheet(
                 h1: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 21,
                 ),
                 h2: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 17,
+                  fontSize: 19,
                 ),
                 h3: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 15,
+                  fontSize: 16,
                 ),
                 p: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.6,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 listBullet: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.6,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 strong: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 em: theme.textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 a: TextStyle(
                   color: AppTheme.primaryColor,
                   fontWeight: FontWeight.w600,
                   decoration: TextDecoration.none,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 tableHead: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 tableBody: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
-                blockSpacing: 10,
-                listIndent: 20,
+                blockSpacing: 11,
+                listIndent: 22,
               ),
             ),
           ),
