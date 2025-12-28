@@ -344,6 +344,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   defaultBuilder: (context, day, focusedDay) {
                     final normalizedDate = DateTime(day.year, day.month, day.day);
                     final hasData = _datesWithData.contains(normalizedDate);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
 
                     return Center(
                       child: Column(
@@ -352,7 +353,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                           Text(
                             '${day.day}',
                             style: context.textStyles.tileSubtitle.copyWith(
-                              color: Colors.black87,
+                              color: isDark ? context.colors.textPrimary : Colors.black87,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -371,6 +372,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   disabledBuilder: (context, day, focusedDay) {
                     final normalizedDate = DateTime(day.year, day.month, day.day);
                     final hasData = _datesWithData.contains(normalizedDate);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
 
                     return Center(
                       child: Column(
@@ -379,7 +381,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                           Text(
                             '${day.day}',
                             style: context.textStyles.tileSubtitle.copyWith(
-                              color: Colors.grey[300],
+                              color: isDark ? context.colors.textSecondary : Colors.grey[300],
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -387,7 +389,9 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: hasData ? Colors.grey[300] : Colors.transparent,
+                              color: hasData
+                                ? (isDark ? context.colors.textSecondary.withValues(alpha: 0.3) : Colors.grey[300])
+                                : Colors.transparent,
                               shape: BoxShape.circle,
                             ),
                           ),

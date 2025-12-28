@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 
@@ -140,29 +141,32 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
                       _doNotShowAgain = !_doNotShowAgain;
                     });
                   },
-                  child: Row(
-                    children: [
-                      Transform.scale(
-                        scale: 0.8,
-                        child: CupertinoCheckbox(
-                          value: _doNotShowAgain,
-                          onChanged: (value) {
-                            setState(() {
-                              _doNotShowAgain = value ?? false;
-                            });
-                          },
-                          activeColor: context.colors.textPrimary,
+                  child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Transform.scale(
+                          scale: 1.2,
+                          child: CupertinoCheckbox(
+                            value: _doNotShowAgain,
+                            onChanged: (value) {
+                              setState(() {
+                                _doNotShowAgain = value ?? false;
+                              });
+                            },
+                            activeColor: context.colors.textPrimary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        l10n.doNotShowAgain,
-                        style: context.textStyles.bodyText.copyWith(
-                          fontSize: 14,
-                          decoration: TextDecoration.none,
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.doNotShowAgain,
+                          style: context.textStyles.bodyText.copyWith(
+                            fontSize: 14,
+                            decoration: TextDecoration.none,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
@@ -174,7 +178,7 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
                   height: 50,
                   child: CupertinoButton(
                     padding: EdgeInsets.zero,
-                    color: context.colors.textPrimary,
+                    color: AppTheme.primaryColor,
                     borderRadius: BorderRadius.circular(12),
                     onPressed: _onConfirm,
                     child: Text(
