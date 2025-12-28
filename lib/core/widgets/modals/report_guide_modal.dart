@@ -97,8 +97,10 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
             child: Text(
               l10n.reportGuideTitle,
-              style: context.textStyles.largeTitle.copyWith(
-                fontWeight: FontWeight.w700,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: context.colors.textPrimary,
                 decoration: TextDecoration.none,
               ),
             ),

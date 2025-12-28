@@ -119,9 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconColor: AppTheme.iconBlue,
                     title: l10n.name,
                     subtitle: settings.userProfile.name ?? '-',
-                    onTap: () {
-                      // TODO: Navigate to profile edit
-                    },
+                    onTap: () => AppRoutes.goToProfileSettings(context),
                   ),
                 ],
               ),
@@ -129,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // App Settings Section
-              _buildSectionTitle(context, l10n.settings),
+              _buildSectionTitle(context, l10n.general),
               _buildGroupedSection(
                 context: context,
                 children: [
@@ -163,6 +161,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title: l10n.targetGlucoseRange,
                     subtitle: _getTargetRangeSubtitle(settings),
                     onTap: () => AppRoutes.goToGlucoseRange(context),
+                  ),
+                  _buildDivider(context),
+                  _buildSettingsTile(
+                    context: context,
+                    icon: CupertinoIcons.bell_fill,
+                    iconColor: AppTheme.iconOrange,
+                    title: l10n.notifications,
+                    subtitle: l10n.changeInSettings,
+                    trailing: Icon(
+                      CupertinoIcons.arrow_up_right,
+                      size: 16,
+                      color: context.colors.iconGrey,
+                    ),
+                    onTap: () => AppSettingsService.openAppSettings(),
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(

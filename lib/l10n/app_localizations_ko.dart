@@ -156,6 +156,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get none => '해당없음';
 
   @override
+  String get personal => '개인정보';
+
+  @override
+  String get diabetes => '당뇨';
+
+  @override
+  String get yearOfDiagnosis => '진단 연도';
+
+  @override
   String get language => '언어';
 
   @override
@@ -166,6 +175,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get displaySettings => '화면';
+
+  @override
+  String get general => '일반';
 
   @override
   String get systemDefault => '시스템 설정';

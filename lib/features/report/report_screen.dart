@@ -125,7 +125,8 @@ class _ReportScreenState extends State<ReportScreen> {
         return LargeTitleScrollView(
           title: l10n.report,
           trailing: const SettingsIconButton(),
-          onScrollDirectionChanged: widget.onScrollDirectionChanged,
+          // 레포트가 없을 때는 스크롤로 탭바 숨김 비활성화
+          onScrollDirectionChanged: reportContent != null ? widget.onScrollDirectionChanged : null,
           slivers: [
             if (reportContent == null)
               // 레포트 없을 때: 빈 화면 + 생성 버튼

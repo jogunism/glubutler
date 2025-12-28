@@ -157,6 +157,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get none => 'なし';
 
   @override
+  String get personal => '個人情報';
+
+  @override
+  String get diabetes => '糖尿病';
+
+  @override
+  String get yearOfDiagnosis => '診断年';
+
+  @override
   String get language => '言語';
 
   @override
@@ -167,6 +176,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get displaySettings => '表示';
+
+  @override
+  String get general => '一般';
 
   @override
   String get systemDefault => 'システム設定';

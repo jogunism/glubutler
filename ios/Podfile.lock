@@ -1,4 +1,6 @@
 PODS:
+  - adaptive_platform_ui (0.1.0):
+    - Flutter
   - CocoaLumberjack (3.9.0):
     - CocoaLumberjack/Core (= 3.9.0)
   - CocoaLumberjack/Core (3.9.0)
@@ -30,6 +32,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - adaptive_platform_ui (from `.symlinks/plugins/adaptive_platform_ui/ios`)
   - cupertino_native_plus (from `.symlinks/plugins/cupertino_native_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
@@ -47,6 +50,8 @@ SPEC REPOS:
     - SVGKit
 
 EXTERNAL SOURCES:
+  adaptive_platform_ui:
+    :path: ".symlinks/plugins/adaptive_platform_ui/ios"
   cupertino_native_plus:
     :path: ".symlinks/plugins/cupertino_native_plus/ios"
   Flutter:
@@ -69,6 +74,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  adaptive_platform_ui: f54f620666d1797636f9ef06f49137ef2cc13611
   CocoaLumberjack: 5644158777912b7de7469fa881f8a3f259c2512a
   cupertino_native_plus: d86c2d22e15e85fe4ee351662e47b5f20f422144
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467

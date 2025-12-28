@@ -157,6 +157,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get none => '无';
 
   @override
+  String get personal => '个人信息';
+
+  @override
+  String get diabetes => '糖尿病';
+
+  @override
+  String get yearOfDiagnosis => '诊断年份';
+
+  @override
   String get language => '语言';
 
   @override
@@ -167,6 +176,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get displaySettings => '显示';
+
+  @override
+  String get general => '通用';
 
   @override
   String get systemDefault => '跟随系统';

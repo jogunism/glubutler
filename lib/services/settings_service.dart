@@ -191,4 +191,13 @@ class SettingsService extends ChangeNotifier {
     await _prefs.setDouble(AppConstants.keyGlucoseVeryHigh, range.veryHigh);
     notifyListeners();
   }
+
+  Future<void> updateUserProfile(UserProfile profile) async {
+    _userProfile = profile;
+    await _prefs.setString(
+      AppConstants.keyUserProfile,
+      jsonEncode(profile.toJson()),
+    );
+    notifyListeners();
+  }
 }

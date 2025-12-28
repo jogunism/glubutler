@@ -157,6 +157,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get none => 'Keiner';
 
   @override
+  String get personal => 'Persönlich';
+
+  @override
+  String get diabetes => 'Diabetes';
+
+  @override
+  String get yearOfDiagnosis => 'Jahr der Diagnose';
+
+  @override
   String get language => 'Sprache';
 
   @override
@@ -167,6 +176,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get displaySettings => 'Anzeige';
+
+  @override
+  String get general => 'Allgemein';
 
   @override
   String get systemDefault => 'Systemstandard';

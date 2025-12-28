@@ -404,6 +404,24 @@ abstract class AppLocalizations {
   /// **'None'**
   String get none;
 
+  /// No description provided for @personal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal'**
+  String get personal;
+
+  /// No description provided for @diabetes.
+  ///
+  /// In en, this message translates to:
+  /// **'Diabetes'**
+  String get diabetes;
+
+  /// No description provided for @yearOfDiagnosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Year of Diagnosis'**
+  String get yearOfDiagnosis;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
@@ -427,6 +445,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Display'**
   String get displaySettings;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
 
   /// No description provided for @systemDefault.
   ///
