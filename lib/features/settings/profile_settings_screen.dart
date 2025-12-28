@@ -390,23 +390,28 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               style: context.textStyles.tileTitle,
             ),
           ),
-          AdaptivePopupMenuButton.widget<String>(
-            items: itemsWithCheckmarks,
-            onSelected: onSelected,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  displayValue,
-                  style: context.textStyles.tileSubtitle,
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  CupertinoIcons.chevron_down,
-                  size: 16,
-                  color: context.colors.iconGrey,
-                ),
-              ],
+          MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              platformBrightness: Theme.of(context).brightness,
+            ),
+            child: AdaptivePopupMenuButton.widget<String>(
+              items: itemsWithCheckmarks,
+              onSelected: onSelected,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    displayValue,
+                    style: context.textStyles.tileSubtitle,
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    CupertinoIcons.chevron_down,
+                    size: 16,
+                    color: context.colors.iconGrey,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
