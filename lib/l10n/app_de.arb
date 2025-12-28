@@ -72,6 +72,7 @@
   "darkMode": "Dunkelmodus",
   "displaySettings": "Anzeige",
   "general": "Allgemein",
+  "hapticFeedback": "Haptisches Feedback",
   "systemDefault": "Systemstandard",
   "systemDefaultDescription": "Systemdesign folgen",
   "lightMode": "Hell",

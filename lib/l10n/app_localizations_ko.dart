@@ -204,6 +204,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get general => '일반';
 
   @override
+  String get hapticFeedback => '햅틱 피드백';
+
+  @override
   String get systemDefault => '시스템 설정';
 
   @override

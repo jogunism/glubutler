@@ -205,6 +205,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get general => '一般';
 
   @override
+  String get hapticFeedback => '触覚フィードバック';
+
+  @override
   String get systemDefault => 'システム設定';
 
   @override

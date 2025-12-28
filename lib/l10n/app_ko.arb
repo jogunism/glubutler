@@ -72,6 +72,7 @@
   "darkMode": "다크 모드",
   "displaySettings": "화면",
   "general": "일반",
+  "hapticFeedback": "햅틱 피드백",
   "systemDefault": "시스템 설정",
   "systemDefaultDescription": "시스템 테마를 따름",
   "lightMode": "라이트",

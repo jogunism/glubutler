@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/core/constants/app_constants.dart';
@@ -22,6 +23,7 @@ class SettingsService extends ChangeNotifier {
   int _syncPeriod = AppConstants.defaultSyncPeriod;
   GlucoseRangeSettings _glucoseRange = const GlucoseRangeSettings();
   DateTime? _serviceStartDate;
+  bool _hapticEnabled = AppConstants.defaultHapticEnabled;
 
   String get language => _language;
   String get unit => _unit;
@@ -34,6 +36,7 @@ class SettingsService extends ChangeNotifier {
   int get syncPeriod => _syncPeriod;
   GlucoseRangeSettings get glucoseRange => _glucoseRange;
   DateTime? get serviceStartDate => _serviceStartDate;
+  bool get hapticEnabled => _hapticEnabled;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -104,6 +107,8 @@ class SettingsService extends ChangeNotifier {
       );
       debugPrint('[SettingsService] Service start date initialized: $_serviceStartDate');
     }
+
+    _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
 
     notifyListeners();
   }
@@ -198,6 +203,16 @@ class SettingsService extends ChangeNotifier {
       AppConstants.keyUserProfile,
       jsonEncode(profile.toJson()),
     );
+    notifyListeners();
+  }
+
+  Future<void> setHapticEnabled(bool enabled) async {
+    // 켤 때만 햅틱 피드백 제공
+    if (enabled) {
+      HapticFeedback.lightImpact(); // "툭" when turning on
+    }
+    _hapticEnabled = enabled;
+    await _prefs.setBool(AppConstants.keyHapticEnabled, enabled);
     notifyListeners();
   }
 }

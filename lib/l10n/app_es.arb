@@ -72,6 +72,7 @@
   "darkMode": "Modo oscuro",
   "displaySettings": "Pantalla",
   "general": "General",
+  "hapticFeedback": "Retroalimentación háptica",
   "systemDefault": "Predeterminado del sistema",
   "systemDefaultDescription": "Seguir tema del sistema",
   "lightMode": "Claro",

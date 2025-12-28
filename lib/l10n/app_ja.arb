@@ -72,6 +72,7 @@
   "darkMode": "ダークモード",
   "displaySettings": "表示",
   "general": "一般",
+  "hapticFeedback": "触覚フィードバック",
   "systemDefault": "システム設定",
   "systemDefaultDescription": "システムテーマに従う",
   "lightMode": "ライト",

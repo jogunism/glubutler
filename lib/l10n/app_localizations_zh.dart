@@ -205,6 +205,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get general => '通用';
 
   @override
+  String get hapticFeedback => '触觉反馈';
+
+  @override
   String get systemDefault => '跟随系统';
 
   @override

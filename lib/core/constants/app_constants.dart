@@ -81,4 +81,8 @@ class AppConstants {
   static const String keyGlucoseTarget = 'glucose_target';
   static const String keyGlucoseHigh = 'glucose_high';
   static const String keyGlucoseVeryHigh = 'glucose_very_high';
+
+  // Haptic Feedback
+  static const String keyHapticEnabled = 'haptic_enabled';
+  static const bool defaultHapticEnabled = true;
 }

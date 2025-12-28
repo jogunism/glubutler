@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
+import 'package:provider/provider.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -12,6 +13,7 @@ import 'package:glu_butler/features/home/home_screen.dart';
 import 'package:glu_butler/features/feed/feed_screen.dart';
 import 'package:glu_butler/features/diary/diary_screen.dart';
 import 'package:glu_butler/features/report/report_screen.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// 메인 화면 - iOS 상태바 탭 scroll-to-top 지원
 ///
@@ -38,7 +40,10 @@ class MainScreenState extends State<MainScreen> {
 
   void switchToTab(int index) {
     if (index >= 0 && index < 4 && index != _currentIndex) {
-      HapticFeedback.lightImpact();
+      final settings = context.read<SettingsService>();
+      if (settings.hapticEnabled) {
+        HapticFeedback.lightImpact();
+      }
       setState(() {
         _currentIndex = index;
       });
@@ -170,6 +175,8 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildAdaptiveTabBar(AppLocalizations l10n) {
+    final settings = context.watch<SettingsService>();
+
     void handleTap(int index) {
       if (index == _currentIndex) {
         // 이미 선택된 탭을 다시 탭하면 scroll to top
@@ -177,7 +184,9 @@ class MainScreenState extends State<MainScreen> {
         if (controller.hasClients &&
             controller.positions.length == 1 &&
             controller.offset > 0) {
-          HapticFeedback.lightImpact();
+          if (settings.hapticEnabled) {
+            HapticFeedback.lightImpact();
+          }
           controller.animateTo(
             0,
             duration: const Duration(milliseconds: 300),

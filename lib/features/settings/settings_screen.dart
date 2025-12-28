@@ -202,6 +202,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     subtitle: _getThemeModeLabel(settings.themeMode, l10n),
                     onTap: () => AppRoutes.goToDisplaySettings(context),
                   ),
+                  _buildDivider(context),
+                  _buildHapticToggleTile(context: context, settings: settings),
                 ],
               ),
 
@@ -488,5 +490,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return '${formatValue(range.targetLow)} - ${formatValue(range.targetHigh)} $unit';
+  }
+
+  Widget _buildHapticToggleTile({
+    required BuildContext context,
+    required SettingsService settings,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GlassIcon(icon: CupertinoIcons.hand_draw_fill, color: AppTheme.iconPurple, size: 32),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              l10n.hapticFeedback,
+              style: context.textStyles.tileTitle,
+            ),
+          ),
+          CupertinoSwitch(
+            value: settings.hapticEnabled,
+            onChanged: (value) => settings.setHapticEnabled(value),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import 'package:glu_butler/services/settings_service.dart';
 
@@ -46,10 +47,16 @@ class InitializationService {
   /// 에러 발생 시에도 앱 실행을 계속하도록 각 단계별로 try-catch 처리합니다.
   Future<void> initialize() async {
     // 1. 설정 로드 (이미 main.dart에서 수행됨)
+    if (settingsService.hapticEnabled) {
+      HapticFeedback.mediumImpact(); // 첫 번째 "툭"
+    }
     onStepChanged?.call(InitializationStep.settings);
     await _loadSettings();
 
     // 2. 건강앱 동기화
+    if (settingsService.hapticEnabled) {
+      HapticFeedback.mediumImpact(); // 두 번째 "툭"
+    }
     onStepChanged?.call(InitializationStep.healthSync);
     await _syncHealthData();
 
@@ -62,6 +69,9 @@ class InitializationService {
     await _initializeLocalDatabase();
 
     // 5. 완료
+    if (settingsService.hapticEnabled) {
+      HapticFeedback.lightImpact(); // 완료 "툭" (가볍게)
+    }
     onStepChanged?.call(InitializationStep.done);
   }
 

@@ -500,6 +500,12 @@ abstract class AppLocalizations {
   /// **'General'**
   String get general;
 
+  /// No description provided for @hapticFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptic Feedback'**
+  String get hapticFeedback;
+
   /// No description provided for @systemDefault.
   ///
   /// In en, this message translates to:

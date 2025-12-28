@@ -205,6 +205,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get general => 'General';
 
   @override
+  String get hapticFeedback => 'Retroalimentación háptica';
+
+  @override
   String get systemDefault => 'Predeterminado del sistema';
 
   @override

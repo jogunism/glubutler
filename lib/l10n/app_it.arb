@@ -72,6 +72,7 @@
   "darkMode": "Modalità scura",
   "displaySettings": "Schermo",
   "general": "Generale",
+  "hapticFeedback": "Feedback aptico",
   "systemDefault": "Predefinito di sistema",
   "systemDefaultDescription": "Segui il tema di sistema",
   "lightMode": "Chiaro",
