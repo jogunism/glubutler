@@ -79,7 +79,11 @@ class _HomeScreenState extends State<HomeScreen>
 
     try {
       // _selectedDate를 사용하여 선택한 날짜의 데이터 로드
-      final startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+      final startOfDay = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+      );
       final endOfDay = startOfDay.add(const Duration(days: 1));
 
       // GlucoseRepository.fetch() automatically handles:
@@ -165,8 +169,16 @@ class _HomeScreenState extends State<HomeScreen>
       // 수면 종료 시간이 오늘인 것만 포함 (어제 밤 ~ 오늘 아침 수면)
       if (sleepRecords.isNotEmpty) {
         final todaySleepRecords = sleepRecords.where((record) {
-          final endDay = DateTime(record.endTime.year, record.endTime.month, record.endTime.day);
-          final targetDay = DateTime(startOfDay.year, startOfDay.month, startOfDay.day);
+          final endDay = DateTime(
+            record.endTime.year,
+            record.endTime.month,
+            record.endTime.day,
+          );
+          final targetDay = DateTime(
+            startOfDay.year,
+            startOfDay.month,
+            startOfDay.day,
+          );
           return endDay == targetDay;
         }).toList();
 
@@ -220,8 +232,9 @@ class _HomeScreenState extends State<HomeScreen>
       return l10n.yesterday;
     } else {
       // 국가별 날짜 형식 (예: "24 Dec 2025", "2025년 12월 24일")
-      return DateFormat.yMMMd(Localizations.localeOf(context).toString())
-          .format(_selectedDate);
+      return DateFormat.yMMMd(
+        Localizations.localeOf(context).toString(),
+      ).format(_selectedDate);
     }
   }
 
@@ -344,7 +357,6 @@ class _HomeScreenState extends State<HomeScreen>
       ],
     );
   }
-
 
   Widget _buildChartCard(BuildContext context, AppLocalizations l10n) {
     return Container(
@@ -470,7 +482,8 @@ class _HomeScreenState extends State<HomeScreen>
                   fontWeight: FontWeight.w600,
                   backgroundColor: context.colors.card.withValues(alpha: 0.8),
                 ),
-                labelResolver: (line) => ' ${l10n.average} ${averageGlucose.toInt()} ',
+                labelResolver: (line) =>
+                    ' ${l10n.average} ${averageGlucose.toInt()} ',
               ),
             ),
           ],
@@ -681,8 +694,8 @@ class _HomeScreenState extends State<HomeScreen>
                   subtitle: l10n.lowest,
                   color: hasData
                       ? (Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.grey[800]!)
+                            ? Colors.white
+                            : Colors.grey[800]!)
                       : context.colors.textSecondary.withValues(alpha: 0.5),
                   hasData: hasData,
                 ),
@@ -697,8 +710,8 @@ class _HomeScreenState extends State<HomeScreen>
                   subtitle: l10n.highest,
                   color: hasData
                       ? (Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.grey[800]!)
+                            ? Colors.white
+                            : Colors.grey[800]!)
                       : context.colors.textSecondary.withValues(alpha: 0.5),
                   hasData: hasData,
                 ),
@@ -749,7 +762,8 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildDistributionCard(BuildContext context, AppLocalizations l10n) {
     final settings = context.watch<SettingsService>();
     final dist = _rangeDistribution;
-    final total = dist['veryLow']! +
+    final total =
+        dist['veryLow']! +
         dist['low']! +
         dist['normal']! +
         dist['high']! +
@@ -830,14 +844,20 @@ class _HomeScreenState extends State<HomeScreen>
                         return CustomPaint(
                           size: const Size(100, 100),
                           painter: _PieChartPainter(
-                            veryLowRatio: hasData ? dist['veryLow']! / total : 0,
+                            veryLowRatio: hasData
+                                ? dist['veryLow']! / total
+                                : 0,
                             lowRatio: hasData ? dist['low']! / total : 0,
                             normalRatio: hasData ? dist['normal']! / total : 0,
                             highRatio: hasData ? dist['high']! / total : 0,
-                            veryHighRatio: hasData ? dist['veryHigh']! / total : 0,
+                            veryHighRatio: hasData
+                                ? dist['veryHigh']! / total
+                                : 0,
                             holeColor: context.colors.card,
                             hasData: hasData,
-                            emptyColor: context.colors.textSecondary.withValues(alpha: 0.5),
+                            emptyColor: context.colors.textSecondary.withValues(
+                              alpha: 0.5,
+                            ),
                             animationValue: hasData ? _animation.value : 1.0,
                           ),
                         );
@@ -851,9 +871,11 @@ class _HomeScreenState extends State<HomeScreen>
                         fontWeight: FontWeight.bold,
                         color: hasData
                             ? (Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black)
-                            : context.colors.textSecondary.withValues(alpha: 0.5),
+                                  ? Colors.white
+                                  : Colors.black)
+                            : context.colors.textSecondary.withValues(
+                                alpha: 0.5,
+                              ),
                       ),
                     ),
                   ],

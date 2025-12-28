@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
+import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/repositories/glucose_repository.dart';
 import 'package:glu_butler/repositories/report_repository.dart';
 import 'package:glu_butler/services/settings_service.dart';
@@ -25,6 +26,8 @@ class DateRangePickerModal extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      useRootNavigator: true,
       builder: (context) => const DateRangePickerModal(),
     );
   }
@@ -37,7 +40,6 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   DateTime _focusedDay = DateTime.now();
-  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   final GlucoseRepository _glucoseRepository = GlucoseRepository();
   final ReportRepository _reportRepository = ReportRepository();
@@ -45,6 +47,11 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
   List<Report> _existingReports = [];
 
   late Future<void> _initializationFuture;
+
+  bool get _isCurrentMonth {
+    final now = DateTime.now();
+    return _focusedDay.year == now.year && _focusedDay.month == now.month;
+  }
 
   @override
   void initState() {
@@ -185,7 +192,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
         if (snapshot.connectionState != ConnectionState.done) {
           return Container(
             decoration: BoxDecoration(
-              color: AppTheme.iosBackground(context),
+              color: context.colors.card,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: const SafeArea(
@@ -204,7 +211,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
   Widget _buildContent(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.iosBackground(context),
+        color: context.colors.card,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -265,14 +272,19 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
               const SizedBox(height: 20),
 
               // 달력
-              TableCalendar(
-                firstDay: DateTime.now().subtract(const Duration(days: 365)),
-                lastDay: DateTime.now(),
-                focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
-                rangeStartDay: _rangeStart,
-                rangeEndDay: _rangeEnd,
-                rangeSelectionMode: RangeSelectionMode.enforced,
+              SizedBox(
+                height: 400,
+                child: TableCalendar(
+                  firstDay: DateTime.now().subtract(const Duration(days: 365)),
+                  lastDay: DateTime.now(),
+                  focusedDay: _focusedDay,
+                  calendarFormat: CalendarFormat.month,
+                  availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+                  rangeStartDay: _rangeStart,
+                  rangeEndDay: _rangeEnd,
+                  rangeSelectionMode: RangeSelectionMode.enforced,
+                  daysOfWeekHeight: 40,
+                  rowHeight: 48,
                 // 날짜 활성화 조건
                 enabledDayPredicate: (day) {
                   final normalizedDay = DateTime(day.year, day.month, day.day);
@@ -322,13 +334,10 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                     }
                   });
                 },
-                onFormatChanged: (format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                },
                 onPageChanged: (focusedDay) {
-                  _focusedDay = focusedDay;
+                  setState(() {
+                    _focusedDay = focusedDay;
+                  });
                 },
                 // 커스텀 빌더로 빨간 점 표시
                 calendarBuilders: CalendarBuilders(
@@ -342,7 +351,9 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                         children: [
                           Text(
                             '${day.day}',
-                            style: context.textStyles.tileSubtitle,
+                            style: context.textStyles.tileSubtitle.copyWith(
+                              color: Colors.black87,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Container(
@@ -357,37 +368,58 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                       ),
                     );
                   },
+                  disabledBuilder: (context, day, focusedDay) {
+                    final normalizedDate = DateTime(day.year, day.month, day.day);
+                    final hasData = _datesWithData.contains(normalizedDate);
+
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${day.day}',
+                            style: context.textStyles.tileSubtitle.copyWith(
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: hasData ? Colors.grey[300] : Colors.transparent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                   todayBuilder: (context, day, focusedDay) {
                     final normalizedDate = DateTime(day.year, day.month, day.day);
                     final hasData = _datesWithData.contains(normalizedDate);
 
-                    return Container(
-                      margin: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withOpacity(0.3),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${day.day}',
-                              style: context.textStyles.tileSubtitle.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${day.day}',
+                            style: context.textStyles.tileSubtitle.copyWith(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(height: 4),
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: hasData ? Colors.red : Colors.transparent,
-                                shape: BoxShape.circle,
-                              ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: hasData ? Colors.red : Colors.transparent,
+                              shape: BoxShape.circle,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -526,7 +558,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   ),
                   rightChevronIcon: Icon(
                     Icons.chevron_right,
-                    color: AppTheme.primaryColor,
+                    color: _isCurrentMonth ? Colors.transparent : AppTheme.primaryColor,
                   ),
                 ),
                 daysOfWeekStyle: DaysOfWeekStyle(
@@ -540,6 +572,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   ),
                 ),
               ),
+            ),
               const SizedBox(height: 24),
 
               // 리포트 생성 버튼
@@ -584,7 +617,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                     style: TextStyle(
                       color: _rangeStart != null && _rangeEnd != null
                           ? Colors.white
-                          : Colors.grey[500],
+                          : Colors.grey[700],
                       fontWeight: FontWeight.w600,
                     ),
                   ),
