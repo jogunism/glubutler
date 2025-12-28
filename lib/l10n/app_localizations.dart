@@ -374,6 +374,12 @@ abstract class AppLocalizations {
   /// **'Female'**
   String get female;
 
+  /// No description provided for @otherGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherGender;
+
   /// No description provided for @birthday.
   ///
   /// In en, this message translates to:
@@ -385,6 +391,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Diabetes Type'**
   String get diabetesType;
+
+  /// No description provided for @preDiabetes.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-Diabetes'**
+  String get preDiabetes;
 
   /// No description provided for @type1.
   ///
@@ -398,6 +410,42 @@ abstract class AppLocalizations {
   /// **'Type 2'**
   String get type2;
 
+  /// No description provided for @lada.
+  ///
+  /// In en, this message translates to:
+  /// **'LADA (1.5)'**
+  String get lada;
+
+  /// No description provided for @mody.
+  ///
+  /// In en, this message translates to:
+  /// **'MODY'**
+  String get mody;
+
+  /// No description provided for @gestational.
+  ///
+  /// In en, this message translates to:
+  /// **'Gestational'**
+  String get gestational;
+
+  /// No description provided for @surgicallyInduced.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgically Induced'**
+  String get surgicallyInduced;
+
+  /// No description provided for @chemicallyInduced.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemically Induced'**
+  String get chemicallyInduced;
+
+  /// No description provided for @unlistedType.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlisted Type'**
+  String get unlistedType;
+
   /// No description provided for @none.
   ///
   /// In en, this message translates to:
@@ -407,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @personal.
   ///
   /// In en, this message translates to:
-  /// **'Personal'**
+  /// **'Basic'**
   String get personal;
 
   /// No description provided for @diabetes.

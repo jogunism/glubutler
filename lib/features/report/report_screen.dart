@@ -139,7 +139,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(
-                          Icons.leaderboard,
+                          CupertinoIcons.doc_text_fill,
                           size: 80,
                           color: AppTheme.primaryColor,
                         ),

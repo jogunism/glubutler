@@ -142,10 +142,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get female => '女';
 
   @override
+  String get otherGender => '其他';
+
+  @override
   String get birthday => '生日';
 
   @override
   String get diabetesType => '糖尿病类型';
+
+  @override
+  String get preDiabetes => '糖尿病前期';
 
   @override
   String get type1 => '1型';
@@ -154,10 +160,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get type2 => '2型';
 
   @override
+  String get lada => 'LADA (1.5型)';
+
+  @override
+  String get mody => 'MODY';
+
+  @override
+  String get gestational => '妊娠糖尿病';
+
+  @override
+  String get surgicallyInduced => '手术诱发';
+
+  @override
+  String get chemicallyInduced => '药物诱发';
+
+  @override
+  String get unlistedType => '其他类型';
+
+  @override
   String get none => '无';
 
   @override
-  String get personal => '个人信息';
+  String get personal => '基本';
 
   @override
   String get diabetes => '糖尿病';

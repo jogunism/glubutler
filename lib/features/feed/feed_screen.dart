@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -124,9 +126,11 @@ class _FeedScreenState extends State<FeedScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.list_alt_outlined,
+              PlatformInfo.isIOS26OrHigher()
+                  ? CupertinoIcons.rectangle_grid_1x2_fill
+                  : CupertinoIcons.square_grid_2x2_fill,
               size: 80,
-              color: context.colors.textSecondary,
+              color: AppTheme.primaryColor,
             ),
             const SizedBox(height: 16),
             Text(

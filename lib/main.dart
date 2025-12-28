@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:cupertino_native_plus/cupertino_native.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
@@ -26,9 +25,6 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
-  // Initialize platform version for cupertino_native_plus
-  await PlatformVersion.initialize();
 
   // Initialize database first (tables, migrations)
   await DatabaseService().initialize();

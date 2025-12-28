@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:cupertino_native_plus/cupertino_native.dart';
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -98,7 +99,7 @@ class MainScreenState extends State<MainScreen> {
             },
           ),
 
-          // CNTabBar를 Positioned로 배치
+          // AdaptiveBottomNavigationBar를 Positioned로 배치
           AnimatedPositioned(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
@@ -107,89 +108,52 @@ class MainScreenState extends State<MainScreen> {
             bottom: _isTabBarVisible ? 0 : -100,
             child: IgnorePointer(
               ignoring: !_isTabBarVisible,
-              child: Stack(
-                children: [
-                  CNTabBar(
-                    tint: AppTheme.primaryColor,
-                    items: [
-                      CNTabBarItem(
-                        label: l10n.home,
-                        customIcon: Icons.water_drop_outlined,
-                        activeCustomIcon: Icons.water_drop,
-                      ),
-                      CNTabBarItem(
-                        label: l10n.feed,
-                        customIcon: Icons.view_agenda_outlined,
-                        activeCustomIcon: Icons.view_agenda,
-                      ),
-                      CNTabBarItem(
-                        label: l10n.diary,
-                        customIcon: Icons.book_outlined,
-                        activeCustomIcon: Icons.book,
-                      ),
-                      CNTabBarItem(
-                        label: l10n.report,
-                        customIcon: Icons.leaderboard_outlined,
-                        activeCustomIcon: Icons.leaderboard,
-                      ),
-                    ],
-                    currentIndex: _currentIndex,
-                    onTap: (index) {
-                      if (index == _currentIndex) {
-                        // 이미 선택된 탭을 다시 탭하면 scroll to top
-                        final controller = PrimaryScrollController.of(context);
-                        if (controller.hasClients &&
-                            controller.positions.length == 1 &&
-                            controller.offset > 0) {
-                          HapticFeedback.lightImpact();
-                          controller.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOut,
-                          );
-                        }
-                      } else {
-                        switchToTab(index);
-                      }
-                    },
-                  ),
-                  // AI 배지를 리포트 탭 아이콘 위에 오버레이
-                  Positioned(
-                    bottom: 60,
-                    right: MediaQuery.of(context).size.width / 8,
-                    child: IgnorePointer(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _currentIndex == 3
-                              ? Colors.transparent
-                              : AppTheme.primaryColor,
-                          border: _currentIndex == 3
-                              ? Border.all(
-                                  color: AppTheme.primaryColor,
-                                  width: 1,
-                                )
-                              : null,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'AI',
-                          style: TextStyle(
-                            color: _currentIndex == 3
-                                ? AppTheme.primaryColor
-                                : Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
+              child: _buildAdaptiveTabBar(l10n),
+            ),
+          ),
+
+          // AI 배지를 리포트 탭 아이콘 위에 오버레이 (탭바보다 위에 렌더링)
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            bottom: _isTabBarVisible ? 60 : -100,
+            right: MediaQuery.of(context).size.width / 8,
+            child: IgnorePointer(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: _currentIndex == 3
+                      ? Colors.transparent
+                      : AppTheme.primaryColor,
+                  border: _currentIndex == 3
+                      ? Border.all(
+                          color: AppTheme.primaryColor,
+                          width: 1,
+                        )
+                      : null,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
+                  ],
+                ),
+                child: Text(
+                  'AI',
+                  style: TextStyle(
+                    color: _currentIndex == 3
+                        ? AppTheme.primaryColor
+                        : Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    height: 1.0,
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -203,5 +167,120 @@ class MainScreenState extends State<MainScreen> {
       offstage: _currentIndex != index,
       child: TickerMode(enabled: _currentIndex == index, child: child),
     );
+  }
+
+  Widget _buildAdaptiveTabBar(AppLocalizations l10n) {
+    void handleTap(int index) {
+      if (index == _currentIndex) {
+        // 이미 선택된 탭을 다시 탭하면 scroll to top
+        final controller = PrimaryScrollController.of(context);
+        if (controller.hasClients &&
+            controller.positions.length == 1 &&
+            controller.offset > 0) {
+          HapticFeedback.lightImpact();
+          controller.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      } else {
+        switchToTab(index);
+      }
+    }
+
+    // Platform별로 적절한 탭바 반환
+    if (PlatformInfo.isIOS26OrHigher()) {
+      // iOS 26+: 네이티브 UITabBar with Liquid Glass effect
+      // UITabBar는 SF Symbol을 자동으로 filled 변형 처리
+      return IOS26NativeTabBar(
+        destinations: [
+          AdaptiveNavigationDestination(
+            icon: 'drop',
+            selectedIcon: 'drop.fill',
+            label: l10n.home,
+          ),
+          AdaptiveNavigationDestination(
+            icon: 'rectangle.grid.1x2',
+            selectedIcon: 'rectangle.grid.1x2.fill',
+            label: l10n.feed,
+          ),
+          AdaptiveNavigationDestination(
+            icon: 'book',
+            selectedIcon: 'book.fill',
+            label: l10n.diary,
+          ),
+          AdaptiveNavigationDestination(
+            icon: 'doc.text',
+            selectedIcon: 'doc.text.fill',
+            label: l10n.report,
+          ),
+        ],
+        selectedIndex: _currentIndex,
+        onTap: handleTap,
+        tint: AppTheme.primaryColor,
+        minimizeBehavior: TabBarMinimizeBehavior.never,
+      );
+    } else if (PlatformInfo.isIOS) {
+      // iOS <26: CupertinoTabBar
+      return CupertinoTabBar(
+        backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
+        activeColor: AppTheme.primaryColor,
+        inactiveColor: CupertinoColors.inactiveGray,
+        currentIndex: _currentIndex,
+        onTap: handleTap,
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.drop),
+            activeIcon: const Icon(CupertinoIcons.drop_fill),
+            label: l10n.home,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.square_grid_2x2),
+            activeIcon: const Icon(CupertinoIcons.square_grid_2x2_fill),
+            label: l10n.feed,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.book),
+            activeIcon: const Icon(CupertinoIcons.book_fill),
+            label: l10n.diary,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.doc_text),
+            activeIcon: const Icon(CupertinoIcons.doc_text_fill),
+            label: l10n.report,
+          ),
+        ],
+      );
+    } else {
+      // Android: NavigationBar
+      return NavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        selectedIndex: _currentIndex,
+        onDestinationSelected: handleTap,
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(CupertinoIcons.drop),
+            selectedIcon: const Icon(CupertinoIcons.drop_fill),
+            label: l10n.home,
+          ),
+          NavigationDestination(
+            icon: const Icon(CupertinoIcons.square_grid_2x2),
+            selectedIcon: const Icon(CupertinoIcons.square_grid_2x2_fill),
+            label: l10n.feed,
+          ),
+          NavigationDestination(
+            icon: const Icon(CupertinoIcons.book),
+            selectedIcon: const Icon(CupertinoIcons.book_fill),
+            label: l10n.diary,
+          ),
+          NavigationDestination(
+            icon: const Icon(CupertinoIcons.doc_text),
+            selectedIcon: const Icon(CupertinoIcons.doc_text_fill),
+            label: l10n.report,
+          ),
+        ],
+      );
+    }
   }
 }

@@ -142,10 +142,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get female => 'Female';
 
   @override
+  String get otherGender => 'Other';
+
+  @override
   String get birthday => 'Birthday';
 
   @override
   String get diabetesType => 'Diabetes Type';
+
+  @override
+  String get preDiabetes => 'Pre-Diabetes';
 
   @override
   String get type1 => 'Type 1';
@@ -154,10 +160,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get type2 => 'Type 2';
 
   @override
+  String get lada => 'LADA (1.5)';
+
+  @override
+  String get mody => 'MODY';
+
+  @override
+  String get gestational => 'Gestational';
+
+  @override
+  String get surgicallyInduced => 'Surgically Induced';
+
+  @override
+  String get chemicallyInduced => 'Chemically Induced';
+
+  @override
+  String get unlistedType => 'Unlisted Type';
+
+  @override
   String get none => 'None';
 
   @override
-  String get personal => 'Personal';
+  String get personal => 'Basic';
 
   @override
   String get diabetes => 'Diabetes';

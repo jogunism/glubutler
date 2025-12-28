@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
@@ -145,13 +146,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () => AppSettingsService.openAppSettings(),
                   ),
                   _buildDivider(context),
-                  _buildSettingsTile(
+                  _buildAdaptivePopupTile(
                     context: context,
                     icon: CupertinoIcons.gauge,
                     iconColor: AppTheme.iconRed,
                     title: l10n.glucoseUnit,
-                    subtitle: settings.unit,
-                    onTap: () => AppRoutes.goToUnitSelection(context),
+                    displayValue: settings.unit,
+                    currentValue: settings.unit,
+                    items: [
+                      AdaptivePopupMenuItem<String>(
+                        value: AppConstants.unitMmolL,
+                        label: l10n.mmoll,
+                      ),
+                      AdaptivePopupMenuItem<String>(
+                        value: AppConstants.unitMgDl,
+                        label: l10n.mgdl,
+                      ),
+                    ],
+                    onSelected: (index, item) {
+                      if (item.value != null) {
+                        settings.setUnit(item.value!);
+                      }
+                    },
+                    settings: settings,
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(
@@ -378,6 +395,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Divider(
         height: 1,
         color: context.colors.divider,
+      ),
+    );
+  }
+
+  Widget _buildAdaptivePopupTile({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String displayValue,
+    required List<AdaptivePopupMenuEntry> items,
+    required void Function(int index, AdaptivePopupMenuItem<String> entry) onSelected,
+    String? currentValue,
+    required SettingsService settings,
+  }) {
+    // Add checkmarks to items based on currentValue
+    final itemsWithCheckmarks = items.map((item) {
+      if (item is AdaptivePopupMenuItem<String>) {
+        final isSelected = item.value == currentValue;
+        return AdaptivePopupMenuItem<String>(
+          value: item.value,
+          label: item.label,
+          icon: isSelected ? 'checkmark' : null,
+        );
+      }
+      return item;
+    }).toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GlassIcon(icon: icon, color: iconColor, size: 32),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              title,
+              style: context.textStyles.tileTitle,
+            ),
+          ),
+          AdaptivePopupMenuButton.widget<String>(
+            items: itemsWithCheckmarks,
+            onSelected: onSelected,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  displayValue,
+                  style: context.textStyles.tileSubtitle,
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  CupertinoIcons.chevron_down,
+                  size: 16,
+                  color: context.colors.iconGrey,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

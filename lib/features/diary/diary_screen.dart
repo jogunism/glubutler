@@ -162,7 +162,7 @@ class DiaryScreenState extends State<DiaryScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.book_outlined,
+                      CupertinoIcons.book_fill,
                       size: 80,
                       color: AppTheme.primaryColor,
                     ),

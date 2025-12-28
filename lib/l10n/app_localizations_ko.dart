@@ -141,10 +141,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get female => '여성';
 
   @override
+  String get otherGender => '기타';
+
+  @override
   String get birthday => '생년월일';
 
   @override
   String get diabetesType => '당뇨 유형';
+
+  @override
+  String get preDiabetes => '당뇨전단계';
 
   @override
   String get type1 => '1형';
@@ -153,10 +159,28 @@ class AppLocalizationsKo extends AppLocalizations {
   String get type2 => '2형';
 
   @override
+  String get lada => 'LADA (1.5형)';
+
+  @override
+  String get mody => 'MODY';
+
+  @override
+  String get gestational => '임신성';
+
+  @override
+  String get surgicallyInduced => '수술 유발성';
+
+  @override
+  String get chemicallyInduced => '약물 유발성';
+
+  @override
+  String get unlistedType => '기타';
+
+  @override
   String get none => '해당없음';
 
   @override
-  String get personal => '개인정보';
+  String get personal => '기본';
 
   @override
   String get diabetes => '당뇨';

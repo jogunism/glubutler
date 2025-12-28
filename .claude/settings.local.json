@@ -35,7 +35,8 @@
       "Bash(sqlite3:*)",
       "Bash(fvm flutter run:*)",
       "Bash(cat:*)",
-      "Bash(export PATH=\"$HOME/.pub-cache/bin:$HOME/fvm/default/bin:$PATH\")"
+      "Bash(export PATH=\"$HOME/.pub-cache/bin:$HOME/fvm/default/bin:$PATH\")",
+      "Bash(git clone:*)"
     ]
   }
 }
