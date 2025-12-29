@@ -156,7 +156,7 @@
   "needsAttention": "La tua glicemia ha variato molto oggi. Controlla la dieta.",
   "noGlucoseToday": "Nessun valore glicemico oggi",
   "addGlucose": "Aggiungi Glicemia",
-  "addDiaryEntry": "Aggiungi voce al diario",
+  "addDiaryItem": "Aggiungi voce al diario",
   "diaryPlaceholder": "Scrivi il tuo diario di gestione glicemica",
   "attachPhoto": "Allega foto",
   "discardDiaryTitle": "Annulla voce",

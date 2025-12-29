@@ -6,7 +6,7 @@ import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
-import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/models/report.dart';
 
@@ -137,11 +137,11 @@ class DatabaseService {
   Future<int> deleteInsulinByIds(List<String> ids) => recordDao.deleteInsulinByIds(ids);
 
   // Diary entries
-  Future<int> insertDiary(DiaryEntry entry) => recordDao.insertDiary(entry);
-  Future<List<DiaryEntry>> getDiaryEntries({DateTime? startDate, DateTime? endDate}) =>
+  Future<int> insertDiary(DiaryItem entry) => recordDao.insertDiary(entry);
+  Future<List<DiaryItem>> getDiaryEntries({DateTime? startDate, DateTime? endDate}) =>
       recordDao.getDiaryEntries(startDate: startDate, endDate: endDate);
-  Future<DiaryEntry?> getDiaryEntry(String id) => recordDao.getDiaryEntry(id);
-  Future<int> updateDiary(DiaryEntry entry) => recordDao.updateDiary(entry);
+  Future<DiaryItem?> getDiaryItem(String id) => recordDao.getDiaryItem(id);
+  Future<int> updateDiary(DiaryItem entry) => recordDao.updateDiary(entry);
   Future<int> deleteDiary(String id) => recordDao.deleteDiary(id);
 
   // Diary files

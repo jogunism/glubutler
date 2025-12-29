@@ -479,7 +479,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get addGlucose => '血糖を追加';
 
   @override
-  String get addDiaryEntry => '日記を追加';
+  String get addDiaryItem => '日記を追加';
 
   @override
   String get diaryPlaceholder => '血糖管理日記を書いてみてください';

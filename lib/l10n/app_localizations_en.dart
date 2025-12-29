@@ -490,7 +490,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addGlucose => 'Add Glucose';
 
   @override
-  String get addDiaryEntry => 'Add Diary Entry';
+  String get addDiaryItem => 'Add Diary Entry';
 
   @override
   String get diaryPlaceholder => 'Write your glucose management diary';

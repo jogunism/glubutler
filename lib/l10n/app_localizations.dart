@@ -1040,11 +1040,11 @@ abstract class AppLocalizations {
   /// **'Add Glucose'**
   String get addGlucose;
 
-  /// No description provided for @addDiaryEntry.
+  /// No description provided for @addDiaryItem.
   ///
   /// In en, this message translates to:
   /// **'Add Diary Entry'**
-  String get addDiaryEntry;
+  String get addDiaryItem;
 
   /// No description provided for @diaryPlaceholder.
   ///

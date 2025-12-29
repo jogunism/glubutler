@@ -11,6 +11,7 @@ import 'package:glu_butler/core/widgets/modals/report_guide_modal.dart';
 import 'package:glu_butler/core/widgets/modals/date_range_picker_modal.dart';
 import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// 리포트 화면
 ///
@@ -57,32 +58,30 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _generateReport() async {
     final reportProvider = context.read<ReportProvider>();
+    final settingsService = context.read<SettingsService>();
 
     // 안내 모달 표시
+    if (!mounted) return;
     final confirmed = await ReportGuideModal.show(context);
     if (!confirmed) return;
 
     // 날짜 범위 선택 모달 표시
+    if (!mounted) return;
     final dateRange = await DateRangePickerModal.show(context);
     if (dateRange == null) return;
 
     final startDate = dateRange[0];
     final endDate = dateRange[1];
 
-    // TODO: 실제 사용자 ID와 혈당 데이터 수집
-    // 현재는 임시 데이터 사용
-    final userId = 'temp_user_id';
-    final glucoseData = <String, dynamic>{
-      'records': [],
-      // 실제 구현 시 DB에서 해당 기간의 혈당 데이터를 가져와야 함
-    };
+    // SettingsService에서 UserIdentity 가져오기 (async gap 전에 미리 가져옴)
+    final userIdentity = settingsService.userIdentity;
 
     // Provider를 통해 리포트 생성
+    // FeedProvider와 DiaryProvider는 ReportRepository에서 자동으로 가져옴
     final success = await reportProvider.generateReport(
       startDate: startDate,
       endDate: endDate,
-      userId: userId,
-      glucoseData: glucoseData,
+      userIdentity: userIdentity,
     );
 
     if (!success && mounted) {

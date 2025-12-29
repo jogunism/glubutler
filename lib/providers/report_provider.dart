@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:glu_butler/models/report.dart';
+import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/repositories/report_repository.dart';
 import 'package:glu_butler/services/report_api_service.dart';
 
@@ -48,8 +49,7 @@ class ReportProvider extends ChangeNotifier {
   Future<bool> generateReport({
     required DateTime startDate,
     required DateTime endDate,
-    required String userId,
-    required Map<String, dynamic> glucoseData,
+    required UserIdentity userIdentity,
   }) async {
     _isLoading = true;
     _error = null;
@@ -60,8 +60,7 @@ class ReportProvider extends ChangeNotifier {
       await _reportRepository.generateReport(
         startDate: startDate,
         endDate: endDate,
-        userId: userId,
-        glucoseData: glucoseData,
+        userIdentity: userIdentity,
       );
 
       // Reload latest report to update UI

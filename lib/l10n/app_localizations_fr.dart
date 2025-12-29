@@ -493,7 +493,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addGlucose => 'Ajouter Glycémie';
 
   @override
-  String get addDiaryEntry => 'Ajouter une entrée';
+  String get addDiaryItem => 'Ajouter une entrée';
 
   @override
   String get diaryPlaceholder =>

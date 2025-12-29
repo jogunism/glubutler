@@ -99,4 +99,20 @@ class CgmGlucoseGroup {
     }
     return '${min.toStringAsFixed(decimals)}~${max.toStringAsFixed(decimals)}';
   }
+
+  /// JSON으로 변환 (API 전송용)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'records': records.map((r) => r.toJson()).toList(),
+      'groupType': groupType.name,
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime.toIso8601String(),
+      'minValue': minValue,
+      'maxValue': maxValue,
+      'avgValue': avgValue,
+      'unit': unit,
+      'sourceName': sourceName,
+    };
+  }
 }

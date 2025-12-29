@@ -478,7 +478,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get addGlucose => '혈당 추가';
 
   @override
-  String get addDiaryEntry => '일기 추가';
+  String get addDiaryItem => '일기 추가';
 
   @override
   String get diaryPlaceholder => '혈당 관리 일기를 작성해보세요';

@@ -2,8 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:glu_butler/models/report.dart';
+import 'package:glu_butler/models/user_identity.dart';
+import 'package:glu_butler/models/user_profile.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// Repository for report generation and management.
 ///
@@ -12,12 +17,21 @@ import 'package:glu_butler/services/report_api_service.dart';
 class ReportRepository {
   final ReportApiService _reportApi;
   final DatabaseService _databaseService;
+  final FeedProvider _feedProvider;
+  final DiaryProvider _diaryProvider;
+  final SettingsService _settingsService;
 
   ReportRepository({
     ReportApiService? reportApi,
     DatabaseService? databaseService,
+    FeedProvider? feedProvider,
+    DiaryProvider? diaryProvider,
+    SettingsService? settingsService,
   })  : _reportApi = reportApi ?? ReportApiService(),
-        _databaseService = databaseService ?? DatabaseService();
+        _databaseService = databaseService ?? DatabaseService(),
+        _feedProvider = feedProvider ?? FeedProvider(),
+        _diaryProvider = diaryProvider ?? DiaryProvider(),
+        _settingsService = settingsService ?? SettingsService();
 
   /// Generate a new AI report
   ///
@@ -26,22 +40,51 @@ class ReportRepository {
   Future<Report> generateReport({
     required DateTime startDate,
     required DateTime endDate,
-    required String userId,
-    required Map<String, dynamic> glucoseData,
+    required UserIdentity userIdentity,
   }) async {
+    // FeedProvider와 DiaryProvider에서 날짜 범위의 데이터 가져오기
+    final feedData = _feedProvider.getReportData(
+      startDate: startDate,
+      endDate: endDate,
+    );
+    final diaryData = _diaryProvider.getReportData(
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    // SettingsService에서 UserProfile 가져오기
+    final userProfile = _settingsService.userProfile;
+
+    debugPrint('[ReportRepository] Feed data count: ${feedData.length}');
+    debugPrint('[ReportRepository] Diary data count: ${diaryData.length}');
+    debugPrint('[ReportRepository] User profile: ${userProfile.name}, Age: ${userProfile.age}, Type: ${userProfile.diabetesType}');
+
     String reportContent;
 
     try {
-      // TODO: 실제 API 호출로 교체
-      // final reportContent = await _reportApi.generateReport(...);
-
-      // 현재는 mock 파일 사용
-      reportContent = await _loadMockReport(startDate, endDate);
-      debugPrint('[ReportRepository] Using mock report content');
+      // 실제 API 호출
+      reportContent = await _reportApi.generateReport(
+        userIdentity: userIdentity,
+        userProfile: userProfile,
+        startDate: startDate,
+        endDate: endDate,
+        feedData: feedData,
+        diaryData: diaryData,
+      );
+      debugPrint('[ReportRepository] Report generated via API');
     } catch (e) {
-      debugPrint('[ReportRepository] Error loading mock report: $e');
-      // Fallback to simple mock
-      reportContent = _getSimpleMockReport(startDate, endDate);
+      debugPrint('[ReportRepository] API call failed: $e');
+      debugPrint('[ReportRepository] Falling back to mock report');
+
+      // API 실패 시 Mock으로 폴백
+      try {
+        reportContent = await _loadMockReport(startDate, endDate);
+        debugPrint('[ReportRepository] Using mock report from file');
+      } catch (mockError) {
+        debugPrint('[ReportRepository] Mock file load failed: $mockError');
+        reportContent = _getSimpleMockReport(startDate, endDate);
+        debugPrint('[ReportRepository] Using simple mock report');
+      }
     }
 
     // Create report model

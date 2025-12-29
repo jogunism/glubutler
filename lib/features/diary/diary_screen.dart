@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'dart:io';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
@@ -13,8 +14,8 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
-import 'package:glu_butler/models/diary_entry.dart';
-import 'package:glu_butler/repositories/diary_repository.dart';
+import 'package:glu_butler/models/diary_item.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
 
 /// 일기 화면
 ///
@@ -44,58 +45,31 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class DiaryScreenState extends State<DiaryScreen> {
-  final _diaryRepository = DiaryRepository();
-  List<DiaryEntry> _entries = [];
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    _loadEntries();
   }
 
   Future<void> loadEntries() async {
-    await _loadEntries();
-  }
-
-  Future<void> _loadEntries() async {
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final entries = await _diaryRepository.fetch();
-      if (mounted) {
-        setState(() {
-          _entries = entries;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      debugPrint('[DiaryScreen] Error loading entries: $e');
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    final provider = context.read<DiaryProvider>();
+    await provider.refreshData();
   }
 
   Future<void> _onRefresh() async {
-    await _loadEntries();
+    final provider = context.read<DiaryProvider>();
+    await provider.refreshData();
   }
 
-  Future<void> _editEntry(DiaryEntry entry) async {
+  Future<void> _editEntry(DiaryItem entry) async {
     final result = await DiaryInputModal.show(context, entry: entry);
 
     if (result == true) {
-      await _loadEntries();
+      final provider = context.read<DiaryProvider>();
+      await provider.refreshData();
     }
   }
 
-  Future<void> _deleteEntry(DiaryEntry entry) async {
+  Future<void> _deleteEntry(DiaryItem entry) async {
     final l10n = AppLocalizations.of(context)!;
 
     final confirmed = await showCupertinoDialog<bool>(
@@ -116,17 +90,14 @@ class DiaryScreenState extends State<DiaryScreen> {
       ),
     );
 
-    if (confirmed == true) {
-      try {
-        await _diaryRepository.delete(entry.id);
+    if (confirmed == true && mounted) {
+      final provider = context.read<DiaryProvider>();
+      final success = await provider.deleteEntry(entry.id);
 
-        if (mounted) {
+      if (mounted) {
+        if (success) {
           TopBanner.show(context, message: l10n.diaryDeleted, isSuccess: true);
-          await _loadEntries();
-        }
-      } catch (e) {
-        debugPrint('[DiaryScreen] Error deleting entry: $e');
-        if (mounted) {
+        } else {
           TopBanner.show(
             context,
             message: l10n.diaryDeleteFailed,
@@ -139,6 +110,7 @@ class DiaryScreenState extends State<DiaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final diaryProvider = context.watch<DiaryProvider>();
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
@@ -147,12 +119,12 @@ class DiaryScreenState extends State<DiaryScreen> {
       onRefresh: _onRefresh,
       trailing: const SettingsIconButton(),
       slivers: [
-        if (_isLoading)
+        if (diaryProvider.isLoading)
           const SliverFillRemaining(
             hasScrollBody: false,
             child: Center(child: CircularProgressIndicator()),
           )
-        else if (_entries.isEmpty)
+        else if (diaryProvider.entries.isEmpty)
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
@@ -180,13 +152,13 @@ class DiaryScreenState extends State<DiaryScreen> {
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                final entry = _entries[index];
-                return _DiaryEntryCard(
+                final entry = diaryProvider.entries[index];
+                return _DiaryItemCard(
                   entry: entry,
                   onEdit: () => _editEntry(entry),
                   onDelete: () => _deleteEntry(entry),
                 );
-              }, childCount: _entries.length),
+              }, childCount: diaryProvider.entries.length),
             ),
           ),
       ],
@@ -194,22 +166,97 @@ class DiaryScreenState extends State<DiaryScreen> {
   }
 }
 
-class _DiaryEntryCard extends StatefulWidget {
-  final DiaryEntry entry;
+class _DiaryImageWidget extends StatelessWidget {
+  final String filePath;
+
+  const _DiaryImageWidget({required this.filePath});
+
+  @override
+  Widget build(BuildContext context) {
+    final file = File(filePath);
+
+    return FutureBuilder<bool>(
+      future: file.exists(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: context.colors.divider,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          );
+        }
+
+        final fileExists = snapshot.data ?? false;
+
+        if (!fileExists) {
+          return Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: context.colors.divider,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              Icons.broken_image,
+              color: context.colors.iconGrey,
+            ),
+          );
+        }
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.file(
+            file,
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: context.colors.divider,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(
+                  Icons.broken_image,
+                  color: context.colors.iconGrey,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DiaryItemCard extends StatefulWidget {
+  final DiaryItem entry;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const _DiaryEntryCard({
+  const _DiaryItemCard({
     required this.entry,
     required this.onEdit,
     required this.onDelete,
   });
 
   @override
-  State<_DiaryEntryCard> createState() => _DiaryEntryCardState();
+  State<_DiaryItemCard> createState() => _DiaryItemCardState();
 }
 
-class _DiaryEntryCardState extends State<_DiaryEntryCard>
+class _DiaryItemCardState extends State<_DiaryItemCard>
     with TickerProviderStateMixin {
   bool _isExpanded = false;
   bool _shouldOpenSlidable = false;
@@ -379,26 +426,7 @@ class _DiaryEntryCardState extends State<_DiaryEntryCard>
                       spacing: 8,
                       runSpacing: 8,
                       children: widget.entry.files.map(
-                        (file) => ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: Image.file(
-                            File(file.filePath),
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 60,
-                                height: 60,
-                                color: context.colors.divider,
-                                child: Icon(
-                                  Icons.broken_image,
-                                  color: context.colors.iconGrey,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        (file) => _DiaryImageWidget(filePath: file.filePath),
                       ).toList(),
                     ),
                   ],

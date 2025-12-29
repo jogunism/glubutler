@@ -13,7 +13,7 @@ import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
-import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
 import 'package:glu_butler/services/image_service.dart';
@@ -28,11 +28,11 @@ import 'package:glu_butler/services/image_service.dart';
 /// DiaryInputModal.show(context);
 /// ```
 class DiaryInputModal extends StatefulWidget {
-  final DiaryEntry? entry; // 수정 모드일 때 기존 엔트리
+  final DiaryItem? entry; // 수정 모드일 때 기존 엔트리
 
   const DiaryInputModal({super.key, this.entry});
 
-  static Future<bool?> show(BuildContext context, {DiaryEntry? entry}) {
+  static Future<bool?> show(BuildContext context, {DiaryItem? entry}) {
     return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -251,7 +251,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
       }
 
       // Create or update diary entry
-      final entry = DiaryEntry(
+      final entry = DiaryItem(
         id: entryId,
         content: content,
         timestamp: _selectedDate,
@@ -524,7 +524,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                   height: 4,
                   margin: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.dividerLight,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -545,14 +545,14 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                         },
                         child: Text(
                           l10n.cancel,
-                          style: TextStyle(
-                            color: Colors.grey[600],
+                          style: const TextStyle(
+                            color: AppTheme.textSecondaryLight,
                             fontSize: 16,
                           ),
                         ),
                       ),
                       Text(
-                        widget.entry != null ? l10n.editDiary : l10n.addDiaryEntry,
+                        widget.entry != null ? l10n.editDiary : l10n.addDiaryItem,
                         style: context.textStyles.tileTitle.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -566,7 +566,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                                 l10n.save,
                                 style: TextStyle(
                                   color: _isSaving
-                                      ? Colors.grey
+                                      ? AppTheme.textSecondaryLight
                                       : AppTheme.primaryColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -602,9 +602,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                             _formatDate(_selectedDate),
                             style: context.textStyles.tileTitle,
                           ),
-                          Icon(
+                          const Icon(
                             CupertinoIcons.calendar,
-                            color: Colors.grey[400],
+                            color: AppTheme.textSecondaryLight,
                             size: 20,
                           ),
                         ],
@@ -663,9 +663,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                       ),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             CupertinoIcons.photo,
-                            color: Colors.grey[500],
+                            color: AppTheme.textSecondaryLight,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
@@ -719,8 +719,8 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                                     onTap: () => _removeImage(index),
                                     child: Container(
                                       padding: const EdgeInsets.all(2),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.black54,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(alpha: 0.54),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(

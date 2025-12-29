@@ -30,4 +30,14 @@ class WaterGroup {
     }
     return '${totalAmountMl.toStringAsFixed(0)} ml';
   }
+
+  /// JSON으로 변환 (API 전송용)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(),
+      'totalAmountMl': totalAmountMl,
+      'records': records.map((r) => r.toJson()).toList(),
+    };
+  }
 }

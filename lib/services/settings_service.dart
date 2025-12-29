@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/models/user_profile.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
+import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/services/database_service.dart';
 
 class SettingsService extends ChangeNotifier {
@@ -24,6 +26,7 @@ class SettingsService extends ChangeNotifier {
   GlucoseRangeSettings _glucoseRange = const GlucoseRangeSettings();
   DateTime? _serviceStartDate;
   bool _hapticEnabled = AppConstants.defaultHapticEnabled;
+  UserIdentity? _userIdentity;
 
   String get language => _language;
   String get unit => _unit;
@@ -37,6 +40,7 @@ class SettingsService extends ChangeNotifier {
   GlucoseRangeSettings get glucoseRange => _glucoseRange;
   DateTime? get serviceStartDate => _serviceStartDate;
   bool get hapticEnabled => _hapticEnabled;
+  UserIdentity get userIdentity => _userIdentity ?? UserIdentity(deviceId: 'unknown');
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -109,6 +113,29 @@ class SettingsService extends ChangeNotifier {
     }
 
     _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
+
+    // Load or generate UserIdentity
+    final userIdentityJson = _prefs.getString(AppConstants.keyUserIdentity);
+    if (userIdentityJson != null) {
+      try {
+        _userIdentity = UserIdentity.fromJson(jsonDecode(userIdentityJson));
+        debugPrint('[SettingsService] UserIdentity loaded: $_userIdentity');
+      } catch (e) {
+        debugPrint('[SettingsService] Error loading UserIdentity: $e');
+        _userIdentity = null;
+      }
+    }
+
+    // 첫 실행이거나 로드 실패: 새 UserIdentity 생성
+    if (_userIdentity == null) {
+      final deviceId = const Uuid().v7(); // UUIDv7 생성
+      _userIdentity = UserIdentity(deviceId: deviceId);
+      await _prefs.setString(
+        AppConstants.keyUserIdentity,
+        jsonEncode(_userIdentity!.toJson()),
+      );
+      debugPrint('[SettingsService] UserIdentity created: $_userIdentity');
+    }
 
     notifyListeners();
   }
@@ -213,6 +240,36 @@ class SettingsService extends ChangeNotifier {
     }
     _hapticEnabled = enabled;
     await _prefs.setBool(AppConstants.keyHapticEnabled, enabled);
+    notifyListeners();
+  }
+
+  /// CloudKit User ID 업데이트
+  ///
+  /// iCloud 연동 시 호출
+  Future<void> updateCloudKitId(String cloudKitId) async {
+    if (_userIdentity == null) return;
+
+    _userIdentity = _userIdentity!.withCloudKitId(cloudKitId);
+    await _prefs.setString(
+      AppConstants.keyUserIdentity,
+      jsonEncode(_userIdentity!.toJson()),
+    );
+    debugPrint('[SettingsService] CloudKit ID updated: $cloudKitId');
+    notifyListeners();
+  }
+
+  /// Receipt Transaction ID 업데이트
+  ///
+  /// 유료 구독 시 호출
+  Future<void> updateReceiptId(String receiptId) async {
+    if (_userIdentity == null) return;
+
+    _userIdentity = _userIdentity!.withReceiptId(receiptId);
+    await _prefs.setString(
+      AppConstants.keyUserIdentity,
+      jsonEncode(_userIdentity!.toJson()),
+    );
+    debugPrint('[SettingsService] Receipt ID updated: $receiptId');
     notifyListeners();
   }
 }

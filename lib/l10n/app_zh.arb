@@ -156,7 +156,7 @@
   "needsAttention": "今天血糖波动较大，请检查饮食。",
   "noGlucoseToday": "今天没有血糖记录",
   "addGlucose": "添加血糖",
-  "addDiaryEntry": "添加日记",
+  "addDiaryItem": "添加日记",
   "diaryPlaceholder": "写下您的血糖管理日记",
   "attachPhoto": "附加照片",
   "discardDiaryTitle": "取消编写",

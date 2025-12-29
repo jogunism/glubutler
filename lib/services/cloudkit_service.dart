@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
-import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_item.dart';
 
 /// CloudKit 동기화 서비스
 ///
@@ -20,7 +20,7 @@ import 'package:glu_butler/models/diary_entry.dart';
 /// ## CloudKit 레코드 타입
 /// - `GlucoseRecord`: 혈당 기록
 /// - `InsulinRecord`: 인슐린 기록
-/// - `DiaryEntry`: 일기 엔트리
+/// - `DiaryItem`: 일기 엔트리
 /// - `DiaryFile`: 일기 첨부 파일 (CKAsset 사용)
 class CloudKitService {
   static const _channel = MethodChannel('cloudkit');
@@ -48,6 +48,22 @@ class CloudKitService {
     } catch (e) {
       debugPrint('[CloudKit] Error checking user sign-in: $e');
       return false;
+    }
+  }
+
+  /// iCloud 사용자 고유 식별자 가져오기
+  ///
+  /// Returns: iCloud 계정과 연동된 고유 사용자 ID (앱 재설치 후에도 동일)
+  /// Returns null if user is not signed in to iCloud or on error
+  Future<String?> getUserId() async {
+    if (!Platform.isIOS) return null;
+
+    try {
+      final result = await _channel.invokeMethod<String>('getUserId');
+      return result;
+    } catch (e) {
+      debugPrint('[CloudKit] Error fetching user ID: $e');
+      return null;
     }
   }
 
@@ -164,7 +180,7 @@ class CloudKitService {
   }
 
   /// CloudKit에서 모든 일기 엔트리 가져오기
-  Future<List<DiaryEntry>> fetchDiaryEntries({
+  Future<List<DiaryItem>> fetchDiaryEntries({
     DateTime? startDate,
     DateTime? endDate,
   }) async {
@@ -179,7 +195,7 @@ class CloudKitService {
       if (result == null) return [];
 
       return result
-          .map((json) => DiaryEntry.fromJson(Map<String, dynamic>.from(json)))
+          .map((json) => DiaryItem.fromJson(Map<String, dynamic>.from(json)))
           .toList();
     } catch (e) {
       debugPrint('[CloudKit] Error fetching diary entries: $e');
@@ -188,11 +204,11 @@ class CloudKitService {
   }
 
   /// 일기 엔트리를 CloudKit에 저장
-  Future<bool> saveDiaryEntry(DiaryEntry entry) async {
+  Future<bool> saveDiaryItem(DiaryItem entry) async {
     if (!Platform.isIOS) return false;
 
     try {
-      final result = await _channel.invokeMethod<bool>('saveDiaryEntry', {
+      final result = await _channel.invokeMethod<bool>('saveDiaryItem', {
         'entry': entry.toJson(),
       });
 
@@ -204,11 +220,11 @@ class CloudKitService {
   }
 
   /// 일기 엔트리 삭제
-  Future<bool> deleteDiaryEntry(String id) async {
+  Future<bool> deleteDiaryItem(String id) async {
     if (!Platform.isIOS) return false;
 
     try {
-      final result = await _channel.invokeMethod<bool>('deleteDiaryEntry', {
+      final result = await _channel.invokeMethod<bool>('deleteDiaryItem', {
         'id': id,
       });
 
@@ -244,7 +260,7 @@ class CloudKitService {
       }
 
       final cloudEntries = result
-          .map((json) => DiaryEntry.fromJson(Map<String, dynamic>.from(json)))
+          .map((json) => DiaryItem.fromJson(Map<String, dynamic>.from(json)))
           .toList();
 
       debugPrint('[CloudKit] Fetched ${cloudEntries.length} diary entries from CloudKit');

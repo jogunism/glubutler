@@ -479,7 +479,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addGlucose => '添加血糖';
 
   @override
-  String get addDiaryEntry => '添加日记';
+  String get addDiaryItem => '添加日记';
 
   @override
   String get diaryPlaceholder => '写下您的血糖管理日记';

@@ -4,7 +4,7 @@ import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
-import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
 
 import 'database_schema.dart';
@@ -304,7 +304,7 @@ class RecordDao {
 
   // ============ Diary Records ============
 
-  Future<int> insertDiary(DiaryEntry entry) async {
+  Future<int> insertDiary(DiaryItem entry) async {
     return await db.insert(
       DatabaseSchema.tableDiary,
       entry.toMap(),
@@ -312,7 +312,7 @@ class RecordDao {
     );
   }
 
-  Future<List<DiaryEntry>> getDiaryEntries({
+  Future<List<DiaryItem>> getDiaryEntries({
     DateTime? startDate,
     DateTime? endDate,
   }) async {
@@ -331,10 +331,10 @@ class RecordDao {
       orderBy: 'timestamp DESC',
     );
 
-    return maps.map((map) => DiaryEntry.fromMap(map)).toList();
+    return maps.map((map) => DiaryItem.fromMap(map)).toList();
   }
 
-  Future<DiaryEntry?> getDiaryEntry(String id) async {
+  Future<DiaryItem?> getDiaryItem(String id) async {
     final maps = await db.query(
       DatabaseSchema.tableDiary,
       where: 'id = ?',
@@ -342,10 +342,10 @@ class RecordDao {
     );
 
     if (maps.isEmpty) return null;
-    return DiaryEntry.fromMap(maps.first);
+    return DiaryItem.fromMap(maps.first);
   }
 
-  Future<int> updateDiary(DiaryEntry entry) async {
+  Future<int> updateDiary(DiaryItem entry) async {
     return await db.update(
       DatabaseSchema.tableDiary,
       entry.toMap(),

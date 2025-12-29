@@ -156,7 +156,7 @@
   "needsAttention": "Tu glucosa varió mucho hoy. Revisa tu dieta.",
   "noGlucoseToday": "Sin registros de glucosa hoy",
   "addGlucose": "Añadir Glucosa",
-  "addDiaryEntry": "Añadir entrada al diario",
+  "addDiaryItem": "Añadir entrada al diario",
   "diaryPlaceholder": "Escribe tu diario de control de glucosa",
   "attachPhoto": "Adjuntar foto",
   "discardDiaryTitle": "Cancelar entrada",

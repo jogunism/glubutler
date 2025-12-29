@@ -63,6 +63,9 @@ dependencies:
   # Environment variables
   flutter_dotenv: ^5.2.1
 
+  # JWT (for API authentication)
+  dart_jsonwebtoken: ^2.14.1
+
   # URL Launcher (for opening external apps)
   url_launcher: ^6.3.1
 

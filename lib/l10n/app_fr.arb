@@ -156,7 +156,7 @@
   "needsAttention": "Votre glycémie a beaucoup varié aujourd'hui. Vérifiez votre alimentation.",
   "noGlucoseToday": "Pas de glycémie enregistrée aujourd'hui",
   "addGlucose": "Ajouter Glycémie",
-  "addDiaryEntry": "Ajouter une entrée",
+  "addDiaryItem": "Ajouter une entrée",
   "diaryPlaceholder": "Écrivez votre journal de gestion de la glycémie",
   "attachPhoto": "Joindre une photo",
   "discardDiaryTitle": "Annuler l'entrée",

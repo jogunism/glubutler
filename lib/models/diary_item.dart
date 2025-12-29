@@ -1,17 +1,17 @@
 import 'package:glu_butler/models/diary_file.dart';
 
-/// 일기 엔트리 모델
+/// 일기 아이템 모델
 ///
 /// 사용자가 작성한 일기를 나타냅니다.
 /// 여러 개의 파일 첨부를 가질 수 있습니다 (1:N 관계)
-class DiaryEntry {
+class DiaryItem {
   final String id;
   final String content;
   final DateTime timestamp;
   final DateTime createdAt;
   final List<DiaryFile> files;
 
-  DiaryEntry({
+  DiaryItem({
     required this.id,
     required this.content,
     required this.timestamp,
@@ -20,8 +20,8 @@ class DiaryEntry {
   });
 
   /// SQLite 맵으로부터 생성
-  factory DiaryEntry.fromMap(Map<String, dynamic> map, {List<DiaryFile>? files}) {
-    return DiaryEntry(
+  factory DiaryItem.fromMap(Map<String, dynamic> map, {List<DiaryFile>? files}) {
+    return DiaryItem(
       id: map['id'] as String,
       content: map['content'] as String,
       timestamp: DateTime.parse(map['timestamp'] as String),
@@ -41,8 +41,8 @@ class DiaryEntry {
   }
 
   /// JSON으로부터 생성 (CloudKit 용)
-  factory DiaryEntry.fromJson(Map<String, dynamic> json) {
-    return DiaryEntry(
+  factory DiaryItem.fromJson(Map<String, dynamic> json) {
+    return DiaryItem(
       id: json['id'] as String,
       content: json['content'] as String,
       timestamp: DateTime.parse(json['timestamp'] as String),
@@ -65,14 +65,14 @@ class DiaryEntry {
     };
   }
 
-  DiaryEntry copyWith({
+  DiaryItem copyWith({
     String? id,
     String? content,
     DateTime? timestamp,
     DateTime? createdAt,
     List<DiaryFile>? files,
   }) {
-    return DiaryEntry(
+    return DiaryItem(
       id: id ?? this.id,
       content: content ?? this.content,
       timestamp: timestamp ?? this.timestamp,

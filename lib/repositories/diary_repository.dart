@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:glu_butler/models/diary_entry.dart';
+import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
@@ -22,7 +22,7 @@ class DiaryRepository {
   ///
   /// Returns true if save was successful.
   /// Automatically syncs to CloudKit if enabled.
-  Future<bool> save(DiaryEntry entry) async {
+  Future<bool> save(DiaryItem entry) async {
     try {
       await _databaseService.insertDiary(entry);
 
@@ -34,7 +34,7 @@ class DiaryRepository {
       }
 
       // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
-      // _cloudKitService.saveDiaryEntry(entry);
+      // _cloudKitService.saveDiaryItem(entry);
 
       return true;
     } catch (e) {
@@ -46,7 +46,7 @@ class DiaryRepository {
   /// Fetch diary entries with their files.
   ///
   /// Returns list sorted by timestamp (newest first).
-  Future<List<DiaryEntry>> fetch({
+  Future<List<DiaryItem>> fetch({
     DateTime? startDate,
     DateTime? endDate,
   }) async {
@@ -56,7 +56,7 @@ class DiaryRepository {
     );
 
     // Load files for each entry
-    final entriesWithFiles = <DiaryEntry>[];
+    final entriesWithFiles = <DiaryItem>[];
     for (final entry in entries) {
       final files = await _databaseService.getDiaryFiles(entry.id);
       entriesWithFiles.add(entry.copyWith(files: files));
@@ -66,8 +66,8 @@ class DiaryRepository {
   }
 
   /// Fetch a single diary entry by ID with its files.
-  Future<DiaryEntry?> fetchById(String id) async {
-    final entry = await _databaseService.getDiaryEntry(id);
+  Future<DiaryItem?> fetchById(String id) async {
+    final entry = await _databaseService.getDiaryItem(id);
     if (entry == null) return null;
 
     final files = await _databaseService.getDiaryFiles(id);
@@ -80,12 +80,12 @@ class DiaryRepository {
     await _databaseService.deleteDiary(id);
 
     // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
-    // _cloudKitService.deleteDiaryEntry(id);
+    // _cloudKitService.deleteDiaryItem(id);
   }
 
   /// Update a diary entry.
   /// Automatically syncs to CloudKit if enabled.
-  Future<bool> update(DiaryEntry entry) async {
+  Future<bool> update(DiaryItem entry) async {
     try {
       await _databaseService.updateDiary(entry);
 
@@ -98,7 +98,7 @@ class DiaryRepository {
       }
 
       // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
-      // _cloudKitService.saveDiaryEntry(entry);
+      // _cloudKitService.saveDiaryItem(entry);
 
       return true;
     } catch (e) {

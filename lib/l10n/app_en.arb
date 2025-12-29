@@ -178,7 +178,7 @@
   "needsAttention": "Your glucose varied a lot today. Check your diet.",
   "noGlucoseToday": "No glucose records today",
   "addGlucose": "Add Glucose",
-  "addDiaryEntry": "Add Diary Entry",
+  "addDiaryItem": "Add Diary Entry",
   "diaryPlaceholder": "Write your glucose management diary",
   "attachPhoto": "Attach Photo",
   "discardDiaryTitle": "Discard Entry",

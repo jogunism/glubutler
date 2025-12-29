@@ -56,4 +56,17 @@ class SleepGroup {
     if (deepDuration == null || totalDurationMinutes == 0) return null;
     return (deepDuration / totalDurationMinutes * 100);
   }
+
+  /// JSON으로 변환 (API 전송용)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(),
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime.toIso8601String(),
+      'totalDurationMinutes': totalDurationMinutes,
+      'records': records.map((r) => r.toJson()).toList(),
+      'sourceName': sourceName,
+    };
+  }
 }

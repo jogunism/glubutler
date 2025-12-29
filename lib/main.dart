@@ -13,6 +13,7 @@ import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,12 +45,16 @@ void main() async {
   final reportProvider = ReportProvider();
   await reportProvider.initialize();
 
+  final diaryProvider = DiaryProvider();
+  await diaryProvider.initialize();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: settingsService),
         ChangeNotifierProvider.value(value: feedProvider),
         ChangeNotifierProvider.value(value: reportProvider),
+        ChangeNotifierProvider.value(value: diaryProvider),
       ],
       child: const GluButlerApp(),
     ),

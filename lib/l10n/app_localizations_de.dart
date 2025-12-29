@@ -491,7 +491,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get addGlucose => 'Blutzucker hinzufügen';
 
   @override
-  String get addDiaryEntry => 'Tagebucheintrag hinzufügen';
+  String get addDiaryItem => 'Tagebucheintrag hinzufügen';
 
   @override
   String get diaryPlaceholder => 'Schreiben Sie Ihr Blutzucker-Tagebuch';

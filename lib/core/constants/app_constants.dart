@@ -74,6 +74,8 @@ class AppConstants {
   static const String keySubscriptionDate = 'subscription_date';
   static const String keySyncPeriod = 'sync_period';
   static const String keyServiceStartDate = 'service_start_date';
+  static const String keyUserId = 'user_id'; // Deprecated: 기존 호환성용
+  static const String keyUserIdentity = 'user_identity';
 
   // Glucose Range Keys (5단계)
   static const String keyGlucoseVeryLow = 'glucose_very_low';

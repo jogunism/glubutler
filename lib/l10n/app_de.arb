@@ -156,7 +156,7 @@
   "needsAttention": "Ihr Blutzucker hat heute stark geschwankt. Überprüfen Sie Ihre Ernährung.",
   "noGlucoseToday": "Heute keine Blutzuckerwerte",
   "addGlucose": "Blutzucker hinzufügen",
-  "addDiaryEntry": "Tagebucheintrag hinzufügen",
+  "addDiaryItem": "Tagebucheintrag hinzufügen",
   "diaryPlaceholder": "Schreiben Sie Ihr Blutzucker-Tagebuch",
   "attachPhoto": "Foto anhängen",
   "discardDiaryTitle": "Abbrechen",

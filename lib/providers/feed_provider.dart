@@ -618,6 +618,32 @@ class FeedProvider extends ChangeNotifier {
     return grouped;
   }
 
+  /// 특정 날짜 범위의 피드 아이템 가져오기 (리포트용)
+  List<FeedItem> getItemsInRange({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    return _items.where((item) {
+      return item.timestamp.isAfter(startDate.subtract(const Duration(days: 1))) &&
+          item.timestamp.isBefore(endDate.add(const Duration(days: 1)));
+    }).toList();
+  }
+
+  /// 리포트 API용 피드 데이터 반환
+  ///
+  /// [startDate]: 시작 날짜
+  /// [endDate]: 종료 날짜
+  /// Returns: 선택된 날짜 범위의 피드 아이템 리스트
+  List<FeedItem> getReportData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    return getItemsInRange(
+      startDate: startDate,
+      endDate: endDate,
+    );
+  }
+
   /// Delete a glucose record from both local DB and Apple Health
   Future<bool> deleteGlucoseRecord(String id, DateTime timestamp) async {
     try {
