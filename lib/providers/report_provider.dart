@@ -4,12 +4,15 @@ import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/repositories/report_repository.dart';
 import 'package:glu_butler/services/report_api_service.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// Provider for report generation and management
 ///
 /// Manages report state and delegates data operations to ReportRepository.
 class ReportProvider extends ChangeNotifier {
-  final ReportRepository _reportRepository = ReportRepository();
+  late final ReportRepository _reportRepository;
 
   Report? _latestReport;
   Report? get latestReport => _latestReport;
@@ -19,6 +22,19 @@ class ReportProvider extends ChangeNotifier {
 
   String? _error;
   String? get error => _error;
+
+  /// Constructor that accepts dependencies
+  ReportProvider({
+    required FeedProvider feedProvider,
+    required DiaryProvider diaryProvider,
+    required SettingsService settingsService,
+  }) {
+    _reportRepository = ReportRepository(
+      feedProvider: feedProvider,
+      diaryProvider: diaryProvider,
+      settingsService: settingsService,
+    );
+  }
 
   /// Initialize provider by loading the latest report
   Future<void> initialize() async {

@@ -59,11 +59,9 @@ class ReportRepository {
     debugPrint('[ReportRepository] Diary data count: ${diaryData.length}');
     debugPrint('[ReportRepository] User profile: ${userProfile.name}, Age: ${userProfile.age}, Type: ${userProfile.diabetesType}');
 
-    String reportContent;
-
     try {
       // 실제 API 호출
-      reportContent = await _reportApi.generateReport(
+      final reportContent = await _reportApi.generateReport(
         userIdentity: userIdentity,
         userProfile: userProfile,
         startDate: startDate,
@@ -72,33 +70,39 @@ class ReportRepository {
         diaryData: diaryData,
       );
       debugPrint('[ReportRepository] Report generated via API');
+
+      // API 호출 성공 시에만 DB에 저장
+      final report = Report(
+        startDate: startDate,
+        endDate: endDate,
+        content: reportContent,
+      );
+      await _databaseService.insertReport(report);
+      debugPrint('[ReportRepository] Report saved to DB');
+
+      return report;
     } catch (e) {
       debugPrint('[ReportRepository] API call failed: $e');
-      debugPrint('[ReportRepository] Falling back to mock report');
+      debugPrint('[ReportRepository] Falling back to mock report (not saved to DB)');
 
-      // API 실패 시 Mock으로 폴백
+      // API 실패 시 Mock으로 폴백 (DB에 저장하지 않음)
+      String mockContent;
       try {
-        reportContent = await _loadMockReport(startDate, endDate);
+        mockContent = await _loadMockReport(startDate, endDate);
         debugPrint('[ReportRepository] Using mock report from file');
       } catch (mockError) {
         debugPrint('[ReportRepository] Mock file load failed: $mockError');
-        reportContent = _getSimpleMockReport(startDate, endDate);
+        mockContent = _getSimpleMockReport(startDate, endDate);
         debugPrint('[ReportRepository] Using simple mock report');
       }
+
+      // Mock 리포트는 DB에 저장하지 않고 반환만
+      return Report(
+        startDate: startDate,
+        endDate: endDate,
+        content: mockContent,
+      );
     }
-
-    // Create report model
-    final report = Report(
-      startDate: startDate,
-      endDate: endDate,
-      content: reportContent,
-    );
-
-    // Save to local database
-    await _databaseService.insertReport(report);
-
-    debugPrint('[ReportRepository] Report generated and saved to DB');
-    return report;
   }
 
   /// Load mock report from asset file

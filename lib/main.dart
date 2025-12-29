@@ -42,11 +42,15 @@ void main() async {
   feedProvider.setSettingsService(settingsService);
   await feedProvider.initialize();
 
-  final reportProvider = ReportProvider();
-  await reportProvider.initialize();
-
   final diaryProvider = DiaryProvider();
   await diaryProvider.initialize();
+
+  final reportProvider = ReportProvider(
+    feedProvider: feedProvider,
+    diaryProvider: diaryProvider,
+    settingsService: settingsService,
+  );
+  await reportProvider.initialize();
 
   runApp(
     MultiProvider(

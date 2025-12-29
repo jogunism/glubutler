@@ -84,23 +84,36 @@ class ReportApiService {
     void Function(int sent, int total)? onProgress,
   }) async {
     try {
+      debugPrint('[ReportApiService] Starting report generation...');
       final formData = FormData();
 
       // FeedItem과 DiaryItem을 JSON으로 변환
+      debugPrint('[ReportApiService] Converting feed items to JSON...');
       final feedDataJson = _convertFeedItemsToJson(feedData);
+      debugPrint('[ReportApiService] Feed items converted: ${feedDataJson.length} items');
+
+      debugPrint('[ReportApiService] Converting diary items to JSON...');
       final diaryDataJson = diaryData.map((item) => item.toJson()).toList();
+      debugPrint('[ReportApiService] Diary items converted: ${diaryDataJson.length} items');
 
       // JSON 데이터를 FormData에 추가
-      formData.fields.addAll([
-        MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
-        MapEntry('userProfile', _encodeJson(userProfile.toJson())),
-        MapEntry('startDate', startDate.toIso8601String()),
-        MapEntry('endDate', endDate.toIso8601String()),
-        MapEntry(
-          'data',
-          _encodeJson({'feed': feedDataJson, 'diary': diaryDataJson}),
-        ),
-      ]);
+      debugPrint('[ReportApiService] Adding fields to FormData...');
+      try {
+        formData.fields.addAll([
+          MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
+          MapEntry('userProfile', _encodeJson(userProfile.toJson())),
+          MapEntry('startDate', startDate.toIso8601String()),
+          MapEntry('endDate', endDate.toIso8601String()),
+          MapEntry(
+            'data',
+            _encodeJson({'feed': feedDataJson, 'diary': diaryDataJson}),
+          ),
+        ]);
+        debugPrint('[ReportApiService] FormData fields added successfully');
+      } catch (e) {
+        debugPrint('[ReportApiService] Error adding fields to FormData: $e');
+        rethrow;
+      }
 
       // 일기 이미지 파일 추가 (diaryData에서 파일 경로 추출)
       final imagePaths = diaryData
@@ -136,25 +149,66 @@ class ReportApiService {
       // JWT 토큰 생성
       final token = _generateJwtToken(userIdentity);
 
+      // FormData 내용 디버그 출력
+      debugPrint('[ReportApiService] === FormData Debug ===');
+      debugPrint('[ReportApiService] Fields:');
+      for (var field in formData.fields) {
+        if (field.key == 'data') {
+          debugPrint('  ${field.key}: ${field.value.substring(0, field.value.length > 200 ? 200 : field.value.length)}...');
+        } else {
+          debugPrint('  ${field.key}: ${field.value}');
+        }
+      }
+      debugPrint('[ReportApiService] Files count: ${formData.files.length}');
+      for (var i = 0; i < formData.files.length; i++) {
+        final file = formData.files[i];
+        debugPrint('  [$i] ${file.key}: ${file.value.filename}');
+      }
+      debugPrint('[ReportApiService] ======================');
+
+      debugPrint('[ReportApiService] Sending POST request to /report...');
+      debugPrint('[ReportApiService] Base URL: $baseUrl');
+      debugPrint('[ReportApiService] Full URL: $baseUrl/report');
+
       final response = await _dio.post(
         '/report',
         data: formData,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-        onSendProgress: onProgress,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+          validateStatus: (status) {
+            debugPrint('[ReportApiService] Response status: $status');
+            return status != null && status < 500;
+          },
+        ),
+        onSendProgress: (sent, total) {
+          debugPrint('[ReportApiService] Upload progress: $sent / $total bytes');
+          if (onProgress != null) {
+            onProgress(sent, total);
+          }
+        },
       );
+
+      debugPrint('[ReportApiService] Response received - Status Code: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = response.data;
+        debugPrint('[ReportApiService] Report generated successfully');
         return data['reportContent'] as String;
       } else {
+        debugPrint('[ReportApiService] Unexpected status code: ${response.statusCode}');
         throw ReportApiException(
           'Failed to generate report: ${response.statusCode}',
           statusCode: response.statusCode,
         );
       }
     } on DioException catch (e) {
+      debugPrint('[ReportApiService] DioException caught: ${e.type}');
+      debugPrint('[ReportApiService] Error message: ${e.message}');
+      debugPrint('[ReportApiService] Response status: ${e.response?.statusCode}');
       throw _handleDioError(e);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[ReportApiService] Unexpected error caught: $e');
+      debugPrint('[ReportApiService] Stack trace: $stackTrace');
       throw ReportApiException('Unexpected error: $e');
     }
   }
@@ -233,7 +287,16 @@ class ReportApiService {
       case FeedItemType.mindfulness:
         return item.mindfulnessRecord?.toJson();
       case FeedItemType.steps:
-        return item.stepsData;
+        // stepsData의 date 필드를 ISO8601 문자열로 변환
+        final stepsData = item.stepsData;
+        if (stepsData != null) {
+          return {
+            'steps': stepsData['steps'],
+            'distanceKm': stepsData['distanceKm'],
+            'date': (stepsData['date'] as DateTime).toIso8601String(),
+          };
+        }
+        return null;
       case FeedItemType.sleepGroup:
         return item.sleepGroup?.toJson();
       case FeedItemType.waterGroup:
