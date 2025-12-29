@@ -297,10 +297,21 @@
   "reportGuideMessage": "• La glucosa en sangre se ve afectada por diversos aspectos de la vida. Por lo tanto, para generar informes se requieren datos detallados relacionados con la salud.\n\n• Toda la información básica se basa en datos de la aplicación Apple Health.\n\n• Nos referimos a su información básica, registros de ejercicio y patrones de estilo de vida registrados en la aplicación Apple Health, y rastreamos su estado actual basándonos en registros de glucosa de Glu Butler u otras aplicaciones.\n\n• Cuantos más datos se acumulen y más detallados sean, más factores se pueden considerar, lo que resulta en informes más completos.\n\n• Por lo tanto, recomendamos generar informes cuando tenga al menos 2-3 días de datos de actividad y glucosa.\n\n• Para su primer informe, puede generar informes a partir de una semana antes de hoy.\n\n• No se admiten informes de un solo día.\n\n• No puede crear informes para fechas que ya tienen informes existentes.\n\n※ La información personal utilizada para la generación de informes nunca se almacena en otro lugar. Se utiliza únicamente para la generación de informes y se descarta inmediatamente después de su uso.",
   "doNotShowAgain": "No mostrar de nuevo",
   "viewPastReports": "Ver informes anteriores",
+  "pastReports": "Informes anteriores",
   "reportPeriod": "Período del informe",
   "selectDateRange": "Seleccionar rango de fechas",
   "selectStartAndEndDate": "Seleccione las fechas de inicio y fin",
   "month": "mes",
   "day": "día",
-  "newReport": "Crear nuevo informe"
+  "newReport": "Crear nuevo informe",
+  "deleteReport": "Eliminar informe",
+  "reportWillBeDeleted": "El informe será eliminado",
+  "daysAgo": "hace {count} días",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -297,10 +297,21 @@
   "reportGuideMessage": "• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.\n\n• Tutte le informazioni di base si basano sui dati dell'app Apple Health.\n\n• Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.\n\n• Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.\n\n• Pertanto, consigliamo di generare rapporti quando si dispone di almeno 2-3 giorni di dati di attività e glucosio.\n\n• Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.\n\n• I rapporti di un solo giorno non sono supportati.\n\n• Non puoi creare rapporti per date che hanno già rapporti esistenti.\n\n※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l'uso.",
   "doNotShowAgain": "Non mostrare più",
   "viewPastReports": "Vedi rapporti precedenti",
+  "pastReports": "Rapporti precedenti",
   "reportPeriod": "Periodo del rapporto",
   "selectDateRange": "Seleziona intervallo di date",
   "selectStartAndEndDate": "Seleziona le date di inizio e fine",
   "month": "mese",
   "day": "giorno",
-  "newReport": "Crea nuovo rapporto"
+  "newReport": "Crea nuovo rapporto",
+  "deleteReport": "Elimina rapporto",
+  "reportWillBeDeleted": "Il rapporto verrà eliminato",
+  "daysAgo": "{count} giorni fa",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

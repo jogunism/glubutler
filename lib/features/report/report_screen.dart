@@ -118,7 +118,8 @@ class _ReportScreenState extends State<ReportScreen> {
 
     return Consumer<ReportProvider>(
       builder: (context, reportProvider, child) {
-        final reportContent = reportProvider.latestReport?.content;
+        final currentReport = reportProvider.currentReport;
+        final reportContent = currentReport?.content;
         final isLoading = reportProvider.isLoading;
 
         return LargeTitleScrollView(
@@ -265,18 +266,23 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildReportContent(ThemeData theme, String content) {
+    // 리포트 영역은 항상 라이트 모드 색상 사용
+    const backgroundColor = Colors.white;
+    const textColor = Colors.black87;
+    const borderColor = Color(0xFFCCCCCC);
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: theme.cardColor,
-        border: Border.all(color: theme.dividerColor, width: 1),
+        color: backgroundColor,
+        border: Border.all(color: borderColor, width: 1),
       ),
       child: Container(
         margin: const EdgeInsets.all(3),
         padding: const EdgeInsets.all(3),
         child: CustomPaint(
           painter: _DashedBorderPainter(
-            color: theme.dividerColor.withOpacity(0.4),
+            color: borderColor,
             strokeWidth: 1,
             dashWidth: 4,
             dashSpace: 3,
@@ -287,45 +293,56 @@ class _ReportScreenState extends State<ReportScreen> {
               data: content,
               softLineBreak: true,
               styleSheet: MarkdownStyleSheet(
-                h1: theme.textTheme.headlineMedium?.copyWith(
+                h1: const TextStyle(
+                  color: textColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 21,
                 ),
-                h2: theme.textTheme.titleLarge?.copyWith(
+                h2: const TextStyle(
+                  color: textColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 19,
                 ),
-                h3: theme.textTheme.titleMedium?.copyWith(
+                h3: const TextStyle(
+                  color: textColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
-                p: theme.textTheme.bodyMedium?.copyWith(
+                p: const TextStyle(
+                  color: textColor,
                   height: 1.6,
                   fontSize: 14,
                 ),
-                listBullet: theme.textTheme.bodyMedium?.copyWith(
+                listBullet: const TextStyle(
+                  color: textColor,
                   height: 1.6,
                   fontSize: 14,
                 ),
-                strong: theme.textTheme.bodyMedium?.copyWith(
+                strong: const TextStyle(
+                  color: textColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
-                em: theme.textTheme.bodyMedium?.copyWith(
+                em: const TextStyle(
+                  color: textColor,
                   fontStyle: FontStyle.italic,
                   fontSize: 14,
                 ),
-                a: TextStyle(
+                a: const TextStyle(
                   color: AppTheme.primaryColor,
                   fontWeight: FontWeight.w600,
                   decoration: TextDecoration.none,
                   fontSize: 14,
                 ),
-                tableHead: theme.textTheme.bodyMedium?.copyWith(
+                tableHead: const TextStyle(
+                  color: textColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
-                tableBody: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
+                tableBody: const TextStyle(
+                  color: textColor,
+                  fontSize: 14,
+                ),
                 blockSpacing: 11,
                 listIndent: 22,
               ),

@@ -17,6 +17,12 @@ class ReportProvider extends ChangeNotifier {
   Report? _latestReport;
   Report? get latestReport => _latestReport;
 
+  Report? _selectedReport;
+  Report? get selectedReport => _selectedReport;
+
+  /// 현재 표시 중인 리포트 (선택된 리포트가 있으면 그것을, 없으면 최신 리포트)
+  Report? get currentReport => _selectedReport ?? _latestReport;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -82,6 +88,9 @@ class ReportProvider extends ChangeNotifier {
       // Reload latest report to update UI
       await loadLatestReport();
 
+      // Reset to viewing latest report
+      _selectedReport = null;
+
       return true;
     } on ReportApiException catch (e) {
       _error = e.message;
@@ -113,6 +122,11 @@ class ReportProvider extends ChangeNotifier {
     try {
       await _reportRepository.deleteReport(id);
 
+      // If deleted report was the selected one, reset to latest
+      if (_selectedReport?.id == id) {
+        _selectedReport = null;
+      }
+
       // If deleted report was the latest, reload
       if (_latestReport?.id == id) {
         await loadLatestReport();
@@ -126,6 +140,21 @@ class ReportProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  /// Select a specific report to view
+  void setSelectedReport(Report? report) {
+    _selectedReport = report;
+    notifyListeners();
+  }
+
+  /// Reset to viewing the latest report
+  void selectLatestReport() {
+    _selectedReport = null;
+    notifyListeners();
+  }
+
+  /// Check if currently viewing the latest report
+  bool get isViewingLatest => _selectedReport == null || _selectedReport?.id == _latestReport?.id;
 
   /// Clear error message
   void clearError() {

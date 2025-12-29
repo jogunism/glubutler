@@ -36,10 +36,13 @@ class Report {
     };
   }
 
-  /// 리포트 기간 문자열 반환 (예: "12월 21일 - 12월 27일")
+  /// 리포트 기간 문자열 반환 (예: "12월 28일 - 29일" 또는 "11월 30일 - 12월 2일")
   String getPeriodString() {
     final start = '${startDate.month}월 ${startDate.day}일';
-    final end = '${endDate.month}월 ${endDate.day}일';
+    // 같은 달이면 월 생략
+    final end = startDate.month == endDate.month
+        ? '${endDate.day}일'
+        : '${endDate.month}월 ${endDate.day}일';
     return '$start - $end';
   }
 

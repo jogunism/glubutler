@@ -825,20 +825,34 @@ class AppLocalizationsDe extends AppLocalizations {
   String get viewPastReports => 'Frühere Berichte';
 
   @override
+  String get pastReports => 'Frühere Berichte';
+
+  @override
   String get reportPeriod => 'Berichtszeitraum';
 
   @override
-  String get selectDateRange => 'Select Date Range';
+  String get selectDateRange => 'Datumsbereich auswählen';
 
   @override
-  String get selectStartAndEndDate => 'Select start and end dates';
+  String get selectStartAndEndDate => 'Start- und Enddatum auswählen';
 
   @override
-  String get month => 'month';
+  String get month => 'Monat';
 
   @override
-  String get day => 'day';
+  String get day => 'Tag';
 
   @override
-  String get newReport => 'Create New Report';
+  String get newReport => 'Neuen Bericht erstellen';
+
+  @override
+  String get deleteReport => 'Bericht löschen';
+
+  @override
+  String get reportWillBeDeleted => 'Der Bericht wird gelöscht';
+
+  @override
+  String daysAgo(int count) {
+    return 'vor $count Tagen';
+  }
 }

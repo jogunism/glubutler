@@ -806,6 +806,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get viewPastReports => '查看过去的报告';
 
   @override
+  String get pastReports => '过去的报告';
+
+  @override
   String get reportPeriod => '报告期间';
 
   @override
@@ -822,4 +825,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get newReport => '创建新报告';
+
+  @override
+  String get deleteReport => '删除报告';
+
+  @override
+  String get reportWillBeDeleted => '报告将被删除';
+
+  @override
+  String daysAgo(int count) {
+    return '$count天前';
+  }
 }

@@ -67,6 +67,7 @@ class ReportApiService {
   ///
   /// [userIdentity]: 사용자 식별 정보 (deviceId, cloudKitId, receiptId)
   /// [userProfile]: 사용자 프로필 (이름, 성별, 연령, 당뇨 타입, 진단년)
+  /// [language]: 사용자 언어 설정 (예: "ko", "en", "ja")
   /// [startDate]: 리포트 시작 날짜
   /// [endDate]: 리포트 종료 날짜
   /// [feedData]: 피드 데이터 (혈당, 식사, 운동, 수면 등)
@@ -77,6 +78,7 @@ class ReportApiService {
   Future<String> generateReport({
     required UserIdentity userIdentity,
     required UserProfile userProfile,
+    required String language,
     required DateTime startDate,
     required DateTime endDate,
     required List<FeedItem> feedData,
@@ -102,6 +104,7 @@ class ReportApiService {
         formData.fields.addAll([
           MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
           MapEntry('userProfile', _encodeJson(userProfile.toJson())),
+          MapEntry('lang', language),
           MapEntry('startDate', startDate.toIso8601String()),
           MapEntry('endDate', endDate.toIso8601String()),
           MapEntry(
@@ -192,8 +195,20 @@ class ReportApiService {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        debugPrint('[ReportApiService] Report generated successfully');
-        return data['reportContent'] as String;
+        debugPrint('[ReportApiService] Response data type: ${data.runtimeType}');
+        debugPrint('[ReportApiService] Response data: $data');
+
+        if (data is Map<String, dynamic>) {
+          debugPrint('[ReportApiService] Response keys: ${data.keys.toList()}');
+          if (data.containsKey('reportContent')) {
+            debugPrint('[ReportApiService] reportContent type: ${data['reportContent'].runtimeType}');
+            return data['reportContent'] as String;
+          } else {
+            throw ReportApiException('Response missing reportContent field. Available keys: ${data.keys.toList()}');
+          }
+        } else {
+          throw ReportApiException('Unexpected response type: ${data.runtimeType}');
+        }
       } else {
         debugPrint('[ReportApiService] Unexpected status code: ${response.statusCode}');
         throw ReportApiException(

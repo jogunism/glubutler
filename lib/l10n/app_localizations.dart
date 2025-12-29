@@ -1676,6 +1676,12 @@ abstract class AppLocalizations {
   /// **'View Past Reports'**
   String get viewPastReports;
 
+  /// No description provided for @pastReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Reports'**
+  String get pastReports;
+
   /// No description provided for @reportPeriod.
   ///
   /// In en, this message translates to:
@@ -1711,6 +1717,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create New Report'**
   String get newReport;
+
+  /// No description provided for @deleteReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Report'**
+  String get deleteReport;
+
+  /// No description provided for @reportWillBeDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Report will be deleted'**
+  String get reportWillBeDeleted;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String daysAgo(int count);
 }
 
 class _AppLocalizationsDelegate

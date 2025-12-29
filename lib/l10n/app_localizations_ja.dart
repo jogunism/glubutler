@@ -806,6 +806,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get viewPastReports => '過去のレポート';
 
   @override
+  String get pastReports => '過去のレポート';
+
+  @override
   String get reportPeriod => 'レポート期間';
 
   @override
@@ -822,4 +825,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get newReport => '新しいレポートを作成';
+
+  @override
+  String get deleteReport => 'レポートを削除';
+
+  @override
+  String get reportWillBeDeleted => 'レポートが削除されます';
+
+  @override
+  String daysAgo(int count) {
+    return '$count日前';
+  }
 }

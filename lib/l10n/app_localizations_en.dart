@@ -823,6 +823,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewPastReports => 'View Past Reports';
 
   @override
+  String get pastReports => 'Past Reports';
+
+  @override
   String get reportPeriod => 'Report Period';
 
   @override
@@ -839,4 +842,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newReport => 'Create New Report';
+
+  @override
+  String get deleteReport => 'Delete Report';
+
+  @override
+  String get reportWillBeDeleted => 'Report will be deleted';
+
+  @override
+  String daysAgo(int count) {
+    return '$count days ago';
+  }
 }
