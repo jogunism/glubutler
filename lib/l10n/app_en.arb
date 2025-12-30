@@ -325,6 +325,9 @@
   "deleteReport": "Delete Report",
   "reportWillBeDeleted": "Report will be deleted",
   "generatingReport": "Generating AI Report...",
+  "reportGenerationFailed": "Report Generation Failed",
+  "reportGenerationSuccess": "Report has been generated",
+  "ok": "OK",
   "daysAgo": "{count} days ago",
   "@daysAgo": {
     "placeholders": {

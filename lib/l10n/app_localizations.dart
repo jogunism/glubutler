@@ -1736,6 +1736,24 @@ abstract class AppLocalizations {
   /// **'Generating AI Report...'**
   String get generatingReport;
 
+  /// No description provided for @reportGenerationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Generation Failed'**
+  String get reportGenerationFailed;
+
+  /// No description provided for @reportGenerationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Report has been generated'**
+  String get reportGenerationSuccess;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
   /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:

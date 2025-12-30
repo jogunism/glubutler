@@ -307,6 +307,9 @@
   "deleteReport": "レポートを削除",
   "reportWillBeDeleted": "レポートが削除されます",
   "generatingReport": "AIレポート生成中...",
+  "reportGenerationFailed": "レポート生成失敗",
+  "reportGenerationSuccess": "レポートが生成されました",
+  "ok": "確認",
   "daysAgo": "{count}日前",
   "@daysAgo": {
     "placeholders": {

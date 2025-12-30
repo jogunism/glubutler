@@ -853,6 +853,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generatingReport => 'Generating AI Report...';
 
   @override
+  String get reportGenerationFailed => 'Report Generation Failed';
+
+  @override
+  String get reportGenerationSuccess => 'Report has been generated';
+
+  @override
+  String get ok => 'OK';
+
+  @override
   String daysAgo(int count) {
     return '$count days ago';
   }

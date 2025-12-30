@@ -836,6 +836,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get generatingReport => 'AIレポート生成中...';
 
   @override
+  String get reportGenerationFailed => 'レポート生成失敗';
+
+  @override
+  String get reportGenerationSuccess => 'レポートが生成されました';
+
+  @override
+  String get ok => '確認';
+
+  @override
   String daysAgo(int count) {
     return '$count日前';
   }

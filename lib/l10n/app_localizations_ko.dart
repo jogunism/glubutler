@@ -836,6 +836,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get generatingReport => 'AI 리포트 생성 중...';
 
   @override
+  String get reportGenerationFailed => '리포트 생성 실패';
+
+  @override
+  String get reportGenerationSuccess => '리포트가 생성되었습니다';
+
+  @override
+  String get ok => '확인';
+
+  @override
   String daysAgo(int count) {
     return '$count일 전';
   }

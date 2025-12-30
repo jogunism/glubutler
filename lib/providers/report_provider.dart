@@ -33,6 +33,9 @@ class ReportProvider extends ChangeNotifier {
   double _uploadProgress = 0.0;
   double get uploadProgress => _uploadProgress;
 
+  /// 타이머로 진행률을 증가시키기 위한 변수
+  bool _isGenerating = false;
+
   /// Constructor that accepts dependencies
   ReportProvider({
     required FeedProvider feedProvider,
@@ -80,7 +83,11 @@ class ReportProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     _uploadProgress = 0.0;
+    _isGenerating = true;
     notifyListeners();
+
+    // 60% → 95%: 3-5초, 95% → 99%: 5-10초 (더 느리게)
+    _startProgressTimer();
 
     try {
       // Generate report via repository (API call + DB save)
@@ -89,45 +96,118 @@ class ReportProvider extends ChangeNotifier {
         endDate: endDate,
         userIdentity: userIdentity,
         onProgress: (sent, total) {
-          _uploadProgress = sent / total;
+          if (!_isGenerating) return;
+          // 업로드 진행률은 60%까지만 표시
+          _uploadProgress = (sent / total) * 0.6;
           debugPrint('[ReportProvider] Upload progress: ${(sent / total * 100).toStringAsFixed(1)}%');
           notifyListeners();
         },
       );
 
-      // Set to 100% when complete
+      // 서버 응답 받음 - 타이머 중단하고 즉시 100%로 설정
+      _isGenerating = false;
       _uploadProgress = 1.0;
       notifyListeners();
 
-      // Reload latest report to update UI (without showing loading indicator)
+      // 0.5초 대기 (100% 애니메이션 완료 대기)
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // 로딩 오버레이 먼저 닫기 (toast가 보이도록)
+      _isLoading = false;
+      _uploadProgress = 0.0;
+      notifyListeners();
+
+      // Reload latest report to update UI
       try {
         _latestReport = await _reportRepository.getLatestReport();
+        notifyListeners();
       } catch (e) {
         debugPrint('[ReportProvider] Error loading latest report: $e');
       }
 
       // Reset to viewing latest report
       _selectedReport = null;
-      _isLoading = false;
-      _uploadProgress = 0.0;
-      notifyListeners();
 
       return true;
     } on ReportApiException catch (e) {
       _error = e.message;
       debugPrint('[ReportProvider] Report generation failed: $e');
+
+      // 타이머 중단하고 실패 시에도 100%로 채운 후 0.5초 대기
+      _isGenerating = false;
+      _uploadProgress = 1.0;
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // 로딩 오버레이 먼저 닫기 (toast가 보이도록)
       _isLoading = false;
       _uploadProgress = 0.0;
       notifyListeners();
+
       return false;
     } catch (e) {
       _error = 'Unexpected error: $e';
       debugPrint('[ReportProvider] Unexpected error during report generation: $e');
+
+      // 타이머 중단하고 실패 시에도 100%로 채운 후 0.5초 대기
+      _isGenerating = false;
+      _uploadProgress = 1.0;
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // 로딩 오버레이 먼저 닫기 (toast가 보이도록)
       _isLoading = false;
       _uploadProgress = 0.0;
       notifyListeners();
+
       return false;
     }
+  }
+
+  /// 60% 이후 진행률을 천천히 99%까지 증가시키는 타이머
+  /// 60% → 95%: 3-5초 (빠르게)
+  /// 95% → 99%: 5-10초 (느리게)
+  void _startProgressTimer() {
+    // 첫 번째 단계: 60% → 95% (3-5초)
+    final phase1Duration = 3000 + (DateTime.now().millisecondsSinceEpoch % 2000); // 3-5초
+    final phase1Start = 0.6;
+    final phase1Target = 0.95;
+    final phase1Increment = (phase1Target - phase1Start) / (phase1Duration / 100);
+
+    Future.doWhile(() async {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!_isGenerating) return false; // 타이머 중단
+
+      if (_uploadProgress < phase1Target) {
+        _uploadProgress = (_uploadProgress + phase1Increment).clamp(0.0, phase1Target);
+        notifyListeners();
+        return true;
+      }
+
+      // 첫 번째 단계 완료, 두 번째 단계 시작
+      _startPhase2Timer();
+      return false;
+    });
+  }
+
+  /// 95% → 99%로 천천히 증가 (5-10초)
+  void _startPhase2Timer() {
+    final phase2Duration = 5000 + (DateTime.now().millisecondsSinceEpoch % 5000); // 5-10초
+    final phase2Start = 0.95;
+    final phase2Target = 0.99;
+    final phase2Increment = (phase2Target - phase2Start) / (phase2Duration / 100);
+
+    Future.doWhile(() async {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!_isGenerating) return false; // 타이머 중단
+
+      if (_uploadProgress < phase2Target) {
+        _uploadProgress = (_uploadProgress + phase2Increment).clamp(0.0, phase2Target);
+        notifyListeners();
+        return true;
+      }
+      return false;
+    });
   }
 
   /// Get all past reports

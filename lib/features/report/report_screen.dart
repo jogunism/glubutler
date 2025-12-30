@@ -10,6 +10,7 @@ import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/water_drop_loading.dart';
 import 'package:glu_butler/core/widgets/modals/report_guide_modal.dart';
 import 'package:glu_butler/core/widgets/modals/date_range_picker_modal.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
@@ -60,6 +61,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Future<void> _generateReport() async {
     final reportProvider = context.read<ReportProvider>();
     final settingsService = context.read<SettingsService>();
+    final l10n = AppLocalizations.of(context)!;
 
     // 안내 모달 표시
     if (!mounted) return;
@@ -85,25 +87,14 @@ class _ReportScreenState extends State<ReportScreen> {
       userIdentity: userIdentity,
     );
 
-    if (!success && mounted) {
-      // 에러 처리 (Provider의 error 메시지 표시)
-      final error = reportProvider.error;
-      if (error != null) {
-        showCupertinoDialog(
-          context: context,
-          builder: (context) => CupertinoAlertDialog(
-            title: const Text('리포트 생성 실패'),
-            content: Text(error),
-            actions: [
-              CupertinoDialogAction(
-                child: const Text('확인'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-        );
-      }
-    }
+    if (!mounted) return;
+
+    // TopBanner로 성공/실패 알림 표시
+    TopBanner.show(
+      context,
+      message: success ? l10n.reportGenerationSuccess : (reportProvider.error ?? l10n.reportGenerationFailed),
+      isSuccess: success,
+    );
   }
 
   void _viewPastReports() {

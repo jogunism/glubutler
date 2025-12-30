@@ -314,6 +314,9 @@
   "deleteReport": "리포트 삭제",
   "reportWillBeDeleted": "리포트가 삭제됩니다",
   "generatingReport": "AI 리포트 생성 중...",
+  "reportGenerationFailed": "리포트 생성 실패",
+  "reportGenerationSuccess": "리포트가 생성되었습니다",
+  "ok": "확인",
   "daysAgo": "{count}일 전",
   "@daysAgo": {
     "placeholders": {
