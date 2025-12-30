@@ -1730,6 +1730,12 @@ abstract class AppLocalizations {
   /// **'Report will be deleted'**
   String get reportWillBeDeleted;
 
+  /// No description provided for @generatingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating AI Report...'**
+  String get generatingReport;
+
   /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:

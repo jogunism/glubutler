@@ -833,6 +833,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reportWillBeDeleted => '报告将被删除';
 
   @override
+  String get generatingReport => 'Generating AI Report...';
+
+  @override
   String daysAgo(int count) {
     return '$count天前';
   }

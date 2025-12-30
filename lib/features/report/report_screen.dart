@@ -7,6 +7,7 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
+import 'package:glu_butler/core/widgets/water_drop_loading.dart';
 import 'package:glu_butler/core/widgets/modals/report_guide_modal.dart';
 import 'package:glu_butler/core/widgets/modals/date_range_picker_modal.dart';
 import 'package:glu_butler/features/report/past_reports_screen.dart';
@@ -121,13 +122,16 @@ class _ReportScreenState extends State<ReportScreen> {
         final currentReport = reportProvider.currentReport;
         final reportContent = currentReport?.content;
         final isLoading = reportProvider.isLoading;
+        final uploadProgress = reportProvider.uploadProgress;
 
-        return LargeTitleScrollView(
-          title: l10n.report,
-          trailing: const SettingsIconButton(),
-          // 레포트가 없을 때는 스크롤로 탭바 숨김 비활성화
-          onScrollDirectionChanged: reportContent != null ? widget.onScrollDirectionChanged : null,
-          slivers: [
+        return Stack(
+          children: [
+            LargeTitleScrollView(
+              title: l10n.report,
+              trailing: const SettingsIconButton(),
+              // 레포트가 없을 때는 스크롤로 탭바 숨김 비활성화
+              onScrollDirectionChanged: reportContent != null ? widget.onScrollDirectionChanged : null,
+              slivers: [
             if (reportContent == null)
               // 레포트 없을 때: 빈 화면 + 생성 버튼
               SliverFillRemaining(
@@ -188,11 +192,19 @@ class _ReportScreenState extends State<ReportScreen> {
                   ]),
                 ),
               ),
-          ],
-        );
-      },
-    );
-  }
+            ],
+          ),
+          // 로딩 오버레이
+          if (isLoading)
+            WaterDropLoadingOverlay(
+              progress: uploadProgress,
+              message: l10n.generatingReport,
+            ),
+        ],
+      );
+    },
+  );
+}
 
   Widget _buildReportHeader(AppLocalizations l10n, bool isLoading) {
     return Padding(

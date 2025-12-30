@@ -306,6 +306,7 @@
   "newReport": "Crea nuovo rapporto",
   "deleteReport": "Elimina rapporto",
   "reportWillBeDeleted": "Il rapporto verrà eliminato",
+  "generatingReport": "Generating AI Report...",
   "daysAgo": "{count} giorni fa",
   "@daysAgo": {
     "placeholders": {

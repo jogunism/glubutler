@@ -29,6 +29,10 @@ class ReportProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  /// 리포트 생성 진행률 (0.0 ~ 1.0)
+  double _uploadProgress = 0.0;
+  double get uploadProgress => _uploadProgress;
+
   /// Constructor that accepts dependencies
   ReportProvider({
     required FeedProvider feedProvider,
@@ -75,6 +79,7 @@ class ReportProvider extends ChangeNotifier {
   }) async {
     _isLoading = true;
     _error = null;
+    _uploadProgress = 0.0;
     notifyListeners();
 
     try {
@@ -83,25 +88,43 @@ class ReportProvider extends ChangeNotifier {
         startDate: startDate,
         endDate: endDate,
         userIdentity: userIdentity,
+        onProgress: (sent, total) {
+          _uploadProgress = sent / total;
+          debugPrint('[ReportProvider] Upload progress: ${(sent / total * 100).toStringAsFixed(1)}%');
+          notifyListeners();
+        },
       );
 
-      // Reload latest report to update UI
-      await loadLatestReport();
+      // Set to 100% when complete
+      _uploadProgress = 1.0;
+      notifyListeners();
+
+      // Reload latest report to update UI (without showing loading indicator)
+      try {
+        _latestReport = await _reportRepository.getLatestReport();
+      } catch (e) {
+        debugPrint('[ReportProvider] Error loading latest report: $e');
+      }
 
       // Reset to viewing latest report
       _selectedReport = null;
+      _isLoading = false;
+      _uploadProgress = 0.0;
+      notifyListeners();
 
       return true;
     } on ReportApiException catch (e) {
       _error = e.message;
       debugPrint('[ReportProvider] Report generation failed: $e');
       _isLoading = false;
+      _uploadProgress = 0.0;
       notifyListeners();
       return false;
     } catch (e) {
       _error = 'Unexpected error: $e';
       debugPrint('[ReportProvider] Unexpected error during report generation: $e');
       _isLoading = false;
+      _uploadProgress = 0.0;
       notifyListeners();
       return false;
     }

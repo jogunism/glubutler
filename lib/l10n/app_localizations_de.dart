@@ -852,6 +852,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get reportWillBeDeleted => 'Der Bericht wird gelöscht';
 
   @override
+  String get generatingReport => 'Generating AI Report...';
+
+  @override
   String daysAgo(int count) {
     return 'vor $count Tagen';
   }

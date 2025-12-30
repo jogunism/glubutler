@@ -306,6 +306,7 @@
   "newReport": "新しいレポートを作成",
   "deleteReport": "レポートを削除",
   "reportWillBeDeleted": "レポートが削除されます",
+  "generatingReport": "AIレポート生成中...",
   "daysAgo": "{count}日前",
   "@daysAgo": {
     "placeholders": {

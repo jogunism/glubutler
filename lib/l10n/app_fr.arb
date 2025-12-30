@@ -306,6 +306,7 @@
   "newReport": "Créer un nouveau rapport",
   "deleteReport": "Supprimer le rapport",
   "reportWillBeDeleted": "Le rapport sera supprimé",
+  "generatingReport": "Generating AI Report...",
   "daysAgo": "il y a {count} jours",
   "@daysAgo": {
     "placeholders": {

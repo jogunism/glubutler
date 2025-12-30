@@ -6,8 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/models/user_profile.dart';
-import 'package:glu_butler/models/feed_item.dart';
-import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
 
 /// AI 리포트 생성 API 서비스
@@ -72,8 +70,9 @@ class ReportApiService {
   /// [glucoseRange]: 혈당 목표 범위 설정
   /// [startDate]: 리포트 시작 날짜
   /// [endDate]: 리포트 종료 날짜
-  /// [feedData]: 피드 데이터 (혈당, 식사, 운동, 수면 등)
-  /// [diaryData]: 일기 데이터 (텍스트 및 파일 정보 포함)
+  /// [simplifiedFeedData]: 간소화된 피드 데이터 (type, time, value만 포함)
+  /// [simplifiedDiaryData]: 간소화된 일기 데이터 (time, content, files만 포함)
+  /// [imagePaths]: 일기 이미지 파일 경로 리스트
   /// [onProgress]: 업로드 진행률 콜백 (옵션)
   ///
   /// Returns: AI가 생성한 Markdown 형식의 리포트 텍스트
@@ -84,20 +83,19 @@ class ReportApiService {
     required GlucoseRangeSettings glucoseRange,
     required DateTime startDate,
     required DateTime endDate,
-    required List<FeedItem> feedData,
-    required List<DiaryItem> diaryData,
+    required List<Map<String, dynamic>> simplifiedFeedData,
+    required List<Map<String, dynamic>> simplifiedDiaryData,
+    List<String>? imagePaths,
     void Function(int sent, int total)? onProgress,
   }) async {
     try {
       debugPrint('[ReportApiService] Starting report generation...');
       final formData = FormData();
 
-      // FeedItem과 DiaryItem을 JSON으로 변환
-      final feedDataJson = _convertFeedItemsToJson(feedData);
-      final diaryDataJson = diaryData.map((item) => item.toJson()).toList();
-
       // JSON 데이터를 FormData에 추가
       debugPrint('[ReportApiService] Glucose range: ${glucoseRange.toJson()}');
+      debugPrint('[ReportApiService] Simplified feed data count: ${simplifiedFeedData.length}');
+      debugPrint('[ReportApiService] Simplified diary data count: ${simplifiedDiaryData.length}');
       try {
         formData.fields.addAll([
           MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
@@ -108,7 +106,7 @@ class ReportApiService {
           MapEntry('endDate', endDate.toIso8601String()),
           MapEntry(
             'data',
-            _encodeJson({'feed': feedDataJson, 'diary': diaryDataJson}),
+            _encodeJson({'feed': simplifiedFeedData, 'diary': simplifiedDiaryData}),
           ),
         ]);
         // debugPrint('[ReportApiService] FormData fields added successfully');
@@ -117,33 +115,30 @@ class ReportApiService {
         rethrow;
       }
 
-      // 일기 이미지 파일 추가 (diaryData에서 파일 경로 추출)
-      final imagePaths = diaryData
-          .expand((item) => item.files)
-          .map((file) => file.filePath)
-          .toList();
+      // 일기 이미지 파일 추가
+      final paths = imagePaths ?? [];
 
       // 추출된 파일 경로를 FormData에 추가
-      for (var i = 0; i < imagePaths.length; i++) {
+      for (var i = 0; i < paths.length; i++) {
         try {
-          final file = File(imagePaths[i]);
+          final file = File(paths[i]);
           if (await file.exists()) {
-            final fileName = imagePaths[i].split('/').last;
+            final fileName = paths[i].split('/').last;
             formData.files.add(
               MapEntry(
                 'images',
                 await MultipartFile.fromFile(
-                  imagePaths[i],
+                  paths[i],
                   filename: fileName.isEmpty ? 'diary_$i.jpg' : fileName,
                 ),
               ),
             );
           } else {
-            debugPrint('[ReportApiService] File not found: ${imagePaths[i]}');
+            debugPrint('[ReportApiService] File not found: ${paths[i]}');
           }
         } catch (e) {
           debugPrint(
-            '[ReportApiService] Failed to load image: ${imagePaths[i]}, $e',
+            '[ReportApiService] Failed to load image: ${paths[i]}, $e',
           );
         }
       }
@@ -242,56 +237,6 @@ class ReportApiService {
       }
     } on DioException catch (e) {
       throw _handleDioError(e);
-    }
-  }
-
-  /// FeedItem 리스트를 JSON으로 직렬화 가능한 형태로 변환
-  List<Map<String, dynamic>> _convertFeedItemsToJson(List<FeedItem> items) {
-    return items.map((item) {
-      return {
-        'id': item.id,
-        'type': item.type.name,
-        'timestamp': item.timestamp.toIso8601String(),
-        'isFromHealthKit': item.isFromHealthKit,
-        'data': _convertFeedItemData(item),
-      };
-    }).toList();
-  }
-
-  /// FeedItem의 data 필드를 JSON 가능한 형태로 변환
-  dynamic _convertFeedItemData(FeedItem item) {
-    switch (item.type) {
-      case FeedItemType.glucose:
-        return item.glucoseRecord?.toJson();
-      case FeedItemType.meal:
-        return item.mealRecord?.toJson();
-      case FeedItemType.exercise:
-        return item.exerciseRecord?.toJson();
-      case FeedItemType.sleep:
-        return item.sleepRecord?.toJson();
-      case FeedItemType.water:
-        return item.waterRecord?.toJson();
-      case FeedItemType.insulin:
-        return item.insulinRecord?.toJson();
-      case FeedItemType.mindfulness:
-        return item.mindfulnessRecord?.toJson();
-      case FeedItemType.steps:
-        // stepsData의 date 필드를 ISO8601 문자열로 변환
-        final stepsData = item.stepsData;
-        if (stepsData != null) {
-          return {
-            'steps': stepsData['steps'],
-            'distanceKm': stepsData['distanceKm'],
-            'date': (stepsData['date'] as DateTime).toIso8601String(),
-          };
-        }
-        return null;
-      case FeedItemType.sleepGroup:
-        return item.sleepGroup?.toJson();
-      case FeedItemType.waterGroup:
-        return item.waterGroup?.toJson();
-      case FeedItemType.cgmGroup:
-        return item.cgmGroup?.toJson();
     }
   }
 

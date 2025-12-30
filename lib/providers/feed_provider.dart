@@ -728,4 +728,123 @@ class FeedProvider extends ChangeNotifier {
     );
   }
 
+  /// API 리포트용 간소화된 데이터 생성
+  ///
+  /// 모든 FeedItem을 간단한 포맷으로 변환:
+  /// {
+  ///   "type": "glucose manual|cgm|steps|water|exercise|sleep",
+  ///   "time": "2024-12-30T18:30",
+  ///   "value": "before_meal 145 mg/dL" // 또는 "avg": "95 mg/dL", "max": "102", "min": "88" (CGM인 경우)
+  /// }
+  List<Map<String, dynamic>> getSimplifiedReportData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final result = <Map<String, dynamic>>[];
+
+    // startDate ~ endDate 범위의 FeedItem 필터링
+    final filteredItems = _items.where((item) {
+      return item.timestamp.isAfter(startDate.subtract(const Duration(seconds: 1))) &&
+          item.timestamp.isBefore(endDate.add(const Duration(seconds: 1)));
+    }).toList();
+
+    // timestamp 기준 정렬
+    filteredItems.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    for (final item in filteredItems) {
+      final timeStr = _formatTimeForApi(item.timestamp);
+
+      switch (item.type) {
+        case FeedItemType.glucose:
+          final record = item.glucoseRecord;
+          if (record == null) continue;
+
+          // CGM 여부 판단: isFromHealthKit이고 연속적인 데이터면 CGM
+          // 현재는 단순하게 수동 입력만 manual로 처리
+          final isCgm = record.isFromHealthKit;
+
+          if (isCgm) {
+            // CGM 데이터는 시간별로 그룹화해야 하므로 일단 개별 데이터로 추가
+            // (나중에 시간별 그룹화 로직 추가 가능)
+            result.add({
+              'type': 'glucose cgm',
+              'time': timeStr,
+              'value': '${record.value.toStringAsFixed(0)}${record.unit}',
+            });
+          } else {
+            // Manual 데이터
+            final mealContext = record.mealContext != null
+                ? '${record.mealContext}, '
+                : '';
+            result.add({
+              'type': 'glucose manual',
+              'time': timeStr,
+              'value': '$mealContext${record.value.toStringAsFixed(0)}${record.unit}',
+            });
+          }
+          break;
+
+        case FeedItemType.steps:
+          final stepsMap = item.stepsData;
+          if (stepsMap == null) continue;
+          final steps = stepsMap['steps'] as int? ?? 0;
+          final distanceKm = stepsMap['distanceKm'] as double? ?? 0;
+          result.add({
+            'type': 'steps',
+            'time': timeStr,
+            'value': '${steps}steps, ${distanceKm.toStringAsFixed(2)}km',
+          });
+          break;
+
+        case FeedItemType.waterGroup:
+          final waterGroup = item.waterGroup;
+          if (waterGroup == null) continue;
+          final totalMl = waterGroup.totalAmountMl;
+          result.add({
+            'type': 'water',
+            'time': timeStr,
+            'value': '${totalMl.toStringAsFixed(2)}ml',
+          });
+          break;
+
+        case FeedItemType.exercise:
+          final exercise = item.exerciseRecord;
+          if (exercise == null) continue;
+          final calories = exercise.calories ?? 0;
+          final duration = exercise.durationMinutes;
+          final exerciseType = exercise.exerciseType;
+          result.add({
+            'type': 'exercise',
+            'time': timeStr,
+            'value': '${calories}kcal, ${duration}min ($exerciseType)',
+          });
+          break;
+
+        case FeedItemType.sleepGroup:
+          final sleep = item.sleepGroup;
+          if (sleep == null) continue;
+          final startTime = _formatTimeForApi(sleep.startTime);
+          final endTime = _formatTimeForApi(sleep.endTime);
+          final duration = sleep.totalDurationMinutes;
+          result.add({
+            'type': 'sleep',
+            'time': timeStr,
+            'value': '$startTime~$endTime, ${duration}min',
+          });
+          break;
+
+        // 다른 타입들은 무시
+        default:
+          break;
+      }
+    }
+
+    return result;
+  }
+
+  /// API용 시간 포맷 (초 단위 제거)
+  String _formatTimeForApi(DateTime dateTime) {
+    return dateTime.toIso8601String().substring(0, 16); // "2024-12-30T18:30"
+  }
+
 }

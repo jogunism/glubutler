@@ -324,6 +324,7 @@
   "newReport": "Create New Report",
   "deleteReport": "Delete Report",
   "reportWillBeDeleted": "Report will be deleted",
+  "generatingReport": "Generating AI Report...",
   "daysAgo": "{count} days ago",
   "@daysAgo": {
     "placeholders": {

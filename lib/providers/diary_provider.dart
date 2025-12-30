@@ -104,6 +104,63 @@ class DiaryProvider extends ChangeNotifier {
     );
   }
 
+  /// API 리포트용 간소화된 일기 데이터 생성
+  ///
+  /// 일기 데이터를 간단한 포맷으로 변환:
+  /// {
+  ///   "time": "2024-12-30T18:30",
+  ///   "content": "일기 내용",
+  ///   "files": [
+  ///     {
+  ///       "path": "filename.jpg",
+  ///       "time": "2024-12-30T18:30",
+  ///       "location": "50.1356,8.5067"
+  ///     }
+  ///   ]
+  /// }
+  List<Map<String, dynamic>> getSimplifiedReportData({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final entries = getEntriesInRange(
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    return entries.map((entry) {
+      // 파일 정보 간소화
+      final simplifiedFiles = entry.files.map((file) {
+        // 파일 경로에서 파일명만 추출
+        final fileName = file.filePath.split('/').last;
+
+        // 위도와 경도를 결합
+        final location = file.latitude != null && file.longitude != null
+            ? '${file.latitude},${file.longitude}'
+            : null;
+
+        // capturedAt이 null이면 파일을 제외
+        if (file.capturedAt == null) return null;
+
+        return {
+          'path': fileName,
+          'time': _formatTimeForApi(file.capturedAt!),
+          if (location != null) 'location': location,
+        };
+      }).whereType<Map<String, dynamic>>().toList(); // null 제거
+
+      return {
+        'time': _formatTimeForApi(entry.timestamp),
+        'content': entry.content,
+        'files': simplifiedFiles,
+      };
+    }).toList();
+  }
+
+  /// API용 시간 포맷 (초 단위 제거)
+  String _formatTimeForApi(DateTime dateTime) {
+    return dateTime.toIso8601String().substring(0, 16); // "2024-12-30T18:30"
+  }
+
   /// 특정 날짜의 일기 가져오기
   List<DiaryItem> getEntriesForDate(DateTime date) {
     return _entries.where((entry) {

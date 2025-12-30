@@ -313,6 +313,7 @@
   "newReport": "신규 리포트 생성",
   "deleteReport": "리포트 삭제",
   "reportWillBeDeleted": "리포트가 삭제됩니다",
+  "generatingReport": "AI 리포트 생성 중...",
   "daysAgo": "{count}일 전",
   "@daysAgo": {
     "placeholders": {

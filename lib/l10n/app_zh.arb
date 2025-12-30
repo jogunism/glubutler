@@ -306,6 +306,7 @@
   "newReport": "创建新报告",
   "deleteReport": "删除报告",
   "reportWillBeDeleted": "报告将被删除",
+  "generatingReport": "Generating AI Report...",
   "daysAgo": "{count}天前",
   "@daysAgo": {
     "placeholders": {

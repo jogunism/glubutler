@@ -38,16 +38,29 @@ class ReportRepository {
     required DateTime startDate,
     required DateTime endDate,
     required UserIdentity userIdentity,
+    void Function(int sent, int total)? onProgress,
   }) async {
-    // FeedProvider와 DiaryProvider에서 날짜 범위의 데이터 가져오기
-    final feedData = _feedProvider.getReportData(
+    // FeedProvider에서 간소화된 데이터 가져오기
+    final simplifiedFeedData = _feedProvider.getSimplifiedReportData(
       startDate: startDate,
       endDate: endDate,
     );
-    final diaryData = _diaryProvider.getReportData(
+
+    // DiaryProvider에서 간소화된 데이터 가져오기
+    final simplifiedDiaryData = _diaryProvider.getSimplifiedReportData(
       startDate: startDate,
       endDate: endDate,
     );
+
+    // 일기 이미지 파일 경로 추출
+    final diaryEntries = _diaryProvider.getReportData(
+      startDate: startDate,
+      endDate: endDate,
+    );
+    final imagePaths = diaryEntries
+        .expand((entry) => entry.files)
+        .map((file) => file.filePath)
+        .toList();
 
     // SettingsService에서 UserProfile, 언어, 목표 수치 설정 가져오기
     final userProfile = _settingsService.userProfile;
@@ -57,6 +70,9 @@ class ReportRepository {
     debugPrint('[ReportRepository] Current language setting: $language');
     debugPrint('[ReportRepository] User profile: ${userProfile.toJson()}');
     debugPrint('[ReportRepository] Glucose range: ${glucoseRange.toJson()}');
+    debugPrint('[ReportRepository] Simplified feed data count: ${simplifiedFeedData.length}');
+    debugPrint('[ReportRepository] Simplified diary data count: ${simplifiedDiaryData.length}');
+    debugPrint('[ReportRepository] Image paths count: ${imagePaths.length}');
 
     try {
       // 실제 API 호출
@@ -67,8 +83,10 @@ class ReportRepository {
         glucoseRange: glucoseRange,
         startDate: startDate,
         endDate: endDate,
-        feedData: feedData,
-        diaryData: diaryData,
+        simplifiedFeedData: simplifiedFeedData,
+        simplifiedDiaryData: simplifiedDiaryData,
+        imagePaths: imagePaths,
+        onProgress: onProgress,
       );
       // API 호출 성공 시에만 DB에 저장
       final report = Report(

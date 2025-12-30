@@ -833,6 +833,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get reportWillBeDeleted => '리포트가 삭제됩니다';
 
   @override
+  String get generatingReport => 'AI 리포트 생성 중...';
+
+  @override
   String daysAgo(int count) {
     return '$count일 전';
   }
