@@ -8,6 +8,7 @@ import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/models/user_profile.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/diary_item.dart';
+import 'package:glu_butler/models/glucose_range_settings.dart';
 
 /// AI 리포트 생성 API 서비스
 ///
@@ -68,6 +69,7 @@ class ReportApiService {
   /// [userIdentity]: 사용자 식별 정보 (deviceId, cloudKitId, receiptId)
   /// [userProfile]: 사용자 프로필 (이름, 성별, 연령, 당뇨 타입, 진단년)
   /// [language]: 사용자 언어 설정 (예: "ko", "en", "ja")
+  /// [glucoseRange]: 혈당 목표 범위 설정
   /// [startDate]: 리포트 시작 날짜
   /// [endDate]: 리포트 종료 날짜
   /// [feedData]: 피드 데이터 (혈당, 식사, 운동, 수면 등)
@@ -79,6 +81,7 @@ class ReportApiService {
     required UserIdentity userIdentity,
     required UserProfile userProfile,
     required String language,
+    required GlucoseRangeSettings glucoseRange,
     required DateTime startDate,
     required DateTime endDate,
     required List<FeedItem> feedData,
@@ -90,20 +93,16 @@ class ReportApiService {
       final formData = FormData();
 
       // FeedItem과 DiaryItem을 JSON으로 변환
-      debugPrint('[ReportApiService] Converting feed items to JSON...');
       final feedDataJson = _convertFeedItemsToJson(feedData);
-      debugPrint('[ReportApiService] Feed items converted: ${feedDataJson.length} items');
-
-      debugPrint('[ReportApiService] Converting diary items to JSON...');
       final diaryDataJson = diaryData.map((item) => item.toJson()).toList();
-      debugPrint('[ReportApiService] Diary items converted: ${diaryDataJson.length} items');
 
       // JSON 데이터를 FormData에 추가
-      debugPrint('[ReportApiService] Adding fields to FormData...');
+      debugPrint('[ReportApiService] Glucose range: ${glucoseRange.toJson()}');
       try {
         formData.fields.addAll([
           MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
           MapEntry('userProfile', _encodeJson(userProfile.toJson())),
+          MapEntry('target', glucoseRange.target.toString()),
           MapEntry('lang', language),
           MapEntry('startDate', startDate.toIso8601String()),
           MapEntry('endDate', endDate.toIso8601String()),
@@ -112,7 +111,7 @@ class ReportApiService {
             _encodeJson({'feed': feedDataJson, 'diary': diaryDataJson}),
           ),
         ]);
-        debugPrint('[ReportApiService] FormData fields added successfully');
+        // debugPrint('[ReportApiService] FormData fields added successfully');
       } catch (e) {
         debugPrint('[ReportApiService] Error adding fields to FormData: $e');
         rethrow;
@@ -152,27 +151,6 @@ class ReportApiService {
       // JWT 토큰 생성
       final token = _generateJwtToken(userIdentity);
 
-      // FormData 내용 디버그 출력
-      debugPrint('[ReportApiService] === FormData Debug ===');
-      debugPrint('[ReportApiService] Fields:');
-      for (var field in formData.fields) {
-        if (field.key == 'data') {
-          debugPrint('  ${field.key}: ${field.value.substring(0, field.value.length > 200 ? 200 : field.value.length)}...');
-        } else {
-          debugPrint('  ${field.key}: ${field.value}');
-        }
-      }
-      debugPrint('[ReportApiService] Files count: ${formData.files.length}');
-      for (var i = 0; i < formData.files.length; i++) {
-        final file = formData.files[i];
-        debugPrint('  [$i] ${file.key}: ${file.value.filename}');
-      }
-      debugPrint('[ReportApiService] ======================');
-
-      debugPrint('[ReportApiService] Sending POST request to /report...');
-      debugPrint('[ReportApiService] Base URL: $baseUrl');
-      debugPrint('[ReportApiService] Full URL: $baseUrl/report');
-
       final response = await _dio.post(
         '/report',
         data: formData,
@@ -184,33 +162,29 @@ class ReportApiService {
           },
         ),
         onSendProgress: (sent, total) {
-          debugPrint('[ReportApiService] Upload progress: $sent / $total bytes');
+          // 진행률 콜백만 호출 (로그 출력 안 함)
           if (onProgress != null) {
             onProgress(sent, total);
           }
         },
       );
 
-      debugPrint('[ReportApiService] Response received - Status Code: ${response.statusCode}');
-
       if (response.statusCode == 200) {
         final data = response.data;
-        debugPrint('[ReportApiService] Response data type: ${data.runtimeType}');
-        debugPrint('[ReportApiService] Response data: $data');
 
         if (data is Map<String, dynamic>) {
-          debugPrint('[ReportApiService] Response keys: ${data.keys.toList()}');
           if (data.containsKey('reportContent')) {
-            debugPrint('[ReportApiService] reportContent type: ${data['reportContent'].runtimeType}');
+            debugPrint('[ReportApiService] Report generated successfully');
             return data['reportContent'] as String;
           } else {
-            throw ReportApiException('Response missing reportContent field. Available keys: ${data.keys.toList()}');
+            throw ReportApiException('Response missing reportContent field');
           }
         } else {
-          throw ReportApiException('Unexpected response type: ${data.runtimeType}');
+          throw ReportApiException(
+            'Unexpected response type: ${data.runtimeType}',
+          );
         }
       } else {
-        debugPrint('[ReportApiService] Unexpected status code: ${response.statusCode}');
         throw ReportApiException(
           'Failed to generate report: ${response.statusCode}',
           statusCode: response.statusCode,
@@ -218,11 +192,11 @@ class ReportApiService {
       }
     } on DioException catch (e) {
       debugPrint('[ReportApiService] DioException caught: ${e.type}');
-      debugPrint('[ReportApiService] Error message: ${e.message}');
-      debugPrint('[ReportApiService] Response status: ${e.response?.statusCode}');
+      debugPrint(
+        '[ReportApiService] Error message: [${e.response?.statusCode}] ${e.message}',
+      );
       throw _handleDioError(e);
     } catch (e, stackTrace) {
-      debugPrint('[ReportApiService] Unexpected error caught: $e');
       debugPrint('[ReportApiService] Stack trace: $stackTrace');
       throw ReportApiException('Unexpected error: $e');
     }

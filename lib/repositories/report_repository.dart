@@ -49,9 +49,14 @@ class ReportRepository {
       endDate: endDate,
     );
 
-    // SettingsService에서 UserProfile과 언어 설정 가져오기
+    // SettingsService에서 UserProfile, 언어, 목표 수치 설정 가져오기
     final userProfile = _settingsService.userProfile;
     final language = _settingsService.language;
+    final glucoseRange = _settingsService.glucoseRange;
+
+    debugPrint('[ReportRepository] Current language setting: $language');
+    debugPrint('[ReportRepository] User profile: ${userProfile.toJson()}');
+    debugPrint('[ReportRepository] Glucose range: ${glucoseRange.toJson()}');
 
     try {
       // 실제 API 호출
@@ -59,6 +64,7 @@ class ReportRepository {
         userIdentity: userIdentity,
         userProfile: userProfile,
         language: language,
+        glucoseRange: glucoseRange,
         startDate: startDate,
         endDate: endDate,
         feedData: feedData,

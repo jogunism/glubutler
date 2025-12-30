@@ -8,8 +8,8 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
-import 'package:glu_butler/repositories/glucose_repository.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 날짜 선택 모달 팝업
 ///
@@ -49,7 +49,6 @@ class DatePickerModal extends StatefulWidget {
 class _DatePickerModalState extends State<DatePickerModal> {
   late DateTime _selectedDate;
   late DateTime _focusedDate;
-  final _glucoseRepository = GlucoseRepository();
   Set<DateTime> _datesWithData = {};
   bool _isLoading = true;
 
@@ -70,25 +69,33 @@ class _DatePickerModalState extends State<DatePickerModal> {
     setState(() => _isLoading = true);
 
     try {
-      // Provider를 통해 SettingsService 가져오기
+      // FeedProvider에서 데이터 가져오기
+      final feedProvider = context.read<FeedProvider>();
       final settings = context.read<SettingsService>();
       final syncPeriod = settings.syncPeriod;
       final now = DateTime.now();
-      final startDate = now.subtract(Duration(days: syncPeriod));
 
-      final records = await _glucoseRepository.fetch(
+      // 오늘 포함 syncPeriod일 = (syncPeriod - 1)일 전부터
+      // 예: 오늘이 30일, syncPeriod=7 -> 24일부터 30일까지 (7일간)
+      final startDate = now.subtract(Duration(days: syncPeriod - 1));
+
+      // FeedProvider의 캐시된 데이터에서 날짜 추출
+      final feedItems = feedProvider.getReportData(
         startDate: startDate,
         endDate: now,
       );
 
       final datesSet = <DateTime>{};
-      for (final record in records) {
-        final date = DateTime(
-          record.timestamp.year,
-          record.timestamp.month,
-          record.timestamp.day,
-        );
-        datesSet.add(date);
+      for (final item in feedItems) {
+        // 혈당 데이터만 체크
+        if (item.glucoseRecord != null) {
+          final date = DateTime(
+            item.timestamp.year,
+            item.timestamp.month,
+            item.timestamp.day,
+          );
+          datesSet.add(date);
+        }
       }
 
       setState(() {

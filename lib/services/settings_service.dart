@@ -61,7 +61,30 @@ class SettingsService extends ChangeNotifier {
   }
 
   Future<void> _loadSettings() async {
-    _language = _prefs.getString(AppConstants.keyLanguage) ?? AppConstants.defaultLanguage;
+    // 저장된 언어 확인
+    final savedLanguage = _prefs.getString(AppConstants.keyLanguage);
+
+    if (savedLanguage == null) {
+      // 저장된 언어가 없으면 시스템 언어 감지
+      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+      final systemLanguage = systemLocale.languageCode;
+
+      // 지원하는 언어인지 확인
+      if (AppConstants.supportedLanguages.contains(systemLanguage)) {
+        _language = systemLanguage;
+      } else {
+        _language = AppConstants.defaultLanguage;
+      }
+
+      // 감지한 언어를 저장
+      await _prefs.setString(AppConstants.keyLanguage, _language);
+      debugPrint('[SettingsService] System language detected and saved: $_language');
+    } else {
+      // 저장된 언어 사용
+      _language = savedLanguage;
+      debugPrint('[SettingsService] Loaded saved language: $_language');
+    }
+
     _unit = _prefs.getString(AppConstants.keyUnit) ?? AppConstants.defaultUnit;
     _themeMode = _prefs.getString(AppConstants.keyThemeMode) ?? AppConstants.themeModeSystem;
     _isHealthConnected = _prefs.getBool(AppConstants.keyHealthConnected) ?? false;

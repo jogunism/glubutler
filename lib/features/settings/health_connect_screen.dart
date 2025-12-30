@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
@@ -403,11 +404,34 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
       }
     }
 
+    // AdaptivePopupMenuButton용 아이템 리스트 생성 (짧은 기간부터)
+    final items = [
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod3Months,
+        label: l10n.syncPeriod3Months,
+        icon: currentPeriod == AppConstants.syncPeriod3Months ? 'checkmark' : null,
+      ),
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod1Month,
+        label: l10n.syncPeriod1Month,
+        icon: currentPeriod == AppConstants.syncPeriod1Month ? 'checkmark' : null,
+      ),
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod2Weeks,
+        label: l10n.syncPeriod2Weeks,
+        icon: currentPeriod == AppConstants.syncPeriod2Weeks ? 'checkmark' : null,
+      ),
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod1Week,
+        label: l10n.syncPeriod1Week,
+        icon: currentPeriod == AppConstants.syncPeriod1Week ? 'checkmark' : null,
+      ),
+    ];
+
     return Container(
       decoration: context.decorations.card,
-      child: CupertinoButton(
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        onPressed: () => _showSyncPeriodPicker(context, l10n, settings),
         child: Row(
           children: [
             Container(
@@ -432,17 +456,36 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
                 ),
               ),
             ),
-            Text(
-              getPeriodLabel(currentPeriod),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
+            MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                platformBrightness: Theme.of(context).brightness,
               ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              CupertinoIcons.chevron_right,
-              size: 16,
-              color: context.colors.iconGrey,
+              child: AdaptivePopupMenuButton.widget<int>(
+                items: items,
+                onSelected: (index, item) {
+                  if (item.value != null) {
+                    settings.setSyncPeriod(item.value!);
+                    context.read<FeedProvider>().refreshData();
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      getPeriodLabel(currentPeriod),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      CupertinoIcons.chevron_down,
+                      size: 16,
+                      color: context.colors.iconGrey,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -450,55 +493,6 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
     );
   }
 
-  void _showSyncPeriodPicker(
-      BuildContext context, AppLocalizations l10n, SettingsService settings) {
-    final feedProvider = context.read<FeedProvider>();
-
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => CupertinoActionSheet(
-        title: Text(l10n.syncPeriod),
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: () {
-              settings.setSyncPeriod(AppConstants.syncPeriod1Week);
-              feedProvider.refreshData();
-              Navigator.pop(context);
-            },
-            child: Text(l10n.syncPeriod1Week),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              settings.setSyncPeriod(AppConstants.syncPeriod2Weeks);
-              feedProvider.refreshData();
-              Navigator.pop(context);
-            },
-            child: Text(l10n.syncPeriod2Weeks),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              settings.setSyncPeriod(AppConstants.syncPeriod1Month);
-              feedProvider.refreshData();
-              Navigator.pop(context);
-            },
-            child: Text(l10n.syncPeriod1Month),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              settings.setSyncPeriod(AppConstants.syncPeriod3Months);
-              feedProvider.refreshData();
-              Navigator.pop(context);
-            },
-            child: Text(l10n.syncPeriod3Months),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-      ),
-    );
-  }
 
   Widget _buildConnectButton(
     BuildContext context,

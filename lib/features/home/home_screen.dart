@@ -14,11 +14,11 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/modals/date_picker_modal.dart';
-import 'package:glu_butler/repositories/glucose_repository.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/glucose_score_service.dart';
 import 'package:glu_butler/services/health_service.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 홈 대시보드 화면
 ///
@@ -39,7 +39,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  final _glucoseRepository = GlucoseRepository();
   final _healthService = HealthService();
 
   List<GlucoseRecord> _todayRecords = [];
@@ -78,23 +77,17 @@ class _HomeScreenState extends State<HomeScreen>
     _animationController.reset();
 
     try {
-      // _selectedDate를 사용하여 선택한 날짜의 데이터 로드
+      // FeedProvider에서 혈당 데이터 가져오기
+      final feedProvider = context.read<FeedProvider>();
+      final records = await feedProvider.getHomeGraphData(_selectedDate);
+
+      // 건강 앱 데이터 로드
       final startOfDay = DateTime(
         _selectedDate.year,
         _selectedDate.month,
         _selectedDate.day,
       );
       final endOfDay = startOfDay.add(const Duration(days: 1));
-
-      // GlucoseRepository.fetch() automatically handles:
-      // - Fetches from local DB
-      // - If HealthKit permissions exist, also fetches from HealthKit and merges
-      final records = await _glucoseRepository.fetch(
-        startDate: startOfDay,
-        endDate: endOfDay,
-      );
-
-      // 건강 앱 데이터 로드
       await _loadHealthData(startOfDay, endOfDay);
 
       setState(() {
@@ -137,10 +130,9 @@ class _HomeScreenState extends State<HomeScreen>
         return;
       }
 
-      final records = await _glucoseRepository.fetch(
-        startDate: startOfDay,
-        endDate: endOfDay,
-      );
+      // FeedProvider에서 혈당 데이터 가져오기
+      final feedProvider = context.read<FeedProvider>();
+      final records = await feedProvider.getHomeGraphData(_selectedDate);
 
       // 건강 앱 데이터 로드
       await _loadHealthData(startOfDay, endOfDay);

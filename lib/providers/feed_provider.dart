@@ -391,7 +391,9 @@ class FeedProvider extends ChangeNotifier {
 
       final now = DateTime.now();
       final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
-      final startDate = now.subtract(Duration(days: syncDays));
+      // 오늘 포함 syncDays일 = (syncDays - 1)일 전부터
+      // 예: 오늘이 30일, syncDays=7 -> 24일부터 30일까지 (7일간)
+      final startDate = now.subtract(Duration(days: syncDays - 1));
       // Allow future dates (up to 1 day ahead) in case user enters future time
       final endDate = now.add(const Duration(days: 1));
 
@@ -686,6 +688,44 @@ class FeedProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  /// Home 화면 그래프용 혈당 데이터 가져오기 (특정 날짜)
+  ///
+  /// [date]: 조회할 날짜
+  /// Returns: 해당 날짜의 혈당 기록 리스트
+  ///
+  /// 캐시된 데이터가 있으면 반환하고, 없으면 Repository에서 직접 가져옴
+  Future<List<GlucoseRecord>> getHomeGraphData(DateTime date) async {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    // 먼저 캐시된 데이터에서 찾기
+    final cachedRecords = _items
+        .where((item) {
+          return item.type == FeedItemType.glucose &&
+              item.glucoseRecord != null &&
+              item.timestamp.isAfter(startOfDay.subtract(const Duration(seconds: 1))) &&
+              item.timestamp.isBefore(endOfDay);
+        })
+        .map((item) => item.glucoseRecord!)
+        .toList();
+
+    // 오늘 또는 syncPeriod 이내 날짜면 캐시 데이터 반환
+    final now = DateTime.now();
+    final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
+    // 오늘 포함 syncDays일 = (syncDays - 1)일 전부터
+    final earliestCachedDate = now.subtract(Duration(days: syncDays - 1));
+
+    if (startOfDay.isAfter(earliestCachedDate) || startOfDay.isAtSameMomentAs(earliestCachedDate)) {
+      return cachedRecords;
+    }
+
+    // 캐시 범위 밖이면 Repository에서 직접 가져오기
+    return await _glucoseRepository.fetch(
+      startDate: startOfDay,
+      endDate: endOfDay,
+    );
   }
 
 }
