@@ -99,7 +99,6 @@ class ReportProvider extends ChangeNotifier {
           if (!_isGenerating) return;
           // 업로드 진행률은 60%까지만 표시
           _uploadProgress = (sent / total) * 0.6;
-          debugPrint('[ReportProvider] Upload progress: ${(sent / total * 100).toStringAsFixed(1)}%');
           notifyListeners();
         },
       );

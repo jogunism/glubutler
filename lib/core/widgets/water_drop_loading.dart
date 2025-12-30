@@ -22,7 +22,7 @@ class WaterDropLoading extends StatefulWidget {
     super.key,
     required this.progress,
     this.size = 120,
-    this.color = AppTheme.iconRed,
+    this.color = AppTheme.primaryColor,
   });
 
   @override
