@@ -16,6 +16,7 @@ import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
+import 'package:glu_butler/features/diary/diary_image_viewer.dart';
 
 /// 일기 화면
 ///
@@ -425,9 +426,20 @@ class _DiaryItemCardState extends State<_DiaryItemCard>
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: widget.entry.files.map(
-                        (file) => _DiaryImageWidget(filePath: file.filePath),
-                      ).toList(),
+                      children: widget.entry.files.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final file = entry.value;
+                        return GestureDetector(
+                          onTap: () {
+                            DiaryImageViewer.show(
+                              context,
+                              files: widget.entry.files,
+                              initialIndex: index,
+                            );
+                          },
+                          child: _DiaryImageWidget(filePath: file.filePath),
+                        );
+                      }).toList(),
                     ),
                   ],
                 ],
