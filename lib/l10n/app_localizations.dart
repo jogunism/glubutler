@@ -1628,6 +1628,12 @@ abstract class AppLocalizations {
   /// **'Please enter content or attach photos.'**
   String get diaryContentRequired;
 
+  /// Detected food items appended to diary content
+  ///
+  /// In en, this message translates to:
+  /// **'\n\nFood: {food}'**
+  String foodDetected(String food);
+
   /// No description provided for @error.
   ///
   /// In en, this message translates to:

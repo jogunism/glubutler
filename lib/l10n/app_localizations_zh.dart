@@ -779,6 +779,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get diaryContentRequired => '请输入内容或附加照片。';
 
   @override
+  String foodDetected(String food) {
+    return '\n\n食物: $food';
+  }
+
+  @override
   String get error => '错误';
 
   @override

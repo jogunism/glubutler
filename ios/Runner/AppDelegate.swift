@@ -5,6 +5,7 @@ import HealthKit
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   private let healthKitBridge = HealthKitBridge()
+  private let visionBridge = VisionBridge()
 //  private let cloudKitBridge = CloudKitBridge()
 
   override func application(
@@ -152,6 +153,33 @@ import HealthKit
         self.healthKitBridge.startBackgroundObserver(result: result)
       case "stopBackgroundObserver":
         self.healthKitBridge.stopBackgroundObserver(result: result)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+
+    // Vision Channel - 음식 사진 분석
+    let visionChannel = FlutterMethodChannel(
+      name: "vision_analysis",
+      binaryMessenger: controller.binaryMessenger
+    )
+
+    visionChannel.setMethodCallHandler { [weak self] (call, result) in
+      guard let self = self else { return }
+
+      switch call.method {
+      case "analyzeFoodPhoto":
+        if let args = call.arguments as? [String: Any] {
+          self.visionBridge.analyzeFoodPhoto(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
+      case "extractMetadata":
+        if let args = call.arguments as? [String: Any] {
+          self.visionBridge.extractMetadata(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
       default:
         result(FlutterMethodNotImplemented)
       }

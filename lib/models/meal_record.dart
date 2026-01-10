@@ -1,63 +1,57 @@
+/// 식사 기록 모델
+///
+/// 일기 항목에서 음식 사진이 감지되면 자동으로 생성됩니다.
+/// diary_id를 통해 일기와 1:1 관계를 가집니다.
 class MealRecord {
   final String id;
-  final DateTime timestamp;
-  final String mealType; // breakfast, lunch, dinner, snack
-  final String? description;
-  final List<String>? photoUrls;
-  final String? note;
-  final int? estimatedCarbs;
+  final String diaryId;
+  final String? foodName;
+  final DateTime mealTime;
+  final DateTime createdAt;
 
   MealRecord({
     required this.id,
-    required this.timestamp,
-    required this.mealType,
-    this.description,
-    this.photoUrls,
-    this.note,
-    this.estimatedCarbs,
+    required this.diaryId,
+    this.foodName,
+    required this.mealTime,
+    required this.createdAt,
   });
 
   MealRecord copyWith({
     String? id,
-    DateTime? timestamp,
-    String? mealType,
-    String? description,
-    List<String>? photoUrls,
-    String? note,
-    int? estimatedCarbs,
+    String? diaryId,
+    String? foodName,
+    DateTime? mealTime,
+    DateTime? createdAt,
   }) {
     return MealRecord(
       id: id ?? this.id,
-      timestamp: timestamp ?? this.timestamp,
-      mealType: mealType ?? this.mealType,
-      description: description ?? this.description,
-      photoUrls: photoUrls ?? this.photoUrls,
-      note: note ?? this.note,
-      estimatedCarbs: estimatedCarbs ?? this.estimatedCarbs,
+      diaryId: diaryId ?? this.diaryId,
+      foodName: foodName ?? this.foodName,
+      mealTime: mealTime ?? this.mealTime,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  /// SQLite 맵으로 변환
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'timestamp': timestamp.toIso8601String(),
-      'mealType': mealType,
-      'description': description,
-      'photoUrls': photoUrls,
-      'note': note,
-      'estimatedCarbs': estimatedCarbs,
+      'diary_id': diaryId,
+      'food_name': foodName,
+      'meal_time': mealTime.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
     };
   }
 
-  factory MealRecord.fromJson(Map<String, dynamic> json) {
+  /// SQLite 맵으로부터 생성
+  factory MealRecord.fromMap(Map<String, dynamic> map) {
     return MealRecord(
-      id: json['id'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      mealType: json['mealType'] as String,
-      description: json['description'] as String?,
-      photoUrls: (json['photoUrls'] as List<dynamic>?)?.cast<String>(),
-      note: json['note'] as String?,
-      estimatedCarbs: json['estimatedCarbs'] as int?,
+      id: map['id'] as String,
+      diaryId: map['diary_id'] as String,
+      foodName: map['food_name'] as String?,
+      mealTime: DateTime.parse(map['meal_time'] as String),
+      createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
 }

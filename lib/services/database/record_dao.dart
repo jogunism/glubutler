@@ -96,7 +96,7 @@ class RecordDao {
   Future<int> insertMeal(MealRecord record) async {
     return await db.insert(
       DatabaseSchema.tableMeal,
-      _mealToMap(record),
+      record.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -109,7 +109,7 @@ class RecordDao {
     List<dynamic>? whereArgs;
 
     if (startDate != null && endDate != null) {
-      where = 'timestamp >= ? AND timestamp <= ?';
+      where = 'meal_time >= ? AND meal_time <= ?';
       whereArgs = [startDate.toIso8601String(), endDate.toIso8601String()];
     }
 
@@ -117,10 +117,21 @@ class RecordDao {
       DatabaseSchema.tableMeal,
       where: where,
       whereArgs: whereArgs,
-      orderBy: 'timestamp DESC',
+      orderBy: 'meal_time DESC',
     );
 
-    return maps.map((map) => _mapToMeal(map)).toList();
+    return maps.map((map) => MealRecord.fromMap(map)).toList();
+  }
+
+  Future<MealRecord?> getMealByDiaryId(String diaryId) async {
+    final maps = await db.query(
+      DatabaseSchema.tableMeal,
+      where: 'diary_id = ?',
+      whereArgs: [diaryId],
+    );
+
+    if (maps.isEmpty) return null;
+    return MealRecord.fromMap(maps.first);
   }
 
   Future<int> deleteMeal(String id) async {
@@ -128,32 +139,6 @@ class RecordDao {
       DatabaseSchema.tableMeal,
       where: 'id = ?',
       whereArgs: [id],
-    );
-  }
-
-  Map<String, dynamic> _mealToMap(MealRecord record) {
-    return {
-      'id': record.id,
-      'timestamp': record.timestamp.toIso8601String(),
-      'meal_type': record.mealType,
-      'description': record.description,
-      'photo_urls': record.photoUrls?.join(','),
-      'note': record.note,
-      'estimated_carbs': record.estimatedCarbs,
-    };
-  }
-
-  MealRecord _mapToMeal(Map<String, dynamic> map) {
-    final photoUrlsStr = map['photo_urls'] as String?;
-    return MealRecord(
-      id: map['id'] as String,
-      timestamp: DateTime.parse(map['timestamp'] as String),
-      mealType: map['meal_type'] as String,
-      description: map['description'] as String?,
-      photoUrls:
-          photoUrlsStr?.isNotEmpty == true ? photoUrlsStr!.split(',') : null,
-      note: map['note'] as String?,
-      estimatedCarbs: map['estimated_carbs'] as int?,
     );
   }
 

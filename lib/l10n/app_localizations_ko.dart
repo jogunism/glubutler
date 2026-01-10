@@ -779,6 +779,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get diaryContentRequired => '내용을 입력하거나 사진을 첨부해주세요.';
 
   @override
+  String foodDetected(String food) {
+    return '\n\n먹은 음식: $food';
+  }
+
+  @override
   String get error => '오류';
 
   @override

@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database schema definition and migration logic
 class DatabaseSchema {
-  static const int version = 4;
+  static const int version = 1;
 
   // Table names
   static const String tableGlucose = 'glucose_records';
@@ -40,28 +40,8 @@ class DatabaseSchema {
     debugPrint(
         '[DatabaseSchema] Upgrading database from v$oldVersion to v$newVersion');
 
-    if (oldVersion < 2) {
-      await _createHealthConnectionTable(db);
-      await _createHealthPermissionsTable(db);
-    }
-
-    if (oldVersion < 3) {
-      await _createDiaryTable(db);
-      await _createDiaryFilesTable(db);
-      await db.execute(
-          'CREATE INDEX idx_diary_timestamp ON $tableDiary (timestamp)');
-      await db.execute(
-          'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
-    }
-
-    if (oldVersion < 4) {
-      await _createReportsTable(db);
-      await db.execute(
-          'CREATE INDEX idx_reports_created_at ON $tableReports (created_at)');
-    }
-
-    // Add future migrations here:
-    // if (oldVersion < 5) { ... }
+    // No migrations needed - app not yet released
+    // Future migrations will go here
   }
 
   // ============ Table Creation ============
@@ -84,12 +64,11 @@ class DatabaseSchema {
     await db.execute('''
       CREATE TABLE $tableMeal (
         id TEXT PRIMARY KEY,
-        timestamp TEXT NOT NULL,
-        meal_type TEXT NOT NULL,
-        description TEXT,
-        photo_urls TEXT,
-        note TEXT,
-        estimated_carbs INTEGER
+        diary_id TEXT NOT NULL,
+        food_name TEXT,
+        meal_time TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (diary_id) REFERENCES $tableDiary (id) ON DELETE CASCADE
       )
     ''');
   }
@@ -190,7 +169,9 @@ class DatabaseSchema {
     await db.execute(
         'CREATE INDEX idx_glucose_timestamp ON $tableGlucose (timestamp)');
     await db.execute(
-        'CREATE INDEX idx_meal_timestamp ON $tableMeal (timestamp)');
+        'CREATE INDEX idx_meal_meal_time ON $tableMeal (meal_time)');
+    await db.execute(
+        'CREATE INDEX idx_meal_diary_id ON $tableMeal (diary_id)');
     await db.execute(
         'CREATE INDEX idx_exercise_timestamp ON $tableExercise (timestamp)');
     await db.execute(

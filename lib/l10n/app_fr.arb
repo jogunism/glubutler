@@ -281,6 +281,15 @@
   "showMore": "Afficher plus",
   "showLess": "Afficher moins",
   "diaryContentRequired": "Veuillez saisir du contenu ou joindre des photos.",
+  "foodDetected": "\n\nNourriture: {food}",
+  "@foodDetected": {
+    "description": "Detected food items appended to diary content",
+    "placeholders": {
+      "food": {
+        "type": "String"
+      }
+    }
+  },
   "error": "Erreur",
   "confirm": "OK",
   "dataSyncPeriodInfo": "Affichage des données de {period} récentes. La période peut être modifiée dans les paramètres Apple Health",

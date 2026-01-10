@@ -123,6 +123,7 @@ class DatabaseService {
   Future<int> insertMeal(MealRecord record) => recordDao.insertMeal(record);
   Future<List<MealRecord>> getMealRecords({DateTime? startDate, DateTime? endDate}) =>
       recordDao.getMealRecords(startDate: startDate, endDate: endDate);
+  Future<MealRecord?> getMealByDiaryId(String diaryId) => recordDao.getMealByDiaryId(diaryId);
   Future<int> deleteMeal(String id) => recordDao.deleteMeal(id);
 
   Future<int> insertExercise(ExerciseRecord record) => recordDao.insertExercise(record);

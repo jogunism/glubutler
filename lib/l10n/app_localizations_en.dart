@@ -796,6 +796,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get diaryContentRequired => 'Please enter content or attach photos.';
 
   @override
+  String foodDetected(String food) {
+    return '\n\nFood: $food';
+  }
+
+  @override
   String get error => 'Error';
 
   @override

@@ -779,6 +779,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get diaryContentRequired => '内容を入力するか、写真を添付してください。';
 
   @override
+  String foodDetected(String food) {
+    return '\n\n食べ物: $food';
+  }
+
+  @override
   String get error => 'エラー';
 
   @override

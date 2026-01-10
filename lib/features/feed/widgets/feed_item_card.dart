@@ -378,7 +378,7 @@ class _FeedItemCardState extends State<FeedItemCard>
       case FeedItemType.sleep:
         return l10n.sleep;
       case FeedItemType.meal:
-        return _formatMealType(widget.item.mealRecord!.mealType);
+        return l10n.meal;
       case FeedItemType.water:
         return l10n.waterIntake;
       case FeedItemType.insulin:
@@ -514,9 +514,9 @@ class _FeedItemCardState extends State<FeedItemCard>
 
   Widget _buildMealValue(ThemeData theme) {
     final meal = widget.item.mealRecord!;
-    if (meal.description != null) {
+    if (meal.foodName != null && meal.foodName!.isNotEmpty) {
       return Text(
-        meal.description!,
+        meal.foodName!,
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
           fontSize: 16,
@@ -889,18 +889,4 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
-  String _formatMealType(String type) {
-    switch (type) {
-      case 'breakfast':
-        return 'Breakfast';
-      case 'lunch':
-        return 'Lunch';
-      case 'dinner':
-        return 'Dinner';
-      case 'snack':
-        return 'Snack';
-      default:
-        return 'Meal';
-    }
-  }
 }

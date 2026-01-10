@@ -16,7 +16,10 @@ import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
+import 'package:glu_butler/repositories/meal_repository.dart';
+import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/services/image_service.dart';
+import 'package:glu_butler/services/vision_service.dart';
 
 /// 일기 입력 모달 팝업
 ///
@@ -56,7 +59,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   final List<File> _selectedImages = [];
   final _imagePicker = ImagePicker();
   final _imageService = ImageService();
+  final _visionService = VisionService();
   final _diaryRepository = DiaryRepository();
+  final _mealRepository = MealRepository();
   bool _isSaving = false;
   static const int _maxImages = 5;
 
@@ -265,6 +270,11 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
           : await _diaryRepository.save(entry);
 
       if (success) {
+        // 음식 사진이 있으면 meal 레코드 생성
+        if (!isEditMode) {
+          await _createMealRecordIfNeeded(entry);
+        }
+
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
           Navigator.of(context).pop(true); // Return true to indicate success
@@ -353,6 +363,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
           _selectedImages.addAll(validFiles);
         });
 
+        // Vision Framework로 음식 사진 분석
+        _analyzeFoodPhotos(validFiles);
+
         // 최대 개수 초과 시 알림
         if (pickedFiles.length > remainingSlots) {
           final l10n = AppLocalizations.of(context)!;
@@ -363,6 +376,45 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
       debugPrint('[DiaryInputModal] Error picking image: $e');
       final l10n = AppLocalizations.of(context)!;
       _showError(l10n.imageLoadFailed);
+    }
+  }
+
+  /// 업로드된 사진들을 Vision Framework로 분석하여 음식 정보 추출
+  Future<void> _analyzeFoodPhotos(List<File> newImages) async {
+    if (newImages.isEmpty) return;
+
+    try {
+      final l10n = AppLocalizations.of(context)!;
+      final allFoodItems = <String>[];
+
+      // 각 이미지를 분석
+      for (final imageFile in newImages) {
+        final result = await _visionService.analyzeFoodPhoto(imageFile.path);
+
+        if (result.isFood && result.foodDescription.isNotEmpty) {
+          allFoodItems.add(result.foodDescription);
+        }
+      }
+
+      // 음식이 발견되면 일기 내용에 추가
+      if (allFoodItems.isNotEmpty && mounted) {
+        final foodText = allFoodItems.join(', ');
+        final currentText = _contentController.text;
+
+        // 이미 같은 음식 정보가 있는지 확인 (중복 방지)
+        if (!currentText.contains(foodText)) {
+          final newContent = currentText + l10n.foodDetected(foodText);
+          _contentController.text = newContent;
+
+          // 커서를 맨 끝으로 이동
+          _contentController.selection = TextSelection.fromPosition(
+            TextPosition(offset: newContent.length),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('[DiaryInputModal] Error analyzing food photos: $e');
+      // 에러가 나도 사진 업로드는 계속 진행
     }
   }
 
@@ -394,6 +446,53 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         ],
       ),
     );
+  }
+
+  /// 음식 사진이 감지되었으면 meal 레코드 생성
+  Future<void> _createMealRecordIfNeeded(DiaryItem entry) async {
+    try {
+      // 음식 사진이 있는지 확인 (첫 번째 음식 사진 찾기)
+      DiaryFile? firstFoodPhoto;
+      String? detectedFoodName;
+
+      for (final file in entry.files) {
+        final result = await _visionService.analyzeFoodPhoto(file.filePath);
+        if (result.isFood && result.foodDescription.isNotEmpty) {
+          firstFoodPhoto = file;
+          detectedFoodName = result.foodDescription;
+          break; // 첫 번째 음식 사진만 사용
+        }
+      }
+
+      // 음식 사진이 없으면 meal 레코드 생성 안 함
+      if (firstFoodPhoto == null) {
+        debugPrint('[DiaryInputModal] No food photos detected, skipping meal record creation');
+        return;
+      }
+
+      // 식사 시간: 음식 사진의 촬영 시간 (없으면 일기 작성 시간)
+      final mealTime = firstFoodPhoto.capturedAt ?? entry.timestamp;
+
+      // Meal 레코드 생성
+      final mealRecord = MealRecord(
+        id: const Uuid().v4(),
+        diaryId: entry.id,
+        foodName: detectedFoodName,
+        mealTime: mealTime,
+        createdAt: DateTime.now(),
+      );
+
+      // 저장
+      final success = await _mealRepository.save(mealRecord);
+      if (success) {
+        debugPrint('[DiaryInputModal] Meal record created: ${mealRecord.foodName} at ${mealRecord.mealTime}');
+      } else {
+        debugPrint('[DiaryInputModal] Failed to create meal record');
+      }
+    } catch (e) {
+      debugPrint('[DiaryInputModal] Error creating meal record: $e');
+      // 에러가 나도 일기 저장은 성공했으므로 무시
+    }
   }
 
   void _removeImage(int index) {

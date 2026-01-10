@@ -281,6 +281,15 @@
   "showMore": "展开",
   "showLess": "收起",
   "diaryContentRequired": "请输入内容或附加照片。",
+  "foodDetected": "\n\n食物: {food}",
+  "@foodDetected": {
+    "description": "Detected food items appended to diary content",
+    "placeholders": {
+      "food": {
+        "type": "String"
+      }
+    }
+  },
   "error": "错误",
   "confirm": "确定",
   "dataSyncPeriodInfo": "显示最近{period}的数据。可在Apple Health设置中更改期间",

@@ -299,6 +299,15 @@
   "showMore": "Show More",
   "showLess": "Show Less",
   "diaryContentRequired": "Please enter content or attach photos.",
+  "foodDetected": "\n\nFood: {food}",
+  "@foodDetected": {
+    "description": "Detected food items appended to diary content",
+    "placeholders": {
+      "food": {
+        "type": "String"
+      }
+    }
+  },
   "error": "Error",
   "confirm": "OK",
   "dataSyncPeriodInfo": "Showing recent {period} data. Period can be changed in Apple Health settings",

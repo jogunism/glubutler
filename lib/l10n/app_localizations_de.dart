@@ -798,6 +798,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Bitte geben Sie Inhalte ein oder fügen Sie Fotos hinzu.';
 
   @override
+  String foodDetected(String food) {
+    return '\n\nEssen: $food';
+  }
+
+  @override
   String get error => 'Fehler';
 
   @override
