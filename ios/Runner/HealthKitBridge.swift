@@ -4,6 +4,9 @@ import Flutter
 
 class HealthKitBridge {
   private let healthStore = HKHealthStore()
+  private var glucoseObserver: HKObserverQuery?
+  private var weightObserver: HKObserverQuery?
+  private var onBackgroundUpdateCallback: (() -> Void)?
 
   // MARK: - Check Availability
 
@@ -885,6 +888,143 @@ class HealthKitBridge {
             details: nil
           ))
         }
+      }
+    }
+  }
+
+  // MARK: - Background Observer
+
+  /// 백그라운드 데이터 업데이트 콜백 설정
+  func setBackgroundUpdateCallback(_ callback: @escaping () -> Void) {
+    self.onBackgroundUpdateCallback = callback
+  }
+
+  /// 백그라운드 옵저버 시작 - 혈당과 체중 데이터를 모니터링
+  func startBackgroundObserver(result: @escaping FlutterResult) {
+    guard HKHealthStore.isHealthDataAvailable() else {
+      result(FlutterError(code: "UNAVAILABLE", message: "HealthKit not available", details: nil))
+      return
+    }
+
+    // 혈당 옵저버 설정
+    setupGlucoseObserver()
+
+    // 체중 옵저버 설정
+    setupWeightObserver()
+
+    print("[HealthKitBridge] Background observers started")
+    result(true)
+  }
+
+  /// 백그라운드 옵저버 중지
+  func stopBackgroundObserver(result: @escaping FlutterResult) {
+    if let observer = glucoseObserver {
+      healthStore.stop(observer)
+      glucoseObserver = nil
+      print("[HealthKitBridge] Glucose observer stopped")
+    }
+
+    if let observer = weightObserver {
+      healthStore.stop(observer)
+      weightObserver = nil
+      print("[HealthKitBridge] Weight observer stopped")
+    }
+
+    result(true)
+  }
+
+  private func setupGlucoseObserver() {
+    guard let glucoseType = HKObjectType.quantityType(forIdentifier: .bloodGlucose) else {
+      print("[HealthKitBridge] Failed to get blood glucose type")
+      return
+    }
+
+    // 기존 옵저버가 있다면 중지
+    if let existingObserver = glucoseObserver {
+      healthStore.stop(existingObserver)
+    }
+
+    // 새 옵저버 쿼리 생성
+    let query = HKObserverQuery(sampleType: glucoseType, predicate: nil) { [weak self] query, completionHandler, error in
+      guard let self = self else {
+        completionHandler()
+        return
+      }
+
+      if let error = error {
+        print("[HealthKitBridge] Glucose observer error: \(error.localizedDescription)")
+        completionHandler()
+        return
+      }
+
+      print("[HealthKitBridge] Glucose data updated - triggering callback")
+
+      // Flutter 콜백 호출
+      DispatchQueue.main.async {
+        self.onBackgroundUpdateCallback?()
+      }
+
+      // iOS에 백그라운드 작업 완료 알림
+      completionHandler()
+    }
+
+    glucoseObserver = query
+    healthStore.execute(query)
+
+    // 백그라운드 delivery 활성화
+    healthStore.enableBackgroundDelivery(for: glucoseType, frequency: .immediate) { success, error in
+      if let error = error {
+        print("[HealthKitBridge] Failed to enable glucose background delivery: \(error.localizedDescription)")
+      } else if success {
+        print("[HealthKitBridge] Glucose background delivery enabled")
+      }
+    }
+  }
+
+  private func setupWeightObserver() {
+    guard let weightType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
+      print("[HealthKitBridge] Failed to get body mass type")
+      return
+    }
+
+    // 기존 옵저버가 있다면 중지
+    if let existingObserver = weightObserver {
+      healthStore.stop(existingObserver)
+    }
+
+    // 새 옵저버 쿼리 생성
+    let query = HKObserverQuery(sampleType: weightType, predicate: nil) { [weak self] query, completionHandler, error in
+      guard let self = self else {
+        completionHandler()
+        return
+      }
+
+      if let error = error {
+        print("[HealthKitBridge] Weight observer error: \(error.localizedDescription)")
+        completionHandler()
+        return
+      }
+
+      print("[HealthKitBridge] Weight data updated - triggering callback")
+
+      // Flutter 콜백 호출
+      DispatchQueue.main.async {
+        self.onBackgroundUpdateCallback?()
+      }
+
+      // iOS에 백그라운드 작업 완료 알림
+      completionHandler()
+    }
+
+    weightObserver = query
+    healthStore.execute(query)
+
+    // 백그라운드 delivery 활성화
+    healthStore.enableBackgroundDelivery(for: weightType, frequency: .immediate) { success, error in
+      if let error = error {
+        print("[HealthKitBridge] Failed to enable weight background delivery: \(error.localizedDescription)")
+      } else if success {
+        print("[HealthKitBridge] Weight background delivery enabled")
       }
     }
   }

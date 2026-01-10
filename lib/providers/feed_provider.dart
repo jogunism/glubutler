@@ -106,6 +106,12 @@ class FeedProvider extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
+    // 백그라운드 업데이트 콜백 설정
+    _healthService.setBackgroundUpdateCallback(() {
+      debugPrint('[FeedProvider] Background health data updated - refreshing data');
+      refreshData();
+    });
+
     // Load connection status from DB first
     final healthConnection = await _databaseService.getHealthConnection();
     _isHealthConnected = healthConnection.isConnected;
@@ -151,6 +157,11 @@ class FeedProvider extends ChangeNotifier {
       _retryPendingMigration();
     }
 
+    // 백그라운드 옵저버 시작 (건강 데이터 연결되어 있을 때만)
+    if (hasEverConnected) {
+      _healthService.startBackgroundObserver();
+    }
+
     notifyListeners();
   }
 
@@ -182,6 +193,9 @@ class FeedProvider extends ChangeNotifier {
         _migrateLocalToHealthInBackground();
 
         await refreshData();
+
+        // 백그라운드 옵저버 시작
+        await _healthService.startBackgroundObserver();
       }
       return _isHealthConnected;
     } catch (e) {

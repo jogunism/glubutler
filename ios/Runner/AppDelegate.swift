@@ -90,6 +90,18 @@ import HealthKit
       binaryMessenger: controller.binaryMessenger
     )
 
+    // 백그라운드 업데이트 콜백 설정
+    healthKitBridge.setBackgroundUpdateCallback { [weak controller] in
+      // Flutter에 건강 데이터 업데이트 이벤트 전송
+      if let controller = controller {
+        let channel = FlutterMethodChannel(
+          name: "custom_healthkit",
+          binaryMessenger: controller.binaryMessenger
+        )
+        channel.invokeMethod("onHealthDataUpdated", arguments: nil)
+      }
+    }
+
     healthKitChannel.setMethodCallHandler { [weak self] (call, result) in
       guard let self = self else { return }
 
@@ -136,6 +148,10 @@ import HealthKit
         } else {
           result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
         }
+      case "startBackgroundObserver":
+        self.healthKitBridge.startBackgroundObserver(result: result)
+      case "stopBackgroundObserver":
+        self.healthKitBridge.stopBackgroundObserver(result: result)
       default:
         result(FlutterMethodNotImplemented)
       }

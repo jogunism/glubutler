@@ -44,7 +44,10 @@ class DailyActivityData {
 class HealthService {
   static final HealthService _instance = HealthService._internal();
   factory HealthService() => _instance;
-  HealthService._internal();
+  HealthService._internal() {
+    // 백그라운드 업데이트 리스너 설정
+    _healthKitChannel.setMethodCallHandler(_handleMethodCall);
+  }
 
   // iOS Native HealthKit channel
   static const MethodChannel _healthKitChannel = MethodChannel('custom_healthkit');
@@ -57,9 +60,29 @@ class HealthService {
   bool _hasRequestedPermissions = false;
   bool get hasRequestedPermissions => _hasRequestedPermissions;
 
+  // 백그라운드 업데이트 콜백
+  Function()? _onBackgroundUpdateCallback;
+
   /// Set permission request status (called from FeedProvider when restoring from DB)
   void setHasRequestedPermissions(bool value) {
     _hasRequestedPermissions = value;
+  }
+
+  /// 백그라운드 업데이트 콜백 설정
+  void setBackgroundUpdateCallback(Function() callback) {
+    _onBackgroundUpdateCallback = callback;
+  }
+
+  /// iOS 네이티브에서 호출되는 메서드 핸들러
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'onHealthDataUpdated':
+        debugPrint('[HealthService] Background health data updated');
+        _onBackgroundUpdateCallback?.call();
+        break;
+      default:
+        debugPrint('[HealthService] Unknown method: ${call.method}');
+    }
   }
 
   // Track individual permission status
@@ -793,6 +816,40 @@ class HealthService {
         return 'core';
       default:
         return 'other';
+    }
+  }
+
+  /// 백그라운드 옵저버 시작 - CGM/체중계 데이터 자동 동기화
+  Future<bool> startBackgroundObserver() async {
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] startBackgroundObserver: Platform not supported (iOS only)');
+      return false;
+    }
+
+    try {
+      final success = await _healthKitChannel.invokeMethod('startBackgroundObserver');
+      debugPrint('[HealthService] Background observer started: $success');
+      return success as bool;
+    } catch (e) {
+      debugPrint('[HealthService] Error starting background observer: $e');
+      return false;
+    }
+  }
+
+  /// 백그라운드 옵저버 중지
+  Future<bool> stopBackgroundObserver() async {
+    if (!Platform.isIOS) {
+      debugPrint('[HealthService] stopBackgroundObserver: Platform not supported (iOS only)');
+      return false;
+    }
+
+    try {
+      final success = await _healthKitChannel.invokeMethod('stopBackgroundObserver');
+      debugPrint('[HealthService] Background observer stopped: $success');
+      return success as bool;
+    } catch (e) {
+      debugPrint('[HealthService] Error stopping background observer: $e');
+      return false;
     }
   }
 
