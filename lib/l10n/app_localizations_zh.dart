@@ -758,6 +758,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteDiaryConfirmation => '确定要删除吗？\n此操作无法撤销。';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      '确定要删除该日记吗？\n动态中的相关餐食信息也将被删除，\n此操作无法撤销。';
+
+  @override
   String get diaryDeleted => '已删除';
 
   @override

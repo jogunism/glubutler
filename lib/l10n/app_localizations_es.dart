@@ -776,6 +776,10 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Está seguro de que desea eliminar?\nEsta acción no se puede deshacer.';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      '¿Eliminar este diario?\nLa información de comida asociada en el feed también se eliminará,\ny esta acción no se puede deshacer.';
+
+  @override
   String get diaryDeleted => 'Eliminado';
 
   @override

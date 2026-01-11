@@ -274,6 +274,7 @@
 
   "deleteDiary": "日記を削除",
   "deleteDiaryConfirmation": "削除しますか？\n元に戻すことはできません。",
+  "deleteDiaryWithMealConfirmation": "この日記を削除しますか？\nフィードに登録された食事情報も一緒に削除され、\n元に戻すことはできません。",
   "diaryDeleted": "削除されました",
   "diaryDeleteFailed": "削除に失敗しました",
   "diaryUpdated": "日記が更新されました",

@@ -1586,6 +1586,12 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete?\nThis action cannot be undone.'**
   String get deleteDiaryConfirmation;
 
+  /// No description provided for @deleteDiaryWithMealConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this diary?\nAssociated meal information in the feed will also be deleted,\nand this action cannot be undone.'**
+  String get deleteDiaryWithMealConfirmation;
+
   /// No description provided for @diaryDeleted.
   ///
   /// In en, this message translates to:

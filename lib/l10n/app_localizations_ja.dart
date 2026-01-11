@@ -758,6 +758,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deleteDiaryConfirmation => '削除しますか？\n元に戻すことはできません。';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      'この日記を削除しますか？\nフィードに登録された食事情報も一緒に削除され、\n元に戻すことはできません。';
+
+  @override
   String get diaryDeleted => '削除されました';
 
   @override

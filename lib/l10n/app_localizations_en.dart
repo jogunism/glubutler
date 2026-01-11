@@ -775,6 +775,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to delete?\nThis action cannot be undone.';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      'Delete this diary?\nAssociated meal information in the feed will also be deleted,\nand this action cannot be undone.';
+
+  @override
   String get diaryDeleted => 'Deleted';
 
   @override

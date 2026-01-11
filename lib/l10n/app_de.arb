@@ -274,6 +274,7 @@
 
   "deleteDiary": "Tagebuch löschen",
   "deleteDiaryConfirmation": "Möchten Sie wirklich löschen?\nDies kann nicht rückgängig gemacht werden.",
+  "deleteDiaryWithMealConfirmation": "Dieses Tagebuch löschen?\nZugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht,\nund diese Aktion kann nicht rückgängig gemacht werden.",
   "diaryDeleted": "Gelöscht",
   "diaryDeleteFailed": "Löschen fehlgeschlagen",
   "diaryUpdated": "Tagebuch aktualisiert",

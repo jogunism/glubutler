@@ -73,10 +73,15 @@ class DiaryScreenState extends State<DiaryScreen> {
   Future<void> _deleteEntry(DiaryItem entry) async {
     final l10n = AppLocalizations.of(context)!;
 
+    // Use different message based on whether diary has meal records
+    final message = entry.hasMealDetected
+        ? l10n.deleteDiaryWithMealConfirmation
+        : l10n.deleteDiaryConfirmation;
+
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        content: Text(l10n.deleteDiaryConfirmation),
+        content: Text(message),
         actions: [
           CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(false),

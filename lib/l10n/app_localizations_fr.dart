@@ -783,6 +783,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Voulez-vous vraiment supprimer ?\nCette action est irréversible.';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      'Supprimer ce journal ?\nLes informations sur le repas associées dans le fil seront également supprimées,\net cette action est irréversible.';
+
+  @override
   String get diaryDeleted => 'Supprimé';
 
   @override

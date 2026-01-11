@@ -274,6 +274,7 @@
 
   "deleteDiary": "Supprimer le journal",
   "deleteDiaryConfirmation": "Voulez-vous vraiment supprimer ?\nCette action est irréversible.",
+  "deleteDiaryWithMealConfirmation": "Supprimer ce journal ?\nLes informations sur le repas associées dans le fil seront également supprimées,\net cette action est irréversible.",
   "diaryDeleted": "Supprimé",
   "diaryDeleteFailed": "Échec de la suppression",
   "diaryUpdated": "Journal mis à jour",

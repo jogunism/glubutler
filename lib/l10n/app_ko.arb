@@ -281,6 +281,7 @@
 
   "deleteDiary": "일기 삭제",
   "deleteDiaryConfirmation": "삭제하시겠습니까?\n되돌릴 수 없습니다.",
+  "deleteDiaryWithMealConfirmation": "해당 일기를 삭제하시겠습니까?\n피드에 등록된 식사정보도 같이 삭제되고,\n이는 되돌릴 수 없습니다.",
   "diaryDeleted": "삭제되었습니다",
   "diaryDeleteFailed": "삭제에 실패했습니다",
   "diaryUpdated": "일기가 수정되었습니다",

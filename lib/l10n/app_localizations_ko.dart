@@ -758,6 +758,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deleteDiaryConfirmation => '삭제하시겠습니까?\n되돌릴 수 없습니다.';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      '해당 일기를 삭제하시겠습니까?\n피드에 등록된 식사정보도 같이 삭제되고,\n이는 되돌릴 수 없습니다.';
+
+  @override
   String get diaryDeleted => '삭제되었습니다';
 
   @override

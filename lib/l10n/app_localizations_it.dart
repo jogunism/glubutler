@@ -776,6 +776,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Sei sicuro di voler eliminare?\nQuesta azione non può essere annullata.';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      'Eliminare questo diario?\nAnche le informazioni sul pasto associate nel feed verranno eliminate,\ne questa azione non può essere annullata.';
+
+  @override
   String get diaryDeleted => 'Eliminato';
 
   @override

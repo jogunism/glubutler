@@ -274,6 +274,7 @@
 
   "deleteDiary": "Eliminar diario",
   "deleteDiaryConfirmation": "¿Está seguro de que desea eliminar?\nEsta acción no se puede deshacer.",
+  "deleteDiaryWithMealConfirmation": "¿Eliminar este diario?\nLa información de comida asociada en el feed también se eliminará,\ny esta acción no se puede deshacer.",
   "diaryDeleted": "Eliminado",
   "diaryDeleteFailed": "Error al eliminar",
   "diaryUpdated": "Diario actualizado",

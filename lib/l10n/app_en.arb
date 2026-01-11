@@ -292,6 +292,7 @@
 
   "deleteDiary": "Delete Diary",
   "deleteDiaryConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
+  "deleteDiaryWithMealConfirmation": "Delete this diary?\nAssociated meal information in the feed will also be deleted,\nand this action cannot be undone.",
   "diaryDeleted": "Deleted",
   "diaryDeleteFailed": "Delete failed",
   "diaryUpdated": "Diary updated",

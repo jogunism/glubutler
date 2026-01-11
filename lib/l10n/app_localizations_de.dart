@@ -776,6 +776,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Möchten Sie wirklich löschen?\nDies kann nicht rückgängig gemacht werden.';
 
   @override
+  String get deleteDiaryWithMealConfirmation =>
+      'Dieses Tagebuch löschen?\nZugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht,\nund diese Aktion kann nicht rückgängig gemacht werden.';
+
+  @override
   String get diaryDeleted => 'Gelöscht';
 
   @override
