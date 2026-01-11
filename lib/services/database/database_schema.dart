@@ -64,6 +64,7 @@ class DatabaseSchema {
     await db.execute('''
       CREATE TABLE $tableMeal (
         id TEXT PRIMARY KEY,
+        diary_id TEXT,
         food_name TEXT,
         meal_time TEXT NOT NULL,
         created_at TEXT NOT NULL
@@ -169,6 +170,8 @@ class DatabaseSchema {
         'CREATE INDEX idx_glucose_timestamp ON $tableGlucose (timestamp)');
     await db.execute(
         'CREATE INDEX idx_meal_meal_time ON $tableMeal (meal_time)');
+    await db.execute(
+        'CREATE INDEX idx_meal_diary_id ON $tableMeal (diary_id)');
     await db.execute(
         'CREATE INDEX idx_exercise_timestamp ON $tableExercise (timestamp)');
     await db.execute(

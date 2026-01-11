@@ -20,6 +20,7 @@ import 'package:glu_butler/repositories/meal_repository.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/services/image_service.dart';
 import 'package:glu_butler/services/vision_service.dart';
+import 'package:glu_butler/services/database_service.dart';
 
 /// 일기 입력 모달 팝업
 ///
@@ -62,6 +63,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   final _visionService = VisionService();
   final _diaryRepository = DiaryRepository();
   final _mealRepository = MealRepository();
+  final _databaseService = DatabaseService();
   bool _isSaving = false;
   static const int _maxImages = 5;
 
@@ -277,9 +279,16 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
           : await _diaryRepository.save(entry);
 
       if (success) {
-        // 음식 사진이 있으면 meal 레코드 생성
-        if (!isEditMode && hasMealDetected) {
+        // 음식 사진이 있으면 meal 레코드 생성/재생성
+        if (hasMealDetected) {
+          if (isEditMode) {
+            // 수정 모드: 기존 meal 삭제 후 재생성
+            await _databaseService.deleteMealsByDiaryId(entry.id);
+          }
           await _createMealRecordIfNeeded(entry);
+        } else if (isEditMode) {
+          // 수정 모드에서 음식 사진이 없어진 경우: 기존 meal 삭제
+          await _databaseService.deleteMealsByDiaryId(entry.id);
         }
 
         if (mounted) {
@@ -522,6 +531,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
         final mealRecord = MealRecord(
           id: const Uuid().v4(),
+          diaryId: entry.id,
           foodName: foodNames.isNotEmpty ? foodNames : null,
           mealTime: mealTime,
           createdAt: now,

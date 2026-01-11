@@ -75,8 +75,13 @@ class DiaryRepository {
   }
 
   /// Delete a diary entry and its files (CASCADE).
+  /// Also deletes related meal records.
   /// Automatically syncs to CloudKit if enabled.
   Future<void> delete(String id) async {
+    // Delete related meal records first
+    await _databaseService.deleteMealsByDiaryId(id);
+
+    // Delete diary (files will be CASCADE deleted)
     await _databaseService.deleteDiary(id);
 
     // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화

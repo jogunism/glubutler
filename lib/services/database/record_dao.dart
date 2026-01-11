@@ -131,6 +131,15 @@ class RecordDao {
     );
   }
 
+  /// Delete all meals associated with a diary
+  Future<int> deleteMealsByDiaryId(String diaryId) async {
+    return await db.delete(
+      DatabaseSchema.tableMeal,
+      where: 'diary_id = ?',
+      whereArgs: [diaryId],
+    );
+  }
+
   // ============ Exercise Records ============
 
   Future<int> insertExercise(ExerciseRecord record) async {
