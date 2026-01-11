@@ -306,55 +306,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  Widget _buildSettingsTile({
-    required BuildContext context,
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              GlassIcon(icon: icon, color: iconColor, size: 32),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: context.textStyles.tileTitle,
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: context.textStyles.tileSubtitle,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Icon(
-                CupertinoIcons.chevron_right,
-                size: 16,
-                color: context.colors.iconGrey,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildAdaptivePopupTile({
     required BuildContext context,
     required IconData icon,

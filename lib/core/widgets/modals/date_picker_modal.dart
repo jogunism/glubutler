@@ -50,7 +50,6 @@ class _DatePickerModalState extends State<DatePickerModal> {
   late DateTime _selectedDate;
   late DateTime _focusedDate;
   Set<DateTime> _datesWithData = {};
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -66,7 +65,6 @@ class _DatePickerModalState extends State<DatePickerModal> {
   }
 
   Future<void> _loadDatesWithData() async {
-    setState(() => _isLoading = true);
 
     try {
       // FeedProvider에서 데이터 가져오기
@@ -100,11 +98,9 @@ class _DatePickerModalState extends State<DatePickerModal> {
 
       setState(() {
         _datesWithData = datesSet;
-        _isLoading = false;
       });
     } catch (e) {
       debugPrint('[DatePickerModal] Error loading data: $e');
-      setState(() => _isLoading = false);
     }
   }
 

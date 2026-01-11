@@ -14,7 +14,6 @@ import 'package:glu_butler/services/app_settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
-import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 앱 설정 화면

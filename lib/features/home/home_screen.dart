@@ -42,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen>
   final _healthService = HealthService();
 
   List<GlucoseRecord> _todayRecords = [];
-  bool _isLoading = true;
   DateTime _selectedDate = DateTime.now();
 
   // 건강 앱 데이터
@@ -73,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _loadTodayData() async {
-    setState(() => _isLoading = true);
     _animationController.reset();
 
     try {
@@ -92,16 +90,14 @@ class _HomeScreenState extends State<HomeScreen>
 
       setState(() {
         _todayRecords = records;
-        _isLoading = false;
       });
       _animationController.forward();
     } catch (e) {
-      setState(() => _isLoading = false);
+      debugPrint('[HomeScreen] Error loading today data: $e');
     }
   }
 
   Future<void> _loadSelectedDateData() async {
-    setState(() => _isLoading = true);
     _animationController.reset();
 
     try {
@@ -124,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen>
           _todayRecords = [];
           _sleepHours = null;
           _exerciseMinutes = null;
-          _isLoading = false;
         });
         _animationController.forward();
         return;
@@ -139,11 +134,10 @@ class _HomeScreenState extends State<HomeScreen>
 
       setState(() {
         _todayRecords = records;
-        _isLoading = false;
       });
       _animationController.forward();
     } catch (e) {
-      setState(() => _isLoading = false);
+      debugPrint('[HomeScreen] Error loading selected date data: $e');
     }
   }
 

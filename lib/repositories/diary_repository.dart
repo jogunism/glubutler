@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:glu_butler/models/diary_item.dart';
-import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 
@@ -10,6 +9,7 @@ import 'package:glu_butler/services/cloudkit_service.dart';
 /// Handles reading/writing diary data to local database and CloudKit sync.
 class DiaryRepository {
   final DatabaseService _databaseService;
+  // ignore: unused_field
   final CloudKitService _cloudKitService;
 
   DiaryRepository({
