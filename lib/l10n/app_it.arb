@@ -290,6 +290,10 @@
       }
     }
   },
+  "mealAddedToFeed": "Informazioni sul pasto aggiunte al feed",
+  "@mealAddedToFeed": {
+    "description": "Message shown when meal is detected and added to feed"
+  },
   "error": "Errore",
   "confirm": "OK",
   "dataSyncPeriodInfo": "Mostrando i dati di {period} recenti. Il periodo può essere modificato nelle impostazioni di Apple Health",

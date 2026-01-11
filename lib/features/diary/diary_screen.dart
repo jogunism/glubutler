@@ -420,6 +420,28 @@ class _DiaryItemCardState extends State<_DiaryItemCard>
                       ),
                   ],
 
+                  // 식사 감지 안내 메시지
+                  if (widget.entry.hasMealDetected) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          CupertinoIcons.checkmark_circle_fill,
+                          size: 14,
+                          color: AppTheme.iconGreen,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          l10n.mealAddedToFeed,
+                          style: context.textStyles.tileSubtitle.copyWith(
+                            fontSize: 11,
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+
                   // 사진 목록 (모두 표시)
                   if (widget.entry.files.isNotEmpty) ...[
                     const SizedBox(height: 12),

@@ -784,6 +784,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get mealAddedToFeed => '피드에 식사 정보가 추가되었습니다';
+
+  @override
   String get error => '오류';
 
   @override

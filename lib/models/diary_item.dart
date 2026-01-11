@@ -10,6 +10,7 @@ class DiaryItem {
   final DateTime timestamp;
   final DateTime createdAt;
   final List<DiaryFile> files;
+  final bool hasMealDetected;
 
   DiaryItem({
     required this.id,
@@ -17,6 +18,7 @@ class DiaryItem {
     required this.timestamp,
     required this.createdAt,
     this.files = const [],
+    this.hasMealDetected = false,
   });
 
   /// SQLite 맵으로부터 생성
@@ -27,6 +29,7 @@ class DiaryItem {
       timestamp: DateTime.parse(map['timestamp'] as String),
       createdAt: DateTime.parse(map['created_at'] as String),
       files: files ?? [],
+      hasMealDetected: (map['has_meal_detected'] as int?) == 1,
     );
   }
 
@@ -37,6 +40,7 @@ class DiaryItem {
       'content': content,
       'timestamp': timestamp.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
+      'has_meal_detected': hasMealDetected ? 1 : 0,
     };
   }
 
@@ -51,6 +55,7 @@ class DiaryItem {
               ?.map((f) => DiaryFile.fromJson(f as Map<String, dynamic>))
               .toList() ??
           [],
+      hasMealDetected: json['hasMealDetected'] as bool? ?? false,
     );
   }
 
@@ -62,6 +67,7 @@ class DiaryItem {
       'timestamp': timestamp.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'files': files.map((f) => f.toJson()).toList(),
+      'hasMealDetected': hasMealDetected,
     };
   }
 
@@ -71,6 +77,7 @@ class DiaryItem {
     DateTime? timestamp,
     DateTime? createdAt,
     List<DiaryFile>? files,
+    bool? hasMealDetected,
   }) {
     return DiaryItem(
       id: id ?? this.id,
@@ -78,6 +85,7 @@ class DiaryItem {
       timestamp: timestamp ?? this.timestamp,
       createdAt: createdAt ?? this.createdAt,
       files: files ?? this.files,
+      hasMealDetected: hasMealDetected ?? this.hasMealDetected,
     );
   }
 }

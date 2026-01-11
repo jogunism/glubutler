@@ -803,6 +803,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get mealAddedToFeed => 'Mahlzeitinformationen zum Feed hinzugefügt';
+
+  @override
   String get error => 'Fehler';
 
   @override

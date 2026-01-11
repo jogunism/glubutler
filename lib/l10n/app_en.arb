@@ -308,6 +308,10 @@
       }
     }
   },
+  "mealAddedToFeed": "Meal information added to feed",
+  "@mealAddedToFeed": {
+    "description": "Message shown when meal is detected and added to feed"
+  },
   "error": "Error",
   "confirm": "OK",
   "dataSyncPeriodInfo": "Showing recent {period} data. Period can be changed in Apple Health settings",

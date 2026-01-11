@@ -64,11 +64,9 @@ class DatabaseSchema {
     await db.execute('''
       CREATE TABLE $tableMeal (
         id TEXT PRIMARY KEY,
-        diary_id TEXT NOT NULL,
         food_name TEXT,
         meal_time TEXT NOT NULL,
-        created_at TEXT NOT NULL,
-        FOREIGN KEY (diary_id) REFERENCES $tableDiary (id) ON DELETE CASCADE
+        created_at TEXT NOT NULL
       )
     ''');
   }
@@ -130,7 +128,8 @@ class DatabaseSchema {
         id TEXT PRIMARY KEY,
         content TEXT NOT NULL,
         timestamp TEXT NOT NULL,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        has_meal_detected INTEGER NOT NULL DEFAULT 0
       )
     ''');
   }
@@ -170,8 +169,6 @@ class DatabaseSchema {
         'CREATE INDEX idx_glucose_timestamp ON $tableGlucose (timestamp)');
     await db.execute(
         'CREATE INDEX idx_meal_meal_time ON $tableMeal (meal_time)');
-    await db.execute(
-        'CREATE INDEX idx_meal_diary_id ON $tableMeal (diary_id)');
     await db.execute(
         'CREATE INDEX idx_exercise_timestamp ON $tableExercise (timestamp)');
     await db.execute(

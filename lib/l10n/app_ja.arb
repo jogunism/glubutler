@@ -290,6 +290,10 @@
       }
     }
   },
+  "mealAddedToFeed": "フィードに食事情報が追加されました",
+  "@mealAddedToFeed": {
+    "description": "Message shown when meal is detected and added to feed"
+  },
   "error": "エラー",
   "confirm": "確認",
   "dataSyncPeriodInfo": "最近{period}のデータが表示されます。Apple Healthの設定で期間変更が可能です",

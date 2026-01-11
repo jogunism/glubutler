@@ -83,7 +83,7 @@ class FeedItem implements Comparable<FeedItem> {
     return FeedItem(
       id: record.id,
       type: FeedItemType.meal,
-      timestamp: record.timestamp,
+      timestamp: record.mealTime,
       isFromHealthKit: false,
       data: record,
     );

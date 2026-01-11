@@ -1634,6 +1634,12 @@ abstract class AppLocalizations {
   /// **'\n\nFood: {food}'**
   String foodDetected(String food);
 
+  /// Message shown when meal is detected and added to feed
+  ///
+  /// In en, this message translates to:
+  /// **'Meal information added to feed'**
+  String get mealAddedToFeed;
+
   /// No description provided for @error.
   ///
   /// In en, this message translates to:

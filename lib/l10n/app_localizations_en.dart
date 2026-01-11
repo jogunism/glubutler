@@ -801,6 +801,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get mealAddedToFeed => 'Meal information added to feed';
+
+  @override
   String get error => 'Error';
 
   @override

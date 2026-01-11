@@ -123,17 +123,6 @@ class RecordDao {
     return maps.map((map) => MealRecord.fromMap(map)).toList();
   }
 
-  Future<MealRecord?> getMealByDiaryId(String diaryId) async {
-    final maps = await db.query(
-      DatabaseSchema.tableMeal,
-      where: 'diary_id = ?',
-      whereArgs: [diaryId],
-    );
-
-    if (maps.isEmpty) return null;
-    return MealRecord.fromMap(maps.first);
-  }
-
   Future<int> deleteMeal(String id) async {
     return await db.delete(
       DatabaseSchema.tableMeal,

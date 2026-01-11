@@ -290,6 +290,10 @@
       }
     }
   },
+  "mealAddedToFeed": "已将餐食信息添加到动态",
+  "@mealAddedToFeed": {
+    "description": "Message shown when meal is detected and added to feed"
+  },
   "error": "错误",
   "confirm": "确定",
   "dataSyncPeriodInfo": "显示最近{period}的数据。可在Apple Health设置中更改期间",

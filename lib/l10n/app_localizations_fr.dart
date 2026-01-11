@@ -810,6 +810,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get mealAddedToFeed => 'Informations sur le repas ajoutées au fil';
+
+  @override
   String get error => 'Erreur';
 
   @override

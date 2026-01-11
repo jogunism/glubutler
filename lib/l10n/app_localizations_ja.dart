@@ -784,6 +784,9 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get mealAddedToFeed => 'フィードに食事情報が追加されました';
+
+  @override
   String get error => 'エラー';
 
   @override

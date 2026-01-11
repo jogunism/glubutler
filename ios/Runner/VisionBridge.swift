@@ -2,143 +2,141 @@ import Foundation
 import Vision
 import UIKit
 import Flutter
+import ImageIO
 
 class VisionBridge {
 
-  /// 이미지가 음식 사진인지 분석하고 음식 정보 반환
-  /// - Returns: { "isFood": true/false, "foodItems": ["pizza", "salad"], "confidence": 0.85 }
+  /// 음식 사진 분석 - Vision Framework 사용
   func analyzeFoodPhoto(arguments: [String: Any], result: @escaping FlutterResult) {
     guard let filePath = arguments["filePath"] as? String else {
-      result(FlutterError(code: "INVALID_ARGS", message: "filePath is required", details: nil))
+      result(FlutterError(code: "INVALID_ARGS", message: "File path required", details: nil))
       return
     }
 
     guard let image = UIImage(contentsOfFile: filePath) else {
-      result(FlutterError(code: "INVALID_IMAGE", message: "Cannot load image", details: nil))
+      result(FlutterError(code: "INVALID_IMAGE", message: "Could not load image", details: nil))
       return
     }
 
     guard let cgImage = image.cgImage else {
-      result(FlutterError(code: "INVALID_IMAGE", message: "Cannot get CGImage", details: nil))
+      result(FlutterError(code: "INVALID_IMAGE", message: "Could not get CGImage", details: nil))
       return
     }
 
-    // Vision 분류 요청 생성
-    let request = VNClassifyImageRequest { [weak self] request, error in
+    // Vision Framework를 사용한 이미지 분류
+    let request = VNClassifyImageRequest { request, error in
       if let error = error {
-        print("[VisionBridge] Classification error: \(error.localizedDescription)")
-        result(FlutterError(
-          code: "CLASSIFICATION_ERROR",
-          message: error.localizedDescription,
-          details: nil
-        ))
+        result(FlutterError(code: "ANALYSIS_ERROR", message: error.localizedDescription, details: nil))
         return
       }
 
       guard let observations = request.results as? [VNClassificationObservation] else {
-        result(FlutterError(code: "NO_RESULTS", message: "No classification results", details: nil))
+        result(["isFood": false, "foodItems": [], "confidence": 0.0])
         return
       }
 
       // 음식 관련 키워드
       let foodKeywords = [
-        "food", "meal", "dish", "cuisine", "pizza", "burger", "salad",
-        "pasta", "rice", "noodle", "soup", "sandwich", "bread", "cake",
-        "dessert", "fruit", "vegetable", "meat", "chicken", "beef", "pork",
-        "fish", "seafood", "sushi", "coffee", "drink", "beverage", "breakfast",
-        "lunch", "dinner", "snack", "appetizer", "entree", "plate"
+        "food", "meal", "dish", "cuisine", "plate",
+        "pizza", "burger", "sandwich", "salad", "soup",
+        "pasta", "rice", "noodle", "bread", "cake",
+        "fruit", "vegetable", "meat", "fish", "chicken",
+        "dessert", "snack", "breakfast", "lunch", "dinner",
+        "coffee", "tea", "drink", "beverage",
+        "sushi", "ramen", "curry", "steak", "taco"
       ]
 
-      // 상위 10개 결과 분석
-      let topResults = observations.prefix(10)
       var foodItems: [String] = []
       var maxConfidence: Double = 0.0
       var isFood = false
 
-      for observation in topResults {
+      // 상위 10개 분류 결과 확인
+      for observation in observations.prefix(10) {
         let identifier = observation.identifier.lowercased()
         let confidence = Double(observation.confidence)
 
-        // 음식 관련 키워드가 포함되어 있고 confidence가 0.3 이상이면
-        if foodKeywords.contains(where: { identifier.contains($0) }) && confidence > 0.3 {
-          isFood = true
-          foodItems.append(observation.identifier)
-          maxConfidence = max(maxConfidence, confidence)
+        // 음식 키워드 포함 여부 확인
+        for keyword in foodKeywords {
+          if identifier.contains(keyword) {
+            isFood = true
+            foodItems.append(observation.identifier)
+            maxConfidence = max(maxConfidence, confidence)
+            break
+          }
         }
       }
 
-      // 결과 반환
-      let response: [String: Any] = [
+      print("[VisionBridge] Food analysis - isFood: \(isFood), items: \(foodItems), confidence: \(maxConfidence)")
+
+      result([
         "isFood": isFood,
         "foodItems": foodItems,
-        "confidence": maxConfidence,
-        "allResults": topResults.map { [
-          "label": $0.identifier,
-          "confidence": Double($0.confidence)
-        ]}
-      ]
-
-      print("[VisionBridge] Analysis result: isFood=\(isFood), items=\(foodItems), confidence=\(maxConfidence)")
-      result(response)
+        "confidence": maxConfidence
+      ])
     }
 
     // 이미지 분석 실행
     let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-
-    DispatchQueue.global(qos: .userInitiated).async {
-      do {
-        try handler.perform([request])
-      } catch {
-        print("[VisionBridge] Failed to perform classification: \(error.localizedDescription)")
-        result(FlutterError(
-          code: "CLASSIFICATION_FAILED",
-          message: error.localizedDescription,
-          details: nil
-        ))
-      }
+    do {
+      try handler.perform([request])
+    } catch {
+      result(FlutterError(code: "ANALYSIS_ERROR", message: error.localizedDescription, details: nil))
     }
   }
 
-  /// 이미지의 EXIF 메타데이터 추출 (위치, 날짜 등)
+  /// 이미지 메타데이터 추출 (GPS 위치, 촬영 시간)
   func extractMetadata(arguments: [String: Any], result: @escaping FlutterResult) {
     guard let filePath = arguments["filePath"] as? String else {
-      result(FlutterError(code: "INVALID_ARGS", message: "filePath is required", details: nil))
+      result(FlutterError(code: "INVALID_ARGS", message: "File path required", details: nil))
       return
     }
 
-    guard let imageSource = CGImageSourceCreateWithURL(URL(fileURLWithPath: filePath) as CFURL, nil),
-          let metadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [String: Any] else {
-      result([:]) // 메타데이터 없으면 빈 딕셔너리 반환
+    guard let imageSource = CGImageSourceCreateWithURL(URL(fileURLWithPath: filePath) as CFURL, nil) else {
+      result(FlutterError(code: "INVALID_IMAGE", message: "Could not create image source", details: nil))
       return
     }
 
-    var extractedData: [String: Any] = [:]
+    guard let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [String: Any] else {
+      // 메타데이터가 없으면 빈 결과 반환
+      result([:])
+      return
+    }
 
-    // GPS 정보
-    if let gps = metadata[kCGImagePropertyGPSDictionary as String] as? [String: Any] {
-      if let latitude = gps[kCGImagePropertyGPSLatitude as String] as? Double,
-         let longitude = gps[kCGImagePropertyGPSLongitude as String] as? Double,
-         let latRef = gps[kCGImagePropertyGPSLatitudeRef as String] as? String,
-         let lonRef = gps[kCGImagePropertyGPSLongitudeRef as String] as? String {
+    var metadata: [String: Any] = [:]
 
-        let finalLat = latRef == "S" ? -latitude : latitude
-        let finalLon = lonRef == "W" ? -longitude : longitude
+    // GPS 정보 추출
+    if let gpsData = imageProperties[kCGImagePropertyGPSDictionary as String] as? [String: Any] {
+      if let latitude = gpsData[kCGImagePropertyGPSLatitude as String] as? Double,
+         let longitude = gpsData[kCGImagePropertyGPSLongitude as String] as? Double,
+         let latitudeRef = gpsData[kCGImagePropertyGPSLatitudeRef as String] as? String,
+         let longitudeRef = gpsData[kCGImagePropertyGPSLongitudeRef as String] as? String {
 
-        extractedData["latitude"] = finalLat
-        extractedData["longitude"] = finalLon
+        // 위도/경도 부호 조정
+        let finalLatitude = latitudeRef == "N" ? latitude : -latitude
+        let finalLongitude = longitudeRef == "E" ? longitude : -longitude
+
+        metadata["latitude"] = finalLatitude
+        metadata["longitude"] = finalLongitude
       }
     }
 
-    // 촬영 날짜/시간
-    if let exif = metadata[kCGImagePropertyExifDictionary as String] as? [String: Any],
-       let dateString = exif[kCGImagePropertyExifDateTimeOriginal as String] as? String {
-      extractedData["takenAt"] = dateString
-    } else if let tiff = metadata[kCGImagePropertyTIFFDictionary as String] as? [String: Any],
-              let dateString = tiff[kCGImagePropertyTIFFDateTime as String] as? String {
-      extractedData["takenAt"] = dateString
+    // 촬영 시간 추출 (EXIF)
+    if let exifData = imageProperties[kCGImagePropertyExifDictionary as String] as? [String: Any] {
+      if let dateTimeOriginal = exifData[kCGImagePropertyExifDateTimeOriginal as String] as? String {
+        metadata["takenAt"] = dateTimeOriginal
+      }
     }
 
-    print("[VisionBridge] Extracted metadata: \(extractedData)")
-    result(extractedData)
+    // TIFF 데이터에서도 시도
+    if metadata["takenAt"] == nil {
+      if let tiffData = imageProperties[kCGImagePropertyTIFFDictionary as String] as? [String: Any] {
+        if let dateTime = tiffData[kCGImagePropertyTIFFDateTime as String] as? String {
+          metadata["takenAt"] = dateTime
+        }
+      }
+    }
+
+    print("[VisionBridge] Metadata extracted: \(metadata)")
+    result(metadata)
   }
 }

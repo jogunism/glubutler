@@ -514,18 +514,32 @@ class _FeedItemCardState extends State<FeedItemCard>
 
   Widget _buildMealValue(ThemeData theme) {
     final meal = widget.item.mealRecord!;
-    if (meal.foodName != null && meal.foodName!.isNotEmpty) {
-      return Text(
-        meal.foodName!,
-        style: theme.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
+    final l10n = AppLocalizations.of(context)!;
+
+    // 시간 기반 식사 타입 결정
+    final mealTypeKey = meal.getMealTypeKey();
+    String mealTypeText;
+
+    switch (mealTypeKey) {
+      case 'breakfast':
+        mealTypeText = l10n.breakfast;
+      case 'lunch':
+        mealTypeText = l10n.lunch;
+      case 'dinner':
+        mealTypeText = l10n.dinner;
+      case 'snack':
+        mealTypeText = l10n.snack;
+      default:
+        mealTypeText = l10n.meal;
     }
-    return const SizedBox.shrink();
+
+    return Text(
+      mealTypeText,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+    );
   }
 
   Widget _buildWaterValue(ThemeData theme) {
@@ -623,7 +637,7 @@ class _FeedItemCardState extends State<FeedItemCard>
 
     return Text(
       '$stepsText$distanceText',
-      style: theme.textTheme.titleMedium?.copyWith(
+      style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 16,
       ),
@@ -635,7 +649,7 @@ class _FeedItemCardState extends State<FeedItemCard>
 
     return Text(
       sleepGroup.formattedDuration,
-      style: theme.textTheme.titleMedium?.copyWith(
+      style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 16,
       ),
@@ -669,7 +683,7 @@ class _FeedItemCardState extends State<FeedItemCard>
     final waterGroup = widget.item.waterGroup!;
     return Text(
       waterGroup.formattedAmount(),
-      style: theme.textTheme.titleMedium?.copyWith(
+      style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 16,
       ),
@@ -714,7 +728,7 @@ class _FeedItemCardState extends State<FeedItemCard>
         backgroundColor = color;
       case FeedItemType.meal:
         icon = Icons.restaurant;
-        color = AppTheme.iconGreen;
+        color = Colors.deepPurple[400]!;
         backgroundColor = color;
       case FeedItemType.water:
         icon = Icons.local_drink;

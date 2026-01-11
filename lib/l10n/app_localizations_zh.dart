@@ -784,6 +784,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get mealAddedToFeed => '已将餐食信息添加到动态';
+
+  @override
   String get error => '错误';
 
   @override

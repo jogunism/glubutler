@@ -255,6 +255,12 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         }
       }
 
+      // 음식 사진 감지 여부 확인 (새 일기 작성 시에만)
+      bool hasMealDetected = false;
+      if (!isEditMode && diaryFiles.isNotEmpty) {
+        hasMealDetected = await _checkFoodDetected(diaryFiles);
+      }
+
       // Create or update diary entry
       final entry = DiaryItem(
         id: entryId,
@@ -262,6 +268,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         timestamp: _selectedDate,
         createdAt: isEditMode ? widget.entry!.createdAt : now,
         files: diaryFiles,
+        hasMealDetected: hasMealDetected,
       );
 
       // Save or update to database
@@ -271,7 +278,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
       if (success) {
         // 음식 사진이 있으면 meal 레코드 생성
-        if (!isEditMode) {
+        if (!isEditMode && hasMealDetected) {
           await _createMealRecordIfNeeded(entry);
         }
 
@@ -380,36 +387,20 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   }
 
   /// 업로드된 사진들을 Vision Framework로 분석하여 음식 정보 추출
+  /// 음식이 감지되면 내부적으로 플래그만 설정하고, 텍스트는 추가하지 않음
   Future<void> _analyzeFoodPhotos(List<File> newImages) async {
     if (newImages.isEmpty) return;
 
     try {
-      final l10n = AppLocalizations.of(context)!;
-      final allFoodItems = <String>[];
-
       // 각 이미지를 분석
       for (final imageFile in newImages) {
         final result = await _visionService.analyzeFoodPhoto(imageFile.path);
 
         if (result.isFood && result.foodDescription.isNotEmpty) {
-          allFoodItems.add(result.foodDescription);
-        }
-      }
-
-      // 음식이 발견되면 일기 내용에 추가
-      if (allFoodItems.isNotEmpty && mounted) {
-        final foodText = allFoodItems.join(', ');
-        final currentText = _contentController.text;
-
-        // 이미 같은 음식 정보가 있는지 확인 (중복 방지)
-        if (!currentText.contains(foodText)) {
-          final newContent = currentText + l10n.foodDetected(foodText);
-          _contentController.text = newContent;
-
-          // 커서를 맨 끝으로 이동
-          _contentController.selection = TextSelection.fromPosition(
-            TextPosition(offset: newContent.length),
-          );
+          // 음식이 감지되었음을 내부적으로만 표시
+          // (실제 플래그는 저장 시 _createMealRecordIfNeeded에서 설정됨)
+          debugPrint('[DiaryInputModal] Food detected: ${result.foodDescription}');
+          break; // 하나라도 음식이 감지되면 충분
         }
       }
     } catch (e) {
@@ -448,49 +439,104 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
     );
   }
 
+  /// 파일들 중 음식 사진이 있는지 확인
+  Future<bool> _checkFoodDetected(List<DiaryFile> files) async {
+    try {
+      for (final file in files) {
+        final result = await _visionService.analyzeFoodPhoto(file.filePath);
+        if (result.isFood && result.foodDescription.isNotEmpty) {
+          return true; // 하나라도 음식 사진이 있으면 true
+        }
+      }
+      return false;
+    } catch (e) {
+      debugPrint('[DiaryInputModal] Error checking food detection: $e');
+      return false;
+    }
+  }
+
   /// 음식 사진이 감지되었으면 meal 레코드 생성
+  /// 음식 사진들을 시간 기반으로 그룹화하여 meal 레코드 생성
+  ///
+  /// 같은 일기 내에서 음식 사진들의 촬영 시간을 기준으로 1시간 윈도우로 그룹화합니다.
+  /// - 1시간 이내 촬영된 음식 사진들 = 같은 식사
+  /// - 1시간 이상 차이나는 음식 사진들 = 다른 식사
+  /// - 촬영 시간이 없는 사진은 일기 작성 시간 사용
   Future<void> _createMealRecordIfNeeded(DiaryItem entry) async {
     try {
-      // 음식 사진이 있는지 확인 (첫 번째 음식 사진 찾기)
-      DiaryFile? firstFoodPhoto;
-      String? detectedFoodName;
+      // 1. 음식 사진 감지 및 수집
+      final List<_FoodPhoto> foodPhotos = [];
 
       for (final file in entry.files) {
         final result = await _visionService.analyzeFoodPhoto(file.filePath);
-        if (result.isFood && result.foodDescription.isNotEmpty) {
-          firstFoodPhoto = file;
-          detectedFoodName = result.foodDescription;
-          break; // 첫 번째 음식 사진만 사용
+        if (result.isFood) {
+          foodPhotos.add(_FoodPhoto(
+            file: file,
+            foodName: result.foodDescription,
+            captureTime: file.capturedAt ?? entry.timestamp,
+          ));
         }
       }
 
-      // 음식 사진이 없으면 meal 레코드 생성 안 함
-      if (firstFoodPhoto == null) {
-        debugPrint('[DiaryInputModal] No food photos detected, skipping meal record creation');
+      if (foodPhotos.isEmpty) {
+        debugPrint('[DiaryInputModal] No food photos detected');
         return;
       }
 
-      // 식사 시간: 음식 사진의 촬영 시간 (없으면 일기 작성 시간)
-      final mealTime = firstFoodPhoto.capturedAt ?? entry.timestamp;
+      // 2. 촬영 시간 기준으로 정렬
+      foodPhotos.sort((a, b) => a.captureTime.compareTo(b.captureTime));
 
-      // Meal 레코드 생성
-      final mealRecord = MealRecord(
-        id: const Uuid().v4(),
-        diaryId: entry.id,
-        foodName: detectedFoodName,
-        mealTime: mealTime,
-        createdAt: DateTime.now(),
-      );
+      // 3. 1시간 윈도우로 그룹화
+      final List<List<_FoodPhoto>> mealGroups = [];
+      List<_FoodPhoto> currentGroup = [foodPhotos.first];
 
-      // 저장
-      final success = await _mealRepository.save(mealRecord);
-      if (success) {
-        debugPrint('[DiaryInputModal] Meal record created: ${mealRecord.foodName} at ${mealRecord.mealTime}');
-      } else {
-        debugPrint('[DiaryInputModal] Failed to create meal record');
+      for (int i = 1; i < foodPhotos.length; i++) {
+        final timeDiff = foodPhotos[i].captureTime.difference(currentGroup.first.captureTime);
+
+        if (timeDiff.inMinutes <= 60) {
+          // 1시간 이내 = 같은 식사
+          currentGroup.add(foodPhotos[i]);
+        } else {
+          // 1시간 초과 = 새로운 식사
+          mealGroups.add(currentGroup);
+          currentGroup = [foodPhotos[i]];
+        }
       }
+      // 마지막 그룹 추가
+      mealGroups.add(currentGroup);
+
+      // 4. 각 그룹마다 meal 레코드 생성
+      final now = DateTime.now();
+      int createdCount = 0;
+
+      for (final group in mealGroups) {
+        // 그룹의 첫 번째 사진 시간을 식사 시간으로 사용
+        final mealTime = group.first.captureTime;
+
+        // 음식 이름들 수집 (중복 제거)
+        final foodNames = group
+            .where((p) => p.foodName.isNotEmpty)
+            .map((p) => p.foodName)
+            .toSet()
+            .join(', ');
+
+        final mealRecord = MealRecord(
+          id: const Uuid().v4(),
+          foodName: foodNames.isNotEmpty ? foodNames : null,
+          mealTime: mealTime,
+          createdAt: now,
+        );
+
+        final success = await _mealRepository.save(mealRecord);
+        if (success) {
+          createdCount++;
+          debugPrint('[DiaryInputModal] Meal record created: $foodNames at $mealTime');
+        }
+      }
+
+      debugPrint('[DiaryInputModal] Created $createdCount meal records from ${foodPhotos.length} food photos');
     } catch (e) {
-      debugPrint('[DiaryInputModal] Error creating meal record: $e');
+      debugPrint('[DiaryInputModal] Error creating meal records: $e');
       // 에러가 나도 일기 저장은 성공했으므로 무시
     }
   }
@@ -897,4 +943,17 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
     final dateFormat = DateFormat.yMMMd().add_Hm();
     return dateFormat.format(date);
   }
+}
+
+/// 음식 사진 정보를 담는 헬퍼 클래스
+class _FoodPhoto {
+  final DiaryFile file;
+  final String foodName;
+  final DateTime captureTime;
+
+  _FoodPhoto({
+    required this.file,
+    required this.foodName,
+    required this.captureTime,
+  });
 }

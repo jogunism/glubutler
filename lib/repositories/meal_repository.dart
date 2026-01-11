@@ -40,13 +40,6 @@ class MealRepository {
     );
   }
 
-  /// Fetch a meal record by diary ID.
-  ///
-  /// Returns null if no meal exists for the given diary.
-  Future<MealRecord?> fetchByDiaryId(String diaryId) async {
-    return await _databaseService.getMealByDiaryId(diaryId);
-  }
-
   /// Delete a meal record by ID.
   Future<void> delete(String id) async {
     await _databaseService.deleteMeal(id);
