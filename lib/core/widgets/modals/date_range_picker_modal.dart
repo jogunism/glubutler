@@ -209,17 +209,22 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
   }
 
   Widget _buildContent(AppLocalizations l10n) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Container(
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+      padding: EdgeInsets.only(bottom: bottomPadding + 30),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               // 드래그 핸들
               Container(
                 width: 40,
@@ -630,9 +635,10 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
             ],
           ),
         ),
-      ),
-    );
-  }
+      ],
+    ),
+  );
+}
 
   String _getDateRangeString() {
     if (_rangeStart == null || _rangeEnd == null) return '';
