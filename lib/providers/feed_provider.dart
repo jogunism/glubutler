@@ -69,13 +69,15 @@ class FeedProvider extends ChangeNotifier {
 
   // Permission status for each category (true = granted, false = denied, null = unknown)
   final Map<HealthDataCategory, bool?> _categoryPermissions = {};
-  Map<HealthDataCategory, bool?> get categoryPermissions => Map.unmodifiable(_categoryPermissions);
+  Map<HealthDataCategory, bool?> get categoryPermissions =>
+      Map.unmodifiable(_categoryPermissions);
 
   int? _todaySteps;
   int? get todaySteps => _todaySteps;
 
   final Map<DateTime, DailyActivityData> _activityByDate = {};
-  Map<DateTime, DailyActivityData> get activityByDate => Map.unmodifiable(_activityByDate);
+  Map<DateTime, DailyActivityData> get activityByDate =>
+      Map.unmodifiable(_activityByDate);
 
   double? _todayWaterMl;
   double? get todayWaterMl => _todayWaterMl;
@@ -108,7 +110,9 @@ class FeedProvider extends ChangeNotifier {
   Future<void> initialize() async {
     // 백그라운드 업데이트 콜백 설정
     _healthService.setBackgroundUpdateCallback(() {
-      debugPrint('[FeedProvider] Background health data updated - refreshing data');
+      debugPrint(
+        '[FeedProvider] Background health data updated - refreshing data',
+      );
       refreshData();
     });
 
@@ -118,7 +122,8 @@ class FeedProvider extends ChangeNotifier {
 
     // If user has ever connected to Health (connectedAt exists or currently connected),
     // mark as having requested permissions. This allows reading data even if write permission was later revoked.
-    final hasEverConnected = healthConnection.connectedAt != null || healthConnection.isConnected;
+    final hasEverConnected =
+        healthConnection.connectedAt != null || healthConnection.isConnected;
     if (hasEverConnected) {
       _healthService.setHasRequestedPermissions(true);
     }
@@ -127,8 +132,9 @@ class FeedProvider extends ChangeNotifier {
     if (hasEverConnected) {
       // Check actual write permission by testing
       await _healthService.checkPermissionStatus();
-      final hasWritePermission =
-          _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+      final hasWritePermission = _healthService.getPermissionStatus(
+        HealthDataType.BLOOD_GLUCOSE,
+      );
 
       if (!hasWritePermission) {
         // Write permission revoked, mark as disconnected (but keep connectedAt for read access)
@@ -176,7 +182,8 @@ class FeedProvider extends ChangeNotifier {
 
       if (_isHealthConnected) {
         // Save connection status to DB only if write permission was granted
-        final syncPeriod = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
+        final syncPeriod =
+            _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
         await _databaseService.saveHealthConnection(
           HealthConnectionInfo(
             isConnected: true,
@@ -211,24 +218,24 @@ class FeedProvider extends ChangeNotifier {
   /// Called after requestAuthorization which already checked permissions
   Future<void> _syncPermissionsFromHealthService() async {
     _categoryPermissions.clear();
-    _categoryPermissions[HealthDataCategory.bloodGlucose] =
-        _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
-    _categoryPermissions[HealthDataCategory.insulin] =
-        _healthService.getPermissionStatus(HealthDataType.INSULIN_DELIVERY);
-    _categoryPermissions[HealthDataCategory.workouts] =
-        _healthService.getPermissionStatus(HealthDataType.WORKOUT);
-    _categoryPermissions[HealthDataCategory.steps] =
-        _healthService.getPermissionStatus(HealthDataType.STEPS);
-    _categoryPermissions[HealthDataCategory.sleep] =
-        _healthService.getPermissionStatus(HealthDataType.SLEEP_ASLEEP);
-    _categoryPermissions[HealthDataCategory.weight] =
-        _healthService.getPermissionStatus(HealthDataType.WEIGHT);
-    _categoryPermissions[HealthDataCategory.water] =
-        _healthService.getPermissionStatus(HealthDataType.WATER);
-    _categoryPermissions[HealthDataCategory.menstrualCycle] =
-        _healthService.getPermissionStatus(HealthDataType.MENSTRUATION_FLOW);
-    _categoryPermissions[HealthDataCategory.mindfulness] =
-        _healthService.getPermissionStatus(HealthDataType.MINDFULNESS);
+    _categoryPermissions[HealthDataCategory.bloodGlucose] = _healthService
+        .getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+    _categoryPermissions[HealthDataCategory.insulin] = _healthService
+        .getPermissionStatus(HealthDataType.INSULIN_DELIVERY);
+    _categoryPermissions[HealthDataCategory.workouts] = _healthService
+        .getPermissionStatus(HealthDataType.WORKOUT);
+    _categoryPermissions[HealthDataCategory.steps] = _healthService
+        .getPermissionStatus(HealthDataType.STEPS);
+    _categoryPermissions[HealthDataCategory.sleep] = _healthService
+        .getPermissionStatus(HealthDataType.SLEEP_ASLEEP);
+    _categoryPermissions[HealthDataCategory.weight] = _healthService
+        .getPermissionStatus(HealthDataType.WEIGHT);
+    _categoryPermissions[HealthDataCategory.water] = _healthService
+        .getPermissionStatus(HealthDataType.WATER);
+    _categoryPermissions[HealthDataCategory.menstrualCycle] = _healthService
+        .getPermissionStatus(HealthDataType.MENSTRUATION_FLOW);
+    _categoryPermissions[HealthDataCategory.mindfulness] = _healthService
+        .getPermissionStatus(HealthDataType.MINDFULNESS);
 
     // Save permissions to DB
     await _savePermissionsToDb();
@@ -239,24 +246,24 @@ class FeedProvider extends ChangeNotifier {
     await _healthService.checkPermissionStatus();
 
     _categoryPermissions.clear();
-    _categoryPermissions[HealthDataCategory.bloodGlucose] =
-        _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
-    _categoryPermissions[HealthDataCategory.insulin] =
-        _healthService.getPermissionStatus(HealthDataType.INSULIN_DELIVERY);
-    _categoryPermissions[HealthDataCategory.workouts] =
-        _healthService.getPermissionStatus(HealthDataType.WORKOUT);
-    _categoryPermissions[HealthDataCategory.steps] =
-        _healthService.getPermissionStatus(HealthDataType.STEPS);
-    _categoryPermissions[HealthDataCategory.sleep] =
-        _healthService.getPermissionStatus(HealthDataType.SLEEP_ASLEEP);
-    _categoryPermissions[HealthDataCategory.weight] =
-        _healthService.getPermissionStatus(HealthDataType.WEIGHT);
-    _categoryPermissions[HealthDataCategory.water] =
-        _healthService.getPermissionStatus(HealthDataType.WATER);
-    _categoryPermissions[HealthDataCategory.menstrualCycle] =
-        _healthService.getPermissionStatus(HealthDataType.MENSTRUATION_FLOW);
-    _categoryPermissions[HealthDataCategory.mindfulness] =
-        _healthService.getPermissionStatus(HealthDataType.MINDFULNESS);
+    _categoryPermissions[HealthDataCategory.bloodGlucose] = _healthService
+        .getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+    _categoryPermissions[HealthDataCategory.insulin] = _healthService
+        .getPermissionStatus(HealthDataType.INSULIN_DELIVERY);
+    _categoryPermissions[HealthDataCategory.workouts] = _healthService
+        .getPermissionStatus(HealthDataType.WORKOUT);
+    _categoryPermissions[HealthDataCategory.steps] = _healthService
+        .getPermissionStatus(HealthDataType.STEPS);
+    _categoryPermissions[HealthDataCategory.sleep] = _healthService
+        .getPermissionStatus(HealthDataType.SLEEP_ASLEEP);
+    _categoryPermissions[HealthDataCategory.weight] = _healthService
+        .getPermissionStatus(HealthDataType.WEIGHT);
+    _categoryPermissions[HealthDataCategory.water] = _healthService
+        .getPermissionStatus(HealthDataType.WATER);
+    _categoryPermissions[HealthDataCategory.menstrualCycle] = _healthService
+        .getPermissionStatus(HealthDataType.MENSTRUATION_FLOW);
+    _categoryPermissions[HealthDataCategory.mindfulness] = _healthService
+        .getPermissionStatus(HealthDataType.MINDFULNESS);
 
     // Save permissions to DB
     await _savePermissionsToDb();
@@ -281,8 +288,10 @@ class FeedProvider extends ChangeNotifier {
 
   /// Perform the actual migration and return result
   Future<MigrationResult> _performMigration() async {
-    final (glucoseAttempted, glucoseSuccess) = await _glucoseRepository.migrateLocalToHealth();
-    final (insulinAttempted, insulinSuccess) = await _insulinRepository.migrateLocalToHealth();
+    final (glucoseAttempted, glucoseSuccess) = await _glucoseRepository
+        .migrateLocalToHealth();
+    final (insulinAttempted, insulinSuccess) = await _insulinRepository
+        .migrateLocalToHealth();
 
     final totalAttempted = glucoseAttempted + insulinAttempted;
     final totalSuccess = glucoseSuccess + insulinSuccess;
@@ -349,7 +358,9 @@ class FeedProvider extends ChangeNotifier {
     await _updatePermissionStatus();
 
     // Check if ANY permission (write or read) is granted
-    final hasAnyPermission = _categoryPermissions.values.any((status) => status == true);
+    final hasAnyPermission = _categoryPermissions.values.any(
+      (status) => status == true,
+    );
 
     bool? statusChanged;
 
@@ -404,7 +415,8 @@ class FeedProvider extends ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 1));
 
       final now = DateTime.now();
-      final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
+      final syncDays =
+          _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
       // 오늘 포함 syncDays일 = (syncDays - 1)일 전부터
       // 예: 오늘이 30일, syncDays=7 -> 24일부터 30일까지 (7일간)
       final startDate = now.subtract(Duration(days: syncDays - 1));
@@ -458,7 +470,9 @@ class FeedProvider extends ChangeNotifier {
 
         // Group water records by date and add to feed items
         await Future.delayed(Duration.zero);
-        final waterGroups = WaterGroupingService.groupWaterRecords(waterRecords);
+        final waterGroups = WaterGroupingService.groupWaterRecords(
+          waterRecords,
+        );
         allItems.addAll(waterGroups.map(FeedItem.fromWaterGroup));
 
         final mindfulnessRecords = await _healthService.fetchMindfulnessData(
@@ -482,11 +496,13 @@ class FeedProvider extends ChangeNotifier {
           final date = entry.key;
           final activity = entry.value;
           if (activity.steps > 0) {
-            allItems.add(FeedItem.fromSteps(
-              date: date,
-              steps: activity.steps,
-              distanceKm: activity.distanceKm,
-            ));
+            allItems.add(
+              FeedItem.fromSteps(
+                date: date,
+                steps: activity.steps,
+                distanceKm: activity.distanceKm,
+              ),
+            );
           }
         }
       }
@@ -508,9 +524,15 @@ class FeedProvider extends ChangeNotifier {
       // Group glucose records using CGM grouping service
       // Yield to UI thread before heavy processing
       await Future.delayed(Duration.zero);
-      final rangeSettings = _settingsService?.glucoseRange ?? const GlucoseRangeSettings();
-      final (cgmGroups, individualGlucose) =
-          CgmGroupingService.groupGlucoseRecords(allGlucoseRecords, rangeSettings: rangeSettings);
+      final rangeSettings =
+          _settingsService?.glucoseRange ?? const GlucoseRangeSettings();
+      final (
+        cgmGroups,
+        individualGlucose,
+      ) = CgmGroupingService.groupGlucoseRecords(
+        allGlucoseRecords,
+        rangeSettings: rangeSettings,
+      );
 
       // Add CGM groups to feed items
       allItems.addAll(cgmGroups.map(FeedItem.fromCgmGroup));
@@ -532,26 +554,30 @@ class FeedProvider extends ChangeNotifier {
       final deletableItems = allItems
           .where((item) {
             // Check individual glucose items (NOT CGM groups)
-            if (item.type == FeedItemType.glucose && item.glucoseRecord != null) {
+            if (item.type == FeedItemType.glucose &&
+                item.glucoseRecord != null) {
               final record = item.glucoseRecord!;
               // Include local records
               if (!record.isFromHealthKit) {
                 return true;
               }
               // Include HealthKit records created by this app
-              if (record.sourceName != null && record.sourceName!.contains('Glu Butler')) {
+              if (record.sourceName != null &&
+                  record.sourceName!.contains('Glu Butler')) {
                 return true;
               }
             }
             // Check insulin items
-            if (item.type == FeedItemType.insulin && item.insulinRecord != null) {
+            if (item.type == FeedItemType.insulin &&
+                item.insulinRecord != null) {
               final record = item.insulinRecord!;
               // Include local records
               if (!record.isFromHealthKit) {
                 return true;
               }
               // Include HealthKit records created by this app
-              if (record.sourceName != null && record.sourceName!.contains('Glu Butler')) {
+              if (record.sourceName != null &&
+                  record.sourceName!.contains('Glu Butler')) {
                 return true;
               }
             }
@@ -640,7 +666,9 @@ class FeedProvider extends ChangeNotifier {
     required DateTime endDate,
   }) {
     return _items.where((item) {
-      return item.timestamp.isAfter(startDate.subtract(const Duration(days: 1))) &&
+      return item.timestamp.isAfter(
+            startDate.subtract(const Duration(days: 1)),
+          ) &&
           item.timestamp.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
   }
@@ -654,10 +682,7 @@ class FeedProvider extends ChangeNotifier {
     required DateTime startDate,
     required DateTime endDate,
   }) {
-    return getItemsInRange(
-      startDate: startDate,
-      endDate: endDate,
-    );
+    return getItemsInRange(startDate: startDate, endDate: endDate);
   }
 
   /// Delete a glucose record from both local DB and Apple Health
@@ -719,7 +744,9 @@ class FeedProvider extends ChangeNotifier {
         .where((item) {
           return item.type == FeedItemType.glucose &&
               item.glucoseRecord != null &&
-              item.timestamp.isAfter(startOfDay.subtract(const Duration(seconds: 1))) &&
+              item.timestamp.isAfter(
+                startOfDay.subtract(const Duration(seconds: 1)),
+              ) &&
               item.timestamp.isBefore(endOfDay);
         })
         .map((item) => item.glucoseRecord!)
@@ -727,11 +754,13 @@ class FeedProvider extends ChangeNotifier {
 
     // 오늘 또는 syncPeriod 이내 날짜면 캐시 데이터 반환
     final now = DateTime.now();
-    final syncDays = _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
+    final syncDays =
+        _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
     // 오늘 포함 syncDays일 = (syncDays - 1)일 전부터
     final earliestCachedDate = now.subtract(Duration(days: syncDays - 1));
 
-    if (startOfDay.isAfter(earliestCachedDate) || startOfDay.isAtSameMomentAs(earliestCachedDate)) {
+    if (startOfDay.isAfter(earliestCachedDate) ||
+        startOfDay.isAtSameMomentAs(earliestCachedDate)) {
       return cachedRecords;
     }
 
@@ -758,7 +787,9 @@ class FeedProvider extends ChangeNotifier {
 
     // startDate ~ endDate 범위의 FeedItem 필터링
     final filteredItems = _items.where((item) {
-      return item.timestamp.isAfter(startDate.subtract(const Duration(seconds: 1))) &&
+      return item.timestamp.isAfter(
+            startDate.subtract(const Duration(seconds: 1)),
+          ) &&
           item.timestamp.isBefore(endDate.add(const Duration(seconds: 1)));
     }).toList();
 
@@ -793,7 +824,8 @@ class FeedProvider extends ChangeNotifier {
             result.add({
               'type': 'glucose manual',
               'time': timeStr,
-              'value': '$mealContext${record.value.toStringAsFixed(0)}${record.unit}',
+              'value':
+                  '$mealContext${record.value.toStringAsFixed(0)}${record.unit}',
             });
           }
           break;
@@ -847,6 +879,37 @@ class FeedProvider extends ChangeNotifier {
           });
           break;
 
+        case FeedItemType.meal:
+          final meal = item.mealRecord;
+          if (meal == null) continue;
+          final mealType = meal
+              .getMealTypeKey(); // breakfast, lunch, dinner, snack
+          result.add({'type': 'meal', 'time': timeStr, 'value': mealType});
+          break;
+
+        case FeedItemType.insulin:
+          final insulin = item.insulinRecord;
+          if (insulin == null) continue;
+          final insulinType = insulin.insulinType.displayName;
+          final units = insulin.units.toStringAsFixed(1);
+          result.add({
+            'type': 'insulin',
+            'time': timeStr,
+            'value': '$insulinType ${units}U',
+          });
+          break;
+
+        case FeedItemType.mindfulness:
+          final mindfulness = item.mindfulnessRecord;
+          if (mindfulness == null) continue;
+          final duration = mindfulness.durationMinutes;
+          result.add({
+            'type': 'mindfulness',
+            'time': timeStr,
+            'value': '${duration}min',
+          });
+          break;
+
         // 다른 타입들은 무시
         default:
           break;
@@ -860,5 +923,4 @@ class FeedProvider extends ChangeNotifier {
   String _formatTimeForApi(DateTime dateTime) {
     return dateTime.toIso8601String().substring(0, 16); // "2024-12-30T18:30"
   }
-
 }

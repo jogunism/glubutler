@@ -9,7 +9,6 @@ import 'package:glu_butler/services/cloudkit_service.dart';
 /// Handles reading/writing diary data to local database and CloudKit sync.
 class DiaryRepository {
   final DatabaseService _databaseService;
-  // ignore: unused_field
   final CloudKitService _cloudKitService;
 
   DiaryRepository({

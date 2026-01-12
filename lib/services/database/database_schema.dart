@@ -41,7 +41,6 @@ class DatabaseSchema {
         '[DatabaseSchema] Upgrading database from v$oldVersion to v$newVersion');
 
     // No migrations needed - app not yet released
-    // Future migrations will go here
   }
 
   // ============ Table Creation ============

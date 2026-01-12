@@ -140,6 +140,21 @@ class RecordDao {
     );
   }
 
+  /// Check if a meal exists within a time range (±30 minutes)
+  Future<bool> hasMealInTimeRange(DateTime mealTime) async {
+    final startTime = mealTime.subtract(const Duration(minutes: 30));
+    final endTime = mealTime.add(const Duration(minutes: 30));
+
+    final maps = await db.query(
+      DatabaseSchema.tableMeal,
+      where: 'meal_time >= ? AND meal_time <= ?',
+      whereArgs: [startTime.toIso8601String(), endTime.toIso8601String()],
+      limit: 1,
+    );
+
+    return maps.isNotEmpty;
+  }
+
   // ============ Exercise Records ============
 
   Future<int> insertExercise(ExerciseRecord record) async {

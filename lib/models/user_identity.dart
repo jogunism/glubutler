@@ -1,66 +1,57 @@
 /// 사용자 식별 정보
 ///
-/// 3가지 ID를 모두 보유하여 서버에서 우선순위에 따라 사용자를 식별
-/// - deviceId: 앱 첫 실행 시 생성되는 UUIDv7 (필수, 영구 보관)
-/// - cloudKitId: iCloud 연동 시 CloudKit에서 받아오는 사용자 ID (선택)
-/// - receiptId: 유료 구독 시 App Store Receipt의 Original Transaction ID (선택)
+/// 서버에서 우선순위에 따라 사용자를 식별
+/// - cloudKitId: iCloud 연동 시 CloudKit에서 받아오는 사용자 ID (최우선, 기기간 동기화)
+/// - idfv: iOS Identifier For Vendor (앱 재설치 시에도 유지, 같은 기기)
 class UserIdentity {
-  /// 기기 고유 ID (UUIDv7)
-  /// 앱 첫 실행 시 생성되며 절대 변경되지 않음
-  final String deviceId;
+  /// iOS Identifier For Vendor (IDFV)
+  /// 앱 재설치 시에도 유지되는 기기 고유 ID
+  /// 동일 vendor의 모든 앱이 삭제되기 전까지 유지됨
+  final String? idfv;
 
   /// CloudKit 사용자 ID
-  /// iCloud 연동 시에만 사용 가능
+  /// iCloud 연동 시에만 사용 가능 (기기간 동기화)
   final String? cloudKitId;
 
-  /// App Store Receipt의 Original Transaction ID
-  /// 유료 구독 후에만 사용 가능
-  final String? receiptId;
-
   const UserIdentity({
-    required this.deviceId,
+    this.idfv,
     this.cloudKitId,
-    this.receiptId,
   });
 
   /// JSON으로 변환 (API 전송용)
   Map<String, dynamic> toJson() {
     return {
-      'deviceId': deviceId,
+      if (idfv != null) 'idfv': idfv,
       if (cloudKitId != null) 'cloudKitId': cloudKitId,
-      if (receiptId != null) 'receiptId': receiptId,
     };
   }
 
   /// JSON에서 생성
   factory UserIdentity.fromJson(Map<String, dynamic> json) {
     return UserIdentity(
-      deviceId: json['deviceId'] as String,
+      idfv: json['idfv'] as String?,
       cloudKitId: json['cloudKitId'] as String?,
-      receiptId: json['receiptId'] as String?,
+    );
+  }
+
+  /// IDFV 업데이트
+  UserIdentity withIdfv(String idfv) {
+    return UserIdentity(
+      idfv: idfv,
+      cloudKitId: cloudKitId,
     );
   }
 
   /// CloudKit ID 업데이트
   UserIdentity withCloudKitId(String cloudKitId) {
     return UserIdentity(
-      deviceId: deviceId,
+      idfv: idfv,
       cloudKitId: cloudKitId,
-      receiptId: receiptId,
-    );
-  }
-
-  /// Receipt ID 업데이트
-  UserIdentity withReceiptId(String receiptId) {
-    return UserIdentity(
-      deviceId: deviceId,
-      cloudKitId: cloudKitId,
-      receiptId: receiptId,
     );
   }
 
   @override
   String toString() {
-    return 'UserIdentity(deviceId: $deviceId, cloudKitId: $cloudKitId, receiptId: $receiptId)';
+    return 'UserIdentity(idfv: $idfv, cloudKitId: $cloudKitId)';
   }
 }

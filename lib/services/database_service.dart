@@ -125,6 +125,7 @@ class DatabaseService {
       recordDao.getMealRecords(startDate: startDate, endDate: endDate);
   Future<int> deleteMeal(String id) => recordDao.deleteMeal(id);
   Future<int> deleteMealsByDiaryId(String diaryId) => recordDao.deleteMealsByDiaryId(diaryId);
+  Future<bool> hasMealInTimeRange(DateTime mealTime) => recordDao.hasMealInTimeRange(mealTime);
 
   Future<int> insertExercise(ExerciseRecord record) => recordDao.insertExercise(record);
   Future<List<ExerciseRecord>> getExerciseRecords({DateTime? startDate, DateTime? endDate}) =>

@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/models/user_profile.dart';
@@ -40,7 +41,7 @@ class SettingsService extends ChangeNotifier {
   GlucoseRangeSettings get glucoseRange => _glucoseRange;
   DateTime? get serviceStartDate => _serviceStartDate;
   bool get hapticEnabled => _hapticEnabled;
-  UserIdentity get userIdentity => _userIdentity ?? UserIdentity(deviceId: 'unknown');
+  UserIdentity get userIdentity => _userIdentity ?? const UserIdentity();
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -151,16 +152,47 @@ class SettingsService extends ChangeNotifier {
 
     // 첫 실행이거나 로드 실패: 새 UserIdentity 생성
     if (_userIdentity == null) {
-      final deviceId = const Uuid().v7(); // UUIDv7 생성
-      _userIdentity = UserIdentity(deviceId: deviceId);
+      final idfv = await _getIdfv(); // IDFV 가져오기
+      _userIdentity = UserIdentity(
+        idfv: idfv,
+      );
       await _prefs.setString(
         AppConstants.keyUserIdentity,
         jsonEncode(_userIdentity!.toJson()),
       );
       debugPrint('[SettingsService] UserIdentity created: $_userIdentity');
+    } else {
+      // 기존 UserIdentity가 있지만 IDFV가 없는 경우 업데이트
+      if (_userIdentity!.idfv == null) {
+        final idfv = await _getIdfv();
+        if (idfv != null) {
+          _userIdentity = _userIdentity!.withIdfv(idfv);
+          await _prefs.setString(
+            AppConstants.keyUserIdentity,
+            jsonEncode(_userIdentity!.toJson()),
+          );
+          debugPrint('[SettingsService] IDFV added to existing UserIdentity: $idfv');
+        }
+      }
     }
 
     notifyListeners();
+  }
+
+  /// iOS IDFV(Identifier For Vendor) 가져오기
+  /// 앱 재설치 시에도 유지되는 기기 고유 ID
+  Future<String?> _getIdfv() async {
+    try {
+      if (Platform.isIOS) {
+        final deviceInfo = DeviceInfoPlugin();
+        final iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor; // IDFV
+      }
+      return null; // Android는 IDFV가 없음
+    } catch (e) {
+      debugPrint('[SettingsService] Error getting IDFV: $e');
+      return null;
+    }
   }
 
   Future<void> setLanguage(String language) async {
@@ -281,18 +313,4 @@ class SettingsService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Receipt Transaction ID 업데이트
-  ///
-  /// 유료 구독 시 호출
-  Future<void> updateReceiptId(String receiptId) async {
-    if (_userIdentity == null) return;
-
-    _userIdentity = _userIdentity!.withReceiptId(receiptId);
-    await _prefs.setString(
-      AppConstants.keyUserIdentity,
-      jsonEncode(_userIdentity!.toJson()),
-    );
-    debugPrint('[SettingsService] Receipt ID updated: $receiptId');
-    notifyListeners();
-  }
 }

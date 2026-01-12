@@ -257,9 +257,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         }
       }
 
-      // 음식 사진 감지 여부 확인 (새 일기 작성 시에만)
+      // 음식 사진 감지 여부 확인
       bool hasMealDetected = false;
-      if (!isEditMode && diaryFiles.isNotEmpty) {
+      if (diaryFiles.isNotEmpty) {
         hasMealDetected = await _checkFoodDetected(diaryFiles);
       }
 
@@ -283,12 +283,14 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         if (hasMealDetected) {
           if (isEditMode) {
             // 수정 모드: 기존 meal 삭제 후 재생성
-            await _databaseService.deleteMealsByDiaryId(entry.id);
+            final deletedCount = await _databaseService.deleteMealsByDiaryId(entry.id);
+            debugPrint('[DiaryInputModal] Deleted $deletedCount existing meal records for diary ${entry.id}');
           }
           await _createMealRecordIfNeeded(entry);
         } else if (isEditMode) {
           // 수정 모드에서 음식 사진이 없어진 경우: 기존 meal 삭제
-          await _databaseService.deleteMealsByDiaryId(entry.id);
+          final deletedCount = await _databaseService.deleteMealsByDiaryId(entry.id);
+          debugPrint('[DiaryInputModal] Deleted $deletedCount meal records (no food detected) for diary ${entry.id}');
         }
 
         if (mounted) {
@@ -296,9 +298,16 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
           Navigator.of(context).pop(true); // Return true to indicate success
 
           // Show success toast
+          String message = isEditMode ? l10n.diaryUpdated : l10n.diarySaved;
+
+          // 음식이 감지되었으면 추가 메시지 표시
+          if (hasMealDetected) {
+            message += '\n${l10n.mealAddedToFeed}';
+          }
+
           TopBanner.show(
             context,
-            message: isEditMode ? l10n.diaryUpdated : l10n.diarySaved,
+            message: message,
             isSuccess: true,
           );
         }
@@ -514,13 +523,22 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
       // 마지막 그룹 추가
       mealGroups.add(currentGroup);
 
-      // 4. 각 그룹마다 meal 레코드 생성
+      // 4. 각 그룹마다 meal 레코드 생성 (중복 체크)
       final now = DateTime.now();
       int createdCount = 0;
+      int skippedCount = 0;
 
       for (final group in mealGroups) {
         // 그룹의 첫 번째 사진 시간을 식사 시간으로 사용
         final mealTime = group.first.captureTime;
+
+        // 중복 체크: ±30분 이내에 이미 meal이 있는지 확인
+        final hasDuplicate = await _databaseService.hasMealInTimeRange(mealTime);
+        if (hasDuplicate) {
+          skippedCount++;
+          debugPrint('[DiaryInputModal] Skipped duplicate meal at $mealTime (already exists within ±30min)');
+          continue;
+        }
 
         // 음식 이름들 수집 (중복 제거)
         final foodNames = group
@@ -544,7 +562,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         }
       }
 
-      debugPrint('[DiaryInputModal] Created $createdCount meal records from ${foodPhotos.length} food photos');
+      debugPrint('[DiaryInputModal] Created $createdCount meal records from ${foodPhotos.length} food photos (skipped $skippedCount duplicates)');
     } catch (e) {
       debugPrint('[DiaryInputModal] Error creating meal records: $e');
       // 에러가 나도 일기 저장은 성공했으므로 무시

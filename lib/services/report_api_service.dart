@@ -93,9 +93,9 @@ class ReportApiService {
       final formData = FormData();
 
       // JSON 데이터를 FormData에 추가
-      debugPrint('[ReportApiService] Glucose range: ${glucoseRange.toJson()}');
-      debugPrint('[ReportApiService] Simplified feed data count: ${simplifiedFeedData.length}');
-      debugPrint('[ReportApiService] Simplified diary data count: ${simplifiedDiaryData.length}');
+      // debugPrint('[ReportApiService] Glucose range: ${glucoseRange.toJson()}');
+      // debugPrint('[ReportApiService] Simplified feed data count: ${simplifiedFeedData.length}');
+      // debugPrint('[ReportApiService] Simplified diary data count: ${simplifiedDiaryData.length}');
       try {
         formData.fields.addAll([
           MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
@@ -106,7 +106,10 @@ class ReportApiService {
           MapEntry('endDate', endDate.toIso8601String()),
           MapEntry(
             'data',
-            _encodeJson({'feed': simplifiedFeedData, 'diary': simplifiedDiaryData}),
+            _encodeJson({
+              'feed': simplifiedFeedData,
+              'diary': simplifiedDiaryData,
+            }),
           ),
         ]);
         // debugPrint('[ReportApiService] FormData fields added successfully');
