@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -14,6 +13,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
+import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/features/diary/diary_image_viewer.dart';
@@ -120,54 +120,60 @@ class DiaryScreenState extends State<DiaryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return LargeTitleScrollView(
-      title: l10n.diary,
-      onRefresh: _onRefresh,
-      trailing: const SettingsIconButton(),
-      slivers: [
-        if (diaryProvider.isLoading)
-          const SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: CircularProgressIndicator()),
-          )
-        else if (diaryProvider.entries.isEmpty)
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      CupertinoIcons.book_fill,
-                      size: 80,
-                      color: AppTheme.primaryColor,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(l10n.noRecords, style: theme.textTheme.titleLarge),
-                    const SizedBox(height: 8),
-                    Text(l10n.startTracking, style: theme.textTheme.bodyMedium),
-                  ],
+    return GestureDetector(
+      onTap: () {
+        // Close any open swipeable card when tapping empty space
+        SwipeableCardState.closeAnyOpenCard();
+      },
+      child: LargeTitleScrollView(
+        title: l10n.diary,
+        onRefresh: _onRefresh,
+        trailing: const SettingsIconButton(),
+        slivers: [
+          if (diaryProvider.isLoading)
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (diaryProvider.entries.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.book_fill,
+                        size: 80,
+                        color: AppTheme.primaryColor,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(l10n.noRecords, style: theme.textTheme.titleLarge),
+                      const SizedBox(height: 8),
+                      Text(l10n.startTracking, style: theme.textTheme.bodyMedium),
+                    ],
+                  ),
                 ),
               ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.only(bottom: 80),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final entry = diaryProvider.entries[index];
+                  return _DiaryItemCard(
+                    entry: entry,
+                    onEdit: () => _editEntry(entry),
+                    onDelete: () => _deleteEntry(entry),
+                  );
+                }, childCount: diaryProvider.entries.length),
+              ),
             ),
-          )
-        else
-          SliverPadding(
-            padding: const EdgeInsets.only(bottom: 80),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final entry = diaryProvider.entries[index];
-                return _DiaryItemCard(
-                  entry: entry,
-                  onEdit: () => _editEntry(entry),
-                  onDelete: () => _deleteEntry(entry),
-                );
-              }, childCount: diaryProvider.entries.length),
-            ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -262,23 +268,8 @@ class _DiaryItemCard extends StatefulWidget {
   State<_DiaryItemCard> createState() => _DiaryItemCardState();
 }
 
-class _DiaryItemCardState extends State<_DiaryItemCard>
-    with TickerProviderStateMixin {
+class _DiaryItemCardState extends State<_DiaryItemCard> {
   bool _isExpanded = false;
-  bool _shouldOpenSlidable = false;
-  late final SlidableController _slidableController;
-
-  @override
-  void initState() {
-    super.initState();
-    _slidableController = SlidableController(this);
-  }
-
-  @override
-  void dispose() {
-    _slidableController.dispose();
-    super.dispose();
-  }
 
   String _formatDate(DateTime date) {
     // 로케일에 맞는 날짜 형식 사용
@@ -314,165 +305,116 @@ class _DiaryItemCardState extends State<_DiaryItemCard>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: GestureDetector(
-          onHorizontalDragEnd: (details) async {
-            // 왼쪽 스와이프 감지 (velocity가 음수)
-            if (details.primaryVelocity != null &&
-                details.primaryVelocity! < -500) {
-              if (_isExpanded) {
-                // 펼쳐진 상태면 먼저 줄이기
-                setState(() {
-                  _isExpanded = false;
-                  _shouldOpenSlidable = true;
-                });
-
-                // 애니메이션 완료 대기 (300ms)
-                await Future.delayed(const Duration(milliseconds: 300));
-
-                if (mounted && _shouldOpenSlidable) {
-                  // Slidable 자동 열기
-                  _slidableController.openEndActionPane();
-                  setState(() {
-                    _shouldOpenSlidable = false;
-                  });
-                }
-              }
-            }
-          },
-          child: Slidable(
-            key: Key(widget.entry.id),
-            controller: _slidableController,
-            enabled: !_isExpanded,
-            endActionPane: ActionPane(
-              motion: const ScrollMotion(),
-              extentRatio: 0.35,
-              children: [
-                CustomSlidableAction(
-                  onPressed: (context) => widget.onEdit(),
-                  backgroundColor: CupertinoColors.systemBlue,
-                  foregroundColor: CupertinoColors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: const Icon(CupertinoIcons.pencil, size: 24),
-                ),
-                CustomSlidableAction(
-                  onPressed: (context) => widget.onDelete(),
-                  backgroundColor: CupertinoColors.systemRed,
-                  foregroundColor: CupertinoColors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: const Icon(CupertinoIcons.delete, size: 24),
-                ),
-              ],
-            ),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: context.decorations.card.copyWith(
-                border: Border.all(color: context.colors.divider, width: 1),
+    return SwipeableCard(
+      swipeable: true,
+      useEdit: true,
+      useRemove: true,
+      onEdit: widget.onEdit,
+      onDelete: widget.onDelete,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+        padding: const EdgeInsets.all(16),
+        decoration: context.decorations.card.copyWith(
+          border: Border.all(color: context.colors.divider, width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 날짜
+            Text(
+              _formatDate(widget.entry.timestamp),
+              style: context.textStyles.tileSubtitle.copyWith(
+                fontSize: 12,
+                color: context.colors.textSecondary,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            const SizedBox(height: 8),
+
+            // 내용
+            if (widget.entry.content.isNotEmpty) ...[
+              AnimatedCrossFade(
+                duration: const Duration(milliseconds: 300),
+                firstCurve: Curves.easeInOutCubic,
+                secondCurve: Curves.easeInOutCubic,
+                sizeCurve: Curves.easeInOutCubic,
+                crossFadeState: _isExpanded
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                alignment: Alignment.topLeft,
+                firstChild: Text(
+                  _getPreviewText(widget.entry.content),
+                  style: context.textStyles.bodyText,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                secondChild: Text(
+                  widget.entry.content,
+                  style: context.textStyles.bodyText,
+                ),
+              ),
+              // 더보기/줄이기 버튼
+              if (_needsExpansion(widget.entry.content))
+                GestureDetector(
+                  onTap: _toggleExpanded,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      _isExpanded ? l10n.showLess : l10n.showMore,
+                      style: context.textStyles.tileSubtitle.copyWith(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+
+            // 식사 감지 안내 메시지
+            if (widget.entry.hasMealDetected) ...[
+              const SizedBox(height: 8),
+              Row(
                 children: [
-                  // 날짜
+                  Icon(
+                    CupertinoIcons.checkmark_circle_fill,
+                    size: 14,
+                    color: AppTheme.iconGreen,
+                  ),
+                  const SizedBox(width: 4),
                   Text(
-                    _formatDate(widget.entry.timestamp),
+                    l10n.mealAddedToFeed,
                     style: context.textStyles.tileSubtitle.copyWith(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: context.colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 8),
-
-                  // 내용
-                  if (widget.entry.content.isNotEmpty) ...[
-                    AnimatedCrossFade(
-                      duration: const Duration(milliseconds: 300),
-                      firstCurve: Curves.easeInOutCubic,
-                      secondCurve: Curves.easeInOutCubic,
-                      sizeCurve: Curves.easeInOutCubic,
-                      crossFadeState: _isExpanded
-                          ? CrossFadeState.showSecond
-                          : CrossFadeState.showFirst,
-                      alignment: Alignment.topLeft,
-                      firstChild: Text(
-                        _getPreviewText(widget.entry.content),
-                        style: context.textStyles.bodyText,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      secondChild: Text(
-                        widget.entry.content,
-                        style: context.textStyles.bodyText,
-                      ),
-                    ),
-                    // 더보기/줄이기 버튼
-                    if (_needsExpansion(widget.entry.content))
-                      GestureDetector(
-                        onTap: _toggleExpanded,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            _isExpanded ? l10n.showLess : l10n.showMore,
-                            style: context.textStyles.tileSubtitle.copyWith(
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-
-                  // 식사 감지 안내 메시지
-                  if (widget.entry.hasMealDetected) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          CupertinoIcons.checkmark_circle_fill,
-                          size: 14,
-                          color: AppTheme.iconGreen,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          l10n.mealAddedToFeed,
-                          style: context.textStyles.tileSubtitle.copyWith(
-                            fontSize: 11,
-                            color: context.colors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-
-                  // 사진 목록 (모두 표시)
-                  if (widget.entry.files.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: widget.entry.files.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final file = entry.value;
-                        return GestureDetector(
-                          onTap: () {
-                            DiaryImageViewer.show(
-                              context,
-                              files: widget.entry.files,
-                              initialIndex: index,
-                            );
-                          },
-                          child: _DiaryImageWidget(filePath: file.filePath),
-                        );
-                      }).toList(),
-                    ),
-                  ],
                 ],
               ),
-            ),
-          ),
+            ],
+
+            // 사진 목록 (모두 표시)
+            if (widget.entry.files.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: widget.entry.files.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final file = entry.value;
+                  return GestureDetector(
+                    onTap: () {
+                      DiaryImageViewer.show(
+                        context,
+                        files: widget.entry.files,
+                        initialIndex: index,
+                      );
+                    },
+                    child: _DiaryImageWidget(filePath: file.filePath),
+                  );
+                }).toList(),
+              ),
+            ],
+          ],
         ),
       ),
     );

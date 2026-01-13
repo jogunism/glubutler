@@ -9,8 +9,17 @@ class SwipeableCard extends StatefulWidget {
   /// 스와이프 가능 여부
   final bool swipeable;
 
+  /// 수정 기능 사용 여부
+  final bool useEdit;
+
+  /// 삭제 기능 사용 여부
+  final bool useRemove;
+
   /// 삭제 버튼 클릭 시 콜백
   final VoidCallback? onDelete;
+
+  /// 수정 버튼 클릭 시 콜백
+  final VoidCallback? onEdit;
 
   /// 카드 높이 (기본값: null - 자동)
   final double? height;
@@ -22,7 +31,10 @@ class SwipeableCard extends StatefulWidget {
     super.key,
     required this.child,
     this.swipeable = false,
+    this.useEdit = false,
+    this.useRemove = true,
     this.onDelete,
+    this.onEdit,
     this.height,
     this.bounceable = false,
   });
@@ -44,7 +56,6 @@ class _SwipeableCardState extends State<SwipeableCard>
   late AnimationController _bounceController;
   late Animation<double> _bounceAnimation;
   double _dragExtent = 0;
-  final double _maxDragDistance = -100; // 25% of screen width roughly
 
   // 전역적으로 열린 카드 추적
   static _SwipeableCardState? _currentlyOpenCard;
@@ -52,6 +63,10 @@ class _SwipeableCardState extends State<SwipeableCard>
   static void _closeAnyOpenCard() {
     _currentlyOpenCard?._closeCard();
   }
+
+  // 최대 드래그 거리 (수정/삭제 기능 여부에 따라 달라짐)
+  double get _maxDragDistance =>
+      (widget.useEdit && widget.useRemove) ? -160.0 : -100.0;
 
   @override
   void initState() {
@@ -67,15 +82,16 @@ class _SwipeableCardState extends State<SwipeableCard>
       vsync: this,
     );
 
-    _bounceAnimation = Tween<double>(
-      begin: 0.0,
-      end: -25.0, // 왼쪽으로 25px 이동
-    ).animate(
-      CurvedAnimation(
-        parent: _bounceController,
-        curve: Curves.easeInOutCubic, // S자 커브
-      ),
-    );
+    _bounceAnimation =
+        Tween<double>(
+          begin: 0.0,
+          end: -25.0, // 왼쪽으로 25px 이동
+        ).animate(
+          CurvedAnimation(
+            parent: _bounceController,
+            curve: Curves.easeInOutCubic, // S자 커브
+          ),
+        );
 
     // bounceable이 true이면 렌더링 후 바운스 실행
     if (widget.bounceable) {
@@ -162,6 +178,7 @@ class _SwipeableCardState extends State<SwipeableCard>
   }
 
   void _closeCard() {
+    if (!mounted) return;
     if (_dragExtent < 0) {
       // 현재 위치에서 부드럽게 닫기
       _controller.value = (_dragExtent / _maxDragDistance).abs();
@@ -195,34 +212,110 @@ class _SwipeableCardState extends State<SwipeableCard>
     // 스와이프 가능한 경우
     return Stack(
       children: [
-        // 가장 아래: 빨간 배경 (카드와 동일한 크기)
-        Positioned.fill(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            height: widget.height,
-          ),
-        ),
-        // 중간: 휴지통 버튼 (항상 표시)
-        Positioned(
-          right: 43,
-          top: 0,
-          bottom: 0,
-          child: Center(
-            child: IconButton(
-              icon: const Icon(
-                Icons.delete_outline,
-                color: Colors.white,
-                size: 28,
+        // 1. 가장 아래: 빨간 배경 (useRemove가 true일 때만)
+        if (widget.useRemove)
+          Positioned.fill(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(12),
               ),
-              onPressed: widget.onDelete,
+              height: widget.height,
             ),
           ),
-        ),
-        // 가장 위: 스와이프 가능한 카드 (바운스 + 드래그 애니메이션)
+        // 2. 그 위: 파란 배경 (useEdit가 true일 때만, 왼쪽 60 마진)
+        if (widget.useEdit)
+          Positioned(
+            left: 60,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              margin: EdgeInsets.only(
+                left: 16,
+                right: (widget.useEdit && widget.useRemove) ? 96 : 16,
+                top: 5,
+                bottom: 5,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              height: widget.height,
+            ),
+          ),
+        // 3. 그 위: 버튼들
+        // 수정/삭제 둘 다 있을 때
+        if (widget.useEdit && widget.useRemove) ...[
+          // 수정 버튼 (왼쪽)
+          Positioned(
+            right: 110,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                onPressed: widget.onEdit,
+              ),
+            ),
+          ),
+          // 삭제 버튼 (오른쪽)
+          Positioned(
+            right: 30,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                onPressed: widget.onDelete,
+              ),
+            ),
+          ),
+        ]
+        // 수정만 있을 때
+        else if (widget.useEdit)
+          Positioned(
+            right: 43,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                onPressed: widget.onEdit,
+              ),
+            ),
+          )
+        // 삭제만 있을 때
+        else if (widget.useRemove)
+          Positioned(
+            right: 43,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                onPressed: widget.onDelete,
+              ),
+            ),
+          ),
+        // 4. 가장 위: 스와이프 가능한 카드 (바운스 + 드래그 애니메이션)
         GestureDetector(
           onHorizontalDragUpdate: _handleDragUpdate,
           onHorizontalDragEnd: _handleDragEnd,
