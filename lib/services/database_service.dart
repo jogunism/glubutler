@@ -9,6 +9,7 @@ import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/models/report.dart';
+import 'package:glu_butler/models/report_guide_summary.dart';
 
 import 'database/database_schema.dart';
 import 'database/health_dao.dart';
@@ -158,6 +159,12 @@ class DatabaseService {
   Future<List<Report>> getAllReports() => reportDao.getAllReports();
   Future<Report?> getReportById(int id) => reportDao.getReportById(id);
   Future<int> deleteReport(int id) => reportDao.deleteReport(id);
+
+  // Report Guide Summaries
+  Future<int> insertGuideSummary(ReportGuideSummary summary) => reportDao.insertGuideSummary(summary);
+  Future<List<ReportGuideSummary>> getAllGuideSummaries({int limit = 10}) => reportDao.getAllGuideSummaries(limit: limit);
+  Future<ReportGuideSummary?> getGuideSummaryByDate(String reportDate) => reportDao.getGuideSummaryByDate(reportDate);
+  Future<int> deleteGuideSummary(int id) => reportDao.deleteGuideSummary(id);
 
   // ============ Utility Methods ============
 

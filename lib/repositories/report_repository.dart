@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/models/user_identity.dart';
@@ -7,6 +8,7 @@ import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/utils/report_parser.dart';
 
 /// Repository for report generation and management.
 ///
@@ -75,6 +77,12 @@ class ReportRepository {
     debugPrint('[ReportRepository] Image paths count: ${imagePaths.length}');
 
     try {
+      // 이전 가이드 요약 가져오기 (최대 10개)
+      final previousGuideSummaries = await _databaseService.getAllGuideSummaries(limit: 10);
+      final previousGuideSummariesJson = previousGuideSummaries
+          .map((summary) => summary.toJson())
+          .toList();
+
       // 실제 API 호출
       final reportContent = await _reportApi.generateReport(
         userIdentity: userIdentity,
@@ -86,8 +94,10 @@ class ReportRepository {
         simplifiedFeedData: simplifiedFeedData,
         simplifiedDiaryData: simplifiedDiaryData,
         imagePaths: imagePaths,
+        previousGuideSummaries: previousGuideSummariesJson,
         onProgress: onProgress,
       );
+
       // API 호출 성공 시에만 DB에 저장
       final report = Report(
         startDate: startDate,
@@ -95,6 +105,22 @@ class ReportRepository {
         content: reportContent,
       );
       await _databaseService.insertReport(report);
+
+      // 리포트에서 가이드 요약 추출 및 저장
+      try {
+        final reportDate = DateFormat('yyyy-MM-dd').format(endDate);
+        final guideSummary = ReportParser.extractGuideSummary(reportContent, reportDate);
+
+        if (guideSummary != null) {
+          await _databaseService.insertGuideSummary(guideSummary);
+          debugPrint('[ReportRepository] Guide summary extracted and saved');
+        } else {
+          debugPrint('[ReportRepository] No guide summary found in report');
+        }
+      } catch (e) {
+        debugPrint('[ReportRepository] Failed to extract/save guide summary: $e');
+        // 가이드 요약 저장 실패해도 리포트는 반환
+      }
 
       return report;
     } catch (e) {

@@ -15,6 +15,7 @@ class DatabaseSchema {
   static const String tableDiary = 'diary_entries';
   static const String tableDiaryFiles = 'diary_files';
   static const String tableReports = 'reports';
+  static const String tableReportGuideSummaries = 'report_guide_summaries';
 
   /// Create all tables (called on first install)
   static Future<void> onCreate(Database db, int version) async {
@@ -29,6 +30,7 @@ class DatabaseSchema {
     await _createDiaryTable(db);
     await _createDiaryFilesTable(db);
     await _createReportsTable(db);
+    await _createReportGuideSummariesTable(db);
     await _createIndexes(db);
 
     debugPrint('[DatabaseSchema] Database tables created successfully');
@@ -162,6 +164,18 @@ class DatabaseSchema {
     ''');
   }
 
+  static Future<void> _createReportGuideSummariesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE $tableReportGuideSummaries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        report_date TEXT NOT NULL,
+        improvements TEXT NOT NULL,
+        needs_improvement TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+  }
+
   // ============ Index Creation ============
 
   static Future<void> _createIndexes(Database db) async {
@@ -181,5 +195,7 @@ class DatabaseSchema {
         'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
     await db.execute(
         'CREATE INDEX idx_reports_created_at ON $tableReports (created_at)');
+    await db.execute(
+        'CREATE INDEX idx_report_guide_summaries_report_date ON $tableReportGuideSummaries (report_date)');
   }
 }

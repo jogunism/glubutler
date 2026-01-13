@@ -73,6 +73,7 @@ class ReportApiService {
   /// [simplifiedFeedData]: 간소화된 피드 데이터 (type, time, value만 포함)
   /// [simplifiedDiaryData]: 간소화된 일기 데이터 (time, content, files만 포함)
   /// [imagePaths]: 일기 이미지 파일 경로 리스트
+  /// [previousGuideSummaries]: 이전 리포트 가이드 요약 리스트 (연속성 있는 리포트 생성용)
   /// [onProgress]: 업로드 진행률 콜백 (옵션)
   ///
   /// Returns: AI가 생성한 Markdown 형식의 리포트 텍스트
@@ -86,6 +87,7 @@ class ReportApiService {
     required List<Map<String, dynamic>> simplifiedFeedData,
     required List<Map<String, dynamic>> simplifiedDiaryData,
     List<String>? imagePaths,
+    List<Map<String, dynamic>>? previousGuideSummaries,
     void Function(int sent, int total)? onProgress,
   }) async {
     try {
@@ -112,6 +114,14 @@ class ReportApiService {
             }),
           ),
         ]);
+
+        // 이전 가이드 요약 추가 (있는 경우에만)
+        if (previousGuideSummaries != null && previousGuideSummaries.isNotEmpty) {
+          formData.fields.add(
+            MapEntry('previousGuideSummaries', jsonEncode(previousGuideSummaries)),
+          );
+        }
+
         // debugPrint('[ReportApiService] FormData fields added successfully');
       } catch (e) {
         debugPrint('[ReportApiService] Error adding fields to FormData: $e');

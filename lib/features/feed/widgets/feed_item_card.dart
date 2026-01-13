@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
@@ -10,106 +9,14 @@ import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
-import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/core/widgets/swipeable_card.dart';
 
-class FeedItemCard extends StatefulWidget {
+class FeedItemCard extends StatelessWidget {
   final FeedItem item;
 
   const FeedItemCard({super.key, required this.item});
-
-  @override
-  State<FeedItemCard> createState() => _FeedItemCardState();
-}
-
-class _FeedItemCardState extends State<FeedItemCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _bounceController;
-  late Animation<Offset> _bounceAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 120),
-      vsync: this,
-    );
-
-    _bounceAnimation =
-        Tween<Offset>(begin: Offset.zero, end: const Offset(-0.04, 0)).animate(
-          CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
-        );
-
-    // Register bounce callback with provider if this item is bouncable
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<FeedProvider>();
-      if (provider.bouncableItemIds.contains(widget.item.id)) {
-        provider.registerBounceCallback(widget.item.id, _performBounce);
-      }
-    });
-  }
-
-  void _performBounce() {
-    if (!mounted) return;
-
-    final provider = context.read<FeedProvider>();
-    if (!provider.bouncableItemIds.contains(widget.item.id)) return;
-
-    _bounceController.forward().then((_) {
-      if (mounted) {
-        _bounceController.reverse();
-      }
-    });
-  }
-
-  @override
-  void didUpdateWidget(FeedItemCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // If the item ID changed, update bounce callback registration
-    if (oldWidget.item.id != widget.item.id) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-
-        final provider = context.read<FeedProvider>();
-
-        // Unregister old callback
-        provider.unregisterBounceCallback(oldWidget.item.id);
-
-        // Register new callback if this item is bouncable
-        if (provider.bouncableItemIds.contains(widget.item.id)) {
-          provider.registerBounceCallback(widget.item.id, _performBounce);
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    // Unregister callback - use try-catch to handle cases where context is no longer valid
-    try {
-      if (mounted) {
-        context.read<FeedProvider>().unregisterBounceCallback(widget.item.id);
-      }
-    } catch (e) {
-      // Context may not be available during disposal, ignore
-    }
-    _bounceController.dispose();
-    super.dispose();
-  }
-
-  void _onTap() {
-    // Only bounce if this is a deletable item (glucose or insulin from our app)
-    final isDeletable =
-        widget.item.type == FeedItemType.glucose ||
-        widget.item.type == FeedItemType.insulin;
-    if (isDeletable) {
-      _bounceController.forward().then((_) {
-        _bounceController.reverse();
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,84 +24,23 @@ class _FeedItemCardState extends State<FeedItemCard>
     final l10n = AppLocalizations.of(context)!;
     final settings = context.watch<SettingsService>();
     final time = Jiffy.parseFromDateTime(
-      widget.item.timestamp,
+      item.timestamp,
     ).format(pattern: 'HH:mm');
     final title = _getItemTitle(l10n);
 
     // Hide source name for steps and water group items
     final sourceName =
-        (widget.item.type == FeedItemType.steps ||
-            widget.item.type == FeedItemType.waterGroup)
+        (item.type == FeedItemType.steps ||
+            item.type == FeedItemType.waterGroup)
         ? null
-        : widget.item.sourceName;
+        : item.sourceName;
 
-    // Glucose and insulin items can be deleted with swipe
-    final isDeletable =
-        widget.item.type == FeedItemType.glucose ||
-        widget.item.type == FeedItemType.insulin;
+    // Glucose and insulin items can be swiped
+    final isSwipeable =
+        item.type == FeedItemType.glucose ||
+        item.type == FeedItemType.insulin;
 
-    if (isDeletable) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        child: Dismissible(
-          key: Key(widget.item.id),
-          direction: DismissDirection.endToStart,
-          confirmDismiss: (direction) async {
-            return await _showDeleteConfirmation(context, l10n);
-          },
-          onDismissed: (direction) async {
-            if (widget.item.type == FeedItemType.glucose) {
-              await _deleteGlucoseItem(context);
-            } else if (widget.item.type == FeedItemType.insulin) {
-              await _deleteInsulinItem(context);
-            }
-          },
-          background: Container(
-            padding: const EdgeInsets.only(right: 20),
-            alignment: Alignment.centerRight,
-            decoration: BoxDecoration(
-              color: AppTheme.iconRed,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(Icons.delete, color: Colors.white, size: 28),
-          ),
-          child: SlideTransition(
-            position: _bounceAnimation,
-            child: GestureDetector(
-              onTap: _onTap,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: _buildCardContent(
-                    context,
-                    theme,
-                    l10n,
-                    settings,
-                    time,
-                    title,
-                    sourceName,
-                    includeMargin: false,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    // Non-glucose items: no swipe delete
-    return _buildCardContent(
+    final cardContent = _buildCardContent(
       context,
       theme,
       l10n,
@@ -204,64 +50,68 @@ class _FeedItemCardState extends State<FeedItemCard>
       sourceName,
       includeMargin: true,
     );
+
+    if (isSwipeable) {
+      return SwipeableCard(
+        swipeable: true,
+        onDelete: () => _deleteItem(context),
+        child: cardContent,
+      );
+    }
+
+    return cardContent;
   }
 
-  Future<bool?> _showDeleteConfirmation(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) {
-    return showCupertinoDialog<bool>(
+  void _deleteItem(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // 삭제 확인 다이얼로그 표시
+    final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
+      builder: (context) => AlertDialog(
+        title: Text(l10n.delete),
         content: Text(l10n.deleteGlucoseConfirmation),
         actions: [
-          CupertinoDialogAction(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(l10n.cancel),
           ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
+          TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.delete),
+            child: Text(
+              l10n.delete,
+              style: const TextStyle(color: AppTheme.primaryColor),
+            ),
           ),
         ],
       ),
     );
-  }
 
-  Future<void> _deleteGlucoseItem(BuildContext context) async {
-    final provider = context.read<FeedProvider>();
-    final l10n = AppLocalizations.of(context)!;
+    // 사용자가 취소를 선택한 경우
+    if (confirmed != true) return;
 
-    final success = await provider.deleteGlucoseRecord(
-      widget.item.glucoseRecord!.id,
-      widget.item.timestamp,
-    );
+    print('[FeedItemCard] Delete button pressed for item: ${item.id}');
+    final feedProvider = context.read<FeedProvider>();
 
-    if (context.mounted) {
-      if (success) {
-        TopBanner.success(context, message: l10n.glucoseDeleted);
-      } else {
-        TopBanner.error(context, message: l10n.deleteFailed);
+    try {
+      // 아이템 타입에 따라 삭제
+      if (item.type == FeedItemType.glucose) {
+        print('[FeedItemCard] Deleting glucose record...');
+        final result = await feedProvider.deleteGlucoseRecord(
+          item.id,
+          item.timestamp,
+        );
+        print('[FeedItemCard] Delete glucose result: $result');
+      } else if (item.type == FeedItemType.insulin) {
+        print('[FeedItemCard] Deleting insulin record...');
+        final result = await feedProvider.deleteInsulinRecord(
+          item.id,
+          item.timestamp,
+        );
+        print('[FeedItemCard] Delete insulin result: $result');
       }
-    }
-  }
-
-  Future<void> _deleteInsulinItem(BuildContext context) async {
-    final provider = context.read<FeedProvider>();
-    final l10n = AppLocalizations.of(context)!;
-
-    final success = await provider.deleteInsulinRecord(
-      widget.item.insulinRecord!.id,
-      widget.item.timestamp,
-    );
-
-    if (context.mounted) {
-      if (success) {
-        TopBanner.success(context, message: l10n.insulinDeleted);
-      } else {
-        TopBanner.error(context, message: l10n.deleteFailed);
-      }
+    } catch (e) {
+      print('[FeedItemCard] Delete error: $e');
     }
   }
 
@@ -278,16 +128,16 @@ class _FeedItemCardState extends State<FeedItemCard>
     final baseDecoration = context.decorations.card;
     // Large size for glucose and insulin, smaller for others
     final isLargeItem =
-        widget.item.type == FeedItemType.glucose ||
-        widget.item.type == FeedItemType.insulin;
+        item.type == FeedItemType.glucose ||
+        item.type == FeedItemType.insulin;
 
     // Hide time for steps and water group items
     final shouldShowTime =
-        widget.item.type != FeedItemType.steps &&
-        widget.item.type != FeedItemType.waterGroup;
+        item.type != FeedItemType.steps &&
+        item.type != FeedItemType.waterGroup;
 
     // For sleep group, show time range instead of single time
-    final isSleepGroup = widget.item.type == FeedItemType.sleepGroup;
+    final isSleepGroup = item.type == FeedItemType.sleepGroup;
 
     // Large items (glucose & insulin): full size, others: 70% size
     final verticalMargin = isLargeItem ? 6.0 : 4.0;
@@ -300,9 +150,9 @@ class _FeedItemCardState extends State<FeedItemCard>
           ? EdgeInsets.symmetric(horizontal: 16, vertical: verticalMargin)
           : EdgeInsets.zero,
       padding: EdgeInsets.all(cardPadding),
-      decoration: includeMargin
-          ? baseDecoration.copyWith(borderRadius: BorderRadius.circular(16))
-          : baseDecoration,
+      decoration: baseDecoration.copyWith(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: isLargeItem
@@ -352,7 +202,7 @@ class _FeedItemCardState extends State<FeedItemCard>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (isSleepGroup)
-                    _buildSleepTimeRange(theme)
+                    _buildSleepTimeRange(context, theme)
                   else
                     Text(
                       time,
@@ -370,7 +220,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   String _getItemTitle(AppLocalizations l10n) {
-    switch (widget.item.type) {
+    switch (item.type) {
       case FeedItemType.glucose:
         return l10n.bloodGlucose;
       case FeedItemType.exercise:
@@ -402,7 +252,7 @@ class _FeedItemCardState extends State<FeedItemCard>
     ThemeData theme,
     AppLocalizations l10n,
   ) {
-    switch (widget.item.type) {
+    switch (item.type) {
       case FeedItemType.glucose:
         return _buildGlucoseValue(context, theme);
       case FeedItemType.exercise:
@@ -410,11 +260,11 @@ class _FeedItemCardState extends State<FeedItemCard>
       case FeedItemType.sleep:
         return _buildSleepValue(theme);
       case FeedItemType.meal:
-        return _buildMealValue(theme);
+        return _buildMealValue(context, theme);
       case FeedItemType.water:
         return _buildWaterValue(theme);
       case FeedItemType.insulin:
-        return _buildInsulinValue(theme);
+        return _buildInsulinValue(context, theme);
       case FeedItemType.mindfulness:
         return _buildMindfulnessValue(theme);
       case FeedItemType.steps:
@@ -429,7 +279,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildGlucoseValue(BuildContext context, ThemeData theme) {
-    final glucose = widget.item.glucoseRecord!;
+    final glucose = item.glucoseRecord!;
     final settings = context.watch<SettingsService>();
     final unit = settings.unit;
     final l10n = AppLocalizations.of(context)!;
@@ -480,7 +330,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildExerciseValue(ThemeData theme) {
-    final exercise = widget.item.exerciseRecord!;
+    final exercise = item.exerciseRecord!;
     return Row(
       children: [
         Text(
@@ -502,7 +352,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildSleepValue(ThemeData theme) {
-    final sleep = widget.item.sleepRecord!;
+    final sleep = item.sleepRecord!;
     return Text(
       sleep.formattedDuration,
       style: theme.textTheme.titleLarge?.copyWith(
@@ -512,8 +362,8 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
-  Widget _buildMealValue(ThemeData theme) {
-    final meal = widget.item.mealRecord!;
+  Widget _buildMealValue(BuildContext context, ThemeData theme) {
+    final meal = item.mealRecord!;
     final l10n = AppLocalizations.of(context)!;
 
     // 시간 기반 식사 타입 결정
@@ -543,7 +393,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildWaterValue(ThemeData theme) {
-    final water = widget.item.waterRecord!;
+    final water = item.waterRecord!;
     return Text(
       water.formattedAmount(),
       style: theme.textTheme.titleLarge?.copyWith(
@@ -553,8 +403,8 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
-  Widget _buildInsulinValue(ThemeData theme) {
-    final insulin = widget.item.insulinRecord!;
+  Widget _buildInsulinValue(BuildContext context, ThemeData theme) {
+    final insulin = item.insulinRecord!;
     final l10n = AppLocalizations.of(context)!;
 
     // Get localized insulin type name (only rapidActing and longActing are used in UI)
@@ -611,7 +461,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildMindfulnessValue(ThemeData theme) {
-    final mindfulness = widget.item.mindfulnessRecord!;
+    final mindfulness = item.mindfulnessRecord!;
     return Text(
       mindfulness.formattedDuration,
       style: theme.textTheme.titleLarge?.copyWith(
@@ -622,7 +472,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildStepsValue(ThemeData theme, AppLocalizations l10n) {
-    final stepsData = widget.item.stepsData!;
+    final stepsData = item.stepsData!;
     final steps = stepsData['steps'] as int;
     final distanceKm = stepsData['distanceKm'] as double?;
 
@@ -645,7 +495,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildSleepGroupValue(ThemeData theme) {
-    final sleepGroup = widget.item.sleepGroup!;
+    final sleepGroup = item.sleepGroup!;
 
     return Text(
       sleepGroup.formattedDuration,
@@ -656,8 +506,8 @@ class _FeedItemCardState extends State<FeedItemCard>
     );
   }
 
-  Widget _buildSleepTimeRange(ThemeData theme) {
-    final sleepGroup = widget.item.sleepGroup!;
+  Widget _buildSleepTimeRange(BuildContext context, ThemeData theme) {
+    final sleepGroup = item.sleepGroup!;
 
     // Format time as HH:mm (24-hour format)
     String formatTime(DateTime time) {
@@ -680,7 +530,7 @@ class _FeedItemCardState extends State<FeedItemCard>
   }
 
   Widget _buildWaterGroupValue(ThemeData theme) {
-    final waterGroup = widget.item.waterGroup!;
+    final waterGroup = item.waterGroup!;
     return Text(
       waterGroup.formattedAmount(),
       style: theme.textTheme.titleLarge?.copyWith(
@@ -700,15 +550,15 @@ class _FeedItemCardState extends State<FeedItemCard>
     Color backgroundColor;
     // Large size for glucose and insulin
     final isLargeItem =
-        widget.item.type == FeedItemType.glucose ||
-        widget.item.type == FeedItemType.insulin;
+        item.type == FeedItemType.glucose ||
+        item.type == FeedItemType.insulin;
 
-    switch (widget.item.type) {
+    switch (item.type) {
       case FeedItemType.glucose:
         icon = Icons.water_drop;
         // Always use red for glucose drop icon
         color = AppTheme.iconRed;
-        final glucose = widget.item.glucoseRecord;
+        final glucose = item.glucoseRecord;
         if (glucose != null) {
           // Calculate 5-level status for background color
           final glucoseRange = settings.glucoseRange;
@@ -902,5 +752,4 @@ class _FeedItemCardState extends State<FeedItemCard>
       ),
     );
   }
-
 }

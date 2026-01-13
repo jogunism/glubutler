@@ -12,6 +12,7 @@ import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/features/feed/widgets/feed_item_card.dart';
+import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/features/feed/widgets/cgm_group_card.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -90,29 +91,36 @@ class _FeedScreenState extends State<FeedScreen> {
 
     return Consumer<FeedProvider>(
       builder: (context, provider, child) {
-        return LargeTitleScrollView(
-          title: l10n.feed,
-          onRefresh: _onRefresh,
-          trailing: const SettingsIconButton(),
-          slivers: [
-              // Loading indicator
-            if (provider.isLoading && provider.items.isEmpty && provider.activityByDate.isEmpty)
-              const SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            // Empty state
-            else if (provider.items.isEmpty && provider.activityByDate.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: _buildEmptyState(theme, l10n),
-              )
-            // Feed items grouped by date
-            else
-              ..._buildFeedContent(context, provider, l10n),
-          ],
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTapDown: (_) {
+            // 화면 어디든 터치하면 열린 카드 닫기
+            SwipeableCardState.closeAnyOpenCard();
+          },
+          child: LargeTitleScrollView(
+            title: l10n.feed,
+            onRefresh: _onRefresh,
+            trailing: const SettingsIconButton(),
+            slivers: [
+                // Loading indicator
+              if (provider.isLoading && provider.items.isEmpty && provider.activityByDate.isEmpty)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              // Empty state
+              else if (provider.items.isEmpty && provider.activityByDate.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildEmptyState(theme, l10n),
+                )
+              // Feed items grouped by date
+              else
+                ..._buildFeedContent(context, provider, l10n),
+            ],
+          ),
         );
       },
     );
