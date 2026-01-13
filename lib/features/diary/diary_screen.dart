@@ -165,6 +165,7 @@ class DiaryScreenState extends State<DiaryScreen> {
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final entry = diaryProvider.entries[index];
                   return _DiaryItemCard(
+                    key: ValueKey('${entry.id}_${diaryProvider.refreshTimestamp}'),
                     entry: entry,
                     onEdit: () => _editEntry(entry),
                     onDelete: () => _deleteEntry(entry),
@@ -259,6 +260,7 @@ class _DiaryItemCard extends StatefulWidget {
   final VoidCallback onDelete;
 
   const _DiaryItemCard({
+    super.key,
     required this.entry,
     required this.onEdit,
     required this.onDelete,
@@ -311,6 +313,14 @@ class _DiaryItemCardState extends State<_DiaryItemCard> {
       useRemove: true,
       onEdit: widget.onEdit,
       onDelete: widget.onDelete,
+      onSwipeStart: () {
+        // Collapse expanded content when swiping
+        if (_isExpanded) {
+          setState(() {
+            _isExpanded = false;
+          });
+        }
+      },
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),

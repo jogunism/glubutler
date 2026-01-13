@@ -17,6 +17,10 @@ class DiaryProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  // Refresh trigger timestamp - updated on each refresh to reset card states
+  int _refreshTimestamp = 0;
+  int get refreshTimestamp => _refreshTimestamp;
+
   /// 초기화 및 데이터 로드
   Future<void> initialize() async {
     await refreshData();
@@ -30,6 +34,8 @@ class DiaryProvider extends ChangeNotifier {
 
     try {
       _entries = await _repository.fetch();
+      // Update refresh timestamp to reset card states
+      _refreshTimestamp = DateTime.now().millisecondsSinceEpoch;
     } catch (e) {
       _error = e.toString();
       debugPrint('[DiaryProvider] Error loading entries: $e');

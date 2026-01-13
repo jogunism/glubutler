@@ -21,6 +21,9 @@ class SwipeableCard extends StatefulWidget {
   /// 수정 버튼 클릭 시 콜백
   final VoidCallback? onEdit;
 
+  /// 스와이프 시작 시 콜백
+  final VoidCallback? onSwipeStart;
+
   /// 카드 높이 (기본값: null - 자동)
   final double? height;
 
@@ -35,6 +38,7 @@ class SwipeableCard extends StatefulWidget {
     this.useRemove = true,
     this.onDelete,
     this.onEdit,
+    this.onSwipeStart,
     this.height,
     this.bounceable = false,
   });
@@ -128,6 +132,11 @@ class _SwipeableCardState extends State<SwipeableCard>
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
+    // 스와이프 시작 시 콜백 호출 (처음 한 번만)
+    if (_dragExtent == 0 && details.primaryDelta != null && details.primaryDelta! < 0) {
+      widget.onSwipeStart?.call();
+    }
+
     // 다른 카드가 열려있으면 닫기
     if (_currentlyOpenCard != null && _currentlyOpenCard != this) {
       _currentlyOpenCard!._closeCard();
@@ -239,7 +248,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                 bottom: 5,
               ),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: AppTheme.iconBlue,
                 borderRadius: BorderRadius.circular(12),
               ),
               height: widget.height,
