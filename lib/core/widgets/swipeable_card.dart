@@ -82,7 +82,7 @@ class _SwipeableCardState extends State<SwipeableCard>
 
     // 바운스 애니메이션 컨트롤러
     _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
@@ -133,7 +133,9 @@ class _SwipeableCardState extends State<SwipeableCard>
 
   void _handleDragUpdate(DragUpdateDetails details) {
     // 스와이프 시작 시 콜백 호출 (처음 한 번만)
-    if (_dragExtent == 0 && details.primaryDelta != null && details.primaryDelta! < 0) {
+    if (_dragExtent == 0 &&
+        details.primaryDelta != null &&
+        details.primaryDelta! < 0) {
       widget.onSwipeStart?.call();
     }
 
