@@ -86,21 +86,13 @@ class FeedProvider extends ChangeNotifier {
   final Set<String> _bouncableItemIds = {};
   Set<String> get bouncableItemIds => _bouncableItemIds;
 
-  // Map of item ID to bounce callback
-  final Map<String, void Function()> _bounceCallbacks = {};
-
-  void registerBounceCallback(String itemId, void Function() callback) {
-    _bounceCallbacks[itemId] = callback;
-  }
-
-  void unregisterBounceCallback(String itemId) {
-    _bounceCallbacks.remove(itemId);
-  }
+  // Bounce trigger timestamp - updated on each refresh to trigger animations
+  int _bounceTimestamp = 0;
+  int get bounceTimestamp => _bounceTimestamp;
 
   void triggerBounce() {
-    for (final callback in _bounceCallbacks.values) {
-      callback();
-    }
+    _bounceTimestamp = DateTime.now().millisecondsSinceEpoch;
+    notifyListeners();
   }
 
   void setSettingsService(SettingsService settingsService) {

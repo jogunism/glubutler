@@ -23,6 +23,7 @@ class FeedItemCard extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final settings = context.watch<SettingsService>();
+    final feedProvider = context.watch<FeedProvider>();
     final time = Jiffy.parseFromDateTime(
       item.timestamp,
     ).format(pattern: 'HH:mm');
@@ -37,29 +38,25 @@ class FeedItemCard extends StatelessWidget {
 
     // Glucose and insulin items can be swiped
     final isSwipeable =
-        item.type == FeedItemType.glucose ||
-        item.type == FeedItemType.insulin;
+        item.type == FeedItemType.glucose || item.type == FeedItemType.insulin;
 
-    final cardContent = _buildCardContent(
-      context,
-      theme,
-      l10n,
-      settings,
-      time,
-      title,
-      sourceName,
-      includeMargin: true,
+    // Use bounceTimestamp as key to force rebuild on refresh
+    return SwipeableCard(
+      key: isSwipeable ? ValueKey('${item.id}_${feedProvider.bounceTimestamp}') : null,
+      swipeable: isSwipeable,
+      bounceable: isSwipeable,
+      onDelete: () => _deleteItem(context),
+      child: _buildCardContent(
+        context,
+        theme,
+        l10n,
+        settings,
+        time,
+        title,
+        sourceName,
+        includeMargin: true,
+      ),
     );
-
-    if (isSwipeable) {
-      return SwipeableCard(
-        swipeable: true,
-        onDelete: () => _deleteItem(context),
-        child: cardContent,
-      );
-    }
-
-    return cardContent;
   }
 
   void _deleteItem(BuildContext context) async {
@@ -128,19 +125,17 @@ class FeedItemCard extends StatelessWidget {
     final baseDecoration = context.decorations.card;
     // Large size for glucose and insulin, smaller for others
     final isLargeItem =
-        item.type == FeedItemType.glucose ||
-        item.type == FeedItemType.insulin;
+        item.type == FeedItemType.glucose || item.type == FeedItemType.insulin;
 
     // Hide time for steps and water group items
     final shouldShowTime =
-        item.type != FeedItemType.steps &&
-        item.type != FeedItemType.waterGroup;
+        item.type != FeedItemType.steps && item.type != FeedItemType.waterGroup;
 
     // For sleep group, show time range instead of single time
     final isSleepGroup = item.type == FeedItemType.sleepGroup;
 
     // Large items (glucose & insulin): full size, others: 70% size
-    final verticalMargin = isLargeItem ? 6.0 : 4.0;
+    final verticalMargin = 5.0;
     final cardPadding = isLargeItem ? 16.0 : 11.0;
     final iconSpacing = isLargeItem ? 16.0 : 11.0;
     final titleValueSpacing = isLargeItem ? 0.0 : 4.0;
@@ -550,8 +545,7 @@ class FeedItemCard extends StatelessWidget {
     Color backgroundColor;
     // Large size for glucose and insulin
     final isLargeItem =
-        item.type == FeedItemType.glucose ||
-        item.type == FeedItemType.insulin;
+        item.type == FeedItemType.glucose || item.type == FeedItemType.insulin;
 
     switch (item.type) {
       case FeedItemType.glucose:

@@ -15,12 +15,16 @@ class SwipeableCard extends StatefulWidget {
   /// 카드 높이 (기본값: null - 자동)
   final double? height;
 
+  /// 바운스 애니메이션 여부 (렌더링 후 자동 실행)
+  final bool bounceable;
+
   const SwipeableCard({
     super.key,
     required this.child,
     this.swipeable = false,
     this.onDelete,
     this.height,
+    this.bounceable = false,
   });
 
   @override
@@ -35,8 +39,10 @@ class SwipeableCardState {
 }
 
 class _SwipeableCardState extends State<SwipeableCard>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _bounceController;
+  late Animation<double> _bounceAnimation;
   double _dragExtent = 0;
   final double _maxDragDistance = -100; // 25% of screen width roughly
 
@@ -54,11 +60,54 @@ class _SwipeableCardState extends State<SwipeableCard>
       duration: const Duration(milliseconds: 250),
       vsync: this,
     );
+
+    // 바운스 애니메이션 컨트롤러
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _bounceAnimation = Tween<double>(
+      begin: 0.0,
+      end: -25.0, // 왼쪽으로 25px 이동
+    ).animate(
+      CurvedAnimation(
+        parent: _bounceController,
+        curve: Curves.easeInOutCubic, // S자 커브
+      ),
+    );
+
+    // bounceable이 true이면 렌더링 후 바운스 실행
+    if (widget.bounceable) {
+      _scheduleBounce();
+    }
+  }
+
+  @override
+  void didUpdateWidget(SwipeableCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // bounceable이 false에서 true로 변경되면 바운스 실행
+    if (!oldWidget.bounceable && widget.bounceable) {
+      _scheduleBounce();
+    }
+  }
+
+  void _scheduleBounce() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 700), () {
+        if (mounted) {
+          _bounceController.forward().then((_) {
+            _bounceController.reverse();
+          });
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _bounceController.dispose();
     super.dispose();
   }
 
@@ -149,7 +198,7 @@ class _SwipeableCardState extends State<SwipeableCard>
         // 가장 아래: 빨간 배경 (카드와 동일한 크기)
         Positioned.fill(
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor,
               borderRadius: BorderRadius.circular(12),
@@ -173,7 +222,7 @@ class _SwipeableCardState extends State<SwipeableCard>
             ),
           ),
         ),
-        // 가장 위: 스와이프 가능한 카드
+        // 가장 위: 스와이프 가능한 카드 (바운스 + 드래그 애니메이션)
         GestureDetector(
           onHorizontalDragUpdate: _handleDragUpdate,
           onHorizontalDragEnd: _handleDragEnd,
@@ -184,15 +233,19 @@ class _SwipeableCardState extends State<SwipeableCard>
             }
           },
           child: AnimatedBuilder(
-            animation: _controller,
+            animation: Listenable.merge([_controller, _bounceController]),
             builder: (context, child) {
-              // 항상 애니메이션 값과 드래그 값 중 더 왼쪽에 있는 값 사용
+              // 드래그 오프셋 계산
               final animatedOffset = _controller.value * _maxDragDistance;
-              final offset = _controller.isAnimating
+              final dragOffset = _controller.isAnimating
                   ? animatedOffset
                   : _dragExtent;
+
+              // 바운스 오프셋 추가 (왼쪽으로)
+              final totalOffset = dragOffset + _bounceAnimation.value;
+
               return Transform.translate(
-                offset: Offset(offset, 0),
+                offset: Offset(totalOffset, 0),
                 child: child,
               );
             },
