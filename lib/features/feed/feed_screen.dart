@@ -9,6 +9,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
+import 'package:glu_butler/core/widgets/tipkit_popover.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/models/water_group.dart';
@@ -47,32 +48,18 @@ class _FeedScreenState extends State<FeedScreen> {
   void _onMigrationComplete(MigrationResult result) {
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
-    final String message;
-    final Color backgroundColor;
-
+    // Log migration result without user notification
     if (result.isFullSuccess) {
-      // All records synced successfully
-      message = l10n.syncCompleteMessage(result.successCount);
-      backgroundColor = AppTheme.iconGreen;
+      debugPrint(
+        '[FeedScreen] Migration complete: ${result.successCount} records synced',
+      );
     } else if (result.hasFailures && result.successCount > 0) {
-      // Partial success
-      message = l10n.syncPartialMessage(result.successCount, result.totalAttempted);
-      backgroundColor = AppTheme.iconOrange;
+      debugPrint(
+        '[FeedScreen] Partial migration: ${result.successCount}/${result.totalAttempted} synced',
+      );
     } else {
-      // All failed
-      message = l10n.syncFailedMessage;
-      backgroundColor = AppTheme.iconRed;
+      debugPrint('[FeedScreen] Migration failed');
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 
   Future<void> _onRefresh() async {
@@ -103,16 +90,17 @@ class _FeedScreenState extends State<FeedScreen> {
             onRefresh: _onRefresh,
             trailing: const SettingsIconButton(),
             slivers: [
-                // Loading indicator
-              if (provider.isLoading && provider.items.isEmpty && provider.activityByDate.isEmpty)
+              // Loading indicator
+              if (provider.isLoading &&
+                  provider.items.isEmpty &&
+                  provider.activityByDate.isEmpty)
                 const SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 )
               // Empty state
-              else if (provider.items.isEmpty && provider.activityByDate.isEmpty)
+              else if (provider.items.isEmpty &&
+                  provider.activityByDate.isEmpty)
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: _buildEmptyState(theme, l10n),
@@ -142,10 +130,7 @@ class _FeedScreenState extends State<FeedScreen> {
               color: AppTheme.primaryColor,
             ),
             const SizedBox(height: 16),
-            Text(
-              l10n.noRecords,
-              style: theme.textTheme.titleLarge,
-            ),
+            Text(l10n.noRecords, style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
               l10n.feedEmptyHint,
@@ -160,7 +145,11 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  List<Widget> _buildFeedContent(BuildContext context, FeedProvider provider, AppLocalizations l10n) {
+  List<Widget> _buildFeedContent(
+    BuildContext context,
+    FeedProvider provider,
+    AppLocalizations l10n,
+  ) {
     final theme = Theme.of(context);
     final itemsByDate = provider.itemsByDate;
 
@@ -184,12 +173,7 @@ class _FeedScreenState extends State<FeedScreen> {
       final waterItem = items.firstWhere(
         (item) => item.type == FeedItemType.waterGroup,
         orElse: () => FeedItem.fromWaterGroup(
-          WaterGroup(
-            id: 'empty',
-            date: date,
-            totalAmountMl: 0,
-            records: [],
-          ),
+          WaterGroup(id: 'empty', date: date, totalAmountMl: 0, records: []),
         ),
       );
 
@@ -198,8 +182,23 @@ class _FeedScreenState extends State<FeedScreen> {
       final waterGroup = waterItem.waterGroup;
       final waterLiters = (waterGroup?.totalAmountMl ?? 0) / 1000;
 
+      // Get distance for this date from activityByDate
+      final activityData = provider.activityByDate[date];
+      final distanceKm = activityData?.distanceKm;
+
       // Check if this date has menstruation data
       final hasMenstruation = provider.menstruationDates.contains(date);
+
+      // Debug log
+      if (date.year == DateTime.now().year &&
+          date.month == DateTime.now().month &&
+          date.day == DateTime.now().day) {
+        print('[FeedScreen] Today date: $date');
+        print('[FeedScreen] Has menstruation: $hasMenstruation');
+        print(
+          '[FeedScreen] All menstruation dates: ${provider.menstruationDates}',
+        );
+      }
 
       // Format steps with comma separators
       final stepsText = steps.toString().replaceAllMapped(
@@ -207,7 +206,7 @@ class _FeedScreenState extends State<FeedScreen> {
         (Match m) => '${m[1]},',
       );
 
-      // Date header with steps and water
+      // Date header with activity summary
       slivers.add(
         SliverToBoxAdapter(
           child: Padding(
@@ -222,46 +221,74 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                 ),
                 const Spacer(),
-                // Steps
-                if (steps > 0) ...[
-                  Icon(
-                    Icons.directions_walk,
-                    size: 16,
-                    color: AppTheme.iconGreen,
+                // Activity summary icons - tappable area
+                if (steps > 0 || waterLiters > 0 || hasMenstruation)
+                  Builder(
+                    builder: (iconContext) {
+                      final iconKey = GlobalKey();
+                      return GestureDetector(
+                        key: iconKey,
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          _showActivitySummary(
+                            iconContext: iconContext,
+                            iconKey: iconKey,
+                            l10n: l10n,
+                            steps: steps,
+                            stepsText: stepsText,
+                            distanceKm: distanceKm,
+                            waterLiters: waterLiters,
+                            hasMenstruation: hasMenstruation,
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Steps
+                            if (steps > 0) ...[
+                              Icon(
+                                Icons.directions_walk,
+                                size: 16,
+                                color: AppTheme.iconGreen,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                stepsText,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: context.colors.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
+                            // Water
+                            if (waterLiters > 0) ...[
+                              Icon(
+                                Icons.local_drink,
+                                size: 16,
+                                color: AppTheme.iconBlue,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                '${waterLiters.toStringAsFixed(1)}L',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: context.colors.textSecondary,
+                                ),
+                              ),
+                            ],
+                            // Menstruation
+                            if (hasMenstruation) ...[
+                              const SizedBox(width: 10),
+                              Icon(
+                                Icons.local_florist,
+                                size: 16,
+                                color: Colors.pink[400],
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(width: 2),
-                  Text(
-                    stepsText,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                ],
-                // Water
-                if (waterLiters > 0) ...[
-                  Icon(
-                    Icons.local_drink,
-                    size: 16,
-                    color: AppTheme.iconBlue,
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    '${waterLiters.toStringAsFixed(1)}L',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
-                  ),
-                ],
-                // Menstruation
-                if (hasMenstruation) ...[
-                  const SizedBox(width: 10),
-                  Icon(
-                    Icons.circle,
-                    size: 16,
-                    color: Colors.pink[300],
-                  ),
-                ],
               ],
             ),
           ),
@@ -272,34 +299,27 @@ class _FeedScreenState extends State<FeedScreen> {
       if (items.isNotEmpty) {
         slivers.add(
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final item = items[index];
-                // Skip steps and water group items (shown in header)
-                if (item.type == FeedItemType.steps ||
-                    item.type == FeedItemType.waterGroup) {
-                  return const SizedBox.shrink();
-                }
-                // Check if this is a CGM group type
-                if (item.type == FeedItemType.cgmGroup) {
-                  return CgmGroupCard(group: item.cgmGroup!);
-                } else {
-                  return FeedItemCard(item: item);
-                }
-              },
-              childCount: items.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final item = items[index];
+              // Skip steps and water group items (shown in header)
+              if (item.type == FeedItemType.steps ||
+                  item.type == FeedItemType.waterGroup) {
+                return const SizedBox.shrink();
+              }
+              // Check if this is a CGM group type
+              if (item.type == FeedItemType.cgmGroup) {
+                return CgmGroupCard(group: item.cgmGroup!);
+              } else {
+                return FeedItemCard(item: item);
+              }
+            }, childCount: items.length),
           ),
         );
       }
     }
 
     // Bottom padding for FAB and tab bar
-    slivers.add(
-      const SliverToBoxAdapter(
-        child: SizedBox(height: 120),
-      ),
-    );
+    slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 120)));
 
     return slivers;
   }
@@ -322,4 +342,41 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
+  void _showActivitySummary({
+    required BuildContext iconContext,
+    required GlobalKey iconKey,
+    required AppLocalizations l10n,
+    required int steps,
+    required String stepsText,
+    required double? distanceKm,
+    required double waterLiters,
+    required bool hasMenstruation,
+  }) {
+    final RenderBox? renderBox = iconKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final position = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    showGeneralDialog(
+      context: iconContext,
+      barrierDismissible: true,
+      barrierLabel: '',
+      barrierColor: Colors.transparent,
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return TipKitPopover(
+          targetPosition: position,
+          targetSize: size,
+          l10n: l10n,
+          steps: steps,
+          stepsText: stepsText,
+          distanceKm: distanceKm,
+          waterLiters: waterLiters,
+          hasMenstruation: hasMenstruation,
+          animation: animation,
+        );
+      },
+    );
+  }
 }

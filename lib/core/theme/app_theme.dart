@@ -32,6 +32,10 @@ class AppTheme {
   static const Color iosCardLight = Colors.white;
   static const Color iosCardDark = Color(0xFF3A3A55); // Brighter Navy (increased from 2D2D44)
 
+  // Popover Colors
+  static const Color popoverLight = Color(0xFFE5E5EA); // Dark gray for light mode
+  static const Color popoverDark = Color(0xFF2C2C2E); // Dark gray for dark mode
+
   // Tab Bar Colors
   static const Color tabBarLight = Color(0xFFF2F2F7); // iOS Default Light
   static const Color tabBarDark = Color(0xFF2D2D44); // Lighter Navy
