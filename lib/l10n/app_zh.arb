@@ -328,5 +328,23 @@
         "type": "int"
       }
     }
+  },
+  "imageLoadError": "无法加载图片",
+
+  "apiErrorNetwork": "发生网络错误。",
+  "apiErrorConnectionTimeout": "连接超时。请检查您的网络连接。",
+  "apiErrorReceiveTimeout": "AI报告生成超时。请稍后重试。",
+  "apiErrorRateLimit": "超出请求限制。请稍后重试。",
+  "apiErrorServer": "发生服务器错误。请稍后重试。",
+  "apiErrorNetworkConnection": "请检查您的网络连接。",
+  "apiErrorUnknown": "发生未知错误。",
+  "apiErrorCancelled": "请求已取消。",
+  "apiErrorReportFailed": "报告生成失败: {message}",
+  "@apiErrorReportFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   }
 }

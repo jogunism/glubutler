@@ -860,4 +860,36 @@ class AppLocalizationsJa extends AppLocalizations {
   String daysAgo(int count) {
     return '$count日前';
   }
+
+  @override
+  String get imageLoadError => '画像を読み込めません';
+
+  @override
+  String get apiErrorNetwork => 'ネットワークエラーが発生しました。';
+
+  @override
+  String get apiErrorConnectionTimeout => '接続がタイムアウトしました。ネットワーク接続を確認してください。';
+
+  @override
+  String get apiErrorReceiveTimeout => 'AIレポート生成がタイムアウトしました。しばらくしてから再度お試しください。';
+
+  @override
+  String get apiErrorRateLimit => 'リクエスト制限を超えました。しばらくしてから再度お試しください。';
+
+  @override
+  String get apiErrorServer => 'サーバーエラーが発生しました。しばらくしてから再度お試しください。';
+
+  @override
+  String get apiErrorNetworkConnection => 'ネットワーク接続を確認してください。';
+
+  @override
+  String get apiErrorUnknown => '不明なエラーが発生しました。';
+
+  @override
+  String get apiErrorCancelled => 'リクエストがキャンセルされました。';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return 'レポート生成失敗: $message';
+  }
 }

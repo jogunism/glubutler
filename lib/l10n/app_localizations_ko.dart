@@ -860,4 +860,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String daysAgo(int count) {
     return '$count일 전';
   }
+
+  @override
+  String get imageLoadError => '이미지를 불러올 수 없습니다';
+
+  @override
+  String get apiErrorNetwork => '네트워크 오류가 발생했습니다.';
+
+  @override
+  String get apiErrorConnectionTimeout => '연결 시간이 초과되었습니다. 네트워크 연결을 확인해주세요.';
+
+  @override
+  String get apiErrorReceiveTimeout => 'AI 리포트 생성 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.';
+
+  @override
+  String get apiErrorRateLimit => '요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.';
+
+  @override
+  String get apiErrorServer => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+
+  @override
+  String get apiErrorNetworkConnection => '네트워크 연결을 확인해주세요.';
+
+  @override
+  String get apiErrorUnknown => '알 수 없는 오류가 발생했습니다.';
+
+  @override
+  String get apiErrorCancelled => '요청이 취소되었습니다.';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return '리포트 생성 실패: $message';
+  }
 }

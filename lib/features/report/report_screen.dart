@@ -14,6 +14,7 @@ import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/report_api_service.dart';
 
 /// 리포트 화면
 ///
@@ -92,9 +93,40 @@ class _ReportScreenState extends State<ReportScreen> {
     // TopBanner로 성공/실패 알림 표시
     TopBanner.show(
       context,
-      message: success ? l10n.reportGenerationSuccess : (reportProvider.error ?? l10n.reportGenerationFailed),
+      message: success ? l10n.reportGenerationSuccess : _getErrorMessage(reportProvider, l10n),
       isSuccess: success,
     );
+  }
+
+  /// 에러 코드를 보고 국제화된 에러 메시지를 반환
+  String _getErrorMessage(ReportProvider provider, AppLocalizations l10n) {
+    final errorCode = provider.errorCode;
+    final serverMessage = provider.serverMessage;
+
+    if (errorCode == null) {
+      return l10n.apiErrorUnknown;
+    }
+
+    switch (errorCode) {
+      case ApiErrorCode.network:
+        return l10n.apiErrorNetwork;
+      case ApiErrorCode.connectionTimeout:
+        return l10n.apiErrorConnectionTimeout;
+      case ApiErrorCode.receiveTimeout:
+        return l10n.apiErrorReceiveTimeout;
+      case ApiErrorCode.rateLimit:
+        return l10n.apiErrorRateLimit;
+      case ApiErrorCode.server:
+        return l10n.apiErrorServer;
+      case ApiErrorCode.networkConnection:
+        return l10n.apiErrorNetworkConnection;
+      case ApiErrorCode.unknown:
+        return l10n.apiErrorUnknown;
+      case ApiErrorCode.cancelled:
+        return l10n.apiErrorCancelled;
+      case ApiErrorCode.reportFailed:
+        return l10n.apiErrorReportFailed(serverMessage ?? 'Unknown error');
+    }
   }
 
   void _viewPastReports() {

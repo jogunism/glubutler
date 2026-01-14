@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
@@ -63,22 +64,19 @@ class FeedItemCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     // 삭제 확인 다이얼로그 표시
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showCupertinoDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.delete),
+      builder: (context) => CupertinoAlertDialog(
         content: Text(l10n.deleteGlucoseConfirmation),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(l10n.cancel),
           ),
-          TextButton(
+          CupertinoDialogAction(
+            isDestructiveAction: true,
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              l10n.delete,
-              style: const TextStyle(color: AppTheme.primaryColor),
-            ),
+            child: Text(l10n.delete),
           ),
         ],
       ),

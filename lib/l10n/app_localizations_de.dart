@@ -879,4 +879,41 @@ class AppLocalizationsDe extends AppLocalizations {
   String daysAgo(int count) {
     return 'vor $count Tagen';
   }
+
+  @override
+  String get imageLoadError => 'Bild kann nicht geladen werden';
+
+  @override
+  String get apiErrorNetwork => 'Ein Netzwerkfehler ist aufgetreten.';
+
+  @override
+  String get apiErrorConnectionTimeout =>
+      'Zeitüberschreitung bei der Verbindung. Bitte überprüfen Sie Ihre Netzwerkverbindung.';
+
+  @override
+  String get apiErrorReceiveTimeout =>
+      'Zeitüberschreitung bei der AI-Berichterstellung. Bitte versuchen Sie es später erneut.';
+
+  @override
+  String get apiErrorRateLimit =>
+      'Anforderungslimit überschritten. Bitte versuchen Sie es später erneut.';
+
+  @override
+  String get apiErrorServer =>
+      'Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+
+  @override
+  String get apiErrorNetworkConnection =>
+      'Bitte überprüfen Sie Ihre Netzwerkverbindung.';
+
+  @override
+  String get apiErrorUnknown => 'Ein unbekannter Fehler ist aufgetreten.';
+
+  @override
+  String get apiErrorCancelled => 'Anfrage wurde abgebrochen.';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return 'Berichterstellung fehlgeschlagen: $message';
+  }
 }

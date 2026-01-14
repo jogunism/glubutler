@@ -879,4 +879,41 @@ class AppLocalizationsIt extends AppLocalizations {
   String daysAgo(int count) {
     return '$count giorni fa';
   }
+
+  @override
+  String get imageLoadError => 'Impossibile caricare l\'immagine';
+
+  @override
+  String get apiErrorNetwork => 'Si è verificato un errore di rete.';
+
+  @override
+  String get apiErrorConnectionTimeout =>
+      'Timeout di connessione. Verifica la tua connessione di rete.';
+
+  @override
+  String get apiErrorReceiveTimeout =>
+      'Timeout della generazione del rapporto IA. Riprova più tardi.';
+
+  @override
+  String get apiErrorRateLimit =>
+      'Limite di richieste superato. Riprova più tardi.';
+
+  @override
+  String get apiErrorServer =>
+      'Si è verificato un errore del server. Riprova più tardi.';
+
+  @override
+  String get apiErrorNetworkConnection =>
+      'Verifica la tua connessione di rete.';
+
+  @override
+  String get apiErrorUnknown => 'Si è verificato un errore sconosciuto.';
+
+  @override
+  String get apiErrorCancelled => 'Richiesta annullata.';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return 'Generazione del rapporto fallita: $message';
+  }
 }

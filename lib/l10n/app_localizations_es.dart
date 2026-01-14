@@ -879,4 +879,41 @@ class AppLocalizationsEs extends AppLocalizations {
   String daysAgo(int count) {
     return 'hace $count días';
   }
+
+  @override
+  String get imageLoadError => 'No se puede cargar la imagen';
+
+  @override
+  String get apiErrorNetwork => 'Se produjo un error de red.';
+
+  @override
+  String get apiErrorConnectionTimeout =>
+      'Se agotó el tiempo de conexión. Por favor, verifica tu conexión de red.';
+
+  @override
+  String get apiErrorReceiveTimeout =>
+      'Se agotó el tiempo de generación del informe AI. Por favor, inténtalo de nuevo más tarde.';
+
+  @override
+  String get apiErrorRateLimit =>
+      'Se superó el límite de solicitudes. Por favor, inténtalo de nuevo más tarde.';
+
+  @override
+  String get apiErrorServer =>
+      'Se produjo un error del servidor. Por favor, inténtalo de nuevo más tarde.';
+
+  @override
+  String get apiErrorNetworkConnection =>
+      'Por favor, verifica tu conexión de red.';
+
+  @override
+  String get apiErrorUnknown => 'Se produjo un error desconocido.';
+
+  @override
+  String get apiErrorCancelled => 'La solicitud fue cancelada.';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return 'Error al generar el informe: $message';
+  }
 }

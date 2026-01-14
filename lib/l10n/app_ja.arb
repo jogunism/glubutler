@@ -331,5 +331,23 @@
         "type": "int"
       }
     }
+  },
+  "imageLoadError": "画像を読み込めません",
+
+  "apiErrorNetwork": "ネットワークエラーが発生しました。",
+  "apiErrorConnectionTimeout": "接続がタイムアウトしました。ネットワーク接続を確認してください。",
+  "apiErrorReceiveTimeout": "AIレポート生成がタイムアウトしました。しばらくしてから再度お試しください。",
+  "apiErrorRateLimit": "リクエスト制限を超えました。しばらくしてから再度お試しください。",
+  "apiErrorServer": "サーバーエラーが発生しました。しばらくしてから再度お試しください。",
+  "apiErrorNetworkConnection": "ネットワーク接続を確認してください。",
+  "apiErrorUnknown": "不明なエラーが発生しました。",
+  "apiErrorCancelled": "リクエストがキャンセルされました。",
+  "apiErrorReportFailed": "レポート生成失敗: {message}",
+  "@apiErrorReportFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   }
 }

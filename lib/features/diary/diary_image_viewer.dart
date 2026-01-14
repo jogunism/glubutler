@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
 import 'package:glu_butler/models/diary_file.dart';
+import 'package:glu_butler/l10n/app_localizations.dart';
 
 /// 일기 이미지 전체화면 뷰어
 ///
@@ -254,6 +255,7 @@ class _ImageZoomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final file = File(filePath);
+    final l10n = AppLocalizations.of(context)!;
 
     return FutureBuilder<bool>(
       future: file.exists(),
@@ -281,7 +283,7 @@ class _ImageZoomView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '이미지를 불러올 수 없습니다',
+                  l10n.imageLoadError,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 16,
@@ -303,6 +305,7 @@ class _ImageZoomView extends StatelessWidget {
               file,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
+                final l10n = AppLocalizations.of(context)!;
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -314,7 +317,7 @@ class _ImageZoomView extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        '이미지를 불러올 수 없습니다',
+                        l10n.imageLoadError,
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.5),
                           fontSize: 16,

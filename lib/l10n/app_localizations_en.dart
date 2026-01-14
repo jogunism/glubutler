@@ -877,4 +877,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String daysAgo(int count) {
     return '$count days ago';
   }
+
+  @override
+  String get imageLoadError => 'Failed to load image';
+
+  @override
+  String get apiErrorNetwork => 'A network error occurred.';
+
+  @override
+  String get apiErrorConnectionTimeout =>
+      'Connection timed out. Please check your network connection.';
+
+  @override
+  String get apiErrorReceiveTimeout =>
+      'AI report generation timed out. Please try again later.';
+
+  @override
+  String get apiErrorRateLimit =>
+      'Request limit exceeded. Please try again later.';
+
+  @override
+  String get apiErrorServer =>
+      'A server error occurred. Please try again later.';
+
+  @override
+  String get apiErrorNetworkConnection =>
+      'Please check your network connection.';
+
+  @override
+  String get apiErrorUnknown => 'An unknown error occurred.';
+
+  @override
+  String get apiErrorCancelled => 'Request was cancelled.';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return 'Report generation failed: $message';
+  }
 }

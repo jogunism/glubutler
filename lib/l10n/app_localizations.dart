@@ -1777,6 +1777,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} days ago'**
   String daysAgo(int count);
+
+  /// No description provided for @imageLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load image'**
+  String get imageLoadError;
+
+  /// No description provided for @apiErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'A network error occurred.'**
+  String get apiErrorNetwork;
+
+  /// No description provided for @apiErrorConnectionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out. Please check your network connection.'**
+  String get apiErrorConnectionTimeout;
+
+  /// No description provided for @apiErrorReceiveTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'AI report generation timed out. Please try again later.'**
+  String get apiErrorReceiveTimeout;
+
+  /// No description provided for @apiErrorRateLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Request limit exceeded. Please try again later.'**
+  String get apiErrorRateLimit;
+
+  /// No description provided for @apiErrorServer.
+  ///
+  /// In en, this message translates to:
+  /// **'A server error occurred. Please try again later.'**
+  String get apiErrorServer;
+
+  /// No description provided for @apiErrorNetworkConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your network connection.'**
+  String get apiErrorNetworkConnection;
+
+  /// No description provided for @apiErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred.'**
+  String get apiErrorUnknown;
+
+  /// No description provided for @apiErrorCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Request was cancelled.'**
+  String get apiErrorCancelled;
+
+  /// No description provided for @apiErrorReportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Report generation failed: {message}'**
+  String apiErrorReportFailed(String message);
 }
 
 class _AppLocalizationsDelegate

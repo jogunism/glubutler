@@ -349,5 +349,23 @@
         "type": "int"
       }
     }
+  },
+  "imageLoadError": "Failed to load image",
+
+  "apiErrorNetwork": "A network error occurred.",
+  "apiErrorConnectionTimeout": "Connection timed out. Please check your network connection.",
+  "apiErrorReceiveTimeout": "AI report generation timed out. Please try again later.",
+  "apiErrorRateLimit": "Request limit exceeded. Please try again later.",
+  "apiErrorServer": "A server error occurred. Please try again later.",
+  "apiErrorNetworkConnection": "Please check your network connection.",
+  "apiErrorUnknown": "An unknown error occurred.",
+  "apiErrorCancelled": "Request was cancelled.",
+  "apiErrorReportFailed": "Report generation failed: {message}",
+  "@apiErrorReportFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   }
 }

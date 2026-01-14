@@ -48,7 +48,10 @@ class ReportApiService {
   /// Returns: JWT 토큰 문자열
   String _generateJwtToken(UserIdentity userIdentity) {
     if (jwtSecret == null || jwtSecret!.isEmpty) {
-      throw ReportApiException('JWT secret key is not configured');
+      throw ReportApiException(
+        errorCode: ApiErrorCode.unknown,
+        serverMessage: 'JWT secret key is not configured',
+      );
     }
 
     final jwt = JWT({
@@ -185,17 +188,22 @@ class ReportApiService {
             debugPrint('[ReportApiService] Report generated successfully');
             return data['reportContent'] as String;
           } else {
-            throw ReportApiException('Response missing reportContent field');
+            throw ReportApiException(
+              errorCode: ApiErrorCode.unknown,
+              serverMessage: 'Response missing reportContent field',
+            );
           }
         } else {
           throw ReportApiException(
-            'Unexpected response type: ${data.runtimeType}',
+            errorCode: ApiErrorCode.unknown,
+            serverMessage: 'Unexpected response type: ${data.runtimeType}',
           );
         }
       } else {
         throw ReportApiException(
-          'Failed to generate report: ${response.statusCode}',
+          errorCode: ApiErrorCode.server,
           statusCode: response.statusCode,
+          serverMessage: 'Failed to generate report: ${response.statusCode}',
         );
       }
     } on DioException catch (e) {
@@ -206,7 +214,10 @@ class ReportApiService {
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       debugPrint('[ReportApiService] Stack trace: $stackTrace');
-      throw ReportApiException('Unexpected error: $e');
+      throw ReportApiException(
+        errorCode: ApiErrorCode.unknown,
+        serverMessage: 'Unexpected error: $e',
+      );
     }
   }
 
@@ -225,8 +236,9 @@ class ReportApiService {
         return List<Map<String, dynamic>>.from(data['reports']);
       } else {
         throw ReportApiException(
-          'Failed to fetch reports: ${response.statusCode}',
+          errorCode: ApiErrorCode.server,
           statusCode: response.statusCode,
+          serverMessage: 'Failed to fetch reports: ${response.statusCode}',
         );
       }
     } on DioException catch (e) {
@@ -244,8 +256,9 @@ class ReportApiService {
         return data['reportContent'] as String;
       } else {
         throw ReportApiException(
-          'Failed to fetch report: ${response.statusCode}',
+          errorCode: ApiErrorCode.server,
           statusCode: response.statusCode,
+          serverMessage: 'Failed to fetch report: ${response.statusCode}',
         );
       }
     } on DioException catch (e) {
@@ -264,46 +277,59 @@ class ReportApiService {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
         return ReportApiException(
-          '연결 시간이 초과되었습니다. 네트워크 연결을 확인해주세요.',
+          errorCode: ApiErrorCode.connectionTimeout,
           originalError: e,
         );
       case DioExceptionType.receiveTimeout:
         return ReportApiException(
-          'AI 리포트 생성 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.',
+          errorCode: ApiErrorCode.receiveTimeout,
           originalError: e,
         );
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
-        final message = e.response?.data?['message'] ?? 'Unknown error';
+        final serverMessage = e.response?.data?['message'] as String?;
 
         if (statusCode == 429) {
           return ReportApiException(
-            '요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.',
+            errorCode: ApiErrorCode.rateLimit,
             statusCode: statusCode,
             originalError: e,
           );
         } else if (statusCode != null && statusCode >= 500) {
           return ReportApiException(
-            '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            errorCode: ApiErrorCode.server,
             statusCode: statusCode,
             originalError: e,
           );
         } else {
           return ReportApiException(
-            '리포트 생성 실패: $message',
+            errorCode: ApiErrorCode.reportFailed,
             statusCode: statusCode,
+            serverMessage: serverMessage,
             originalError: e,
           );
         }
       case DioExceptionType.cancel:
-        return ReportApiException('요청이 취소되었습니다.', originalError: e);
+        return ReportApiException(
+          errorCode: ApiErrorCode.cancelled,
+          originalError: e,
+        );
       case DioExceptionType.unknown:
         if (e.error is SocketException) {
-          return ReportApiException('네트워크 연결을 확인해주세요.', originalError: e);
+          return ReportApiException(
+            errorCode: ApiErrorCode.networkConnection,
+            originalError: e,
+          );
         }
-        return ReportApiException('알 수 없는 오류가 발생했습니다.', originalError: e);
+        return ReportApiException(
+          errorCode: ApiErrorCode.unknown,
+          originalError: e,
+        );
       default:
-        return ReportApiException('네트워크 오류가 발생했습니다.', originalError: e);
+        return ReportApiException(
+          errorCode: ApiErrorCode.network,
+          originalError: e,
+        );
     }
   }
 
@@ -313,14 +339,33 @@ class ReportApiService {
   }
 }
 
+/// API 에러 코드
+enum ApiErrorCode {
+  network,
+  connectionTimeout,
+  receiveTimeout,
+  rateLimit,
+  server,
+  networkConnection,
+  unknown,
+  cancelled,
+  reportFailed,
+}
+
 /// 리포트 API 예외
 class ReportApiException implements Exception {
-  final String message;
+  final ApiErrorCode errorCode;
   final int? statusCode;
+  final String? serverMessage;
   final dynamic originalError;
 
-  ReportApiException(this.message, {this.statusCode, this.originalError});
+  ReportApiException({
+    required this.errorCode,
+    this.statusCode,
+    this.serverMessage,
+    this.originalError,
+  });
 
   @override
-  String toString() => message;
+  String toString() => 'ReportApiException: $errorCode';
 }

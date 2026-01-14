@@ -39,7 +39,8 @@
       "Bash(git clone:*)",
       "Bash(find:*)",
       "Bash(git mv:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(/Users/hyunwoo/flutter/bin/flutter gen-l10n:*)"
     ]
   }
 }

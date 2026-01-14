@@ -328,5 +328,23 @@
         "type": "int"
       }
     }
+  },
+  "imageLoadError": "Impossibile caricare l'immagine",
+
+  "apiErrorNetwork": "Si è verificato un errore di rete.",
+  "apiErrorConnectionTimeout": "Timeout di connessione. Verifica la tua connessione di rete.",
+  "apiErrorReceiveTimeout": "Timeout della generazione del rapporto IA. Riprova più tardi.",
+  "apiErrorRateLimit": "Limite di richieste superato. Riprova più tardi.",
+  "apiErrorServer": "Si è verificato un errore del server. Riprova più tardi.",
+  "apiErrorNetworkConnection": "Verifica la tua connessione di rete.",
+  "apiErrorUnknown": "Si è verificato un errore sconosciuto.",
+  "apiErrorCancelled": "Richiesta annullata.",
+  "apiErrorReportFailed": "Generazione del rapporto fallita: {message}",
+  "@apiErrorReportFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -860,4 +860,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String daysAgo(int count) {
     return '$count天前';
   }
+
+  @override
+  String get imageLoadError => '无法加载图片';
+
+  @override
+  String get apiErrorNetwork => '发生网络错误。';
+
+  @override
+  String get apiErrorConnectionTimeout => '连接超时。请检查您的网络连接。';
+
+  @override
+  String get apiErrorReceiveTimeout => 'AI报告生成超时。请稍后重试。';
+
+  @override
+  String get apiErrorRateLimit => '超出请求限制。请稍后重试。';
+
+  @override
+  String get apiErrorServer => '发生服务器错误。请稍后重试。';
+
+  @override
+  String get apiErrorNetworkConnection => '请检查您的网络连接。';
+
+  @override
+  String get apiErrorUnknown => '发生未知错误。';
+
+  @override
+  String get apiErrorCancelled => '请求已取消。';
+
+  @override
+  String apiErrorReportFailed(String message) {
+    return '报告生成失败: $message';
+  }
 }

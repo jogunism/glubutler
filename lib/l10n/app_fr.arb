@@ -328,5 +328,23 @@
         "type": "int"
       }
     }
+  },
+  "imageLoadError": "Impossible de charger l'image",
+
+  "apiErrorNetwork": "Une erreur réseau s'est produite.",
+  "apiErrorConnectionTimeout": "Délai de connexion dépassé. Veuillez vérifier votre connexion réseau.",
+  "apiErrorReceiveTimeout": "Délai de génération du rapport IA dépassé. Veuillez réessayer plus tard.",
+  "apiErrorRateLimit": "Limite de requêtes dépassée. Veuillez réessayer plus tard.",
+  "apiErrorServer": "Une erreur serveur s'est produite. Veuillez réessayer plus tard.",
+  "apiErrorNetworkConnection": "Veuillez vérifier votre connexion réseau.",
+  "apiErrorUnknown": "Une erreur inconnue s'est produite.",
+  "apiErrorCancelled": "La requête a été annulée.",
+  "apiErrorReportFailed": "Échec de la génération du rapport: {message}",
+  "@apiErrorReportFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -29,6 +29,12 @@ class ReportProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  ApiErrorCode? _errorCode;
+  ApiErrorCode? get errorCode => _errorCode;
+
+  String? _serverMessage;
+  String? get serverMessage => _serverMessage;
+
   /// 리포트 생성 진행률 (0.0 ~ 1.0)
   double _uploadProgress = 0.0;
   double get uploadProgress => _uploadProgress;
@@ -58,6 +64,8 @@ class ReportProvider extends ChangeNotifier {
   Future<void> loadLatestReport() async {
     _isLoading = true;
     _error = null;
+    _errorCode = null;
+    _serverMessage = null;
     notifyListeners();
 
     try {
@@ -82,6 +90,8 @@ class ReportProvider extends ChangeNotifier {
   }) async {
     _isLoading = true;
     _error = null;
+    _errorCode = null;
+    _serverMessage = null;
     _uploadProgress = 0.0;
     _isGenerating = true;
     notifyListeners();
@@ -129,7 +139,8 @@ class ReportProvider extends ChangeNotifier {
 
       return true;
     } on ReportApiException catch (e) {
-      _error = e.message;
+      _errorCode = e.errorCode;
+      _serverMessage = e.serverMessage;
       debugPrint('[ReportProvider] Report generation failed: $e');
 
       // 타이머 중단하고 실패 시에도 100%로 채운 후 0.5초 대기
