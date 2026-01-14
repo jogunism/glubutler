@@ -38,7 +38,8 @@
       "Bash(export PATH=\"$HOME/.pub-cache/bin:$HOME/fvm/default/bin:$PATH\")",
       "Bash(git clone:*)",
       "Bash(find:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(tree:*)"
     ]
   }
 }

@@ -11,6 +11,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/models/feed_item.dart';
+import 'package:glu_butler/models/water_group.dart';
 import 'package:glu_butler/features/feed/widgets/feed_item_card.dart';
 import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/features/feed/widgets/cgm_group_card.dart';
@@ -175,17 +176,93 @@ class _FeedScreenState extends State<FeedScreen> {
       // Skip if no items for this date
       if (items.isEmpty) continue;
 
-      // Date header
+      // Get steps and water data for this date
+      final stepsItem = items.firstWhere(
+        (item) => item.type == FeedItemType.steps,
+        orElse: () => FeedItem.fromSteps(date: date, steps: 0),
+      );
+      final waterItem = items.firstWhere(
+        (item) => item.type == FeedItemType.waterGroup,
+        orElse: () => FeedItem.fromWaterGroup(
+          WaterGroup(
+            id: 'empty',
+            date: date,
+            totalAmountMl: 0,
+            records: [],
+          ),
+        ),
+      );
+
+      final stepsData = stepsItem.stepsData;
+      final steps = stepsData?['steps'] as int? ?? 0;
+      final waterGroup = waterItem.waterGroup;
+      final waterLiters = (waterGroup?.totalAmountMl ?? 0) / 1000;
+
+      // Check if this date has menstruation data
+      final hasMenstruation = provider.menstruationDates.contains(date);
+
+      // Format steps with comma separators
+      final stepsText = steps.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+
+      // Date header with steps and water
       slivers.add(
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              _formatDateHeader(date),
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: context.colors.textSecondary,
-              ),
+            child: Row(
+              children: [
+                Text(
+                  _formatDateHeader(date),
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.textSecondary,
+                  ),
+                ),
+                const Spacer(),
+                // Steps
+                if (steps > 0) ...[
+                  Icon(
+                    Icons.directions_walk,
+                    size: 16,
+                    color: AppTheme.iconGreen,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    stepsText,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+                // Water
+                if (waterLiters > 0) ...[
+                  Icon(
+                    Icons.local_drink,
+                    size: 16,
+                    color: AppTheme.iconBlue,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    '${waterLiters.toStringAsFixed(1)}L',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                ],
+                // Menstruation
+                if (hasMenstruation) ...[
+                  const SizedBox(width: 10),
+                  Icon(
+                    Icons.circle,
+                    size: 16,
+                    color: Colors.pink[300],
+                  ),
+                ],
+              ],
             ),
           ),
         ),
@@ -198,6 +275,11 @@ class _FeedScreenState extends State<FeedScreen> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final item = items[index];
+                // Skip steps and water group items (shown in header)
+                if (item.type == FeedItemType.steps ||
+                    item.type == FeedItemType.waterGroup) {
+                  return const SizedBox.shrink();
+                }
                 // Check if this is a CGM group type
                 if (item.type == FeedItemType.cgmGroup) {
                   return CgmGroupCard(group: item.cgmGroup!);

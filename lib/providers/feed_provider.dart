@@ -82,6 +82,10 @@ class FeedProvider extends ChangeNotifier {
   double? _todayWaterMl;
   double? get todayWaterMl => _todayWaterMl;
 
+  // Menstruation data by date
+  final Set<DateTime> _menstruationDates = {};
+  Set<DateTime> get menstruationDates => Set.unmodifiable(_menstruationDates);
+
   // IDs of top 10 deletable glucose items to bounce after refresh
   final Set<String> _bouncableItemIds = {};
   Set<String> get bouncableItemIds => _bouncableItemIds;
@@ -472,6 +476,22 @@ class FeedProvider extends ChangeNotifier {
           endDate: now,
         );
         allItems.addAll(mindfulnessRecords.map(FeedItem.fromMindfulness));
+
+        // Fetch menstruation data
+        final menstruationRecords = await _healthService.fetchMenstruationData(
+          startDate: startDate,
+          endDate: now,
+        );
+        // Store menstruation dates
+        _menstruationDates.clear();
+        for (final record in menstruationRecords) {
+          final dateKey = DateTime(
+            record.date.year,
+            record.date.month,
+            record.date.day,
+          );
+          _menstruationDates.add(dateKey);
+        }
 
         newTodaySteps = await _healthService.fetchTodaySteps();
         newTodayWaterMl = await _healthService.fetchTodayWaterIntake();

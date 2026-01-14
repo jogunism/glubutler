@@ -502,9 +502,57 @@ class HealthService {
       return [];
     }
 
-    // TODO: Implement native iOS menstruation fetching if needed
-    debugPrint('[HealthService] fetchMenstruationData: Not implemented for iOS native');
-    return [];
+    try {
+      final result = await _healthKitChannel.invokeMethod('readHealthData', {
+        'type': 'MENSTRUATION',
+        'startTime': startDate.millisecondsSinceEpoch.toDouble(),
+        'endTime': endDate.millisecondsSinceEpoch.toDouble(),
+      });
+
+      if (result == null) return [];
+
+      final List<dynamic> data = result as List<dynamic>;
+      return data.map((item) {
+        final map = item as Map<dynamic, dynamic>;
+        final flowValue = map['value'] as int? ?? 0;
+
+        // HKCategoryValueMenstrualFlow values:
+        // 1 = unspecified
+        // 2 = light
+        // 3 = medium
+        // 4 = heavy
+        // 5 = none
+        MenstruationFlow flow;
+        switch (flowValue) {
+          case 2:
+            flow = MenstruationFlow.light;
+            break;
+          case 3:
+            flow = MenstruationFlow.medium;
+            break;
+          case 4:
+            flow = MenstruationFlow.heavy;
+            break;
+          case 5:
+            flow = MenstruationFlow.none;
+            break;
+          default:
+            flow = MenstruationFlow.unspecified;
+        }
+
+        return MenstruationRecord(
+          id: 'hk_${map['startTime']}',
+          date: DateTime.fromMillisecondsSinceEpoch(
+            (map['startTime'] as num).toInt(),
+          ),
+          flow: flow,
+          isFromHealthKit: true,
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('[HealthService] Error fetching menstruation data: $e');
+      return [];
+    }
   }
 
   Future<double?> fetchTodayWaterIntake() async {
