@@ -928,6 +928,34 @@ class FeedProvider extends ChangeNotifier {
       }
     }
 
+    // Add menstruation data for dates in range
+    final datesInRange = <DateTime>[];
+    var currentDate = DateTime(startDate.year, startDate.month, startDate.day);
+    final endDateNormalized = DateTime(endDate.year, endDate.month, endDate.day);
+
+    while (currentDate.isBefore(endDateNormalized) ||
+           currentDate.isAtSameMomentAs(endDateNormalized)) {
+      datesInRange.add(currentDate);
+      currentDate = currentDate.add(const Duration(days: 1));
+    }
+
+    for (final date in datesInRange) {
+      if (_menstruationDates.contains(date)) {
+        // Add menstruation entry for this date (using noon as representative time)
+        final noonTime = DateTime(date.year, date.month, date.day, 12, 0);
+        result.add({
+          'type': 'menstruation',
+          'time': _formatTimeForApi(noonTime),
+          'value': 'menstrual cycle',
+        });
+      }
+    }
+
+    // Sort result by time
+    result.sort((a, b) =>
+      (a['time'] as String).compareTo(b['time'] as String)
+    );
+
     return result;
   }
 
