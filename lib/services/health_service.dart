@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
@@ -77,11 +76,10 @@ class HealthService {
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'onHealthDataUpdated':
-        debugPrint('[HealthService] Background health data updated');
         _onBackgroundUpdateCallback?.call();
         break;
       default:
-        debugPrint('[HealthService] Unknown method: ${call.method}');
+        break;
     }
   }
 
@@ -91,7 +89,6 @@ class HealthService {
 
   Future<bool> requestAuthorization() async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] Platform not supported - iOS only');
       return false;
     }
 
@@ -105,12 +102,8 @@ class HealthService {
       // Consider authorized if we have ANY permission
       _isAuthorized = _permissionStatus.values.any((status) => status == true);
 
-      debugPrint('[HealthService] iOS Native - isAuthorized: $_isAuthorized');
-      debugPrint('[HealthService] iOS Native - permissions: $_permissionStatus');
-
       return _isAuthorized;
     } catch (e) {
-      debugPrint('[HealthService] Error requesting authorization: $e');
       return false;
     }
   }
@@ -125,7 +118,6 @@ class HealthService {
   /// So after requestAuthorization succeeds, we assume READ permissions are granted.
   Future<void> checkPermissionStatus() async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] checkPermissionStatus: Platform not supported (iOS only)');
       return;
     }
 
@@ -153,7 +145,6 @@ class HealthService {
         _permissionStatus[type] = _hasRequestedPermissions;
       }
     } catch (e) {
-      debugPrint('[HealthService] Error checking permission status: $e');
     }
   }
 
@@ -173,7 +164,6 @@ class HealthService {
 
   Future<bool> hasPermissions() async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] hasPermissions: Platform not supported (iOS only)');
       return false;
     }
 
@@ -236,13 +226,11 @@ class HealthService {
         // debugPrint('[HealthService] Fetched ${records.length} glucose records from native iOS');
         return records;
       } catch (e) {
-        debugPrint('[HealthService] Error fetching glucose data from native iOS: $e');
         return [];
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] fetchGlucoseData: Platform not supported (iOS only)');
     return [];
   }
 
@@ -289,13 +277,11 @@ class HealthService {
         // debugPrint('[HealthService] Fetched ${records.length} workout records from native iOS');
         return records;
       } catch (e) {
-        debugPrint('[HealthService] Error fetching workout data from native iOS: $e');
         return [];
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] fetchWorkoutData: Platform not supported (iOS only)');
     return [];
   }
 
@@ -339,13 +325,11 @@ class HealthService {
 
         return records;
       } catch (e) {
-        debugPrint('[HealthService] Error fetching sleep data from native iOS: $e');
         return [];
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] fetchSleepData: Platform not supported (iOS only)');
     return [];
   }
 
@@ -353,7 +337,6 @@ class HealthService {
     if (!_hasRequestedPermissions) return null;
 
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] fetchTodaySteps: Platform not supported (iOS only)');
       return null;
     }
 
@@ -370,7 +353,6 @@ class HealthService {
       final todayActivity = activityData[startOfDay];
       return todayActivity?.steps;
     } catch (e) {
-      debugPrint('[HealthService] Error fetching today steps: $e');
       return null;
     }
   }
@@ -386,7 +368,6 @@ class HealthService {
     }
 
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] fetchDailyActivityByDate: Platform not supported (iOS only)');
       return {};
     }
 
@@ -421,7 +402,6 @@ class HealthService {
 
       return activityByDate;
     } catch (e) {
-      debugPrint('[HealthService] Error fetching daily activity: $e');
       return {};
     }
   }
@@ -435,12 +415,10 @@ class HealthService {
     }
 
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] fetchWeightData: Platform not supported (iOS only)');
       return [];
     }
 
     // TODO: Implement native iOS weight fetching if needed
-    debugPrint('[HealthService] fetchWeightData: Not implemented for iOS native');
     return [];
   }
 
@@ -479,13 +457,11 @@ class HealthService {
         // debugPrint('[HealthService] Fetched ${records.length} water records from native iOS');
         return records;
       } catch (e) {
-        debugPrint('[HealthService] Error fetching water data from native iOS: $e');
         return [];
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] fetchWaterData: Platform not supported (iOS only)');
     return [];
   }
 
@@ -498,7 +474,6 @@ class HealthService {
     }
 
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] fetchMenstruationData: Platform not supported (iOS only)');
       return [];
     }
 
@@ -550,7 +525,6 @@ class HealthService {
         );
       }).toList();
     } catch (e) {
-      debugPrint('[HealthService] Error fetching menstruation data: $e');
       return [];
     }
   }
@@ -559,7 +533,6 @@ class HealthService {
     if (!_hasRequestedPermissions) return null;
 
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] fetchTodayWaterIntake: Platform not supported (iOS only)');
       return null;
     }
 
@@ -580,7 +553,6 @@ class HealthService {
 
       return total > 0 ? total : null;
     } catch (e) {
-      debugPrint('[HealthService] Error fetching today water intake: $e');
       return null;
     }
   }
@@ -624,19 +596,16 @@ class HealthService {
         // debugPrint('[HealthService] Fetched ${records.length} mindfulness records from native iOS');
         return records;
       } catch (e) {
-        debugPrint('[HealthService] Error fetching mindfulness data from native iOS: $e');
         return [];
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] fetchMindfulnessData: Platform not supported (iOS only)');
     return [];
   }
 
   Future<bool> writeGlucoseRecord(GlucoseRecord record) async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] writeGlucoseRecord: Platform not supported (iOS only)');
       return false;
     }
 
@@ -674,19 +643,16 @@ class HealthService {
         // debugPrint('[HealthService] Native iOS glucose write result: $success');
         return success as bool;
       } catch (e) {
-        debugPrint('[HealthService] Error writing glucose to native iOS: $e');
         return false;
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] writeGlucoseRecord: Platform not supported (iOS only)');
     return false;
   }
 
   Future<bool> deleteBloodGlucose(DateTime timestamp) async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] deleteBloodGlucose: Platform not supported (iOS only)');
       return false;
     }
 
@@ -701,14 +667,12 @@ class HealthService {
       // debugPrint('[HealthService] Native iOS glucose delete result: $success');
       return success as bool;
     } catch (e) {
-      debugPrint('[HealthService] Error deleting glucose from native iOS: $e');
       return false;
     }
   }
 
   Future<bool> deleteInsulinDelivery(DateTime timestamp) async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] deleteInsulinDelivery: Platform not supported (iOS only)');
       return false;
     }
 
@@ -723,14 +687,12 @@ class HealthService {
       // debugPrint('[HealthService] Native iOS insulin delete result: $success');
       return success as bool;
     } catch (e) {
-      debugPrint('[HealthService] Error deleting insulin from native iOS: $e');
       return false;
     }
   }
 
   Future<bool> writeInsulinRecord(InsulinRecord record) async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] writeInsulinRecord: Platform not supported (iOS only)');
       return false;
     }
 
@@ -750,13 +712,11 @@ class HealthService {
         // debugPrint('[HealthService] Native iOS insulin write result: $success (reason: $deliveryReason)');
         return success as bool;
       } catch (e) {
-        debugPrint('[HealthService] Error writing insulin to native iOS: $e');
         return false;
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] writeInsulinRecord: Platform not supported (iOS only)');
     return false;
   }
 
@@ -814,13 +774,11 @@ class HealthService {
         // debugPrint('[HealthService] Fetched ${records.length} insulin records from native iOS');
         return records;
       } catch (e) {
-        debugPrint('[HealthService] Error fetching insulin data from native iOS: $e');
         return [];
       }
     }
 
     // Platform not supported
-    debugPrint('[HealthService] fetchInsulinData: Platform not supported (iOS only)');
     return [];
   }
 
@@ -870,16 +828,13 @@ class HealthService {
   /// 백그라운드 옵저버 시작 - CGM/체중계 데이터 자동 동기화
   Future<bool> startBackgroundObserver() async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] startBackgroundObserver: Platform not supported (iOS only)');
       return false;
     }
 
     try {
       final success = await _healthKitChannel.invokeMethod('startBackgroundObserver');
-      debugPrint('[HealthService] Background observer started: $success');
       return success as bool;
     } catch (e) {
-      debugPrint('[HealthService] Error starting background observer: $e');
       return false;
     }
   }
@@ -887,16 +842,13 @@ class HealthService {
   /// 백그라운드 옵저버 중지
   Future<bool> stopBackgroundObserver() async {
     if (!Platform.isIOS) {
-      debugPrint('[HealthService] stopBackgroundObserver: Platform not supported (iOS only)');
       return false;
     }
 
     try {
       final success = await _healthKitChannel.invokeMethod('stopBackgroundObserver');
-      debugPrint('[HealthService] Background observer stopped: $success');
       return success as bool;
     } catch (e) {
-      debugPrint('[HealthService] Error stopping background observer: $e');
       return false;
     }
   }

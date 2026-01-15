@@ -625,12 +625,10 @@ class HealthKitBridge {
       defer { group.leave() }
 
       if let error = error {
-        print("[HealthKitBridge] Error fetching steps: \(error.localizedDescription)")
         return
       }
 
       guard let collection = collection else {
-        print("[HealthKitBridge] No steps collection returned")
         return
       }
 
@@ -657,12 +655,10 @@ class HealthKitBridge {
       defer { group.leave() }
 
       if let error = error {
-        print("[HealthKitBridge] Error fetching distance: \(error.localizedDescription)")
         return
       }
 
       guard let collection = collection else {
-        print("[HealthKitBridge] No distance collection returned")
         return
       }
 
@@ -912,7 +908,6 @@ class HealthKitBridge {
     // 체중 옵저버 설정
     setupWeightObserver()
 
-    print("[HealthKitBridge] Background observers started")
     result(true)
   }
 
@@ -921,13 +916,11 @@ class HealthKitBridge {
     if let observer = glucoseObserver {
       healthStore.stop(observer)
       glucoseObserver = nil
-      print("[HealthKitBridge] Glucose observer stopped")
     }
 
     if let observer = weightObserver {
       healthStore.stop(observer)
       weightObserver = nil
-      print("[HealthKitBridge] Weight observer stopped")
     }
 
     result(true)
@@ -935,7 +928,6 @@ class HealthKitBridge {
 
   private func setupGlucoseObserver() {
     guard let glucoseType = HKObjectType.quantityType(forIdentifier: .bloodGlucose) else {
-      print("[HealthKitBridge] Failed to get blood glucose type")
       return
     }
 
@@ -952,12 +944,9 @@ class HealthKitBridge {
       }
 
       if let error = error {
-        print("[HealthKitBridge] Glucose observer error: \(error.localizedDescription)")
         completionHandler()
         return
       }
-
-      print("[HealthKitBridge] Glucose data updated - triggering callback")
 
       // Flutter 콜백 호출
       DispatchQueue.main.async {
@@ -972,18 +961,11 @@ class HealthKitBridge {
     healthStore.execute(query)
 
     // 백그라운드 delivery 활성화
-    healthStore.enableBackgroundDelivery(for: glucoseType, frequency: .immediate) { success, error in
-      if let error = error {
-        print("[HealthKitBridge] Failed to enable glucose background delivery: \(error.localizedDescription)")
-      } else if success {
-        print("[HealthKitBridge] Glucose background delivery enabled")
-      }
-    }
+    healthStore.enableBackgroundDelivery(for: glucoseType, frequency: .immediate) { _, _ in }
   }
 
   private func setupWeightObserver() {
     guard let weightType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
-      print("[HealthKitBridge] Failed to get body mass type")
       return
     }
 
@@ -1000,12 +982,9 @@ class HealthKitBridge {
       }
 
       if let error = error {
-        print("[HealthKitBridge] Weight observer error: \(error.localizedDescription)")
         completionHandler()
         return
       }
-
-      print("[HealthKitBridge] Weight data updated - triggering callback")
 
       // Flutter 콜백 호출
       DispatchQueue.main.async {
@@ -1020,12 +999,6 @@ class HealthKitBridge {
     healthStore.execute(query)
 
     // 백그라운드 delivery 활성화
-    healthStore.enableBackgroundDelivery(for: weightType, frequency: .immediate) { success, error in
-      if let error = error {
-        print("[HealthKitBridge] Failed to enable weight background delivery: \(error.localizedDescription)")
-      } else if success {
-        print("[HealthKitBridge] Weight background delivery enabled")
-      }
-    }
+    healthStore.enableBackgroundDelivery(for: weightType, frequency: .immediate) { _, _ in }
   }
 }

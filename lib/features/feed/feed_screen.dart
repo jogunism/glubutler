@@ -189,17 +189,6 @@ class _FeedScreenState extends State<FeedScreen> {
       // Check if this date has menstruation data
       final hasMenstruation = provider.menstruationDates.contains(date);
 
-      // Debug log
-      if (date.year == DateTime.now().year &&
-          date.month == DateTime.now().month &&
-          date.day == DateTime.now().day) {
-        print('[FeedScreen] Today date: $date');
-        print('[FeedScreen] Has menstruation: $hasMenstruation');
-        print(
-          '[FeedScreen] All menstruation dates: ${provider.menstruationDates}',
-        );
-      }
-
       // Format steps with comma separators
       final stepsText = steps.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),

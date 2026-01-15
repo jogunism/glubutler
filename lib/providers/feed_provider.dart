@@ -106,9 +106,6 @@ class FeedProvider extends ChangeNotifier {
   Future<void> initialize() async {
     // 백그라운드 업데이트 콜백 설정
     _healthService.setBackgroundUpdateCallback(() {
-      debugPrint(
-        '[FeedProvider] Background health data updated - refreshing data',
-      );
       refreshData();
     });
 
@@ -608,7 +605,6 @@ class FeedProvider extends ChangeNotifier {
       _todayWaterMl = newTodayWaterMl;
     } catch (e) {
       _error = e.toString();
-      debugPrint('[FeedProvider] Error refreshing data: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

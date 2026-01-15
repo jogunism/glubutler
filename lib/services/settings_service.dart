@@ -81,11 +81,9 @@ class SettingsService extends ChangeNotifier {
 
       // 감지한 언어를 저장
       await _prefs.setString(AppConstants.keyLanguage, _language);
-      debugPrint('[SettingsService] System language detected and saved: $_language');
     } else {
       // 저장된 언어 사용
       _language = savedLanguage;
-      debugPrint('[SettingsService] Loaded saved language: $_language');
     }
 
     _unit = _prefs.getString(AppConstants.keyUnit) ?? AppConstants.defaultUnit;
@@ -135,7 +133,6 @@ class SettingsService extends ChangeNotifier {
         AppConstants.keyServiceStartDate,
         _serviceStartDate!.toIso8601String(),
       );
-      debugPrint('[SettingsService] Service start date initialized: $_serviceStartDate');
     }
 
     _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
@@ -147,9 +144,7 @@ class SettingsService extends ChangeNotifier {
     if (userIdentityJson != null) {
       try {
         _userIdentity = UserIdentity.fromJson(jsonDecode(userIdentityJson));
-        debugPrint('[SettingsService] UserIdentity loaded: $_userIdentity');
       } catch (e) {
-        debugPrint('[SettingsService] Error loading UserIdentity: $e');
         _userIdentity = null;
       }
     }
@@ -164,7 +159,6 @@ class SettingsService extends ChangeNotifier {
         AppConstants.keyUserIdentity,
         jsonEncode(_userIdentity!.toJson()),
       );
-      debugPrint('[SettingsService] UserIdentity created: $_userIdentity');
     } else {
       // 기존 UserIdentity가 있지만 IDFV가 없는 경우 업데이트
       if (_userIdentity!.idfv == null) {
@@ -175,7 +169,6 @@ class SettingsService extends ChangeNotifier {
             AppConstants.keyUserIdentity,
             jsonEncode(_userIdentity!.toJson()),
           );
-          debugPrint('[SettingsService] IDFV added to existing UserIdentity: $idfv');
         }
       }
     }
@@ -194,7 +187,6 @@ class SettingsService extends ChangeNotifier {
       }
       return null; // Android는 IDFV가 없음
     } catch (e) {
-      debugPrint('[SettingsService] Error getting IDFV: $e');
       return null;
     }
   }
@@ -313,7 +305,6 @@ class SettingsService extends ChangeNotifier {
       AppConstants.keyUserIdentity,
       jsonEncode(_userIdentity!.toJson()),
     );
-    debugPrint('[SettingsService] CloudKit ID updated: $cloudKitId');
     notifyListeners();
   }
 
@@ -321,7 +312,6 @@ class SettingsService extends ChangeNotifier {
   Future<void> setICloudSync(bool enabled) async {
     _iCloudSyncEnabled = enabled;
     await _prefs.setBool(AppConstants.keyICloudSyncEnabled, enabled);
-    debugPrint('[SettingsService] iCloud Sync ${enabled ? "enabled" : "disabled"}');
     notifyListeners();
   }
 
