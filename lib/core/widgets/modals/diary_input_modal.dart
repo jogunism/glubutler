@@ -15,12 +15,13 @@ import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/diary_file.dart';
-import 'package:glu_butler/repositories/diary_repository.dart';
 import 'package:glu_butler/repositories/meal_repository.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/services/image_service.dart';
 import 'package:glu_butler/services/vision_service.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
+import 'package:provider/provider.dart';
 
 /// 일기 입력 모달 팝업
 ///
@@ -61,7 +62,6 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   final _imagePicker = ImagePicker();
   final _imageService = ImageService();
   final _visionService = VisionService();
-  final _diaryRepository = DiaryRepository();
   final _mealRepository = MealRepository();
   final _databaseService = DatabaseService();
   bool _isSaving = false;
@@ -273,10 +273,12 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         hasMealDetected: hasMealDetected,
       );
 
-      // Save or update to database
+      // Save or update to database via DiaryProvider (handles iCloud sync)
+      if (!mounted) return;
+      final diaryProvider = context.read<DiaryProvider>();
       final success = isEditMode
-          ? await _diaryRepository.update(entry)
-          : await _diaryRepository.save(entry);
+          ? await diaryProvider.updateEntry(entry)
+          : await diaryProvider.addEntry(entry);
 
       if (success) {
         // 음식 사진이 있으면 meal 레코드 생성/재생성

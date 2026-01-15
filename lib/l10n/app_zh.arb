@@ -346,5 +346,10 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "iCloudSyncEnabled": "iCloud同步已启用",
+  "iCloudSyncDisabled": "iCloud同步已禁用",
+  "iCloudSyncFailed": "连接iCloud失败",
+  "iCloudNotAvailable": "iCloud不可用。请在设置中登录iCloud。"
 }

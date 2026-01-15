@@ -1,26 +1,21 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/services/database_service.dart';
-import 'package:glu_butler/services/cloudkit_service.dart';
 
 /// Repository for diary entries and files.
 ///
-/// Handles reading/writing diary data to local database and CloudKit sync.
+/// Handles reading/writing diary data to local database.
+/// CloudKit sync is handled at the Provider level.
 class DiaryRepository {
   final DatabaseService _databaseService;
-  final CloudKitService _cloudKitService;
 
   DiaryRepository({
     DatabaseService? databaseService,
-    CloudKitService? cloudKitService,
-  })  : _databaseService = databaseService ?? DatabaseService(),
-        _cloudKitService = cloudKitService ?? CloudKitService();
+  }) : _databaseService = databaseService ?? DatabaseService();
 
   /// Save a diary entry with optional files.
   ///
   /// Returns true if save was successful.
-  /// Automatically syncs to CloudKit if enabled.
+  /// Note: CloudKit sync is handled automatically by DiaryProvider.
   Future<bool> save(DiaryItem entry) async {
     try {
       await _databaseService.insertDiary(entry);
@@ -32,12 +27,8 @@ class DiaryRepository {
         }
       }
 
-      // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
-      // _cloudKitService.saveDiaryItem(entry);
-
       return true;
     } catch (e) {
-      debugPrint('[DiaryRepository] Failed to save diary: $e');
       return false;
     }
   }
@@ -75,20 +66,19 @@ class DiaryRepository {
 
   /// Delete a diary entry and its files (CASCADE).
   /// Also deletes related meal records.
-  /// Automatically syncs to CloudKit if enabled.
+  /// Note: CloudKit sync is handled automatically by DiaryProvider.
   Future<void> delete(String id) async {
+
     // Delete related meal records first
     await _databaseService.deleteMealsByDiaryId(id);
 
     // Delete diary (files will be CASCADE deleted)
     await _databaseService.deleteDiary(id);
 
-    // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
-    // _cloudKitService.deleteDiaryItem(id);
   }
 
   /// Update a diary entry.
-  /// Automatically syncs to CloudKit if enabled.
+  /// Note: CloudKit sync is handled automatically by DiaryProvider.
   Future<bool> update(DiaryItem entry) async {
     try {
       await _databaseService.updateDiary(entry);
@@ -101,12 +91,8 @@ class DiaryRepository {
         }
       }
 
-      // TODO: CloudKit 동기화 - Apple Developer Program 가입 후 활성화
-      // _cloudKitService.saveDiaryItem(entry);
-
       return true;
     } catch (e) {
-      debugPrint('[DiaryRepository] Failed to update diary: $e');
       return false;
     }
   }

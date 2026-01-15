@@ -892,4 +892,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String apiErrorReportFailed(String message) {
     return 'レポート生成失敗: $message';
   }
+
+  @override
+  String get iCloudSyncEnabled => 'iCloud同期が有効になりました';
+
+  @override
+  String get iCloudSyncDisabled => 'iCloud同期が無効になりました';
+
+  @override
+  String get iCloudSyncFailed => 'iCloudへの接続に失敗しました';
+
+  @override
+  String get iCloudNotAvailable => 'iCloudが利用できません。設定でiCloudにサインインしてください。';
 }

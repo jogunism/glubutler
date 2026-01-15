@@ -367,5 +367,10 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "iCloudSyncEnabled": "iCloud sync enabled",
+  "iCloudSyncDisabled": "iCloud sync disabled",
+  "iCloudSyncFailed": "Failed to connect to iCloud",
+  "iCloudNotAvailable": "iCloud is not available. Please sign in to iCloud in Settings."
 }

@@ -1,6 +1,6 @@
-/* Health permissions */
-"NSHealthShareUsageDescription" = "Glu Butler a besoin d'accéder à vos données de santé pour afficher les informations de glycémie, d'exercices et de sommeil.";
-"NSHealthUpdateUsageDescription" = "Glu Butler a besoin de l'autorisation pour enregistrer vos lectures de glycémie dans Apple Health.";
+/* Health Kit Permissions */
+"NSHealthShareUsageDescription" = "GluButler a besoin d'accéder à vos données de santé pour afficher vos niveaux de glucose.";
+"NSHealthUpdateUsageDescription" = "GluButler a besoin de l'autorisation pour enregistrer vos données de glucose dans l'application Santé.";
 
-/* Photo library permission */
-"NSPhotoLibraryUsageDescription" = "Glu Butler a besoin d'accéder à votre bibliothèque de photos pour joindre des photos à vos entrées de journal.";
+/* Photo Library Permission */
+"NSPhotoLibraryUsageDescription" = "GluButler a besoin d'accéder à vos photos pour joindre des images à vos entrées de journal.";

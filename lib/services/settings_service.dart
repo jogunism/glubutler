@@ -28,6 +28,7 @@ class SettingsService extends ChangeNotifier {
   DateTime? _serviceStartDate;
   bool _hapticEnabled = AppConstants.defaultHapticEnabled;
   UserIdentity? _userIdentity;
+  bool _iCloudSyncEnabled = false;
 
   String get language => _language;
   String get unit => _unit;
@@ -42,6 +43,7 @@ class SettingsService extends ChangeNotifier {
   DateTime? get serviceStartDate => _serviceStartDate;
   bool get hapticEnabled => _hapticEnabled;
   UserIdentity get userIdentity => _userIdentity ?? const UserIdentity();
+  bool get iCloudSyncEnabled => _iCloudSyncEnabled;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -137,6 +139,8 @@ class SettingsService extends ChangeNotifier {
     }
 
     _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
+
+    _iCloudSyncEnabled = _prefs.getBool(AppConstants.keyICloudSyncEnabled) ?? false;
 
     // Load or generate UserIdentity
     final userIdentityJson = _prefs.getString(AppConstants.keyUserIdentity);
@@ -310,6 +314,14 @@ class SettingsService extends ChangeNotifier {
       jsonEncode(_userIdentity!.toJson()),
     );
     debugPrint('[SettingsService] CloudKit ID updated: $cloudKitId');
+    notifyListeners();
+  }
+
+  /// iCloud Sync 상태 설정
+  Future<void> setICloudSync(bool enabled) async {
+    _iCloudSyncEnabled = enabled;
+    await _prefs.setBool(AppConstants.keyICloudSyncEnabled, enabled);
+    debugPrint('[SettingsService] iCloud Sync ${enabled ? "enabled" : "disabled"}');
     notifyListeners();
   }
 

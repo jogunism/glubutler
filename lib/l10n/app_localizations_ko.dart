@@ -892,4 +892,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String apiErrorReportFailed(String message) {
     return '리포트 생성 실패: $message';
   }
+
+  @override
+  String get iCloudSyncEnabled => 'iCloud 연결이 완료되었습니다';
+
+  @override
+  String get iCloudSyncDisabled => 'iCloud 연결이 해제되었습니다';
+
+  @override
+  String get iCloudSyncFailed => 'iCloud 연결에 실패했습니다';
+
+  @override
+  String get iCloudNotAvailable => 'iCloud를 사용할 수 없습니다. 설정에서 iCloud에 로그인해주세요.';
 }

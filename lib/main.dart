@@ -32,16 +32,12 @@ void main() async {
   final settingsService = SettingsService();
   await settingsService.init();
 
-  // TODO: CloudKit 동기화 - Apple Developer Program($99/년) 가입 후 활성화
-  // CloudKit requires a paid Apple Developer account to work
-  // final cloudKitService = CloudKitService();
-  // await cloudKitService.syncOnStartup();
-
   final feedProvider = FeedProvider();
   feedProvider.setSettingsService(settingsService);
   await feedProvider.initialize();
 
   final diaryProvider = DiaryProvider();
+  diaryProvider.setSettingsService(settingsService);
   await diaryProvider.initialize();
 
   final reportProvider = ReportProvider(
@@ -50,6 +46,11 @@ void main() async {
     settingsService: settingsService,
   );
   await reportProvider.initialize();
+
+  // iCloud 동기화 (백그라운드, DiaryProvider를 통해 UI 업데이트)
+  if (settingsService.iCloudSyncEnabled) {
+    diaryProvider.syncFromICloud();
+  }
 
   runApp(
     MultiProvider(

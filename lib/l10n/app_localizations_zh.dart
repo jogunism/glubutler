@@ -892,4 +892,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String apiErrorReportFailed(String message) {
     return '报告生成失败: $message';
   }
+
+  @override
+  String get iCloudSyncEnabled => 'iCloud同步已启用';
+
+  @override
+  String get iCloudSyncDisabled => 'iCloud同步已禁用';
+
+  @override
+  String get iCloudSyncFailed => '连接iCloud失败';
+
+  @override
+  String get iCloudNotAvailable => 'iCloud不可用。请在设置中登录iCloud。';
 }

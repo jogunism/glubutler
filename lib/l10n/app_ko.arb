@@ -356,5 +356,10 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "iCloudSyncEnabled": "iCloud 연결이 완료되었습니다",
+  "iCloudSyncDisabled": "iCloud 연결이 해제되었습니다",
+  "iCloudSyncFailed": "iCloud 연결에 실패했습니다",
+  "iCloudNotAvailable": "iCloud를 사용할 수 없습니다. 설정에서 iCloud에 로그인해주세요."
 }

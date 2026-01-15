@@ -1,0 +1,6 @@
+/* Health Kit Permissions */
+"NSHealthShareUsageDescription" = "GluButler需要访问您的健康数据以显示血糖水平。";
+"NSHealthUpdateUsageDescription" = "GluButler需要权限将血糖数据保存到健康应用。";
+
+/* Photo Library Permission */
+"NSPhotoLibraryUsageDescription" = "GluButler需要访问您的照片以将图片添加到日记条目中。";

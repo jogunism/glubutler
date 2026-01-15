@@ -924,4 +924,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String apiErrorReportFailed(String message) {
     return 'Échec de la génération du rapport: $message';
   }
+
+  @override
+  String get iCloudSyncEnabled => 'Synchronisation iCloud activée';
+
+  @override
+  String get iCloudSyncDisabled => 'Synchronisation iCloud désactivée';
+
+  @override
+  String get iCloudSyncFailed => 'Échec de la connexion à iCloud';
+
+  @override
+  String get iCloudNotAvailable =>
+      'iCloud n\'est pas disponible. Veuillez vous connecter à iCloud dans Réglages.';
 }

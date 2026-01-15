@@ -349,5 +349,10 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "iCloudSyncEnabled": "iCloud同期が有効になりました",
+  "iCloudSyncDisabled": "iCloud同期が無効になりました",
+  "iCloudSyncFailed": "iCloudへの接続に失敗しました",
+  "iCloudNotAvailable": "iCloudが利用できません。設定でiCloudにサインインしてください。"
 }

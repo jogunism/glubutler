@@ -14,6 +14,7 @@ import 'package:glu_butler/services/app_settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 앱 설정 화면
@@ -50,24 +51,99 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final _cloudKitService = CloudKitService();
   bool _cloudKitAvailable = false;
+  bool _iCloudSyncEnabled = false;
+  bool _isTogglingSync = false;
 
   @override
   void initState() {
     super.initState();
     _checkCloudKitStatus();
+    _loadSyncStatus();
   }
 
   Future<void> _checkCloudKitStatus() async {
-    final isAvailable = await _cloudKitService.isAvailable();
-    final isSignedIn = await _cloudKitService.isUserSignedIn();
+    final isAvailable = await CloudKitService.isAvailable();
+    final isSignedIn = await CloudKitService.isUserSignedIn();
 
     if (mounted) {
       setState(() {
         _cloudKitAvailable = isAvailable && isSignedIn;
       });
     }
+  }
+
+  Future<void> _loadSyncStatus() async {
+    final settings = context.read<SettingsService>();
+
+    if (mounted) {
+      setState(() {
+        _iCloudSyncEnabled = settings.iCloudSyncEnabled;
+      });
+    }
+  }
+
+  Future<void> _toggleICloudSync(BuildContext context, bool value) async {
+    if (_isTogglingSync) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    // Check iCloud availability first
+    if (!_cloudKitAvailable) {
+      _showToast(context, l10n.iCloudNotAvailable, isSuccess: false);
+      return;
+    }
+
+    setState(() {
+      _isTogglingSync = true;
+    });
+
+    try {
+      final settings = context.read<SettingsService>();
+
+      if (value) {
+        // Enable iCloud sync: Get CloudKit ID and save it
+        final cloudKitId = await CloudKitService.getUserRecordID();
+        await settings.updateCloudKitId(cloudKitId);
+
+        // 동기화 실행: 로컬 → iCloud 업로드, iCloud → 로컬 다운로드
+        debugPrint('[SettingsScreen] Starting initial iCloud sync...');
+        final (uploaded, downloaded) = await CloudKitService.syncDiaryEntries();
+        debugPrint('[SettingsScreen] Sync complete: $uploaded uploaded, $downloaded downloaded');
+      }
+
+      await settings.setICloudSync(value);
+
+      if (mounted) {
+        setState(() {
+          _iCloudSyncEnabled = value;
+          _isTogglingSync = false;
+        });
+
+        _showToast(
+          context,
+          value ? l10n.iCloudSyncEnabled : l10n.iCloudSyncDisabled,
+          isSuccess: true,
+        );
+      }
+    } catch (e) {
+      debugPrint('[SettingsScreen] iCloud sync toggle failed: $e');
+      if (mounted) {
+        setState(() {
+          _isTogglingSync = false;
+        });
+
+        _showToast(context, l10n.iCloudSyncFailed, isSuccess: false);
+      }
+    }
+  }
+
+  void _showToast(BuildContext context, String message, {required bool isSuccess}) {
+    TopBanner.show(
+      context,
+      message: message,
+      isSuccess: isSuccess,
+    );
   }
 
   @override
@@ -230,25 +306,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
 
-                  // CloudKit Sync (자동 동기화)
-                  _buildSettingsTile(
+                  // iCloud Sync (토글 스위치)
+                  _buildICloudSyncTile(
                     context: context,
-                    icon: CupertinoIcons.cloud,
-                    iconColor: CupertinoColors.activeBlue,
-                    title: l10n.iCloudSync,
-                    subtitle: l10n.iCloudSyncDescription,
-                    trailing: Icon(
-                      _cloudKitAvailable
-                          ? CupertinoIcons.checkmark_circle_fill
-                          : CupertinoIcons.exclamationmark_circle,
-                      color: _cloudKitAvailable
-                          ? CupertinoColors.systemGreen
-                          : CupertinoColors.systemGrey,
-                    ),
-                    onTap: () {
-                      // CloudKit은 자동 동기화이므로 설정 없음
-                      // 필요시 설정 앱으로 이동하는 기능 추가 가능
-                    },
+                    settings: settings,
                   ),
                 ],
               ),
@@ -512,6 +573,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: settings.hapticEnabled,
             onChanged: (value) => settings.setHapticEnabled(value),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildICloudSyncTile({
+    required BuildContext context,
+    required SettingsService settings,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GlassIcon(
+            icon: CupertinoIcons.cloud,
+            color: CupertinoColors.activeBlue,
+            size: 32,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.iCloudSync,
+                  style: context.textStyles.tileTitle,
+                ),
+                Text(
+                  l10n.iCloudSyncDescription,
+                  style: context.textStyles.tileSubtitle,
+                ),
+              ],
+            ),
+          ),
+          if (_isTogglingSync)
+            const CupertinoActivityIndicator()
+          else
+            CupertinoSwitch(
+              value: _iCloudSyncEnabled,
+              onChanged: (value) => _toggleICloudSync(context, value),
+            ),
         ],
       ),
     );

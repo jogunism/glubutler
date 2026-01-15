@@ -346,5 +346,10 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "iCloudSyncEnabled": "Sincronización de iCloud activada",
+  "iCloudSyncDisabled": "Sincronización de iCloud desactivada",
+  "iCloudSyncFailed": "Error al conectar con iCloud",
+  "iCloudNotAvailable": "iCloud no está disponible. Inicie sesión en iCloud en Ajustes."
 }

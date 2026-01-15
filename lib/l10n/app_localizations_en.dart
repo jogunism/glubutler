@@ -914,4 +914,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String apiErrorReportFailed(String message) {
     return 'Report generation failed: $message';
   }
+
+  @override
+  String get iCloudSyncEnabled => 'iCloud sync enabled';
+
+  @override
+  String get iCloudSyncDisabled => 'iCloud sync disabled';
+
+  @override
+  String get iCloudSyncFailed => 'Failed to connect to iCloud';
+
+  @override
+  String get iCloudNotAvailable =>
+      'iCloud is not available. Please sign in to iCloud in Settings.';
 }

@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/settings_service.dart';
 
 /// 일기 데이터 관리 Provider
 ///
 /// 일기 엔트리의 CRUD 작업과 상태 관리를 담당합니다.
 class DiaryProvider extends ChangeNotifier {
   final DiaryRepository _repository = DiaryRepository();
+  SettingsService? _settingsService;
 
   List<DiaryItem> _entries = [];
   List<DiaryItem> get entries => _entries;
@@ -20,6 +23,11 @@ class DiaryProvider extends ChangeNotifier {
   // Refresh trigger timestamp - updated on each refresh to reset card states
   int _refreshTimestamp = 0;
   int get refreshTimestamp => _refreshTimestamp;
+
+  /// SettingsService 설정 (iCloud 동기화 확인용)
+  void setSettingsService(SettingsService settingsService) {
+    _settingsService = settingsService;
+  }
 
   /// 초기화 및 데이터 로드
   Future<void> initialize() async {
@@ -38,10 +46,25 @@ class DiaryProvider extends ChangeNotifier {
       _refreshTimestamp = DateTime.now().millisecondsSinceEpoch;
     } catch (e) {
       _error = e.toString();
-      debugPrint('[DiaryProvider] Error loading entries: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// iCloud에서 다이어리 동기화 (다운로드 후 UI 업데이트)
+  Future<void> syncFromICloud() async {
+    if (_settingsService?.iCloudSyncEnabled != true) {
+      return;
+    }
+
+    try {
+      await CloudKitService.downloadDiaryEntries();
+
+      // DB에서 데이터 다시 로드하여 UI 업데이트
+      await refreshData();
+    } catch (e) {
+      // 에러 무시 (백그라운드 동기화 실패는 사용자에게 영향 없음)
     }
   }
 
@@ -50,6 +73,10 @@ class DiaryProvider extends ChangeNotifier {
     try {
       await _repository.save(entry);
       await refreshData();
+
+      // iCloud 자동 업로드 (백그라운드)
+      _syncToICloudIfEnabled(entry);
+
       return true;
     } catch (e) {
       _error = 'Failed to add diary entry';
@@ -63,6 +90,10 @@ class DiaryProvider extends ChangeNotifier {
     try {
       await _repository.update(entry);
       await refreshData();
+
+      // iCloud 자동 업로드 (백그라운드)
+      _syncToICloudIfEnabled(entry);
+
       return true;
     } catch (e) {
       _error = 'Failed to update diary entry';
@@ -76,12 +107,43 @@ class DiaryProvider extends ChangeNotifier {
     try {
       await _repository.delete(id);
       await refreshData();
+
+      // iCloud에서도 삭제 (백그라운드)
+      _deleteFromICloudIfEnabled(id);
+
       return true;
     } catch (e) {
       _error = 'Failed to delete diary entry';
       notifyListeners();
       return false;
     }
+  }
+
+  /// iCloud에서 삭제 (백그라운드, 에러 무시)
+  void _deleteFromICloudIfEnabled(String entryId) {
+    if (_settingsService?.iCloudSyncEnabled != true) {
+      return;
+    }
+
+    CloudKitService.deleteDiaryEntry(entryId).then((_) {
+    }).catchError((error) {
+      // 에러 무시 (로컬 삭제는 이미 성공했으므로)
+    });
+  }
+
+  /// iCloud 동기화 (백그라운드, 에러 무시)
+  void _syncToICloudIfEnabled(DiaryItem entry) {
+
+    // iCloud Sync가 활성화되어 있는지 확인
+    if (_settingsService?.iCloudSyncEnabled != true) {
+      return;
+    }
+
+    // 백그라운드에서 단일 엔트리 업로드
+    CloudKitService.uploadDiaryEntries().then((_) {
+    }).catchError((error) {
+      // 에러 무시 (로컬 저장은 이미 성공했으므로)
+    });
   }
 
   /// 특정 날짜 범위의 일기 가져오기 (리포트용)

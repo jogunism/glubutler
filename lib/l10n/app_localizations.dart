@@ -1837,6 +1837,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report generation failed: {message}'**
   String apiErrorReportFailed(String message);
+
+  /// No description provided for @iCloudSyncEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud sync enabled'**
+  String get iCloudSyncEnabled;
+
+  /// No description provided for @iCloudSyncDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud sync disabled'**
+  String get iCloudSyncDisabled;
+
+  /// No description provided for @iCloudSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to iCloud'**
+  String get iCloudSyncFailed;
+
+  /// No description provided for @iCloudNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud is not available. Please sign in to iCloud in Settings.'**
+  String get iCloudNotAvailable;
 }
 
 class _AppLocalizationsDelegate

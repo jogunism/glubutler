@@ -87,4 +87,7 @@ class AppConstants {
   // Haptic Feedback
   static const String keyHapticEnabled = 'haptic_enabled';
   static const bool defaultHapticEnabled = true;
+
+  // iCloud Sync
+  static const String keyICloudSyncEnabled = 'icloud_sync_enabled';
 }
