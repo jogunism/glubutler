@@ -964,7 +964,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingPhotoAccess => '照片访问';
 
   @override
-  String get onboardingHealthTitle => '连接 Apple Health';
+  String get onboardingHealthTitle => '与 Apple Health 连接';
 
   @override
   String get onboardingHealthSubtitle => '自动同步血糖、胰岛素、步数和体重';
@@ -973,13 +973,70 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingHealthConnect => '连接';
 
   @override
-  String get onboardingICloudTitle => 'iCloud 同步';
+  String get onboardingReportTitle => '接收血糖报告';
 
   @override
-  String get onboardingICloudSubtitle => '在所有设备上同步您记录的数据并安全保存';
+  String get onboardingReportSubtitle => '根据您的记录数据获取定期报告';
 
   @override
-  String get onboardingICloudEnable => '同步 iCloud';
+  String get onboardingReportICloudRequired => '需要 iCloud 同步';
+
+  @override
+  String get onboardingReportEnable => '同步 iCloud';
+
+  @override
+  String get onboardingNotificationTitle => '接收通知';
+
+  @override
+  String get onboardingNotificationSubtitle => '我们将帮助您保持每日规律记录';
+
+  @override
+  String get onboardingNotificationEnable => '启用通知';
+
+  @override
+  String get onboardingSubscriptionTitle => '升级到Pro并解锁所有功能';
+
+  @override
+  String get onboardingSubscriptionSubtitle => '体验更好血糖管理的高级功能';
+
+  @override
+  String get onboardingSubscriptionFeature1 => '无限AI洞察';
+
+  @override
+  String get onboardingSubscriptionFeature2 => '高级分析和报告';
+
+  @override
+  String get onboardingSubscriptionFeature3 => '数据导出';
+
+  @override
+  String get onboardingSubscriptionFeature4 => '优先支持';
+
+  @override
+  String get onboardingSubscriptionMonthly => 'Plus Monthly';
+
+  @override
+  String get onboardingSubscriptionMonthlyPrice => '¥45/月';
+
+  @override
+  String get onboardingSubscriptionYearly => 'Plus Yearly';
+
+  @override
+  String get onboardingSubscriptionYearlyPrice => '¥350/年';
+
+  @override
+  String get onboardingSubscriptionLifetime => 'Plus Lifetime';
+
+  @override
+  String get onboardingSubscriptionLifetimePrice => '¥998';
+
+  @override
+  String get onboardingSubscriptionRedeem => '兑换代码';
+
+  @override
+  String get onboardingSubscriptionRestore => '恢复购买';
+
+  @override
+  String get onboardingSubscriptionPurchase => '购买';
 
   @override
   String get diabetesTypeUnknown => '不确定';

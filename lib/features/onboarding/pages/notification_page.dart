@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
-// import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
+import 'package:glu_butler/l10n/app_localizations.dart';
 
 /// Notification permission page
 class NotificationPage extends StatefulWidget {
@@ -47,161 +47,136 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 40),
+    final l10n = AppLocalizations.of(context)!;
 
-          // Title
-          Text(
-            'Turn on reminders',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary(context),
-              height: 1.2,
-              letterSpacing: -0.5,
-            ),
-          ),
+    return Stack(
+      children: [
+        // Main content
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
 
-          const SizedBox(height: 12),
-
-          // Description
-          Text(
-            'Get daily reminders for logging glucose and meals',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              color: AppTheme.textSecondary(context),
-              height: 1.4,
-              letterSpacing: -0.3,
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Illustration
-          Center(
-            child: Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(80),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Envelope
-                  Container(
-                    width: 80,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppTheme.primaryColor,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  // Badge
-                  Positioned(
-                    top: 45,
-                    right: 45,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.notifications,
-                        size: 14,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Benefits
-          _buildBenefitItem('Daily glucose logging reminders'),
-          const SizedBox(height: 16),
-          _buildBenefitItem('Meal logging notifications'),
-          const SizedBox(height: 16),
-          _buildBenefitItem('Stay consistent with tracking'),
-
-          const Spacer(),
-
-          // Skip button - always visible
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: widget.onNext,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-              child: Text(
-                'Skip',
+              // Title
+              Text(
+                l10n.onboardingNotificationTitle,
                 style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary(context),
+                  height: 1.2,
+                  letterSpacing: -0.5,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Subtitle
+              Text(
+                l10n.onboardingNotificationSubtitle,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                   color: AppTheme.textSecondary(context),
+                  height: 1.4,
                   letterSpacing: -0.3,
                 ),
               ),
-            ),
-          ),
 
-          const SizedBox(height: 8),
+              const SizedBox(height: 32),
 
-          // Enable button
-          OnboardingPrimaryButton(
-            text: 'Enable Notifications',
-            onPressed: _requestNotificationPermission,
-            isLoading: _isRequesting,
-          ),
+              // Illustration
+              Center(
+                child: Container(
+                  width: 160,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(80),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Envelope
+                      Container(
+                        width: 80,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppTheme.primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      // Badge
+                      Positioned(
+                        top: 45,
+                        right: 45,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: const BoxDecoration(
+                            color: AppTheme.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.notifications,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBenefitItem(String text) {
-    return Row(
-      children: [
-        Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.check,
-            size: 16,
-            color: AppTheme.primaryColor,
+              const Spacer(),
+            ],
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.textPrimary(context),
-              letterSpacing: -0.3,
-            ),
+
+        // Button positioned at bottom
+        Positioned(
+          left: 24,
+          right: 24,
+          bottom: 24,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Skip button
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: widget.onNext,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                  child: Text(
+                    l10n.onboardingSkip,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.textSecondary(context),
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 0),
+
+              // Enable button
+              OnboardingPrimaryButton(
+                text: l10n.onboardingNotificationEnable,
+                onPressed: _requestNotificationPermission,
+                isLoading: _isRequesting,
+              ),
+            ],
           ),
         ),
       ],

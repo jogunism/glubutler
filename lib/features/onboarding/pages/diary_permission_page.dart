@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
@@ -19,6 +20,35 @@ class DiaryPermissionPage extends StatefulWidget {
 
 class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
   bool _isRequesting = false;
+  int _currentImageIndex = 0;
+  Timer? _timer;
+
+  final List<String> _screenImages = [
+    'assets/images/screen_diary.png',
+    'assets/images/screen_feed.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startImageCycling();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startImageCycling() {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (mounted) {
+        setState(() {
+          _currentImageIndex = (_currentImageIndex + 1) % _screenImages.length;
+        });
+      }
+    });
+  }
 
   Future<void> _requestPhotoAccess() async {
     setState(() {
@@ -49,12 +79,17 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // 화면 크기에 따라 동적으로 조정 (welcome_page와 동일)
+    final imageWidth = screenWidth * 0.7;
+    final imageHeight = imageWidth * 1.43;
 
     return Stack(
       children: [
         // Main content
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -78,7 +113,7 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
               Text(
                 l10n.onboardingDiarySubtitle,
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 15,
                   fontWeight: FontWeight.w400,
                   color: AppTheme.textSecondary(context),
                   height: 1.4,
@@ -88,13 +123,20 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
 
               const SizedBox(height: 32),
 
-              // Image - matching health permission page layout
+              // Image - matching health permission page size with animation
               Center(
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Image.asset(
-                    'assets/images/screen_diary.png',
-                    fit: BoxFit.contain,
+                  width: imageWidth,
+                  height: imageHeight,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 800),
+                    switchInCurve: Curves.easeIn,
+                    switchOutCurve: Curves.easeOut,
+                    child: Image.asset(
+                      _screenImages[_currentImageIndex],
+                      key: ValueKey<int>(_currentImageIndex),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -118,12 +160,12 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
                 child: TextButton(
                   onPressed: widget.onNext,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   child: Text(
                     l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,
@@ -132,7 +174,7 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 0),
 
               // Photo access button
               OnboardingPrimaryButton(

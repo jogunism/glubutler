@@ -963,7 +963,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingPhotoAccess => '写真アクセス';
 
   @override
-  String get onboardingHealthTitle => 'Apple Healthと連携';
+  String get onboardingHealthTitle => 'Apple Healthと連携しましょう';
 
   @override
   String get onboardingHealthSubtitle => '血糖値、インスリン、歩数、体重などを自動的に同期します';
@@ -972,13 +972,70 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingHealthConnect => '連携する';
 
   @override
-  String get onboardingICloudTitle => 'iCloud同期';
+  String get onboardingReportTitle => '血糖レポートを受け取りましょう';
 
   @override
-  String get onboardingICloudSubtitle => 'すべてのデバイスで記録されたデータを同期し、安全に保管します';
+  String get onboardingReportSubtitle => '記録されたデータに基づいて定期的なレポートを受け取りましょう';
 
   @override
-  String get onboardingICloudEnable => 'iCloud同期';
+  String get onboardingReportICloudRequired => 'iCloud同期が必要です';
+
+  @override
+  String get onboardingReportEnable => 'iCloud同期';
+
+  @override
+  String get onboardingNotificationTitle => '通知を受け取りましょう';
+
+  @override
+  String get onboardingNotificationSubtitle => '毎日規則正しく記録できるようサポートします';
+
+  @override
+  String get onboardingNotificationEnable => '通知を有効にする';
+
+  @override
+  String get onboardingSubscriptionTitle => 'Proにアップグレードしてすべての機能を使いましょう';
+
+  @override
+  String get onboardingSubscriptionSubtitle => 'より良い血糖管理のためのプレミアム機能を体験してください';
+
+  @override
+  String get onboardingSubscriptionFeature1 => '無制限AIインサイト';
+
+  @override
+  String get onboardingSubscriptionFeature2 => '高度な分析とレポート';
+
+  @override
+  String get onboardingSubscriptionFeature3 => 'データエクスポート';
+
+  @override
+  String get onboardingSubscriptionFeature4 => '優先サポート';
+
+  @override
+  String get onboardingSubscriptionMonthly => 'Plus Monthly';
+
+  @override
+  String get onboardingSubscriptionMonthlyPrice => '¥900/月';
+
+  @override
+  String get onboardingSubscriptionYearly => 'Plus Yearly';
+
+  @override
+  String get onboardingSubscriptionYearlyPrice => '¥7,500/年';
+
+  @override
+  String get onboardingSubscriptionLifetime => 'Plus Lifetime';
+
+  @override
+  String get onboardingSubscriptionLifetimePrice => '¥20,000';
+
+  @override
+  String get onboardingSubscriptionRedeem => 'コードを使用';
+
+  @override
+  String get onboardingSubscriptionRestore => '購入を復元';
+
+  @override
+  String get onboardingSubscriptionPurchase => '購入する';
 
   @override
   String get diabetesTypeUnknown => 'わからない';

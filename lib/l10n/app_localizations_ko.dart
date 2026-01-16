@@ -963,7 +963,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingPhotoAccess => '사진 액세스';
 
   @override
-  String get onboardingHealthTitle => '애플 건강 앱 연결';
+  String get onboardingHealthTitle => '애플 건강앱과 연동하세요';
 
   @override
   String get onboardingHealthSubtitle => '혈당, 인슐린, 걸음 수, 체중 등을 자동으로 동기화하세요';
@@ -972,13 +972,70 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingHealthConnect => '연결하기';
 
   @override
-  String get onboardingICloudTitle => 'iCloud 동기화';
+  String get onboardingReportTitle => '혈당 리포트를 받아보세요';
 
   @override
-  String get onboardingICloudSubtitle => '모든 기기에서 기록된 데이터를 동기화하고 안전하게 보관하세요';
+  String get onboardingReportSubtitle => '기록된 데이터를 바탕으로 주기적인 리포트를 받아보세요';
 
   @override
-  String get onboardingICloudEnable => 'iCloud 연동';
+  String get onboardingReportICloudRequired => 'iCloud 연동이 필요해요';
+
+  @override
+  String get onboardingReportEnable => 'iCloud 연동';
+
+  @override
+  String get onboardingNotificationTitle => '알림을 받아보세요';
+
+  @override
+  String get onboardingNotificationSubtitle => '매일 규칙적인 기록을 할 수 있게 도와드릴께요';
+
+  @override
+  String get onboardingNotificationEnable => '알림 켜기';
+
+  @override
+  String get onboardingSubscriptionTitle => 'Pro로 업그레이드하고 모든 기능을 사용해 보세요';
+
+  @override
+  String get onboardingSubscriptionSubtitle => '더 나은 혈당 관리를 위한 프리미엄 기능을 경험하세요';
+
+  @override
+  String get onboardingSubscriptionFeature1 => '무제한 AI 인사이트';
+
+  @override
+  String get onboardingSubscriptionFeature2 => '고급 분석 및 리포트';
+
+  @override
+  String get onboardingSubscriptionFeature3 => '데이터 내보내기';
+
+  @override
+  String get onboardingSubscriptionFeature4 => '우선 지원';
+
+  @override
+  String get onboardingSubscriptionMonthly => 'Plus Monthly';
+
+  @override
+  String get onboardingSubscriptionMonthlyPrice => '₩6,500/월';
+
+  @override
+  String get onboardingSubscriptionYearly => 'Plus Yearly';
+
+  @override
+  String get onboardingSubscriptionYearlyPrice => '₩54,000/년';
+
+  @override
+  String get onboardingSubscriptionLifetime => 'Plus Lifetime';
+
+  @override
+  String get onboardingSubscriptionLifetimePrice => '₩150,000';
+
+  @override
+  String get onboardingSubscriptionRedeem => '코드 사용';
+
+  @override
+  String get onboardingSubscriptionRestore => '구매 복원';
+
+  @override
+  String get onboardingSubscriptionPurchase => '결제하기';
 
   @override
   String get diabetesTypeUnknown => '잘 모르겠어요';

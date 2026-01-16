@@ -65,7 +65,7 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
       children: [
         // Main content
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -89,7 +89,7 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
               Text(
                 l10n.onboardingHealthSubtitle,
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 15,
                   fontWeight: FontWeight.w400,
                   color: AppTheme.textSecondary(context),
                   height: 1.4,
@@ -130,12 +130,12 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
                 child: TextButton(
                   onPressed: widget.onNext,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   child: Text(
                     l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,
@@ -144,7 +144,7 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 0),
 
               // Connect button
               OnboardingPrimaryButton(

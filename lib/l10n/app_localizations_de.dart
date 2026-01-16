@@ -994,7 +994,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingPhotoAccess => 'Fotozugriff';
 
   @override
-  String get onboardingHealthTitle => 'Apple Health verbinden';
+  String get onboardingHealthTitle => 'Mit Apple Health verbinden';
 
   @override
   String get onboardingHealthSubtitle =>
@@ -1004,14 +1004,75 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingHealthConnect => 'Verbinden';
 
   @override
-  String get onboardingICloudTitle => 'iCloud-Synchronisation';
+  String get onboardingReportTitle => 'Blutzuckerberichte erhalten';
 
   @override
-  String get onboardingICloudSubtitle =>
-      'Synchronisieren Sie Ihre erfassten Daten auf allen Geräten und bewahren Sie sie sicher auf';
+  String get onboardingReportSubtitle =>
+      'Erhalten Sie regelmäßige Berichte basierend auf Ihren erfassten Daten';
 
   @override
-  String get onboardingICloudEnable => 'iCloud synchronisieren';
+  String get onboardingReportICloudRequired =>
+      'iCloud-Synchronisation erforderlich';
+
+  @override
+  String get onboardingReportEnable => 'iCloud synchronisieren';
+
+  @override
+  String get onboardingNotificationTitle => 'Benachrichtigungen erhalten';
+
+  @override
+  String get onboardingNotificationSubtitle =>
+      'Wir helfen Ihnen, tägliche Aufzeichnungen konsequent zu führen';
+
+  @override
+  String get onboardingNotificationEnable => 'Benachrichtigungen aktivieren';
+
+  @override
+  String get onboardingSubscriptionTitle =>
+      'Upgraden Sie auf Pro und schalten Sie alle Funktionen frei';
+
+  @override
+  String get onboardingSubscriptionSubtitle =>
+      'Erleben Sie Premium-Funktionen für besseres Blutzuckermanagement';
+
+  @override
+  String get onboardingSubscriptionFeature1 => 'Unbegrenzte KI-Insights';
+
+  @override
+  String get onboardingSubscriptionFeature2 => 'Erweiterte Analysen & Berichte';
+
+  @override
+  String get onboardingSubscriptionFeature3 => 'Datenexport';
+
+  @override
+  String get onboardingSubscriptionFeature4 => 'Prioritäts-Support';
+
+  @override
+  String get onboardingSubscriptionMonthly => 'Plus Monatlich';
+
+  @override
+  String get onboardingSubscriptionMonthlyPrice => '6,99 €/Monat';
+
+  @override
+  String get onboardingSubscriptionYearly => 'Plus Jährlich';
+
+  @override
+  String get onboardingSubscriptionYearlyPrice => '49,99 €/Jahr';
+
+  @override
+  String get onboardingSubscriptionLifetime => 'Plus Lifetime';
+
+  @override
+  String get onboardingSubscriptionLifetimePrice => '149,99 €';
+
+  @override
+  String get onboardingSubscriptionRedeem => 'Code einlösen';
+
+  @override
+  String get onboardingSubscriptionRestore => 'Kauf wiederherstellen';
+
+  @override
+  String get onboardingSubscriptionPurchase => 'Kaufen';
 
   @override
   String get diabetesTypeUnknown => 'Ich weiß es nicht';

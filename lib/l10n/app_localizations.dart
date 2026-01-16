@@ -1973,7 +1973,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingHealthTitle.
   ///
   /// In en, this message translates to:
-  /// **'Connect Apple Health'**
+  /// **'Connect with Apple Health'**
   String get onboardingHealthTitle;
 
   /// No description provided for @onboardingHealthSubtitle.
@@ -1988,23 +1988,137 @@ abstract class AppLocalizations {
   /// **'Connect'**
   String get onboardingHealthConnect;
 
-  /// No description provided for @onboardingICloudTitle.
+  /// No description provided for @onboardingReportTitle.
   ///
   /// In en, this message translates to:
-  /// **'iCloud Sync'**
-  String get onboardingICloudTitle;
+  /// **'Receive glucose reports'**
+  String get onboardingReportTitle;
 
-  /// No description provided for @onboardingICloudSubtitle.
+  /// No description provided for @onboardingReportSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Sync your recorded data across all devices and keep it secure'**
-  String get onboardingICloudSubtitle;
+  /// **'Get periodic reports based on your recorded data'**
+  String get onboardingReportSubtitle;
 
-  /// No description provided for @onboardingICloudEnable.
+  /// No description provided for @onboardingReportICloudRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud sync required'**
+  String get onboardingReportICloudRequired;
+
+  /// No description provided for @onboardingReportEnable.
   ///
   /// In en, this message translates to:
   /// **'Sync iCloud'**
-  String get onboardingICloudEnable;
+  String get onboardingReportEnable;
+
+  /// No description provided for @onboardingNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications'**
+  String get onboardingNotificationTitle;
+
+  /// No description provided for @onboardingNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll help you keep consistent daily records'**
+  String get onboardingNotificationSubtitle;
+
+  /// No description provided for @onboardingNotificationEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get onboardingNotificationEnable;
+
+  /// No description provided for @onboardingSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro and unlock all features'**
+  String get onboardingSubscriptionTitle;
+
+  /// No description provided for @onboardingSubscriptionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience premium features for better glucose management'**
+  String get onboardingSubscriptionSubtitle;
+
+  /// No description provided for @onboardingSubscriptionFeature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited AI Insights'**
+  String get onboardingSubscriptionFeature1;
+
+  /// No description provided for @onboardingSubscriptionFeature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced analytics & reports'**
+  String get onboardingSubscriptionFeature2;
+
+  /// No description provided for @onboardingSubscriptionFeature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Data export'**
+  String get onboardingSubscriptionFeature3;
+
+  /// No description provided for @onboardingSubscriptionFeature4.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support'**
+  String get onboardingSubscriptionFeature4;
+
+  /// No description provided for @onboardingSubscriptionMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus Monthly'**
+  String get onboardingSubscriptionMonthly;
+
+  /// No description provided for @onboardingSubscriptionMonthlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$6.99/month'**
+  String get onboardingSubscriptionMonthlyPrice;
+
+  /// No description provided for @onboardingSubscriptionYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus Yearly'**
+  String get onboardingSubscriptionYearly;
+
+  /// No description provided for @onboardingSubscriptionYearlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$49.99/year'**
+  String get onboardingSubscriptionYearlyPrice;
+
+  /// No description provided for @onboardingSubscriptionLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus Lifetime'**
+  String get onboardingSubscriptionLifetime;
+
+  /// No description provided for @onboardingSubscriptionLifetimePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$149.99'**
+  String get onboardingSubscriptionLifetimePrice;
+
+  /// No description provided for @onboardingSubscriptionRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem Code'**
+  String get onboardingSubscriptionRedeem;
+
+  /// No description provided for @onboardingSubscriptionRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchase'**
+  String get onboardingSubscriptionRestore;
+
+  /// No description provided for @onboardingSubscriptionPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get onboardingSubscriptionPurchase;
 
   /// No description provided for @diabetesTypeUnknown.
   ///

@@ -7,7 +7,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/initialization_service.dart';
-import 'package:glu_butler/features/onboarding/onboarding_screen.dart';
+import 'package:glu_butler/features/onboarding/onboarding_screen.dart' show kDevMode;
 
 /// 스플래시/로딩 화면
 ///
@@ -174,8 +174,11 @@ class _SplashScreenState extends State<SplashScreen>
     final l10n = AppLocalizations.of(context)!;
     final settingsService = context.read<SettingsService>();
 
-    // 첫 사용자인 경우 다른 메시지 표시
-    if (!settingsService.hasCompletedOnboarding) {
+    // 첫 사용자인 경우 (또는 개발 모드) 완료 단계 전까지는 동일한 메시지 표시
+    if (!settingsService.hasCompletedOnboarding || kDevMode) {
+      if (_currentStep == InitializationStep.done) {
+        return l10n.initDone;
+      }
       return l10n.initFirstTime;
     }
 

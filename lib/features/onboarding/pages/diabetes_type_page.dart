@@ -111,12 +111,12 @@ class _DiabetesTypePageState extends State<DiabetesTypePage> {
                 child: TextButton(
                   onPressed: widget.onNext,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   child: Text(
                     l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,
@@ -124,7 +124,7 @@ class _DiabetesTypePageState extends State<DiabetesTypePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 0),
               // Next button - disabled when no selection
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),

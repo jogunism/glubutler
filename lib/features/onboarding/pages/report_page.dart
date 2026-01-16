@@ -7,20 +7,20 @@ import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
-/// iCloud sync permission page
-class ICloudSyncPage extends StatefulWidget {
+/// Report and iCloud sync page
+class ReportPage extends StatefulWidget {
   final VoidCallback onNext;
 
-  const ICloudSyncPage({
+  const ReportPage({
     super.key,
     required this.onNext,
   });
 
   @override
-  State<ICloudSyncPage> createState() => _ICloudSyncPageState();
+  State<ReportPage> createState() => _ReportPageState();
 }
 
-class _ICloudSyncPageState extends State<ICloudSyncPage> {
+class _ReportPageState extends State<ReportPage> {
   bool _isEnabling = false;
 
   void _showErrorAlert(String reason) {
@@ -103,12 +103,17 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Match health permission page image size
+    final imageWidth = screenWidth * 0.7;
+    final imageHeight = imageWidth * 1.43;
 
     return Stack(
       children: [
         // Main content
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -116,7 +121,7 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
 
               // Title
               Text(
-                l10n.onboardingICloudTitle,
+                l10n.onboardingReportTitle,
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
@@ -130,9 +135,9 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
 
               // Subtitle
               Text(
-                l10n.onboardingICloudSubtitle,
+                l10n.onboardingReportSubtitle,
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 15,
                   fontWeight: FontWeight.w400,
                   color: AppTheme.textSecondary(context),
                   height: 1.4,
@@ -142,27 +147,41 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
 
               const SizedBox(height: 32),
 
-              // iCloud Icon
+              // Report screenshot
               Center(
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 20,
-                        offset: const Offset(0, 4),
+                child: SizedBox(
+                  width: imageWidth,
+                  height: imageHeight,
+                  child: Image.asset(
+                    'assets/images/screen_report.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // iCloud sync required message
+              Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.cloud,
+                      size: 20,
+                      color: AppTheme.iconCyan,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.onboardingReportICloudRequired,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.textSecondary(context),
+                        letterSpacing: -0.3,
                       ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.cloud,
-                    size: 64,
-                    color: AppTheme.iconCyan,
-                  ),
+                    ),
+                  ],
                 ),
               ),
 
@@ -185,12 +204,12 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
                 child: TextButton(
                   onPressed: widget.onNext,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   child: Text(
                     l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,
@@ -199,11 +218,11 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 0),
 
-              // Enable button
+              // Enable iCloud sync button
               OnboardingPrimaryButton(
-                text: l10n.onboardingICloudEnable,
+                text: l10n.onboardingReportEnable,
                 onPressed: _enableICloudSync,
                 isLoading: _isEnabling,
               ),

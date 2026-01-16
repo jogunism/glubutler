@@ -990,7 +990,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingPhotoAccess => 'Photo Access';
 
   @override
-  String get onboardingHealthTitle => 'Connect Apple Health';
+  String get onboardingHealthTitle => 'Connect with Apple Health';
 
   @override
   String get onboardingHealthSubtitle =>
@@ -1000,14 +1000,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingHealthConnect => 'Connect';
 
   @override
-  String get onboardingICloudTitle => 'iCloud Sync';
+  String get onboardingReportTitle => 'Receive glucose reports';
 
   @override
-  String get onboardingICloudSubtitle =>
-      'Sync your recorded data across all devices and keep it secure';
+  String get onboardingReportSubtitle =>
+      'Get periodic reports based on your recorded data';
 
   @override
-  String get onboardingICloudEnable => 'Sync iCloud';
+  String get onboardingReportICloudRequired => 'iCloud sync required';
+
+  @override
+  String get onboardingReportEnable => 'Sync iCloud';
+
+  @override
+  String get onboardingNotificationTitle => 'Receive notifications';
+
+  @override
+  String get onboardingNotificationSubtitle =>
+      'We\'ll help you keep consistent daily records';
+
+  @override
+  String get onboardingNotificationEnable => 'Enable Notifications';
+
+  @override
+  String get onboardingSubscriptionTitle =>
+      'Upgrade to Pro and unlock all features';
+
+  @override
+  String get onboardingSubscriptionSubtitle =>
+      'Experience premium features for better glucose management';
+
+  @override
+  String get onboardingSubscriptionFeature1 => 'Unlimited AI Insights';
+
+  @override
+  String get onboardingSubscriptionFeature2 => 'Advanced analytics & reports';
+
+  @override
+  String get onboardingSubscriptionFeature3 => 'Data export';
+
+  @override
+  String get onboardingSubscriptionFeature4 => 'Priority support';
+
+  @override
+  String get onboardingSubscriptionMonthly => 'Plus Monthly';
+
+  @override
+  String get onboardingSubscriptionMonthlyPrice => '\$6.99/month';
+
+  @override
+  String get onboardingSubscriptionYearly => 'Plus Yearly';
+
+  @override
+  String get onboardingSubscriptionYearlyPrice => '\$49.99/year';
+
+  @override
+  String get onboardingSubscriptionLifetime => 'Plus Lifetime';
+
+  @override
+  String get onboardingSubscriptionLifetimePrice => '\$149.99';
+
+  @override
+  String get onboardingSubscriptionRedeem => 'Redeem Code';
+
+  @override
+  String get onboardingSubscriptionRestore => 'Restore Purchase';
+
+  @override
+  String get onboardingSubscriptionPurchase => 'Purchase';
 
   @override
   String get diabetesTypeUnknown => 'I don\'t know';
