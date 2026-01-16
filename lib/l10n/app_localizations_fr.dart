@@ -936,11 +936,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get iCloudSyncDisabled => 'Synchronisation iCloud désactivée';
 
   @override
-  String get iCloudSyncFailed => 'Échec de la connexion à iCloud';
+  String get iCloudSyncFailed => 'Connexion à iCloud impossible';
 
   @override
-  String get iCloudNotAvailable =>
-      'iCloud n\'est pas disponible. Veuillez vous connecter à iCloud dans Réglages.';
+  String get iCloudNotAvailable => 'iCloud n\'est pas disponible';
+
+  @override
+  String get iCloudNotSignedIn => 'Vous n\'êtes pas connecté à iCloud';
+
+  @override
+  String get iCloudSyncRetryMessage =>
+      'Veuillez vous reconnecter dans le menu Réglages.';
 
   @override
   String get onboardingWelcomeTo => 'Bienvenue sur';
@@ -985,6 +991,17 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle =>
+      'Commencez à écrire votre journal glycémique';
+
+  @override
+  String get onboardingDiarySubtitle =>
+      'Enregistrez vos repas et téléchargez des photos pour suivre votre alimentation dans le fil';
+
+  @override
+  String get onboardingPhotoAccess => 'Accès aux Photos';
+
+  @override
   String get onboardingHealthTitle => 'Connecter Apple Health';
 
   @override
@@ -992,14 +1009,17 @@ class AppLocalizationsFr extends AppLocalizations {
       'Synchronisez glycémie, insuline, pas et poids automatiquement';
 
   @override
-  String get onboardingHealthFeature1 =>
-      'Synchronisation automatique des données';
-
-  @override
-  String get onboardingHealthFeature2 => 'Vos données de santé restent privées';
-
-  @override
   String get onboardingHealthConnect => 'Connecter';
+
+  @override
+  String get onboardingICloudTitle => 'Synchronisation iCloud';
+
+  @override
+  String get onboardingICloudSubtitle =>
+      'Synchronisez vos données enregistrées sur tous vos appareils et sécurisez-les';
+
+  @override
+  String get onboardingICloudEnable => 'Synchroniser iCloud';
 
   @override
   String get diabetesTypeUnknown => 'Je ne sais pas';

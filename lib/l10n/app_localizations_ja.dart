@@ -903,10 +903,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get iCloudSyncDisabled => 'iCloud同期が無効になりました';
 
   @override
-  String get iCloudSyncFailed => 'iCloudへの接続に失敗しました';
+  String get iCloudSyncFailed => 'iCloud接続ができませんでした';
 
   @override
-  String get iCloudNotAvailable => 'iCloudが利用できません。設定でiCloudにサインインしてください。';
+  String get iCloudNotAvailable => 'iCloudが利用できません';
+
+  @override
+  String get iCloudNotSignedIn => 'iCloudにサインインしていません';
+
+  @override
+  String get iCloudSyncRetryMessage => '設定メニューから再度接続してください。';
 
   @override
   String get onboardingWelcomeTo => 'ようこそ';
@@ -948,19 +954,31 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle => '血糖日記を書いてみましょう';
+
+  @override
+  String get onboardingDiarySubtitle => '食事を記録し、写真をアップロードしてフィードに食事を記録しましょう';
+
+  @override
+  String get onboardingPhotoAccess => '写真アクセス';
+
+  @override
   String get onboardingHealthTitle => 'Apple Healthと連携';
 
   @override
   String get onboardingHealthSubtitle => '血糖値、インスリン、歩数、体重などを自動的に同期します';
 
   @override
-  String get onboardingHealthFeature1 => '自動データ同期';
-
-  @override
-  String get onboardingHealthFeature2 => '健康データは安全に保護されます';
-
-  @override
   String get onboardingHealthConnect => '連携する';
+
+  @override
+  String get onboardingICloudTitle => 'iCloud同期';
+
+  @override
+  String get onboardingICloudSubtitle => 'すべてのデバイスで記録されたデータを同期し、安全に保管します';
+
+  @override
+  String get onboardingICloudEnable => 'iCloud同期';
 
   @override
   String get diabetesTypeUnknown => 'わからない';

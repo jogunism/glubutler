@@ -928,11 +928,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get iCloudSyncDisabled => 'Sincronización de iCloud desactivada';
 
   @override
-  String get iCloudSyncFailed => 'Error al conectar con iCloud';
+  String get iCloudSyncFailed => 'No se pudo conectar a iCloud';
 
   @override
-  String get iCloudNotAvailable =>
-      'iCloud no está disponible. Inicie sesión en iCloud en Ajustes.';
+  String get iCloudNotAvailable => 'iCloud no está disponible';
+
+  @override
+  String get iCloudNotSignedIn => 'No ha iniciado sesión en iCloud';
+
+  @override
+  String get iCloudSyncRetryMessage => 'Vuelva a conectar en el menú Ajustes.';
 
   @override
   String get onboardingWelcomeTo => 'Bienvenido a';
@@ -977,6 +982,16 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle => 'Empieza a escribir tu diario de glucosa';
+
+  @override
+  String get onboardingDiarySubtitle =>
+      'Registra comidas y sube fotos para hacer seguimiento de tu alimentación en el feed';
+
+  @override
+  String get onboardingPhotoAccess => 'Acceso a Fotos';
+
+  @override
   String get onboardingHealthTitle => 'Conectar Apple Health';
 
   @override
@@ -984,14 +999,17 @@ class AppLocalizationsEs extends AppLocalizations {
       'Sincroniza glucosa, insulina, pasos y peso automáticamente';
 
   @override
-  String get onboardingHealthFeature1 => 'Sincronización automática de datos';
-
-  @override
-  String get onboardingHealthFeature2 =>
-      'Tus datos de salud permanecen privados';
-
-  @override
   String get onboardingHealthConnect => 'Conectar';
+
+  @override
+  String get onboardingICloudTitle => 'Sincronización iCloud';
+
+  @override
+  String get onboardingICloudSubtitle =>
+      'Sincroniza tus datos registrados en todos tus dispositivos y manténlos seguros';
+
+  @override
+  String get onboardingICloudEnable => 'Sincronizar iCloud';
 
   @override
   String get diabetesTypeUnknown => 'No estoy seguro';

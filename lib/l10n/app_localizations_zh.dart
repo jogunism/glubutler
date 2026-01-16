@@ -904,10 +904,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get iCloudSyncDisabled => 'iCloud同步已禁用';
 
   @override
-  String get iCloudSyncFailed => '连接iCloud失败';
+  String get iCloudSyncFailed => 'iCloud连接未成功';
 
   @override
-  String get iCloudNotAvailable => 'iCloud不可用。请在设置中登录iCloud。';
+  String get iCloudNotAvailable => 'iCloud不可用';
+
+  @override
+  String get iCloudNotSignedIn => '您未登录iCloud';
+
+  @override
+  String get iCloudSyncRetryMessage => '请在设置菜单中重新连接。';
 
   @override
   String get onboardingWelcomeTo => '欢迎使用';
@@ -949,19 +955,31 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle => '开始写血糖日记';
+
+  @override
+  String get onboardingDiarySubtitle => '记录餐食并上传照片，在动态中追踪您的饮食';
+
+  @override
+  String get onboardingPhotoAccess => '照片访问';
+
+  @override
   String get onboardingHealthTitle => '连接 Apple Health';
 
   @override
   String get onboardingHealthSubtitle => '自动同步血糖、胰岛素、步数和体重';
 
   @override
-  String get onboardingHealthFeature1 => '自动数据同步';
-
-  @override
-  String get onboardingHealthFeature2 => '您的健康数据安全保护';
-
-  @override
   String get onboardingHealthConnect => '连接';
+
+  @override
+  String get onboardingICloudTitle => 'iCloud 同步';
+
+  @override
+  String get onboardingICloudSubtitle => '在所有设备上同步您记录的数据并安全保存';
+
+  @override
+  String get onboardingICloudEnable => '同步 iCloud';
 
   @override
   String get diabetesTypeUnknown => '不确定';

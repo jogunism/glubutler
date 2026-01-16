@@ -51,26 +51,13 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _cloudKitAvailable = false;
   bool _iCloudSyncEnabled = false;
   bool _isTogglingSync = false;
 
   @override
   void initState() {
     super.initState();
-    _checkCloudKitStatus();
     _loadSyncStatus();
-  }
-
-  Future<void> _checkCloudKitStatus() async {
-    final isAvailable = await CloudKitService.isAvailable();
-    final isSignedIn = await CloudKitService.isUserSignedIn();
-
-    if (mounted) {
-      setState(() {
-        _cloudKitAvailable = isAvailable && isSignedIn;
-      });
-    }
   }
 
   Future<void> _loadSyncStatus() async {
@@ -88,17 +75,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
-    // Check iCloud availability first
-    if (!_cloudKitAvailable) {
-      _showToast(context, l10n.iCloudNotAvailable, isSuccess: false);
-      return;
-    }
-
     setState(() {
       _isTogglingSync = true;
     });
 
     try {
+      // Check if iCloud is available
+      final isAvailable = await CloudKitService.isAvailable();
+      final isSignedIn = await CloudKitService.isUserSignedIn();
+
+      if (!isAvailable) {
+        if (mounted) {
+          setState(() {
+            _isTogglingSync = false;
+          });
+          _showToast(
+            context,
+            '${l10n.iCloudSyncFailed}.\n${l10n.iCloudNotAvailable}',
+            isSuccess: false,
+          );
+        }
+        return;
+      }
+
+      if (!isSignedIn) {
+        if (mounted) {
+          setState(() {
+            _isTogglingSync = false;
+          });
+          _showToast(
+            context,
+            '${l10n.iCloudSyncFailed}.\n${l10n.iCloudNotSignedIn}',
+            isSuccess: false,
+          );
+        }
+        return;
+      }
+
       final settings = context.read<SettingsService>();
 
       if (value) {

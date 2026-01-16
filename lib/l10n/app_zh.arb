@@ -350,8 +350,10 @@
 
   "iCloudSyncEnabled": "iCloud同步已启用",
   "iCloudSyncDisabled": "iCloud同步已禁用",
-  "iCloudSyncFailed": "连接iCloud失败",
-  "iCloudNotAvailable": "iCloud不可用。请在设置中登录iCloud。",
+  "iCloudSyncFailed": "iCloud连接未成功",
+  "iCloudNotAvailable": "iCloud不可用",
+  "iCloudNotSignedIn": "您未登录iCloud",
+  "iCloudSyncRetryMessage": "请在设置菜单中重新连接。",
 
   "onboardingWelcomeTo": "欢迎使用",
   "onboardingWelcomeDescription": "Glu Butler帮助您管理血糖。 以更智能的方式追踪您的日常模式，建立更健康的生活。",
@@ -377,8 +379,12 @@
   },
   "onboardingHealthTitle": "连接 Apple Health",
   "onboardingHealthSubtitle": "自动同步血糖、胰岛素、步数和体重",
-  "onboardingHealthFeature1": "自动数据同步",
-  "onboardingHealthFeature2": "您的健康数据安全保护",
   "onboardingHealthConnect": "连接",
+  "onboardingICloudTitle": "iCloud 同步",
+  "onboardingICloudSubtitle": "在所有设备上同步您记录的数据并安全保存",
+  "onboardingICloudEnable": "同步 iCloud",
+  "onboardingDiaryTitle": "开始写血糖日记",
+  "onboardingDiarySubtitle": "记录餐食并上传照片，在动态中追踪您的饮食",
+  "onboardingPhotoAccess": "照片访问",
   "diabetesTypeUnknown": "不确定"
 }

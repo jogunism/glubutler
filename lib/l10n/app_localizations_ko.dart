@@ -903,10 +903,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get iCloudSyncDisabled => 'iCloud 연결이 해제되었습니다';
 
   @override
-  String get iCloudSyncFailed => 'iCloud 연결에 실패했습니다';
+  String get iCloudSyncFailed => 'iCloud 연결이 되지 않았습니다';
 
   @override
-  String get iCloudNotAvailable => 'iCloud를 사용할 수 없습니다. 설정에서 iCloud에 로그인해주세요.';
+  String get iCloudNotAvailable => 'iCloud를 사용할 수 없습니다';
+
+  @override
+  String get iCloudNotSignedIn => 'iCloud에 로그인되어 있지 않습니다';
+
+  @override
+  String get iCloudSyncRetryMessage => '설정 메뉴에서 다시 연결해주세요.';
 
   @override
   String get onboardingWelcomeTo => '환영합니다';
@@ -948,19 +954,31 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle => '혈당 일기를 작성해 보세요';
+
+  @override
+  String get onboardingDiarySubtitle => '식사를 기록하고 사진 업로드로 피드에 식사를 기록하세요';
+
+  @override
+  String get onboardingPhotoAccess => '사진 액세스';
+
+  @override
   String get onboardingHealthTitle => '애플 건강 앱 연결';
 
   @override
   String get onboardingHealthSubtitle => '혈당, 인슐린, 걸음 수, 체중 등을 자동으로 동기화하세요';
 
   @override
-  String get onboardingHealthFeature1 => '자동 데이터 동기화';
-
-  @override
-  String get onboardingHealthFeature2 => '건강 데이터는 안전하게 보호됩니다';
-
-  @override
   String get onboardingHealthConnect => '연결하기';
+
+  @override
+  String get onboardingICloudTitle => 'iCloud 동기화';
+
+  @override
+  String get onboardingICloudSubtitle => '모든 기기에서 기록된 데이터를 동기화하고 안전하게 보관하세요';
+
+  @override
+  String get onboardingICloudEnable => 'iCloud 연동';
 
   @override
   String get diabetesTypeUnknown => '잘 모르겠어요';

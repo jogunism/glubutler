@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
-// import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/l10n/app_localizations.dart';
 
 /// iCloud sync permission page
 class ICloudSyncPage extends StatefulWidget {
@@ -22,6 +23,29 @@ class ICloudSyncPage extends StatefulWidget {
 class _ICloudSyncPageState extends State<ICloudSyncPage> {
   bool _isEnabling = false;
 
+  void _showErrorAlert(String reason) {
+    final l10n = AppLocalizations.of(context)!;
+    final message = '$reason. ${l10n.iCloudSyncRetryMessage}';
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          content: Text(message),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.onNext();
+              },
+              child: Text(l10n.confirm),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _enableICloudSync() async {
     setState(() {
       _isEnabling = true;
@@ -32,13 +56,22 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
       final isAvailable = await CloudKitService.isAvailable();
       final isSignedIn = await CloudKitService.isUserSignedIn();
 
-      if (!isAvailable || !isSignedIn) {
+      if (!isAvailable) {
         if (mounted) {
           setState(() {
             _isEnabling = false;
           });
-          // Show error message but continue
-          widget.onNext();
+          _showErrorAlert(AppLocalizations.of(context)!.iCloudNotAvailable);
+        }
+        return;
+      }
+
+      if (!isSignedIn) {
+        if (mounted) {
+          setState(() {
+            _isEnabling = false;
+          });
+          _showErrorAlert(AppLocalizations.of(context)!.iCloudNotSignedIn);
         }
         return;
       }
@@ -62,172 +95,119 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
         setState(() {
           _isEnabling = false;
         });
-        // Continue even if failed
-        widget.onNext();
+        _showErrorAlert(AppLocalizations.of(context)!.iCloudSyncFailed);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 40),
+    final l10n = AppLocalizations.of(context)!;
 
-          // Title
-          Text(
-            'Enable iCloud Sync',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary(context),
-              height: 1.2,
-              letterSpacing: -0.5,
-            ),
-          ),
+    return Stack(
+      children: [
+        // Main content
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
 
-          const SizedBox(height: 12),
-
-          // Description
-          Text(
-            'Sync your diary entries across devices and keep your data safe',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              color: AppTheme.textSecondary(context),
-              height: 1.4,
-              letterSpacing: -0.3,
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Illustration
-          Center(
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(60),
-              ),
-              child: const Icon(
-                Icons.cloud,
-                size: 64,
-                color: AppTheme.primaryColor,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Important note
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  color: AppTheme.primaryColor,
-                  size: 24,
+              // Title
+              Text(
+                l10n.onboardingICloudTitle,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary(context),
+                  height: 1.2,
+                  letterSpacing: -0.5,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
+              ),
+
+              const SizedBox(height: 12),
+
+              // Subtitle
+              Text(
+                l10n.onboardingICloudSubtitle,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w400,
+                  color: AppTheme.textSecondary(context),
+                  height: 1.4,
+                  letterSpacing: -0.3,
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // iCloud Icon
+              Center(
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.cloud,
+                    size: 64,
+                    color: AppTheme.iconCyan,
+                  ),
+                ),
+              ),
+
+              const Spacer(),
+            ],
+          ),
+        ),
+
+        // Button positioned at bottom
+        Positioned(
+          left: 24,
+          right: 24,
+          bottom: 24,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Skip button
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: widget.onNext,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
                   child: Text(
-                    'Required for AI-powered health reports',
+                    l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 17,
                       fontWeight: FontWeight.w500,
-                      color: AppTheme.textPrimary(context),
+                      color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Benefits
-          _buildBenefitItem('Sync across all your devices'),
-          const SizedBox(height: 16),
-          _buildBenefitItem('Secure cloud backup'),
-
-          const Spacer(),
-
-          // Skip button - always visible
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: widget.onNext,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-              child: Text(
-                'Skip',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.textSecondary(context),
-                  letterSpacing: -0.3,
-                ),
+
+              const SizedBox(height: 8),
+
+              // Enable button
+              OnboardingPrimaryButton(
+                text: l10n.onboardingICloudEnable,
+                onPressed: _enableICloudSync,
+                isLoading: _isEnabling,
               ),
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Enable button
-          OnboardingPrimaryButton(
-            text: 'Enable iCloud',
-            onPressed: _enableICloudSync,
-            isLoading: _isEnabling,
-          ),
-
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBenefitItem(String text) {
-    return Row(
-      children: [
-        Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.check,
-            size: 16,
-            color: AppTheme.primaryColor,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.textPrimary(context),
-              letterSpacing: -0.3,
-            ),
+            ],
           ),
         ),
       ],

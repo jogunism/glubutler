@@ -1,45 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
-import 'package:glu_butler/services/settings_service.dart';
-import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
-/// Apple Health permission page
-class HealthPermissionPage extends StatefulWidget {
+/// Diary and photo access permission page
+class DiaryPermissionPage extends StatefulWidget {
   final VoidCallback onNext;
 
-  const HealthPermissionPage({
+  const DiaryPermissionPage({
     super.key,
     required this.onNext,
   });
 
   @override
-  State<HealthPermissionPage> createState() => _HealthPermissionPageState();
+  State<DiaryPermissionPage> createState() => _DiaryPermissionPageState();
 }
 
-class _HealthPermissionPageState extends State<HealthPermissionPage> {
+class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
   bool _isRequesting = false;
 
-  Future<void> _requestHealthPermission() async {
+  Future<void> _requestPhotoAccess() async {
     setState(() {
       _isRequesting = true;
     });
 
     try {
-      final healthService = HealthService();
-      final granted = await healthService.requestAuthorization();
+      await PhotoManager.requestPermissionExtend();
 
       if (mounted) {
-        final settings = context.read<SettingsService>();
-        await settings.setHealthConnected(granted);
-
         setState(() {
           _isRequesting = false;
         });
 
+        // Always proceed to next page regardless of permission result
         widget.onNext();
       }
     } catch (e) {
@@ -55,11 +49,6 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // 화면 크기에 따라 동적으로 조정 (welcome_page와 동일)
-    final imageWidth = screenWidth * 0.7;
-    final imageHeight = imageWidth * 1.43;
 
     return Stack(
       children: [
@@ -73,7 +62,7 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
 
               // Title
               Text(
-                l10n.onboardingHealthTitle,
+                l10n.onboardingDiaryTitle,
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
@@ -87,7 +76,7 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
 
               // Subtitle
               Text(
-                l10n.onboardingHealthSubtitle,
+                l10n.onboardingDiarySubtitle,
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w400,
@@ -99,14 +88,13 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
 
               const SizedBox(height: 32),
 
-              // Image - matching welcome page position and size
+              // Image - matching health permission page layout
               Center(
                 child: SizedBox(
-                  width: imageWidth,
-                  height: imageHeight,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   child: Image.asset(
-                    'assets/images/screen_apple_health.png',
-                    fit: BoxFit.cover,
+                    'assets/images/screen_diary.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -146,10 +134,10 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
 
               const SizedBox(height: 8),
 
-              // Connect button
+              // Photo access button
               OnboardingPrimaryButton(
-                text: l10n.onboardingHealthConnect,
-                onPressed: _requestHealthPermission,
+                text: l10n.onboardingPhotoAccess,
+                onPressed: _requestPhotoAccess,
                 isLoading: _isRequesting,
               ),
             ],

@@ -350,8 +350,10 @@
 
   "iCloudSyncEnabled": "Synchronisation iCloud activée",
   "iCloudSyncDisabled": "Synchronisation iCloud désactivée",
-  "iCloudSyncFailed": "Échec de la connexion à iCloud",
-  "iCloudNotAvailable": "iCloud n'est pas disponible. Veuillez vous connecter à iCloud dans Réglages.",
+  "iCloudSyncFailed": "Connexion à iCloud impossible",
+  "iCloudNotAvailable": "iCloud n'est pas disponible",
+  "iCloudNotSignedIn": "Vous n'êtes pas connecté à iCloud",
+  "iCloudSyncRetryMessage": "Veuillez vous reconnecter dans le menu Réglages.",
 
   "onboardingWelcomeTo": "Bienvenue sur",
   "onboardingWelcomeDescription": "Glu Butler vous aide à gérer votre glycémie. Suivez vos habitudes quotidiennes de manière plus intelligente et construisez une meilleure santé.",
@@ -377,8 +379,12 @@
   },
   "onboardingHealthTitle": "Connecter Apple Health",
   "onboardingHealthSubtitle": "Synchronisez glycémie, insuline, pas et poids automatiquement",
-  "onboardingHealthFeature1": "Synchronisation automatique des données",
-  "onboardingHealthFeature2": "Vos données de santé restent privées",
   "onboardingHealthConnect": "Connecter",
+  "onboardingICloudTitle": "Synchronisation iCloud",
+  "onboardingICloudSubtitle": "Synchronisez vos données enregistrées sur tous vos appareils et sécurisez-les",
+  "onboardingICloudEnable": "Synchroniser iCloud",
+  "onboardingDiaryTitle": "Commencez à écrire votre journal glycémique",
+  "onboardingDiarySubtitle": "Enregistrez vos repas et téléchargez des photos pour suivre votre alimentation dans le fil",
+  "onboardingPhotoAccess": "Accès aux Photos",
   "diabetesTypeUnknown": "Je ne sais pas"
 }

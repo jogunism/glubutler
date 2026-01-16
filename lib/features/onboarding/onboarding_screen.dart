@@ -5,10 +5,15 @@ import 'package:glu_butler/features/onboarding/pages/welcome_page.dart';
 import 'package:glu_butler/features/onboarding/pages/name_input_page.dart';
 import 'package:glu_butler/features/onboarding/pages/diabetes_type_page.dart';
 import 'package:glu_butler/features/onboarding/pages/fasting_glucose_page.dart';
+import 'package:glu_butler/features/onboarding/pages/diary_permission_page.dart';
 import 'package:glu_butler/features/onboarding/pages/health_permission_page.dart';
 import 'package:glu_butler/features/onboarding/pages/icloud_sync_page.dart';
 import 'package:glu_butler/features/onboarding/pages/notification_page.dart';
 import 'package:glu_butler/features/onboarding/pages/completion_page.dart';
+
+/// Development mode settings
+/// Set to true to enable swipe navigation and always show onboarding
+const bool kDevMode = true; // TODO: Set to false for production
 
 /// Main onboarding screen with PageView
 class OnboardingScreen extends StatefulWidget {
@@ -23,8 +28,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
   bool _isAnimating = false;
 
-  // Total 8 pages
-  static const int _totalPages = 8;
+  // Total 9 pages
+  static const int _totalPages = 9;
 
   @override
   void initState() {
@@ -69,7 +74,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               bottom: false, // Don't apply SafeArea to bottom
               child: PageView(
                 controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(), // Disable swipe
+                physics: kDevMode
+                    ? null
+                    : const NeverScrollableScrollPhysics(), // Enable swipe in dev mode
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;
@@ -80,6 +87,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   NameInputPage(onNext: _nextPage),
                   DiabetesTypePage(onNext: _nextPage),
                   FastingGlucosePage(onNext: _nextPage),
+                  DiaryPermissionPage(onNext: _nextPage),
                   HealthPermissionPage(onNext: _nextPage),
                   ICloudSyncPage(onNext: _nextPage),
                   NotificationPage(onNext: _nextPage),

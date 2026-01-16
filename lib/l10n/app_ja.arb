@@ -354,8 +354,10 @@
 
   "iCloudSyncEnabled": "iCloud同期が有効になりました",
   "iCloudSyncDisabled": "iCloud同期が無効になりました",
-  "iCloudSyncFailed": "iCloudへの接続に失敗しました",
-  "iCloudNotAvailable": "iCloudが利用できません。設定でiCloudにサインインしてください。",
+  "iCloudSyncFailed": "iCloud接続ができませんでした",
+  "iCloudNotAvailable": "iCloudが利用できません",
+  "iCloudNotSignedIn": "iCloudにサインインしていません",
+  "iCloudSyncRetryMessage": "設定メニューから再度接続してください。",
 
   "onboardingWelcomeTo": "ようこそ",
   "onboardingWelcomeDescription": "Glu Butlerがあなたの血糖管理をサポートします。\nスマートな方法で日々の生活パターンを追跡し、より健康的な生活を築きましょう。",
@@ -381,8 +383,12 @@
   },
   "onboardingHealthTitle": "Apple Healthと連携",
   "onboardingHealthSubtitle": "血糖値、インスリン、歩数、体重などを自動的に同期します",
-  "onboardingHealthFeature1": "自動データ同期",
-  "onboardingHealthFeature2": "健康データは安全に保護されます",
   "onboardingHealthConnect": "連携する",
+  "onboardingICloudTitle": "iCloud同期",
+  "onboardingICloudSubtitle": "すべてのデバイスで記録されたデータを同期し、安全に保管します",
+  "onboardingICloudEnable": "iCloud同期",
+  "onboardingDiaryTitle": "血糖日記を書いてみましょう",
+  "onboardingDiarySubtitle": "食事を記録し、写真をアップロードしてフィードに食事を記録しましょう",
+  "onboardingPhotoAccess": "写真アクセス",
   "diabetesTypeUnknown": "わからない"
 }

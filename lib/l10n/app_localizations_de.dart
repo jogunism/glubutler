@@ -928,11 +928,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get iCloudSyncDisabled => 'iCloud-Synchronisierung deaktiviert';
 
   @override
-  String get iCloudSyncFailed => 'Verbindung zu iCloud fehlgeschlagen';
+  String get iCloudSyncFailed => 'iCloud-Verbindung nicht möglich';
 
   @override
-  String get iCloudNotAvailable =>
-      'iCloud ist nicht verfügbar. Bitte melden Sie sich in den Einstellungen bei iCloud an.';
+  String get iCloudNotAvailable => 'iCloud ist nicht verfügbar';
+
+  @override
+  String get iCloudNotSignedIn => 'Sie sind nicht bei iCloud angemeldet';
+
+  @override
+  String get iCloudSyncRetryMessage =>
+      'Bitte verbinden Sie sich erneut im Einstellungsmenü.';
 
   @override
   String get onboardingWelcomeTo => 'Willkommen bei';
@@ -977,6 +983,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle =>
+      'Beginnen Sie Ihr Blutzucker-Tagebuch zu schreiben';
+
+  @override
+  String get onboardingDiarySubtitle =>
+      'Zeichnen Sie Mahlzeiten auf und laden Sie Fotos hoch, um Ihre Ernährung im Feed zu verfolgen';
+
+  @override
+  String get onboardingPhotoAccess => 'Fotozugriff';
+
+  @override
   String get onboardingHealthTitle => 'Apple Health verbinden';
 
   @override
@@ -984,13 +1001,17 @@ class AppLocalizationsDe extends AppLocalizations {
       'Synchronisieren Sie Blutzucker, Insulin, Schritte und Gewicht automatisch';
 
   @override
-  String get onboardingHealthFeature1 => 'Automatische Datensynchronisation';
-
-  @override
-  String get onboardingHealthFeature2 => 'Ihre Gesundheitsdaten bleiben privat';
-
-  @override
   String get onboardingHealthConnect => 'Verbinden';
+
+  @override
+  String get onboardingICloudTitle => 'iCloud-Synchronisation';
+
+  @override
+  String get onboardingICloudSubtitle =>
+      'Synchronisieren Sie Ihre erfassten Daten auf allen Geräten und bewahren Sie sie sicher auf';
+
+  @override
+  String get onboardingICloudEnable => 'iCloud synchronisieren';
 
   @override
   String get diabetesTypeUnknown => 'Ich weiß es nicht';

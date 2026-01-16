@@ -1859,14 +1859,26 @@ abstract class AppLocalizations {
   /// No description provided for @iCloudSyncFailed.
   ///
   /// In en, this message translates to:
-  /// **'Failed to connect to iCloud'**
+  /// **'iCloud connection failed'**
   String get iCloudSyncFailed;
 
   /// No description provided for @iCloudNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'iCloud is not available. Please sign in to iCloud in Settings.'**
+  /// **'iCloud is not available'**
   String get iCloudNotAvailable;
+
+  /// No description provided for @iCloudNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not signed in to iCloud'**
+  String get iCloudNotSignedIn;
+
+  /// No description provided for @iCloudSyncRetryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please reconnect in the Settings menu.'**
+  String get iCloudSyncRetryMessage;
 
   /// No description provided for @onboardingWelcomeTo.
   ///
@@ -1940,6 +1952,24 @@ abstract class AppLocalizations {
   /// **'Please enter a value between {min} and {max}'**
   String onboardingFastingGlucoseValidation(String min, String max);
 
+  /// No description provided for @onboardingDiaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start writing your glucose diary'**
+  String get onboardingDiaryTitle;
+
+  /// No description provided for @onboardingDiarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record meals and upload photos to track your food in the feed'**
+  String get onboardingDiarySubtitle;
+
+  /// No description provided for @onboardingPhotoAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Access'**
+  String get onboardingPhotoAccess;
+
   /// No description provided for @onboardingHealthTitle.
   ///
   /// In en, this message translates to:
@@ -1952,23 +1982,29 @@ abstract class AppLocalizations {
   /// **'Sync blood glucose, insulin, steps, and weight automatically'**
   String get onboardingHealthSubtitle;
 
-  /// No description provided for @onboardingHealthFeature1.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic data sync'**
-  String get onboardingHealthFeature1;
-
-  /// No description provided for @onboardingHealthFeature2.
-  ///
-  /// In en, this message translates to:
-  /// **'Your health data stays private'**
-  String get onboardingHealthFeature2;
-
   /// No description provided for @onboardingHealthConnect.
   ///
   /// In en, this message translates to:
   /// **'Connect'**
   String get onboardingHealthConnect;
+
+  /// No description provided for @onboardingICloudTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud Sync'**
+  String get onboardingICloudTitle;
+
+  /// No description provided for @onboardingICloudSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync your recorded data across all devices and keep it secure'**
+  String get onboardingICloudSubtitle;
+
+  /// No description provided for @onboardingICloudEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync iCloud'**
+  String get onboardingICloudEnable;
 
   /// No description provided for @diabetesTypeUnknown.
   ///

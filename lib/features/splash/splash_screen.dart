@@ -7,6 +7,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/initialization_service.dart';
+import 'package:glu_butler/features/onboarding/onboarding_screen.dart';
 
 /// 스플래시/로딩 화면
 ///
@@ -152,20 +153,20 @@ class _SplashScreenState extends State<SplashScreen>
     } catch (_) {}
 
     if (mounted) {
-      // ignore: unused_local_variable
       final settingsService = context.read<SettingsService>();
 
-      // TODO: 개발 중 - 항상 onboarding 표시
-      // 완성 후 아래 주석 해제하고 현재 로직 삭제
-      Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+      // Development mode: always show onboarding
+      if (kDevMode) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+        return;
+      }
 
-      // Check if onboarding is completed
-      // if (settingsService.hasCompletedOnboarding) {
-      //   AppRoutes.goToMain(context);
-      // } else {
-      //   // Navigate to onboarding
-      //   Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
-      // }
+      // Production mode: check if onboarding is completed
+      if (settingsService.hasCompletedOnboarding) {
+        AppRoutes.goToMain(context);
+      } else {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+      }
     }
   }
 

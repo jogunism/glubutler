@@ -926,11 +926,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iCloudSyncDisabled => 'iCloud sync disabled';
 
   @override
-  String get iCloudSyncFailed => 'Failed to connect to iCloud';
+  String get iCloudSyncFailed => 'iCloud connection failed';
 
   @override
-  String get iCloudNotAvailable =>
-      'iCloud is not available. Please sign in to iCloud in Settings.';
+  String get iCloudNotAvailable => 'iCloud is not available';
+
+  @override
+  String get iCloudNotSignedIn => 'You are not signed in to iCloud';
+
+  @override
+  String get iCloudSyncRetryMessage => 'Please reconnect in the Settings menu.';
 
   @override
   String get onboardingWelcomeTo => 'Welcome to';
@@ -975,6 +980,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get onboardingDiaryTitle => 'Start writing your glucose diary';
+
+  @override
+  String get onboardingDiarySubtitle =>
+      'Record meals and upload photos to track your food in the feed';
+
+  @override
+  String get onboardingPhotoAccess => 'Photo Access';
+
+  @override
   String get onboardingHealthTitle => 'Connect Apple Health';
 
   @override
@@ -982,13 +997,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sync blood glucose, insulin, steps, and weight automatically';
 
   @override
-  String get onboardingHealthFeature1 => 'Automatic data sync';
-
-  @override
-  String get onboardingHealthFeature2 => 'Your health data stays private';
-
-  @override
   String get onboardingHealthConnect => 'Connect';
+
+  @override
+  String get onboardingICloudTitle => 'iCloud Sync';
+
+  @override
+  String get onboardingICloudSubtitle =>
+      'Sync your recorded data across all devices and keep it secure';
+
+  @override
+  String get onboardingICloudEnable => 'Sync iCloud';
 
   @override
   String get diabetesTypeUnknown => 'I don\'t know';
