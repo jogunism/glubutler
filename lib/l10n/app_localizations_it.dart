@@ -354,7 +354,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get photoPermissionMessage =>
-      'Per allegare foto, è necessario consentire l\'accesso alla libreria foto.\n\nVai su Impostazioni > Glu Butler per abilitare l\'accesso alle foto.';
+      'Per allegare foto, è necessario consentire l\'accesso alla libreria foto.  Vai su Impostazioni > Glu Butler per abilitare l\'accesso alle foto.';
 
   @override
   String get goToSettings => 'Vai a Impostazioni';
@@ -503,7 +503,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get discardDiaryMessage =>
-      'Le modifiche non salvate andranno perse.\nScartare questa voce?';
+      'Le modifiche non salvate andranno perse. Scartare questa voce?';
 
   @override
   String get diarySaved => 'Voce salvata';
@@ -743,6 +743,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get initDone => 'Fatto';
 
   @override
+  String get initFirstTime =>
+      'Preparing to start the app for the first time...';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count records synced to Apple Health';
   }
@@ -757,7 +761,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get deleteGlucoseConfirmation =>
-      'Sei sicuro di voler eliminare?\nQuesta azione non può essere annullata.';
+      'Sei sicuro di voler eliminare? Questa azione non può essere annullata.';
 
   @override
   String get glucoseDeleted => 'Glicemia eliminata';
@@ -773,11 +777,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      'Sei sicuro di voler eliminare?\nQuesta azione non può essere annullata.';
+      'Sei sicuro di voler eliminare? Questa azione non può essere annullata.';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'Eliminare questo diario?\nAnche le informazioni sul pasto associate nel feed verranno eliminate,\ne questa azione non può essere annullata.';
+      'Eliminare questo diario? Anche le informazioni sul pasto associate nel feed verranno eliminate, e questa azione non può essere annullata.';
 
   @override
   String get diaryDeleted => 'Eliminato';
@@ -803,7 +807,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String foodDetected(String food) {
-    return '\n\nCibo: $food';
+    return '  Cibo: $food';
   }
 
   @override
@@ -828,7 +832,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.\n\n• Tutte le informazioni di base si basano sui dati dell\'app Apple Health.\n\n• Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell\'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.\n\n• Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.\n\n• Pertanto, consigliamo di generare rapporti quando si dispone di almeno 2-3 giorni di dati di attività e glucosio.\n\n• Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.\n\n• I rapporti di un solo giorno non sono supportati.\n\n• Non puoi creare rapporti per date che hanno già rapporti esistenti.\n\n※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l\'uso.';
+      '• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.  • Tutte le informazioni di base si basano sui dati dell\'app Apple Health.  • Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell\'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.  • Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.  • Pertanto, consigliamo di generare rapporti quando si dispone di almeno 2-3 giorni di dati di attività e glucosio.  • Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.  • I rapporti di un solo giorno non sono supportati.  • Non puoi creare rapporti per date che hanno già rapporti esistenti.  ※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l\'uso.';
 
   @override
   String get doNotShowAgain => 'Non mostrare più';
@@ -935,8 +939,30 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get onboardingWelcomeDescription =>
-      'Glu Butler ti aiuta a gestire la glicemia.\nTieni traccia dei tuoi schemi quotidiani in modo più intelligente e costruisci una salute migliore.';
+      'Glu Butler ti aiuta a gestire la glicemia. Tieni traccia dei tuoi schemi quotidiani in modo più intelligente e costruisci una salute migliore.';
 
   @override
   String get onboardingLetsBegin => 'Inizia';
+
+  @override
+  String get onboardingFirstThingsFirst => 'Prima di tutto';
+
+  @override
+  String get onboardingWhatsYourFirstName => 'Come ti chiami?';
+
+  @override
+  String get onboardingTypeYourFirstName => 'Digita il tuo nome qui';
+
+  @override
+  String get onboardingNext => 'Avanti';
+
+  @override
+  String get onboardingSkip => 'Salta';
+
+  @override
+  String get onboardingDiabetesTypeTitle =>
+      'Quale descrive meglio il tuo tipo di diabete?';
+
+  @override
+  String get diabetesTypeUnknown => 'Non lo so';
 }

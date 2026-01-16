@@ -21,9 +21,15 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _isAnimating = false;
 
   // Total 8 pages
   static const int _totalPages = 8;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -32,11 +38,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextPage() {
+    // Prevent multiple calls during animation
+    if (_isAnimating) {
+      return;
+    }
+
     if (_currentPage < _totalPages - 1) {
+      _isAnimating = true;
+
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-      );
+      ).then((_) {
+        _isAnimating = false;
+      });
     }
   }
 
@@ -67,7 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 children: [
                   WelcomePage(onNext: _nextPage),
-                  NameInputPage(onNext: _nextPage, onSkip: _skipToEnd),
+                  NameInputPage(onNext: _nextPage),
                   DiabetesTypePage(onNext: _nextPage, onSkip: _skipToEnd),
                   FastingGlucosePage(onNext: _nextPage, onSkip: _skipToEnd),
                   HealthPermissionPage(onNext: _nextPage, onSkip: _skipToEnd),

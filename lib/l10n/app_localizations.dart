@@ -1532,6 +1532,12 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get initDone;
 
+  /// No description provided for @initFirstTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing to start the app for the first time...'**
+  String get initFirstTime;
+
   /// No description provided for @syncCompleteMessage.
   ///
   /// In en, this message translates to:
@@ -1879,6 +1885,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Let\'s Begin'**
   String get onboardingLetsBegin;
+
+  /// No description provided for @onboardingFirstThingsFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First Things First'**
+  String get onboardingFirstThingsFirst;
+
+  /// No description provided for @onboardingWhatsYourFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your first name?'**
+  String get onboardingWhatsYourFirstName;
+
+  /// No description provided for @onboardingTypeYourFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your first name here'**
+  String get onboardingTypeYourFirstName;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingDiabetesTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which best describes your diabetes type?'**
+  String get onboardingDiabetesTypeTitle;
+
+  /// No description provided for @diabetesTypeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'I don\'t know'**
+  String get diabetesTypeUnknown;
 }
 
 class _AppLocalizationsDelegate

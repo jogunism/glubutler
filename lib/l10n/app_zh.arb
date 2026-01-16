@@ -109,7 +109,7 @@
   "onlyImageFiles": "只能选择图片文件。",
   "imageLoadFailed": "加载照片失败。",
   "photoPermissionRequired": "需要照片访问权限",
-  "photoPermissionMessage": "要附加照片，需要允许访问照片库。\n\n请在设置 > Glu Butler中启用照片访问。",
+  "photoPermissionMessage": "要附加照片，需要允许访问照片库。  请在设置 > Glu Butler中启用照片访问。",
   "goToSettings": "前往设置",
 
   "noRecords": "暂无记录",
@@ -160,7 +160,7 @@
   "diaryPlaceholder": "写下您的血糖管理日记",
   "attachPhoto": "附加照片",
   "discardDiaryTitle": "取消编写",
-  "discardDiaryMessage": "正在编写的内容将消失。\n要取消写作吗？",
+  "discardDiaryMessage": "正在编写的内容将消失。 要取消写作吗？",
   "diarySaved": "日记已保存",
   "diarySaveFailed": "保存日记失败",
   "yes": "是",
@@ -251,7 +251,7 @@
   "insulinSaved": "胰岛素剂量已保存",
   "saveFailed": "保存失败",
 
-  "deleteGlucoseConfirmation": "确定要删除吗？\n此操作无法撤销。",
+  "deleteGlucoseConfirmation": "确定要删除吗？ 此操作无法撤销。",
   "glucoseDeleted": "血糖记录已删除",
   "insulinDeleted": "胰岛素记录已删除",
   "deleteFailed": "删除失败",
@@ -273,8 +273,8 @@
   "scoreInfoPrivacy": "*应用中使用的所有信息不会单独存储或分享到外部。",
 
   "deleteDiary": "删除日记",
-  "deleteDiaryConfirmation": "确定要删除吗？\n此操作无法撤销。",
-  "deleteDiaryWithMealConfirmation": "确定要删除该日记吗？\n动态中的相关餐食信息也将被删除，\n此操作无法撤销。",
+  "deleteDiaryConfirmation": "确定要删除吗？ 此操作无法撤销。",
+  "deleteDiaryWithMealConfirmation": "确定要删除该日记吗？ 动态中的相关餐食信息也将被删除， 此操作无法撤销。",
   "diaryDeleted": "已删除",
   "diaryDeleteFailed": "删除失败",
   "diaryUpdated": "日记已更新",
@@ -282,7 +282,7 @@
   "showMore": "展开",
   "showLess": "收起",
   "diaryContentRequired": "请输入内容或附加照片。",
-  "foodDetected": "\n\n食物: {food}",
+  "foodDetected": "  食物: {food}",
   "@foodDetected": {
     "description": "Detected food items appended to diary content",
     "placeholders": {
@@ -308,7 +308,7 @@
 
   "generateReport": "生成报告",
   "reportGuideTitle": "关于报告",
-  "reportGuideMessage": "• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。\n\n• 所有基本信息都基于Apple健康应用的数据。\n\n• 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。\n\n• 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。\n\n• 因此，建议在至少有2-3天的活动数据和血糖数据时生成报告。\n\n• 首次生成报告时，可以从今天起一周前的日期开始生成报告。\n\n• 不支持单日报告生成。\n\n• 已生成报告的日期无法再次生成报告。\n\n※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。",
+  "reportGuideMessage": "• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。  • 所有基本信息都基于Apple健康应用的数据。  • 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。  • 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。  • 因此，建议在至少有2-3天的活动数据和血糖数据时生成报告。  • 首次生成报告时，可以从今天起一周前的日期开始生成报告。  • 不支持单日报告生成。  • 已生成报告的日期无法再次生成报告。  ※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。",
   "doNotShowAgain": "不再显示",
   "viewPastReports": "查看过去的报告",
   "pastReports": "过去的报告",
@@ -354,6 +354,13 @@
   "iCloudNotAvailable": "iCloud不可用。请在设置中登录iCloud。",
 
   "onboardingWelcomeTo": "欢迎使用",
-  "onboardingWelcomeDescription": "Glu Butler帮助您管理血糖。\n以更智能的方式追踪您的日常模式，建立更健康的生活。",
-  "onboardingLetsBegin": "开始使用"
+  "onboardingWelcomeDescription": "Glu Butler帮助您管理血糖。 以更智能的方式追踪您的日常模式，建立更健康的生活。",
+  "onboardingLetsBegin": "开始使用",
+  "onboardingFirstThingsFirst": "首先",
+  "onboardingWhatsYourFirstName": "您叫什么名字？",
+  "onboardingTypeYourFirstName": "请输入您的名字",
+  "onboardingNext": "下一步",
+  "onboardingSkip": "跳过",
+  "onboardingDiabetesTypeTitle": "请选择您的糖尿病类型",
+  "diabetesTypeUnknown": "不确定"
 }

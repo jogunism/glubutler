@@ -353,7 +353,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get photoPermissionMessage =>
-      '要附加照片，需要允许访问照片库。\n\n请在设置 > Glu Butler中启用照片访问。';
+      '要附加照片，需要允许访问照片库。  请在设置 > Glu Butler中启用照片访问。';
 
   @override
   String get goToSettings => '前往设置';
@@ -491,7 +491,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get discardDiaryTitle => '取消编写';
 
   @override
-  String get discardDiaryMessage => '正在编写的内容将消失。\n要取消写作吗？';
+  String get discardDiaryMessage => '正在编写的内容将消失。 要取消写作吗？';
 
   @override
   String get diarySaved => '日记已保存';
@@ -727,6 +727,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get initDone => '完成';
 
   @override
+  String get initFirstTime =>
+      'Preparing to start the app for the first time...';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count records synced to Apple Health';
   }
@@ -740,7 +744,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
-  String get deleteGlucoseConfirmation => '确定要删除吗？\n此操作无法撤销。';
+  String get deleteGlucoseConfirmation => '确定要删除吗？ 此操作无法撤销。';
 
   @override
   String get glucoseDeleted => '血糖记录已删除';
@@ -755,11 +759,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteDiary => '删除日记';
 
   @override
-  String get deleteDiaryConfirmation => '确定要删除吗？\n此操作无法撤销。';
+  String get deleteDiaryConfirmation => '确定要删除吗？ 此操作无法撤销。';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      '确定要删除该日记吗？\n动态中的相关餐食信息也将被删除，\n此操作无法撤销。';
+      '确定要删除该日记吗？ 动态中的相关餐食信息也将被删除， 此操作无法撤销。';
 
   @override
   String get diaryDeleted => '已删除';
@@ -784,7 +788,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String foodDetected(String food) {
-    return '\n\n食物: $food';
+    return '  食物: $food';
   }
 
   @override
@@ -809,7 +813,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。\n\n• 所有基本信息都基于Apple健康应用的数据。\n\n• 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。\n\n• 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。\n\n• 因此，建议在至少有2-3天的活动数据和血糖数据时生成报告。\n\n• 首次生成报告时，可以从今天起一周前的日期开始生成报告。\n\n• 不支持单日报告生成。\n\n• 已生成报告的日期无法再次生成报告。\n\n※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。';
+      '• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。  • 所有基本信息都基于Apple健康应用的数据。  • 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。  • 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。  • 因此，建议在至少有2-3天的活动数据和血糖数据时生成报告。  • 首次生成报告时，可以从今天起一周前的日期开始生成报告。  • 不支持单日报告生成。  • 已生成报告的日期无法再次生成报告。  ※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。';
 
   @override
   String get doNotShowAgain => '不再显示';
@@ -910,8 +914,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingWelcomeDescription =>
-      'Glu Butler帮助您管理血糖。\n以更智能的方式追踪您的日常模式，建立更健康的生活。';
+      'Glu Butler帮助您管理血糖。 以更智能的方式追踪您的日常模式，建立更健康的生活。';
 
   @override
   String get onboardingLetsBegin => '开始使用';
+
+  @override
+  String get onboardingFirstThingsFirst => '首先';
+
+  @override
+  String get onboardingWhatsYourFirstName => '您叫什么名字？';
+
+  @override
+  String get onboardingTypeYourFirstName => '请输入您的名字';
+
+  @override
+  String get onboardingNext => '下一步';
+
+  @override
+  String get onboardingSkip => '跳过';
+
+  @override
+  String get onboardingDiabetesTypeTitle => '请选择您的糖尿病类型';
+
+  @override
+  String get diabetesTypeUnknown => '不确定';
 }

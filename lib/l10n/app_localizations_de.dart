@@ -355,7 +355,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get photoPermissionMessage =>
-      'Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.\n\nGehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.';
+      'Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.  Gehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.';
 
   @override
   String get goToSettings => 'Zu Einstellungen';
@@ -504,7 +504,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get discardDiaryMessage =>
-      'Ihre nicht gespeicherten Änderungen gehen verloren.\nEintrag verwerfen?';
+      'Ihre nicht gespeicherten Änderungen gehen verloren. Eintrag verwerfen?';
 
   @override
   String get diarySaved => 'Tagebucheintrag gespeichert';
@@ -743,6 +743,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get initDone => 'Fertig';
 
   @override
+  String get initFirstTime =>
+      'Preparing to start the app for the first time...';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count records synced to Apple Health';
   }
@@ -757,7 +761,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteGlucoseConfirmation =>
-      'Möchten Sie wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.';
+      'Möchten Sie wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get glucoseDeleted => 'Blutzucker gelöscht';
@@ -773,11 +777,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      'Möchten Sie wirklich löschen?\nDies kann nicht rückgängig gemacht werden.';
+      'Möchten Sie wirklich löschen? Dies kann nicht rückgängig gemacht werden.';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'Dieses Tagebuch löschen?\nZugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht,\nund diese Aktion kann nicht rückgängig gemacht werden.';
+      'Dieses Tagebuch löschen? Zugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht, und diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get diaryDeleted => 'Gelöscht';
@@ -803,7 +807,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String foodDetected(String food) {
-    return '\n\nEssen: $food';
+    return '  Essen: $food';
   }
 
   @override
@@ -828,7 +832,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.\n\n• Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.\n\n• Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.\n\n• Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.\n\n• Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.\n\n• Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.\n\n• Eintägige Berichte werden nicht unterstützt.\n\n• Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.\n\n※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.';
+      '• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.  • Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.  • Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.  • Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.  • Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.  • Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.  • Eintägige Berichte werden nicht unterstützt.  • Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.  ※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.';
 
   @override
   String get doNotShowAgain => 'Nicht mehr anzeigen';
@@ -935,8 +939,30 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get onboardingWelcomeDescription =>
-      'Glu Butler hilft Ihnen bei der Blutzuckerverwaltung.\nVerfolgen Sie Ihre täglichen Muster intelligenter und bauen Sie bessere Gesundheit auf.';
+      'Glu Butler hilft Ihnen bei der Blutzuckerverwaltung. Verfolgen Sie Ihre täglichen Muster intelligenter und bauen Sie bessere Gesundheit auf.';
 
   @override
   String get onboardingLetsBegin => 'Los geht\'s';
+
+  @override
+  String get onboardingFirstThingsFirst => 'Erst einmal';
+
+  @override
+  String get onboardingWhatsYourFirstName => 'Wie ist Ihr Vorname?';
+
+  @override
+  String get onboardingTypeYourFirstName => 'Geben Sie Ihren Vornamen ein';
+
+  @override
+  String get onboardingNext => 'Weiter';
+
+  @override
+  String get onboardingSkip => 'Überspringen';
+
+  @override
+  String get onboardingDiabetesTypeTitle =>
+      'Welcher Diabetes-Typ beschreibt Sie am besten?';
+
+  @override
+  String get diabetesTypeUnknown => 'Ich weiß es nicht';
 }

@@ -11,7 +11,7 @@ class AppTheme {
   // Brand Colors (Glu Sight palette)
   // ==========================================================================
   static const Color primaryColor = Color(0xFFC1121F); // Flag Red
-  static const Color secondaryColor = Color(0xFF2D3748); // Dark Slate (from logo "Butler")
+  static const Color secondaryColor = Color(0xFF27343D); // Dark Blue Gray
   static const Color accentColor = Color(0xFFFF6B6B); // Coral/Salmon (Light mode)
   static const Color accentColorDark = Color(0xFF9B8FE4); // Lavender/Purple (Dark mode)
 

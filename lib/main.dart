@@ -52,11 +52,7 @@ void main() async {
     diaryProvider.syncFromICloud();
   }
 
-  // Determine initial route based on onboarding status
-  final initialRoute = settingsService.hasCompletedOnboarding
-      ? AppRoutes.splash
-      : AppRoutes.onboarding;
-
+  // Always start with splash screen - it will handle routing to onboarding or main
   runApp(
     MultiProvider(
       providers: [
@@ -65,7 +61,7 @@ void main() async {
         ChangeNotifierProvider.value(value: reportProvider),
         ChangeNotifierProvider.value(value: diaryProvider),
       ],
-      child: GluButlerApp(initialRoute: initialRoute),
+      child: const GluButlerApp(initialRoute: AppRoutes.splash),
     ),
   );
 }

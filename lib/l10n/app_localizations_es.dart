@@ -354,7 +354,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get photoPermissionMessage =>
-      'Para adjuntar fotos, necesita permitir el acceso a su biblioteca de fotos.\n\nVaya a Ajustes > Glu Butler para habilitar el acceso a fotos.';
+      'Para adjuntar fotos, necesita permitir el acceso a su biblioteca de fotos.  Vaya a Ajustes > Glu Butler para habilitar el acceso a fotos.';
 
   @override
   String get goToSettings => 'Ir a Ajustes';
@@ -503,7 +503,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get discardDiaryMessage =>
-      'Se perderán los cambios no guardados.\n¿Descartar esta entrada?';
+      'Se perderán los cambios no guardados. ¿Descartar esta entrada?';
 
   @override
   String get diarySaved => 'Entrada guardada';
@@ -743,6 +743,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get initDone => 'Listo';
 
   @override
+  String get initFirstTime =>
+      'Preparing to start the app for the first time...';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count records synced to Apple Health';
   }
@@ -757,7 +761,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteGlucoseConfirmation =>
-      '¿Estás seguro de que quieres eliminar?\nEsta acción no se puede deshacer.';
+      '¿Estás seguro de que quieres eliminar? Esta acción no se puede deshacer.';
 
   @override
   String get glucoseDeleted => 'Glucosa eliminada';
@@ -773,11 +777,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      '¿Está seguro de que desea eliminar?\nEsta acción no se puede deshacer.';
+      '¿Está seguro de que desea eliminar? Esta acción no se puede deshacer.';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      '¿Eliminar este diario?\nLa información de comida asociada en el feed también se eliminará,\ny esta acción no se puede deshacer.';
+      '¿Eliminar este diario? La información de comida asociada en el feed también se eliminará, y esta acción no se puede deshacer.';
 
   @override
   String get diaryDeleted => 'Eliminado';
@@ -803,7 +807,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String foodDetected(String food) {
-    return '\n\nComida: $food';
+    return '  Comida: $food';
   }
 
   @override
@@ -828,7 +832,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• La glucosa en sangre se ve afectada por diversos aspectos de la vida. Por lo tanto, para generar informes se requieren datos detallados relacionados con la salud.\n\n• Toda la información básica se basa en datos de la aplicación Apple Health.\n\n• Nos referimos a su información básica, registros de ejercicio y patrones de estilo de vida registrados en la aplicación Apple Health, y rastreamos su estado actual basándonos en registros de glucosa de Glu Butler u otras aplicaciones.\n\n• Cuantos más datos se acumulen y más detallados sean, más factores se pueden considerar, lo que resulta en informes más completos.\n\n• Por lo tanto, recomendamos generar informes cuando tenga al menos 2-3 días de datos de actividad y glucosa.\n\n• Para su primer informe, puede generar informes a partir de una semana antes de hoy.\n\n• No se admiten informes de un solo día.\n\n• No puede crear informes para fechas que ya tienen informes existentes.\n\n※ La información personal utilizada para la generación de informes nunca se almacena en otro lugar. Se utiliza únicamente para la generación de informes y se descarta inmediatamente después de su uso.';
+      '• La glucosa en sangre se ve afectada por diversos aspectos de la vida. Por lo tanto, para generar informes se requieren datos detallados relacionados con la salud.  • Toda la información básica se basa en datos de la aplicación Apple Health.  • Nos referimos a su información básica, registros de ejercicio y patrones de estilo de vida registrados en la aplicación Apple Health, y rastreamos su estado actual basándonos en registros de glucosa de Glu Butler u otras aplicaciones.  • Cuantos más datos se acumulen y más detallados sean, más factores se pueden considerar, lo que resulta en informes más completos.  • Por lo tanto, recomendamos generar informes cuando tenga al menos 2-3 días de datos de actividad y glucosa.  • Para su primer informe, puede generar informes a partir de una semana antes de hoy.  • No se admiten informes de un solo día.  • No puede crear informes para fechas que ya tienen informes existentes.  ※ La información personal utilizada para la generación de informes nunca se almacena en otro lugar. Se utiliza únicamente para la generación de informes y se descarta inmediatamente después de su uso.';
 
   @override
   String get doNotShowAgain => 'No mostrar de nuevo';
@@ -935,8 +939,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingWelcomeDescription =>
-      'Glu Butler te ayuda a gestionar tu glucosa en sangre.\nRastrea tus patrones diarios de manera más inteligente y construye una mejor salud.';
+      'Glu Butler te ayuda a gestionar tu glucosa en sangre. Rastrea tus patrones diarios de manera más inteligente y construye una mejor salud.';
 
   @override
   String get onboardingLetsBegin => 'Comenzar';
+
+  @override
+  String get onboardingFirstThingsFirst => 'Primero lo primero';
+
+  @override
+  String get onboardingWhatsYourFirstName => '¿Cuál es tu nombre?';
+
+  @override
+  String get onboardingTypeYourFirstName => 'Escribe tu nombre aquí';
+
+  @override
+  String get onboardingNext => 'Siguiente';
+
+  @override
+  String get onboardingSkip => 'Saltar';
+
+  @override
+  String get onboardingDiabetesTypeTitle =>
+      '¿Cuál describe mejor tu tipo de diabetes?';
+
+  @override
+  String get diabetesTypeUnknown => 'No estoy seguro';
 }

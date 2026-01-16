@@ -131,7 +131,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     try {
       await initService.initialize();
-      debugPrint('[SplashScreen] Initialization complete');
     } catch (e) {
       debugPrint('[SplashScreen] Initialization error: $e');
     }
@@ -172,6 +171,14 @@ class _SplashScreenState extends State<SplashScreen>
 
   String _getStatusText(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final settingsService = context.read<SettingsService>();
+
+    // 첫 사용자인 경우 다른 메시지 표시
+    if (!settingsService.hasCompletedOnboarding) {
+      return l10n.initFirstTime;
+    }
+
+    // 기존 사용자는 단계별 메시지 표시
     switch (_currentStep) {
       case InitializationStep.settings:
         return l10n.initLoadingSettings;

@@ -357,7 +357,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get photoPermissionMessage =>
-      'Pour joindre des photos, vous devez autoriser l\'accès à votre bibliothèque de photos.\n\nAllez dans Réglages > Glu Butler pour activer l\'accès aux photos.';
+      'Pour joindre des photos, vous devez autoriser l\'accès à votre bibliothèque de photos.  Allez dans Réglages > Glu Butler pour activer l\'accès aux photos.';
 
   @override
   String get goToSettings => 'Aller aux Réglages';
@@ -507,7 +507,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get discardDiaryMessage =>
-      'Vos modifications non enregistrées seront perdues.\nAbandonner cette entrée?';
+      'Vos modifications non enregistrées seront perdues. Abandonner cette entrée?';
 
   @override
   String get diarySaved => 'Entrée enregistrée';
@@ -750,6 +750,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get initDone => 'Terminé';
 
   @override
+  String get initFirstTime =>
+      'Preparing to start the app for the first time...';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count records synced to Apple Health';
   }
@@ -764,7 +768,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteGlucoseConfirmation =>
-      'Êtes-vous sûr de vouloir supprimer ?\nCette action ne peut pas être annulée.';
+      'Êtes-vous sûr de vouloir supprimer ? Cette action ne peut pas être annulée.';
 
   @override
   String get glucoseDeleted => 'Glycémie supprimée';
@@ -780,11 +784,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      'Voulez-vous vraiment supprimer ?\nCette action est irréversible.';
+      'Voulez-vous vraiment supprimer ? Cette action est irréversible.';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'Supprimer ce journal ?\nLes informations sur le repas associées dans le fil seront également supprimées,\net cette action est irréversible.';
+      'Supprimer ce journal ? Les informations sur le repas associées dans le fil seront également supprimées, et cette action est irréversible.';
 
   @override
   String get diaryDeleted => 'Supprimé';
@@ -810,7 +814,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String foodDetected(String food) {
-    return '\n\nNourriture: $food';
+    return '  Nourriture: $food';
   }
 
   @override
@@ -835,7 +839,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• La glycémie est affectée par divers aspects de la vie. Par conséquent, pour générer des rapports, des données détaillées liées à la santé sont nécessaires.\n\n• Toutes les informations de base sont basées sur les données de l\'application Apple Health.\n\n• Nous nous référons à vos informations de base, enregistrements d\'exercice et schémas de mode de vie enregistrés dans l\'application Apple Health, et suivons votre état actuel en fonction des enregistrements de glucose de Glu Butler ou d\'autres applications.\n\n• Plus les données accumulées sont nombreuses et détaillées, plus de facteurs peuvent être pris en compte, ce qui donne des rapports plus complets.\n\n• Par conséquent, nous recommandons de générer des rapports lorsque vous disposez d\'au moins 2-3 jours de données d\'activité et de glucose.\n\n• Pour votre premier rapport, vous pouvez générer des rapports à partir d\'une semaine avant aujourd\'hui.\n\n• Les rapports d\'une seule journée ne sont pas pris en charge.\n\n• Vous ne pouvez pas créer de rapports pour des dates qui ont déjà des rapports existants.\n\n※ Les informations personnelles utilisées pour la génération de rapports ne sont jamais stockées ailleurs. Elles sont utilisées uniquement pour la génération de rapports et sont immédiatement supprimées après utilisation.';
+      '• La glycémie est affectée par divers aspects de la vie. Par conséquent, pour générer des rapports, des données détaillées liées à la santé sont nécessaires.  • Toutes les informations de base sont basées sur les données de l\'application Apple Health.  • Nous nous référons à vos informations de base, enregistrements d\'exercice et schémas de mode de vie enregistrés dans l\'application Apple Health, et suivons votre état actuel en fonction des enregistrements de glucose de Glu Butler ou d\'autres applications.  • Plus les données accumulées sont nombreuses et détaillées, plus de facteurs peuvent être pris en compte, ce qui donne des rapports plus complets.  • Par conséquent, nous recommandons de générer des rapports lorsque vous disposez d\'au moins 2-3 jours de données d\'activité et de glucose.  • Pour votre premier rapport, vous pouvez générer des rapports à partir d\'une semaine avant aujourd\'hui.  • Les rapports d\'une seule journée ne sont pas pris en charge.  • Vous ne pouvez pas créer de rapports pour des dates qui ont déjà des rapports existants.  ※ Les informations personnelles utilisées pour la génération de rapports ne sont jamais stockées ailleurs. Elles sont utilisées uniquement pour la génération de rapports et sont immédiatement supprimées après utilisation.';
 
   @override
   String get doNotShowAgain => 'Ne plus afficher';
@@ -943,8 +947,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboardingWelcomeDescription =>
-      'Glu Butler vous aide à gérer votre glycémie.\nSuivez vos habitudes quotidiennes de manière plus intelligente et construisez une meilleure santé.';
+      'Glu Butler vous aide à gérer votre glycémie. Suivez vos habitudes quotidiennes de manière plus intelligente et construisez une meilleure santé.';
 
   @override
   String get onboardingLetsBegin => 'Commencer';
+
+  @override
+  String get onboardingFirstThingsFirst => 'Commençons';
+
+  @override
+  String get onboardingWhatsYourFirstName => 'Quel est votre prénom?';
+
+  @override
+  String get onboardingTypeYourFirstName => 'Entrez votre prénom ici';
+
+  @override
+  String get onboardingNext => 'Suivant';
+
+  @override
+  String get onboardingSkip => 'Passer';
+
+  @override
+  String get onboardingDiabetesTypeTitle =>
+      'Quel type de diabète vous correspond le mieux?';
+
+  @override
+  String get diabetesTypeUnknown => 'Je ne sais pas';
 }

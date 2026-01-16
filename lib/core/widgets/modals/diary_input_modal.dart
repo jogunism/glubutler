@@ -21,6 +21,7 @@ import 'package:glu_butler/services/image_service.dart';
 import 'package:glu_butler/services/vision_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
+import 'package:glu_butler/core/widgets/keyboard_dismiss_button.dart';
 import 'package:provider/provider.dart';
 
 /// 일기 입력 모달 팝업
@@ -114,73 +115,11 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
 
   void _showKeyboardToolbar() {
     if (_keyboardToolbarOverlay != null) return;
-
-    _keyboardToolbarOverlay = OverlayEntry(
-      builder: (context) {
-        final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
-        final brightness = MediaQuery.of(context).platformBrightness;
-        final isDark = brightness == Brightness.dark;
-
-        return Positioned(
-          bottom: bottomPadding,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 44,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF1C1C1E) // iOS 다크모드 키보드 색상
-                  : const Color(0xFFD1D5DB), // iOS 라이트모드 키보드 색상
-              border: Border(
-                top: BorderSide(
-                  color: isDark
-                      ? const Color(0xFF38383A)
-                      : const Color(0xFFB8B8B8),
-                  width: 0.5,
-                ),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CupertinoButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.keyboard,
-                        size: 20,
-                        color: isDark
-                            ? const Color(0xFF98989D)
-                            : const Color(0xFF6B7280),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 20,
-                        color: isDark
-                            ? const Color(0xFF98989D)
-                            : const Color(0xFF6B7280),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    Overlay.of(context).insert(_keyboardToolbarOverlay!);
+    _keyboardToolbarOverlay = KeyboardDismissButton.show(context, _contentFocusNode);
   }
 
   void _hideKeyboardToolbar() {
-    _keyboardToolbarOverlay?.remove();
+    KeyboardDismissButton.hide(_keyboardToolbarOverlay);
     _keyboardToolbarOverlay = null;
   }
 

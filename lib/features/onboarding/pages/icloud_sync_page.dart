@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
-import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
+// import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 
@@ -178,11 +178,11 @@ class _ICloudSyncPageState extends State<ICloudSyncPage> {
 
           const SizedBox(height: 8),
 
-          // Skip button
-          Align(
-            alignment: Alignment.centerRight,
-            child: OnboardingSkipButton(onPressed: widget.onSkip),
-          ),
+          // Skip button - TODO: 나중에 "다음"과 다른 동작 구현 시 주석 해제
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: OnboardingSkipButton(onPressed: widget.onSkip),
+          // ),
 
           const SizedBox(height: 16),
         ],

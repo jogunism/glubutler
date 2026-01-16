@@ -246,6 +246,7 @@
   "initCheckingiCloud": "iCloud同期を確認中...",
   "initLocalDatabase": "ローカルデータベースを初期化中...",
   "initDone": "完了",
+  "initFirstTime": "初回起動の準備をしています。",
 
   "glucoseSaved": "血糖値を保存しました",
   "insulinSaved": "インスリン投与量を保存しました",
@@ -358,5 +359,12 @@
 
   "onboardingWelcomeTo": "ようこそ",
   "onboardingWelcomeDescription": "Glu Butlerがあなたの血糖管理をサポートします。\nスマートな方法で日々の生活パターンを追跡し、より健康的な生活を築きましょう。",
-  "onboardingLetsBegin": "始める"
+  "onboardingLetsBegin": "始める",
+  "onboardingFirstThingsFirst": "まず最初に",
+  "onboardingWhatsYourFirstName": "お名前は何ですか？",
+  "onboardingTypeYourFirstName": "お名前を入力してください",
+  "onboardingNext": "次へ",
+  "onboardingSkip": "スキップ",
+  "onboardingDiabetesTypeTitle": "あなたの糖尿病のタイプを選択してください",
+  "diabetesTypeUnknown": "わからない"
 }

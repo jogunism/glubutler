@@ -742,6 +742,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get initDone => 'Done';
 
   @override
+  String get initFirstTime =>
+      'Preparing to start the app for the first time...';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count records synced to Apple Health';
   }
@@ -937,4 +941,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingLetsBegin => 'Let\'s Begin';
+
+  @override
+  String get onboardingFirstThingsFirst => 'First Things First';
+
+  @override
+  String get onboardingWhatsYourFirstName => 'What\'s your first name?';
+
+  @override
+  String get onboardingTypeYourFirstName => 'Type your first name here';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingDiabetesTypeTitle =>
+      'Which best describes your diabetes type?';
+
+  @override
+  String get diabetesTypeUnknown => 'I don\'t know';
 }

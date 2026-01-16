@@ -4,7 +4,8 @@ enum DiabetesType {
   type1('type1', 'Type 1'),
   type2('type2', 'Type 2'),
   lada('lada', 'LADA (1.5)'),
-  mody('mody', 'MODY');
+  mody('mody', 'MODY'),
+  unknown('unknown', 'Unknown');
 
   final String value;
   final String displayName;
@@ -14,7 +15,7 @@ enum DiabetesType {
   static DiabetesType fromValue(String value) {
     return DiabetesType.values.firstWhere(
       (type) => type.value == value,
-      orElse: () => DiabetesType.type2,
+      orElse: () => DiabetesType.unknown,
     );
   }
 }

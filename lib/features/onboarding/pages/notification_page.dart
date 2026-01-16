@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
-import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
+// import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
 
 /// Notification permission page
 class NotificationPage extends StatefulWidget {
@@ -152,11 +152,11 @@ class _NotificationPageState extends State<NotificationPage> {
 
           const SizedBox(height: 8),
 
-          // Skip button
-          Align(
-            alignment: Alignment.centerRight,
-            child: OnboardingSkipButton(onPressed: widget.onSkip),
-          ),
+          // Skip button - TODO: 나중에 "다음"과 다른 동작 구현 시 주석 해제
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: OnboardingSkipButton(onPressed: widget.onSkip),
+          // ),
 
           const SizedBox(height: 16),
         ],

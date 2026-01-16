@@ -727,6 +727,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get initDone => '완료';
 
   @override
+  String get initFirstTime => '앱을 처음 시작하기 위해 준비중입니다.';
+
+  @override
   String syncCompleteMessage(int count) {
     return '$count개 기록이 Apple 건강에 동기화되었습니다';
   }
@@ -914,4 +917,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get onboardingLetsBegin => '시작하기';
+
+  @override
+  String get onboardingFirstThingsFirst => '먼저 시작해볼까요';
+
+  @override
+  String get onboardingWhatsYourFirstName => '이름이 무엇인가요?';
+
+  @override
+  String get onboardingTypeYourFirstName => '이름을 입력하세요';
+
+  @override
+  String get onboardingNext => '다음';
+
+  @override
+  String get onboardingSkip => '건너뛰기';
+
+  @override
+  String get onboardingDiabetesTypeTitle => '당뇨 유형을 선택해주세요';
+
+  @override
+  String get diabetesTypeUnknown => '잘 모르겠어요';
 }

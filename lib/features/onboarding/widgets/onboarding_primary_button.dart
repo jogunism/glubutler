@@ -4,7 +4,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 /// Primary action button for onboarding screens
 class OnboardingPrimaryButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isLoading;
 
   const OnboardingPrimaryButton({
@@ -24,7 +24,8 @@ class OnboardingPrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
+          disabledBackgroundColor: Colors.grey,
+          disabledForegroundColor: Colors.white.withValues(alpha: 0.6),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),

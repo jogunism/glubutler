@@ -269,6 +269,7 @@
   "initCheckingiCloud": "Checking iCloud sync...",
   "initLocalDatabase": "Initializing local database...",
   "initDone": "Done",
+  "initFirstTime": "Preparing to start the app for the first time...",
 
   "syncCompleteMessage": "{count} records synced to Apple Health",
   "@syncCompleteMessage": {
@@ -376,5 +377,12 @@
 
   "onboardingWelcomeTo": "Welcome to",
   "onboardingWelcomeDescription": "Glu Butler helps you manage your blood glucose.\nTrack your daily patterns smarter and build better health.",
-  "onboardingLetsBegin": "Let's Begin"
+  "onboardingLetsBegin": "Let's Begin",
+  "onboardingFirstThingsFirst": "First Things First",
+  "onboardingWhatsYourFirstName": "What's your first name?",
+  "onboardingTypeYourFirstName": "Type your first name here",
+  "onboardingNext": "Next",
+  "onboardingSkip": "Skip",
+  "onboardingDiabetesTypeTitle": "Which best describes your diabetes type?",
+  "diabetesTypeUnknown": "I don't know"
 }

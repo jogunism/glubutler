@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
-import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
+// import 'package:glu_butler/features/onboarding/widgets/onboarding_skip_button.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_text_field.dart';
 import 'package:glu_butler/services/settings_service.dart';
 
@@ -162,11 +162,11 @@ class _FastingGlucosePageState extends State<FastingGlucosePage> {
 
           const SizedBox(height: 8),
 
-          // Skip button
-          Align(
-            alignment: Alignment.centerRight,
-            child: OnboardingSkipButton(onPressed: widget.onSkip),
-          ),
+          // Skip button - TODO: 나중에 "다음"과 다른 동작 구현 시 주석 해제
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: OnboardingSkipButton(onPressed: widget.onSkip),
+          // ),
 
           const SizedBox(height: 16),
         ],

@@ -17,6 +17,8 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   int _currentImageIndex = 0;
   Timer? _timer;
+  bool _isNavigating = false;
+  bool _isReady = false;
 
   final List<String> _screenImages = [
     'assets/images/screen_1.png',
@@ -29,6 +31,18 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     super.initState();
     _startImageCycling();
+
+    // Wait for page to render first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Small delay to ensure smooth transition
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          setState(() {
+            _isReady = true;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -45,6 +59,22 @@ class _WelcomePageState extends State<WelcomePage> {
         });
       }
     });
+  }
+
+  void _handleNext() {
+    if (!_isReady) {
+      return;
+    }
+
+    if (_isNavigating) {
+      return;
+    }
+
+    setState(() {
+      _isNavigating = true;
+    });
+
+    widget.onNext();
   }
 
   @override
@@ -102,7 +132,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       style: TextStyle(
                         fontSize: titleFontSize,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF27343D),
+                        color: AppTheme.textPrimary(context),
                         letterSpacing: -0.3,
                         height: 1.0,
                       ),
@@ -127,7 +157,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             style: TextStyle(
                               fontSize: appNameFontSize,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF27343D),
+                              color: AppTheme.textPrimary(context),
                               letterSpacing: -0.5,
                               height: 1.0,
                             ),
@@ -157,18 +187,20 @@ class _WelcomePageState extends State<WelcomePage> {
         ),
 
         // Button positioned at bottom
-        Positioned(
-          left: 24,
-          right: 24,
-          bottom: 0,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 24),
-            child: OnboardingPrimaryButton(
-              text: l10n.onboardingLetsBegin,
-              onPressed: widget.onNext,
+        if (_isReady)
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom: 0,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: OnboardingPrimaryButton(
+                text: l10n.onboardingLetsBegin,
+                onPressed: _handleNext,
+                isLoading: _isNavigating,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

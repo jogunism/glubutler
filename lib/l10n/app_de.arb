@@ -109,7 +109,7 @@
   "onlyImageFiles": "Es können nur Bilddateien ausgewählt werden.",
   "imageLoadFailed": "Fehler beim Laden der Fotos.",
   "photoPermissionRequired": "Fotoberechtigung erforderlich",
-  "photoPermissionMessage": "Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.\n\nGehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.",
+  "photoPermissionMessage": "Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.  Gehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.",
   "goToSettings": "Zu Einstellungen",
 
   "noRecords": "Keine Einträge vorhanden",
@@ -160,7 +160,7 @@
   "diaryPlaceholder": "Schreiben Sie Ihr Blutzucker-Tagebuch",
   "attachPhoto": "Foto anhängen",
   "discardDiaryTitle": "Abbrechen",
-  "discardDiaryMessage": "Ihre nicht gespeicherten Änderungen gehen verloren.\nEintrag verwerfen?",
+  "discardDiaryMessage": "Ihre nicht gespeicherten Änderungen gehen verloren. Eintrag verwerfen?",
   "diarySaved": "Tagebucheintrag gespeichert",
   "diarySaveFailed": "Fehler beim Speichern des Tagebucheintrags",
   "yes": "Ja",
@@ -251,7 +251,7 @@
   "insulinSaved": "Insulindosis gespeichert",
   "saveFailed": "Speichern fehlgeschlagen",
 
-  "deleteGlucoseConfirmation": "Möchten Sie wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.",
+  "deleteGlucoseConfirmation": "Möchten Sie wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
   "glucoseDeleted": "Blutzucker gelöscht",
   "insulinDeleted": "Insulin gelöscht",
   "deleteFailed": "Löschen fehlgeschlagen",
@@ -273,8 +273,8 @@
   "scoreInfoPrivacy": "*Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.",
 
   "deleteDiary": "Tagebuch löschen",
-  "deleteDiaryConfirmation": "Möchten Sie wirklich löschen?\nDies kann nicht rückgängig gemacht werden.",
-  "deleteDiaryWithMealConfirmation": "Dieses Tagebuch löschen?\nZugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht,\nund diese Aktion kann nicht rückgängig gemacht werden.",
+  "deleteDiaryConfirmation": "Möchten Sie wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+  "deleteDiaryWithMealConfirmation": "Dieses Tagebuch löschen? Zugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht, und diese Aktion kann nicht rückgängig gemacht werden.",
   "diaryDeleted": "Gelöscht",
   "diaryDeleteFailed": "Löschen fehlgeschlagen",
   "diaryUpdated": "Tagebuch aktualisiert",
@@ -282,7 +282,7 @@
   "showMore": "Mehr anzeigen",
   "showLess": "Weniger anzeigen",
   "diaryContentRequired": "Bitte geben Sie Inhalte ein oder fügen Sie Fotos hinzu.",
-  "foodDetected": "\n\nEssen: {food}",
+  "foodDetected": "  Essen: {food}",
   "@foodDetected": {
     "description": "Detected food items appended to diary content",
     "placeholders": {
@@ -308,7 +308,7 @@
 
   "generateReport": "Bericht erstellen",
   "reportGuideTitle": "Über Berichte",
-  "reportGuideMessage": "• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.\n\n• Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.\n\n• Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.\n\n• Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.\n\n• Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.\n\n• Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.\n\n• Eintägige Berichte werden nicht unterstützt.\n\n• Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.\n\n※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.",
+  "reportGuideMessage": "• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.  • Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.  • Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.  • Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.  • Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.  • Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.  • Eintägige Berichte werden nicht unterstützt.  • Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.  ※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.",
   "doNotShowAgain": "Nicht mehr anzeigen",
   "viewPastReports": "Frühere Berichte",
   "pastReports": "Frühere Berichte",
@@ -354,6 +354,13 @@
   "iCloudNotAvailable": "iCloud ist nicht verfügbar. Bitte melden Sie sich in den Einstellungen bei iCloud an.",
 
   "onboardingWelcomeTo": "Willkommen bei",
-  "onboardingWelcomeDescription": "Glu Butler hilft Ihnen bei der Blutzuckerverwaltung.\nVerfolgen Sie Ihre täglichen Muster intelligenter und bauen Sie bessere Gesundheit auf.",
-  "onboardingLetsBegin": "Los geht's"
+  "onboardingWelcomeDescription": "Glu Butler hilft Ihnen bei der Blutzuckerverwaltung. Verfolgen Sie Ihre täglichen Muster intelligenter und bauen Sie bessere Gesundheit auf.",
+  "onboardingLetsBegin": "Los geht's",
+  "onboardingFirstThingsFirst": "Erst einmal",
+  "onboardingWhatsYourFirstName": "Wie ist Ihr Vorname?",
+  "onboardingTypeYourFirstName": "Geben Sie Ihren Vornamen ein",
+  "onboardingNext": "Weiter",
+  "onboardingSkip": "Überspringen",
+  "onboardingDiabetesTypeTitle": "Welcher Diabetes-Typ beschreibt Sie am besten?",
+  "diabetesTypeUnknown": "Ich weiß es nicht"
 }
