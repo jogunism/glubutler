@@ -1861,6 +1861,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'iCloud is not available. Please sign in to iCloud in Settings.'**
   String get iCloudNotAvailable;
+
+  /// No description provided for @onboardingWelcomeTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to'**
+  String get onboardingWelcomeTo;
+
+  /// No description provided for @onboardingWelcomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Glu Butler helps you manage your blood glucose.\nTrack your daily patterns smarter and build better health.'**
+  String get onboardingWelcomeDescription;
+
+  /// No description provided for @onboardingLetsBegin.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s Begin'**
+  String get onboardingLetsBegin;
 }
 
 class _AppLocalizationsDelegate

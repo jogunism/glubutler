@@ -354,5 +354,9 @@
   "iCloudSyncEnabled": "iCloud同期が有効になりました",
   "iCloudSyncDisabled": "iCloud同期が無効になりました",
   "iCloudSyncFailed": "iCloudへの接続に失敗しました",
-  "iCloudNotAvailable": "iCloudが利用できません。設定でiCloudにサインインしてください。"
+  "iCloudNotAvailable": "iCloudが利用できません。設定でiCloudにサインインしてください。",
+
+  "onboardingWelcomeTo": "ようこそ",
+  "onboardingWelcomeDescription": "Glu Butlerがあなたの血糖管理をサポートします。\nスマートな方法で日々の生活パターンを追跡し、より健康的な生活を築きましょう。",
+  "onboardingLetsBegin": "始める"
 }

@@ -370,6 +370,13 @@ class AppTheme {
         : textPrimaryLight;
   }
 
+  /// Get secondary text color based on theme
+  static Color textSecondary(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? textSecondaryDark
+        : textSecondaryLight;
+  }
+
   /// Get glass background color based on theme
   static Color glassBackground(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark

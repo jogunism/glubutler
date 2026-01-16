@@ -29,6 +29,9 @@ class SettingsService extends ChangeNotifier {
   bool _hapticEnabled = AppConstants.defaultHapticEnabled;
   UserIdentity? _userIdentity;
   bool _iCloudSyncEnabled = false;
+  bool _hasCompletedOnboarding = false;
+  String? _diabetesType;
+  double? _fastingGlucoseTarget;
 
   String get language => _language;
   String get unit => _unit;
@@ -44,6 +47,9 @@ class SettingsService extends ChangeNotifier {
   bool get hapticEnabled => _hapticEnabled;
   UserIdentity get userIdentity => _userIdentity ?? const UserIdentity();
   bool get iCloudSyncEnabled => _iCloudSyncEnabled;
+  bool get hasCompletedOnboarding => _hasCompletedOnboarding;
+  String? get diabetesType => _diabetesType;
+  double? get fastingGlucoseTarget => _fastingGlucoseTarget;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -138,6 +144,11 @@ class SettingsService extends ChangeNotifier {
     _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
 
     _iCloudSyncEnabled = _prefs.getBool(AppConstants.keyICloudSyncEnabled) ?? false;
+
+    // Load onboarding status
+    _hasCompletedOnboarding = _prefs.getBool('has_completed_onboarding') ?? false;
+    _diabetesType = _prefs.getString('diabetes_type');
+    _fastingGlucoseTarget = _prefs.getDouble('fasting_glucose_target');
 
     // Load or generate UserIdentity
     final userIdentityJson = _prefs.getString(AppConstants.keyUserIdentity);
@@ -312,6 +323,34 @@ class SettingsService extends ChangeNotifier {
   Future<void> setICloudSync(bool enabled) async {
     _iCloudSyncEnabled = enabled;
     await _prefs.setBool(AppConstants.keyICloudSyncEnabled, enabled);
+    notifyListeners();
+  }
+
+  /// Set user name (for onboarding)
+  Future<void> setUserName(String name) async {
+    _userProfile = _userProfile.copyWith(name: name);
+    await _prefs.setString(AppConstants.keyUserProfile, jsonEncode(_userProfile.toJson()));
+    notifyListeners();
+  }
+
+  /// Set diabetes type (for onboarding)
+  Future<void> setDiabetesType(String type) async {
+    _diabetesType = type;
+    await _prefs.setString('diabetes_type', type);
+    notifyListeners();
+  }
+
+  /// Set fasting glucose target (for onboarding)
+  Future<void> setFastingGlucoseTarget(double value) async {
+    _fastingGlucoseTarget = value;
+    await _prefs.setDouble('fasting_glucose_target', value);
+    notifyListeners();
+  }
+
+  /// Mark onboarding as completed
+  Future<void> setOnboardingComplete() async {
+    _hasCompletedOnboarding = true;
+    await _prefs.setBool('has_completed_onboarding', true);
     notifyListeners();
   }
 

@@ -929,4 +929,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get iCloudNotAvailable =>
       'iCloud ist nicht verfügbar. Bitte melden Sie sich in den Einstellungen bei iCloud an.';
+
+  @override
+  String get onboardingWelcomeTo => 'Willkommen bei';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Glu Butler hilft Ihnen bei der Blutzuckerverwaltung.\nVerfolgen Sie Ihre täglichen Muster intelligenter und bauen Sie bessere Gesundheit auf.';
+
+  @override
+  String get onboardingLetsBegin => 'Los geht\'s';
 }

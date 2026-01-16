@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:glu_butler/core/navigation/main_screen.dart';
 import 'package:glu_butler/features/splash/splash_screen.dart';
+import 'package:glu_butler/features/onboarding/onboarding_screen.dart';
 import 'package:glu_butler/features/settings/settings_screen.dart';
 import 'package:glu_butler/features/settings/display_settings_screen.dart';
 import 'package:glu_butler/features/settings/subscription_screen.dart';
@@ -17,6 +18,7 @@ import 'package:glu_butler/features/input/input_screen.dart';
 class AppRoutes {
   // Route names
   static const String splash = '/splash';
+  static const String onboarding = '/onboarding';
   static const String main = '/main';
   static const String settings = '/settings';
   static const String settingsDisplay = '/settings/display';
@@ -34,6 +36,16 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => const SplashScreen(),
           settings: settings,
+        );
+
+      case onboarding:
+        return PageRouteBuilder(
+          settings: settings,
+          pageBuilder: (_, __, ___) => const OnboardingScreen(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 300),
         );
 
       case main:

@@ -904,4 +904,14 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get iCloudNotAvailable => 'iCloud를 사용할 수 없습니다. 설정에서 iCloud에 로그인해주세요.';
+
+  @override
+  String get onboardingWelcomeTo => '환영합니다';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Glu Butler가 당신의 혈당 관리를 도와드립니다.\n더 스마트한 방법으로 하루의 생활패턴을 추적하고 더 나은 건강을 만들어가세요.';
+
+  @override
+  String get onboardingLetsBegin => '시작하기';
 }

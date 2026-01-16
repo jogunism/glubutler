@@ -904,4 +904,14 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get iCloudNotAvailable => 'iCloudが利用できません。設定でiCloudにサインインしてください。';
+
+  @override
+  String get onboardingWelcomeTo => 'ようこそ';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Glu Butlerがあなたの血糖管理をサポートします。\nスマートな方法で日々の生活パターンを追跡し、より健康的な生活を築きましょう。';
+
+  @override
+  String get onboardingLetsBegin => '始める';
 }

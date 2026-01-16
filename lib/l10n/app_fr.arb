@@ -351,5 +351,9 @@
   "iCloudSyncEnabled": "Synchronisation iCloud activée",
   "iCloudSyncDisabled": "Synchronisation iCloud désactivée",
   "iCloudSyncFailed": "Échec de la connexion à iCloud",
-  "iCloudNotAvailable": "iCloud n'est pas disponible. Veuillez vous connecter à iCloud dans Réglages."
+  "iCloudNotAvailable": "iCloud n'est pas disponible. Veuillez vous connecter à iCloud dans Réglages.",
+
+  "onboardingWelcomeTo": "Bienvenue sur",
+  "onboardingWelcomeDescription": "Glu Butler vous aide à gérer votre glycémie.\nSuivez vos habitudes quotidiennes de manière plus intelligente et construisez une meilleure santé.",
+  "onboardingLetsBegin": "Commencer"
 }

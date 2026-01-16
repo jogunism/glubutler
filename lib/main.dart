@@ -52,6 +52,11 @@ void main() async {
     diaryProvider.syncFromICloud();
   }
 
+  // Determine initial route based on onboarding status
+  final initialRoute = settingsService.hasCompletedOnboarding
+      ? AppRoutes.splash
+      : AppRoutes.onboarding;
+
   runApp(
     MultiProvider(
       providers: [
@@ -60,13 +65,15 @@ void main() async {
         ChangeNotifierProvider.value(value: reportProvider),
         ChangeNotifierProvider.value(value: diaryProvider),
       ],
-      child: const GluButlerApp(),
+      child: GluButlerApp(initialRoute: initialRoute),
     ),
   );
 }
 
 class GluButlerApp extends StatelessWidget {
-  const GluButlerApp({super.key});
+  final String initialRoute;
+
+  const GluButlerApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +107,7 @@ class GluButlerApp extends StatelessWidget {
           ],
 
           // Navigation - basic Navigator instead of GoRouter
-          initialRoute: AppRoutes.splash,
+          initialRoute: initialRoute,
           onGenerateRoute: AppRoutes.generateRoute,
 
           // Set up locale change callback

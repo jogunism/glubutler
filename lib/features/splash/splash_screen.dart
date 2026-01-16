@@ -153,7 +153,20 @@ class _SplashScreenState extends State<SplashScreen>
     } catch (_) {}
 
     if (mounted) {
-      AppRoutes.goToMain(context);
+      // ignore: unused_local_variable
+      final settingsService = context.read<SettingsService>();
+
+      // TODO: 개발 중 - 항상 onboarding 표시
+      // 완성 후 아래 주석 해제하고 현재 로직 삭제
+      Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+
+      // Check if onboarding is completed
+      // if (settingsService.hasCompletedOnboarding) {
+      //   AppRoutes.goToMain(context);
+      // } else {
+      //   // Navigate to onboarding
+      //   Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+      // }
     }
   }
 

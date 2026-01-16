@@ -904,4 +904,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get iCloudNotAvailable => 'iCloud不可用。请在设置中登录iCloud。';
+
+  @override
+  String get onboardingWelcomeTo => '欢迎使用';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Glu Butler帮助您管理血糖。\n以更智能的方式追踪您的日常模式，建立更健康的生活。';
+
+  @override
+  String get onboardingLetsBegin => '开始使用';
 }

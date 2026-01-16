@@ -372,5 +372,9 @@
   "iCloudSyncEnabled": "iCloud sync enabled",
   "iCloudSyncDisabled": "iCloud sync disabled",
   "iCloudSyncFailed": "Failed to connect to iCloud",
-  "iCloudNotAvailable": "iCloud is not available. Please sign in to iCloud in Settings."
+  "iCloudNotAvailable": "iCloud is not available. Please sign in to iCloud in Settings.",
+
+  "onboardingWelcomeTo": "Welcome to",
+  "onboardingWelcomeDescription": "Glu Butler helps you manage your blood glucose.\nTrack your daily patterns smarter and build better health.",
+  "onboardingLetsBegin": "Let's Begin"
 }
