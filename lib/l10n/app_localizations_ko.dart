@@ -948,5 +948,20 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get onboardingHealthTitle => '애플 건강 앱 연결';
+
+  @override
+  String get onboardingHealthSubtitle => '혈당, 인슐린, 걸음 수, 체중 등을 자동으로 동기화하세요';
+
+  @override
+  String get onboardingHealthFeature1 => '자동 데이터 동기화';
+
+  @override
+  String get onboardingHealthFeature2 => '건강 데이터는 안전하게 보호됩니다';
+
+  @override
+  String get onboardingHealthConnect => '연결하기';
+
+  @override
   String get diabetesTypeUnknown => '잘 모르겠어요';
 }

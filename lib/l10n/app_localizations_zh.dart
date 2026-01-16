@@ -949,5 +949,20 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get onboardingHealthTitle => '连接 Apple Health';
+
+  @override
+  String get onboardingHealthSubtitle => '自动同步血糖、胰岛素、步数和体重';
+
+  @override
+  String get onboardingHealthFeature1 => '自动数据同步';
+
+  @override
+  String get onboardingHealthFeature2 => '您的健康数据安全保护';
+
+  @override
+  String get onboardingHealthConnect => '连接';
+
+  @override
   String get diabetesTypeUnknown => '不确定';
 }

@@ -977,5 +977,22 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get onboardingHealthTitle => 'Collega Apple Health';
+
+  @override
+  String get onboardingHealthSubtitle =>
+      'Sincronizza glicemia, insulina, passi e peso automaticamente';
+
+  @override
+  String get onboardingHealthFeature1 => 'Sincronizzazione automatica dei dati';
+
+  @override
+  String get onboardingHealthFeature2 =>
+      'I tuoi dati sanitari rimangono privati';
+
+  @override
+  String get onboardingHealthConnect => 'Collega';
+
+  @override
   String get diabetesTypeUnknown => 'Non lo so';
 }

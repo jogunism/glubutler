@@ -375,5 +375,10 @@
       }
     }
   },
+  "onboardingHealthTitle": "Apple Health verbinden",
+  "onboardingHealthSubtitle": "Synchronisieren Sie Blutzucker, Insulin, Schritte und Gewicht automatisch",
+  "onboardingHealthFeature1": "Automatische Datensynchronisation",
+  "onboardingHealthFeature2": "Ihre Gesundheitsdaten bleiben privat",
+  "onboardingHealthConnect": "Verbinden",
   "diabetesTypeUnknown": "Ich weiß es nicht"
 }

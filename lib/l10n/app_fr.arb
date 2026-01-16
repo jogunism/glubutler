@@ -375,5 +375,10 @@
       }
     }
   },
+  "onboardingHealthTitle": "Connecter Apple Health",
+  "onboardingHealthSubtitle": "Synchronisez glycémie, insuline, pas et poids automatiquement",
+  "onboardingHealthFeature1": "Synchronisation automatique des données",
+  "onboardingHealthFeature2": "Vos données de santé restent privées",
+  "onboardingHealthConnect": "Connecter",
   "diabetesTypeUnknown": "Je ne sais pas"
 }

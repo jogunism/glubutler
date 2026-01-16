@@ -948,5 +948,20 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get onboardingHealthTitle => 'Apple Healthと連携';
+
+  @override
+  String get onboardingHealthSubtitle => '血糖値、インスリン、歩数、体重などを自動的に同期します';
+
+  @override
+  String get onboardingHealthFeature1 => '自動データ同期';
+
+  @override
+  String get onboardingHealthFeature2 => '健康データは安全に保護されます';
+
+  @override
+  String get onboardingHealthConnect => '連携する';
+
+  @override
   String get diabetesTypeUnknown => 'わからない';
 }

@@ -985,5 +985,22 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get onboardingHealthTitle => 'Connecter Apple Health';
+
+  @override
+  String get onboardingHealthSubtitle =>
+      'Synchronisez glycémie, insuline, pas et poids automatiquement';
+
+  @override
+  String get onboardingHealthFeature1 =>
+      'Synchronisation automatique des données';
+
+  @override
+  String get onboardingHealthFeature2 => 'Vos données de santé restent privées';
+
+  @override
+  String get onboardingHealthConnect => 'Connecter';
+
+  @override
   String get diabetesTypeUnknown => 'Je ne sais pas';
 }

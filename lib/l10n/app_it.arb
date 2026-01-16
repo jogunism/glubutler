@@ -375,5 +375,10 @@
       }
     }
   },
+  "onboardingHealthTitle": "Collega Apple Health",
+  "onboardingHealthSubtitle": "Sincronizza glicemia, insulina, passi e peso automaticamente",
+  "onboardingHealthFeature1": "Sincronizzazione automatica dei dati",
+  "onboardingHealthFeature2": "I tuoi dati sanitari rimangono privati",
+  "onboardingHealthConnect": "Collega",
   "diabetesTypeUnknown": "Non lo so"
 }

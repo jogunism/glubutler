@@ -375,5 +375,10 @@
       }
     }
   },
+  "onboardingHealthTitle": "Conectar Apple Health",
+  "onboardingHealthSubtitle": "Sincroniza glucosa, insulina, pasos y peso automáticamente",
+  "onboardingHealthFeature1": "Sincronización automática de datos",
+  "onboardingHealthFeature2": "Tus datos de salud permanecen privados",
+  "onboardingHealthConnect": "Conectar",
   "diabetesTypeUnknown": "No estoy seguro"
 }

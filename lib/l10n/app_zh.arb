@@ -375,5 +375,10 @@
       }
     }
   },
+  "onboardingHealthTitle": "连接 Apple Health",
+  "onboardingHealthSubtitle": "自动同步血糖、胰岛素、步数和体重",
+  "onboardingHealthFeature1": "自动数据同步",
+  "onboardingHealthFeature2": "您的健康数据安全保护",
+  "onboardingHealthConnect": "连接",
   "diabetesTypeUnknown": "不确定"
 }

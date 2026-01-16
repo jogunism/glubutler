@@ -1940,6 +1940,36 @@ abstract class AppLocalizations {
   /// **'Please enter a value between {min} and {max}'**
   String onboardingFastingGlucoseValidation(String min, String max);
 
+  /// No description provided for @onboardingHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Apple Health'**
+  String get onboardingHealthTitle;
+
+  /// No description provided for @onboardingHealthSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync blood glucose, insulin, steps, and weight automatically'**
+  String get onboardingHealthSubtitle;
+
+  /// No description provided for @onboardingHealthFeature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic data sync'**
+  String get onboardingHealthFeature1;
+
+  /// No description provided for @onboardingHealthFeature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Your health data stays private'**
+  String get onboardingHealthFeature2;
+
+  /// No description provided for @onboardingHealthConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get onboardingHealthConnect;
+
   /// No description provided for @diabetesTypeUnknown.
   ///
   /// In en, this message translates to:

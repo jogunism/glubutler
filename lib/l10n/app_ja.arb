@@ -379,5 +379,10 @@
       }
     }
   },
+  "onboardingHealthTitle": "Apple Healthと連携",
+  "onboardingHealthSubtitle": "血糖値、インスリン、歩数、体重などを自動的に同期します",
+  "onboardingHealthFeature1": "自動データ同期",
+  "onboardingHealthFeature2": "健康データは安全に保護されます",
+  "onboardingHealthConnect": "連携する",
   "diabetesTypeUnknown": "わからない"
 }
