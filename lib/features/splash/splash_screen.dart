@@ -174,11 +174,8 @@ class _SplashScreenState extends State<SplashScreen>
     final l10n = AppLocalizations.of(context)!;
     final settingsService = context.read<SettingsService>();
 
-    // 첫 사용자인 경우 (또는 개발 모드) 완료 단계 전까지는 동일한 메시지 표시
+    // 첫 사용자인 경우 (또는 개발 모드) 항상 동일한 메시지 표시 (완료 메시지 제외)
     if (!settingsService.hasCompletedOnboarding || kDevMode) {
-      if (_currentStep == InitializationStep.done) {
-        return l10n.initDone;
-      }
       return l10n.initFirstTime;
     }
 
