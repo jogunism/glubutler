@@ -148,6 +148,10 @@ import CloudKit
         self.healthKitBridge.startBackgroundObserver(result: result)
       case "stopBackgroundObserver":
         self.healthKitBridge.stopBackgroundObserver(result: result)
+      case "getBiologicalSex":
+        self.healthKitBridge.getBiologicalSex(result: result)
+      case "getDateOfBirth":
+        self.healthKitBridge.getDateOfBirth(result: result)
       default:
         result(FlutterMethodNotImplemented)
       }

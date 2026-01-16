@@ -150,6 +150,12 @@ class SettingsService extends ChangeNotifier {
     _diabetesType = _prefs.getString('diabetes_type');
     _fastingGlucoseTarget = _prefs.getDouble('fasting_glucose_target');
 
+    debugPrint('[SettingsService] Loaded from SharedPreferences:');
+    debugPrint('  - userProfile: ${_userProfile.toJson()}');
+    debugPrint('  - diabetesType: $_diabetesType');
+    debugPrint('  - fastingGlucoseTarget: $_fastingGlucoseTarget');
+    debugPrint('  - unit: $_unit');
+
     // Load or generate UserIdentity
     final userIdentityJson = _prefs.getString(AppConstants.keyUserIdentity);
     if (userIdentityJson != null) {
@@ -333,10 +339,29 @@ class SettingsService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Set user gender (for onboarding)
+  Future<void> setGender(String gender) async {
+    _userProfile = _userProfile.copyWith(gender: gender);
+    await _prefs.setString(AppConstants.keyUserProfile, jsonEncode(_userProfile.toJson()));
+    notifyListeners();
+  }
+
+  /// Set user birth date (for onboarding)
+  Future<void> setBirthDate(DateTime birthDate) async {
+    _userProfile = _userProfile.copyWith(birthday: birthDate);
+    await _prefs.setString(AppConstants.keyUserProfile, jsonEncode(_userProfile.toJson()));
+    notifyListeners();
+  }
+
   /// Set diabetes type (for onboarding)
   Future<void> setDiabetesType(String type) async {
     _diabetesType = type;
     await _prefs.setString('diabetes_type', type);
+
+    // UserProfile에도 당뇨 타입 저장
+    _userProfile = _userProfile.copyWith(diabetesType: type);
+    await _prefs.setString(AppConstants.keyUserProfile, jsonEncode(_userProfile.toJson()));
+
     notifyListeners();
   }
 

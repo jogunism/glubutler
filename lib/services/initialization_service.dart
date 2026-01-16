@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 
 /// 앱 초기화 서비스
 ///
@@ -107,17 +108,52 @@ class InitializationService {
     }
   }
 
-  /// iCloud 데이터 동기화 (향후 구현)
+  /// iCloud 데이터 동기화
+  ///
+  /// iCloud 연결이 활성화된 경우 iCloud에서 최신 데이터를 다운로드하여 로컬을 최신 상태로 유지합니다.
+  /// 업로드는 다이어리 작성/수정/삭제 시 실시간으로 처리되므로 여기서는 다운로드만 수행합니다.
   Future<void> _synciCloudData() async {
-    // TODO: iCloud 동기화 구현
-    // 최소 표시 시간
-    await Future.delayed(const Duration(milliseconds: 400));
+    // 최소 표시 시간 보장
+    const minDisplayTime = Duration(milliseconds: 400);
+    final startTime = DateTime.now();
+
+    if (settingsService.iCloudSyncEnabled) {
+      try {
+        // CloudKit 사용 가능 여부 확인
+        final isAvailable = await CloudKitService.isAvailable();
+        final isSignedIn = await CloudKitService.isUserSignedIn();
+
+        if (isAvailable && isSignedIn) {
+          // iCloud에서 최신 데이터 다운로드
+          final downloadedCount = await CloudKitService.downloadDiaryEntries();
+          debugPrint('[InitializationService] iCloud sync completed: downloaded=$downloadedCount entries');
+        } else {
+          debugPrint('[InitializationService] iCloud not available or user not signed in');
+        }
+      } catch (e) {
+        debugPrint('[InitializationService] iCloud sync error: $e');
+      }
+    }
+
+    // 최소 표시 시간까지 대기
+    final elapsed = DateTime.now().difference(startTime);
+    if (elapsed < minDisplayTime) {
+      await Future.delayed(minDisplayTime - elapsed);
+    }
   }
 
-  /// 로컬 데이터베이스 초기화 (향후 구현)
+  /// 로컬 데이터베이스 추가 초기화
+  ///
+  /// 데이터베이스는 이미 main.dart에서 초기화되었습니다.
+  /// 이 단계는 향후 앱 업데이트 시 다음 작업을 위해 예약되어 있습니다:
+  /// - 데이터 마이그레이션
+  /// - 스키마 업데이트
+  /// - 캐시 정리
+  /// - 기타 데이터베이스 관련 유지보수 작업
   Future<void> _initializeLocalDatabase() async {
-    // TODO: Hive 데이터베이스 초기화
     // 최소 표시 시간
     await Future.delayed(const Duration(milliseconds: 400));
+
+    // 향후 업데이트 시 필요한 작업을 여기에 추가
   }
 }

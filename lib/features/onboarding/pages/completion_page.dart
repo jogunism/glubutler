@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
@@ -25,6 +26,12 @@ class _CompletionPageState extends State<CompletionPage> {
     try {
       final settings = context.read<SettingsService>();
       await settings.setOnboardingComplete();
+
+      // FeedProvider를 refresh하여 health connection 상태 업데이트
+      if (mounted) {
+        final feedProvider = context.read<FeedProvider>();
+        await feedProvider.initialize();
+      }
 
       if (mounted) {
         // Navigate to main screen

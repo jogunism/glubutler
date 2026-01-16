@@ -125,15 +125,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       displayValue: _getDiabetesTypeLabel(settings.userProfile.diabetesType, l10n),
                       currentValue: settings.userProfile.diabetesType,
                       items: [
-                        AdaptivePopupMenuItem<String>(value: 'preDiabetes', label: l10n.preDiabetes),
+                        AdaptivePopupMenuItem<String>(value: 'prediabetes', label: l10n.preDiabetes),
                         AdaptivePopupMenuItem<String>(value: 'type1', label: l10n.type1),
                         AdaptivePopupMenuItem<String>(value: 'type2', label: l10n.type2),
                         AdaptivePopupMenuItem<String>(value: 'lada', label: l10n.lada),
                         AdaptivePopupMenuItem<String>(value: 'mody', label: l10n.mody),
-                        AdaptivePopupMenuItem<String>(value: 'gestational', label: l10n.gestational),
-                        AdaptivePopupMenuItem<String>(value: 'surgicallyInduced', label: l10n.surgicallyInduced),
-                        AdaptivePopupMenuItem<String>(value: 'chemicallyInduced', label: l10n.chemicallyInduced),
-                        AdaptivePopupMenuItem<String>(value: 'unlistedType', label: l10n.unlistedType),
+                        AdaptivePopupMenuItem<String>(value: 'unknown', label: l10n.diabetesTypeUnknown),
                       ],
                       onSelected: (index, item) {
                         final profile = settings.userProfile.copyWith(diabetesType: item.value);
@@ -387,7 +384,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   String _getDiabetesTypeLabel(String? type, AppLocalizations l10n) {
     if (type == null) return '-';
     switch (type) {
-      case 'preDiabetes':
+      case 'prediabetes':
         return l10n.preDiabetes;
       case 'type1':
         return l10n.type1;
@@ -397,14 +394,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         return l10n.lada;
       case 'mody':
         return l10n.mody;
-      case 'gestational':
-        return l10n.gestational;
-      case 'surgicallyInduced':
-        return l10n.surgicallyInduced;
-      case 'chemicallyInduced':
-        return l10n.chemicallyInduced;
-      case 'unlistedType':
-        return l10n.unlistedType;
+      case 'unknown':
+        return l10n.diabetesTypeUnknown;
       default:
         return '-';
     }

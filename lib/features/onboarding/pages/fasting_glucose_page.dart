@@ -115,6 +115,9 @@ class _FastingGlucosePageState extends State<FastingGlucosePage> {
   }
 
   Future<void> _handleNext() async {
+    // 키보드 내리기
+    FocusScope.of(context).unfocus();
+
     final valueStr = _glucoseController.text.trim();
     if (valueStr.isNotEmpty) {
       final value = double.tryParse(valueStr);
@@ -128,7 +131,21 @@ class _FastingGlucosePageState extends State<FastingGlucosePage> {
         final settings = context.read<SettingsService>();
         // Always store as mg/dL
         final mgDlValue = _isMmol ? value * AppConstants.mgDlToMmolL : value;
-        await settings.setFastingGlucoseTarget(mgDlValue);
+
+        // Update glucose range with target and calculate other values
+        // 매우높음 = target+80, 높음 = target+30, 낮음 = target-30, 매우낮음 = target-40
+        final newRange = settings.glucoseRange.copyWith(
+          target: mgDlValue,
+          low: mgDlValue - 30,
+          high: mgDlValue + 30,
+          veryLow: mgDlValue - 40,
+          veryHigh: mgDlValue + 80,
+        );
+        await settings.setGlucoseRange(newRange);
+
+        // Save the selected unit
+        final unit = _isMmol ? AppConstants.unitMmolL : AppConstants.unitMgDl;
+        await settings.setUnit(unit);
       }
     }
     widget.onNext();
@@ -244,7 +261,7 @@ class _FastingGlucosePageState extends State<FastingGlucosePage> {
         decoration: BoxDecoration(
           color: isSelected
               ? AppTheme.primaryColor
-              : Colors.white,
+              : AppTheme.iosCard(context),
           border: Border.all(
             color: isSelected
                 ? AppTheme.primaryColor

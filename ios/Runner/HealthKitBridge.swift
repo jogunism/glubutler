@@ -42,10 +42,52 @@ class HealthKitBridge {
 
     healthStore.requestAuthorization(toShare: writeTypes, read: readTypes) { success, error in
       DispatchQueue.main.async {
+        print("[HealthKitBridge] Authorization completed: success=\(success), error=\(String(describing: error))")
+
         if let error = error {
           result(FlutterError(code: "ERROR", message: error.localizedDescription, details: nil))
         } else {
-          result(success)
+          // 권한 요청 완료 후 바로 성별과 생년월일 가져오기
+          var responseData: [String: Any?] = ["granted": success]
+
+          // 성별 가져오기 - characteristic이므로 권한 불필요
+          do {
+            let biologicalSex = try self.healthStore.biologicalSex()
+            switch biologicalSex.biologicalSex {
+            case .male:
+              responseData["biologicalSex"] = "male"
+            case .female:
+              responseData["biologicalSex"] = "female"
+            case .other:
+              responseData["biologicalSex"] = "other"
+            case .notSet:
+              responseData["biologicalSex"] = nil
+            @unknown default:
+              responseData["biologicalSex"] = nil
+            }
+            print("[HealthKitBridge] Biological sex: \(responseData["biologicalSex"] ?? "nil")")
+          } catch {
+            print("[HealthKitBridge] Error getting biological sex: \(error.localizedDescription)")
+            responseData["biologicalSex"] = nil
+          }
+
+          // 생년월일 가져오기 - characteristic이므로 권한 불필요
+          do {
+            let dateOfBirthComponents = try self.healthStore.dateOfBirthComponents()
+            if let date = Calendar.current.date(from: dateOfBirthComponents) {
+              let formatter = ISO8601DateFormatter()
+              formatter.formatOptions = [.withFullDate]
+              responseData["dateOfBirth"] = formatter.string(from: date)
+              print("[HealthKitBridge] Date of birth: \(responseData["dateOfBirth"] ?? "nil")")
+            } else {
+              responseData["dateOfBirth"] = nil
+            }
+          } catch {
+            print("[HealthKitBridge] Error getting date of birth: \(error.localizedDescription)")
+            responseData["dateOfBirth"] = nil
+          }
+
+          result(responseData)
         }
       }
     }
@@ -1000,5 +1042,62 @@ class HealthKitBridge {
 
     // 백그라운드 delivery 활성화
     healthStore.enableBackgroundDelivery(for: weightType, frequency: .immediate) { _, _ in }
+  }
+
+  // MARK: - User Characteristics
+
+  /// Get biological sex from HealthKit
+  func getBiologicalSex(result: @escaping FlutterResult) {
+    do {
+      let biologicalSex = try healthStore.biologicalSex()
+      print("[HealthKitBridge] biologicalSex raw value: \(biologicalSex.biologicalSex.rawValue)")
+
+      switch biologicalSex.biologicalSex {
+      case .male:
+        print("[HealthKitBridge] Returning 'male'")
+        result("male")
+      case .female:
+        print("[HealthKitBridge] Returning 'female'")
+        result("female")
+      case .other:
+        print("[HealthKitBridge] Returning 'other'")
+        result("other")
+      case .notSet:
+        print("[HealthKitBridge] biologicalSex is .notSet, returning nil")
+        result(nil)
+      @unknown default:
+        print("[HealthKitBridge] biologicalSex is unknown, returning nil")
+        result(nil)
+      }
+    } catch {
+      print("[HealthKitBridge] Error getting biologicalSex: \(error.localizedDescription)")
+      // Authorization 에러인 경우에도 nil 반환 (에러가 아닌 데이터 없음으로 처리)
+      result(nil)
+    }
+  }
+
+  /// Get date of birth from HealthKit
+  func getDateOfBirth(result: @escaping FlutterResult) {
+    do {
+      let dateOfBirthComponents = try healthStore.dateOfBirthComponents()
+      print("[HealthKitBridge] dateOfBirthComponents: \(dateOfBirthComponents)")
+
+      guard let date = Calendar.current.date(from: dateOfBirthComponents) else {
+        print("[HealthKitBridge] Could not convert dateOfBirthComponents to Date, returning nil")
+        result(nil)
+        return
+      }
+
+      // ISO 8601 형식으로 반환
+      let formatter = ISO8601DateFormatter()
+      formatter.formatOptions = [.withFullDate]
+      let dateString = formatter.string(from: date)
+      print("[HealthKitBridge] Returning date of birth: \(dateString)")
+      result(dateString)
+    } catch {
+      print("[HealthKitBridge] Error getting date of birth: \(error.localizedDescription)")
+      // Authorization 에러인 경우에도 nil 반환 (에러가 아닌 데이터 없음으로 처리)
+      result(nil)
+    }
   }
 }

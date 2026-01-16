@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
@@ -93,18 +94,64 @@ class HealthService {
     }
 
     try {
-      await _healthKitChannel.invokeMethod('requestAuthorization');
-      _hasRequestedPermissions = true;
+      final result = await _healthKitChannel.invokeMethod('requestAuthorization');
 
-      // Check actual permission status
-      await checkPermissionStatus();
+      // iOS에서 Map을 반환하면 처리, 아니면 기존 방식 유지 (하위 호환성)
+      if (result is Map) {
+        _hasRequestedPermissions = true;
+        _isAuthorized = result['granted'] == true;
+        return _isAuthorized;
+      } else {
+        // 기존 방식 (boolean 반환)
+        _hasRequestedPermissions = true;
 
-      // Consider authorized if we have ANY permission
-      _isAuthorized = _permissionStatus.values.any((status) => status == true);
+        // Check actual permission status
+        await checkPermissionStatus();
 
-      return _isAuthorized;
+        // Consider authorized if we have ANY permission
+        _isAuthorized = _permissionStatus.values.any((status) => status == true);
+
+        return _isAuthorized;
+      }
     } catch (e) {
       return false;
+    }
+  }
+
+  /// Request authorization and get user characteristics (sex, date of birth)
+  ///
+  /// Returns a map with:
+  /// - granted: bool
+  /// - biologicalSex: String? (male, female, other, or null)
+  /// - dateOfBirth: String? (ISO 8601 date string, or null)
+  Future<Map<String, dynamic>> requestAuthorizationWithCharacteristics() async {
+    if (!Platform.isIOS) {
+      return {'granted': false, 'biologicalSex': null, 'dateOfBirth': null};
+    }
+
+    try {
+      final result = await _healthKitChannel.invokeMethod('requestAuthorization');
+
+      if (result is Map) {
+        _hasRequestedPermissions = true;
+        _isAuthorized = result['granted'] == true;
+
+        return {
+          'granted': result['granted'] ?? false,
+          'biologicalSex': result['biologicalSex'],
+          'dateOfBirth': result['dateOfBirth'],
+        };
+      } else {
+        // 기존 방식 호환성
+        _hasRequestedPermissions = true;
+        await checkPermissionStatus();
+        _isAuthorized = _permissionStatus.values.any((status) => status == true);
+
+        return {'granted': _isAuthorized, 'biologicalSex': null, 'dateOfBirth': null};
+      }
+    } catch (e) {
+      debugPrint('[HealthService] Error requesting authorization: $e');
+      return {'granted': false, 'biologicalSex': null, 'dateOfBirth': null};
     }
   }
 
@@ -150,6 +197,41 @@ class HealthService {
 
   // Removed: Android-only helper functions (not used in iOS native implementation)
   // _testWritePermission and _testInsulinWritePermission
+
+  /// Get biological sex from HealthKit
+  ///
+  /// Returns: 'male', 'female', 'other', or null if not available
+  Future<String?> getBiologicalSex() async {
+    if (!Platform.isIOS) {
+      return null;
+    }
+
+    try {
+      final result = await _healthKitChannel.invokeMethod('getBiologicalSex');
+      return result as String?;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get date of birth from HealthKit
+  ///
+  /// Returns: DateTime or null if not available
+  Future<DateTime?> getDateOfBirth() async {
+    if (!Platform.isIOS) {
+      return null;
+    }
+
+    try {
+      final result = await _healthKitChannel.invokeMethod('getDateOfBirth');
+      if (result != null && result is String) {
+        return DateTime.parse(result);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 
   /// Check if a specific data type has permission
   /// Returns true only if explicitly granted, false otherwise
