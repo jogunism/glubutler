@@ -150,12 +150,6 @@ class SettingsService extends ChangeNotifier {
     _diabetesType = _prefs.getString('diabetes_type');
     _fastingGlucoseTarget = _prefs.getDouble('fasting_glucose_target');
 
-    debugPrint('[SettingsService] Loaded from SharedPreferences:');
-    debugPrint('  - userProfile: ${_userProfile.toJson()}');
-    debugPrint('  - diabetesType: $_diabetesType');
-    debugPrint('  - fastingGlucoseTarget: $_fastingGlucoseTarget');
-    debugPrint('  - unit: $_unit');
-
     // Load or generate UserIdentity
     final userIdentityJson = _prefs.getString(AppConstants.keyUserIdentity);
     if (userIdentityJson != null) {

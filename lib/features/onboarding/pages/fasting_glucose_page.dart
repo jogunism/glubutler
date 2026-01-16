@@ -253,6 +253,8 @@ class _FastingGlucosePageState extends State<FastingGlucosePage> {
   }
 
   Widget _buildUnitToggle(String unit, bool isSelected) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: isSelected ? null : _toggleUnit,
       child: AnimatedContainer(
@@ -261,7 +263,7 @@ class _FastingGlucosePageState extends State<FastingGlucosePage> {
         decoration: BoxDecoration(
           color: isSelected
               ? AppTheme.primaryColor
-              : AppTheme.iosCard(context),
+              : (isDarkMode ? AppTheme.iosCardDark : AppTheme.iosCardLight),
           border: Border.all(
             color: isSelected
                 ? AppTheme.primaryColor

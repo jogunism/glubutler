@@ -4,6 +4,8 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
+import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
@@ -18,6 +20,37 @@ class CompletionPage extends StatefulWidget {
 class _CompletionPageState extends State<CompletionPage> {
   bool _isCompleting = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // CompletionPage가 로드될 때 미리 모든 Provider 초기화
+    _initializeProviders();
+  }
+
+  Future<void> _initializeProviders() async {
+    try {
+      // FeedProvider를 refresh하여 health connection 상태 업데이트
+      if (mounted) {
+        final feedProvider = context.read<FeedProvider>();
+        await feedProvider.initialize();
+      }
+
+      // DiaryProvider iCloud 동기화
+      if (mounted) {
+        final diaryProvider = context.read<DiaryProvider>();
+        await diaryProvider.syncFromICloud();
+      }
+
+      // ReportProvider 초기화
+      if (mounted) {
+        final reportProvider = context.read<ReportProvider>();
+        await reportProvider.initialize();
+      }
+    } catch (e) {
+      // 에러 무시 - 사용자가 계속 진행할 수 있도록
+    }
+  }
+
   Future<void> _completeOnboarding() async {
     setState(() {
       _isCompleting = true;
@@ -26,12 +59,6 @@ class _CompletionPageState extends State<CompletionPage> {
     try {
       final settings = context.read<SettingsService>();
       await settings.setOnboardingComplete();
-
-      // FeedProvider를 refresh하여 health connection 상태 업데이트
-      if (mounted) {
-        final feedProvider = context.read<FeedProvider>();
-        await feedProvider.initialize();
-      }
 
       if (mounted) {
         // Navigate to main screen

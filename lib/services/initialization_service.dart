@@ -125,10 +125,7 @@ class InitializationService {
 
         if (isAvailable && isSignedIn) {
           // iCloud에서 최신 데이터 다운로드
-          final downloadedCount = await CloudKitService.downloadDiaryEntries();
-          debugPrint('[InitializationService] iCloud sync completed: downloaded=$downloadedCount entries');
-        } else {
-          debugPrint('[InitializationService] iCloud not available or user not signed in');
+          await CloudKitService.downloadDiaryEntries();
         }
       } catch (e) {
         debugPrint('[InitializationService] iCloud sync error: $e');

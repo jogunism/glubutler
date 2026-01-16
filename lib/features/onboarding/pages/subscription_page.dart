@@ -267,6 +267,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   Widget _buildPlanOption(String planId, String title, String price) {
     final isSelected = _selectedPlan == planId;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
@@ -280,7 +281,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         decoration: BoxDecoration(
           color: isSelected
               ? AppTheme.primaryColor.withValues(alpha: 0.1)
-              : Colors.white,
+              : (isDarkMode ? AppTheme.iosCardDark : AppTheme.iosCardLight),
           border: Border.all(
             color: isSelected
                 ? AppTheme.primaryColor
