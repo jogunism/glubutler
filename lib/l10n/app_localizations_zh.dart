@@ -938,5 +938,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingDiabetesTypeTitle => '请选择您的糖尿病类型';
 
   @override
+  String get onboardingFastingGlucoseTitle => '您的空腹血糖目标是多少？';
+
+  @override
+  String get onboardingFastingGlucoseSubtitle => '设置目标并记录您的每一天';
+
+  @override
+  String onboardingFastingGlucoseValidation(String min, String max) {
+    return '请输入$min到$max之间的数值';
+  }
+
+  @override
   String get diabetesTypeUnknown => '不确定';
 }

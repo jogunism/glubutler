@@ -69,6 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               bottom: false, // Don't apply SafeArea to bottom
               child: PageView(
                 controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(), // Disable swipe
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;

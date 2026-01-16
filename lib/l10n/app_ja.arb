@@ -366,5 +366,18 @@
   "onboardingNext": "次へ",
   "onboardingSkip": "スキップ",
   "onboardingDiabetesTypeTitle": "あなたの糖尿病のタイプを選択してください",
+  "onboardingFastingGlucoseTitle": "空腹時血糖目標値はいくつですか？",
+  "onboardingFastingGlucoseSubtitle": "目標を設定して毎日の記録を始めましょう",
+  "onboardingFastingGlucoseValidation": "血糖目標値は{min}から{max}の間の値を入力してください",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "わからない"
 }

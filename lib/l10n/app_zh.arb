@@ -362,5 +362,18 @@
   "onboardingNext": "下一步",
   "onboardingSkip": "跳过",
   "onboardingDiabetesTypeTitle": "请选择您的糖尿病类型",
+  "onboardingFastingGlucoseTitle": "您的空腹血糖目标是多少？",
+  "onboardingFastingGlucoseSubtitle": "设置目标并记录您的每一天",
+  "onboardingFastingGlucoseValidation": "请输入{min}到{max}之间的数值",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "不确定"
 }

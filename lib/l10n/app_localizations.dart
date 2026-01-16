@@ -1922,6 +1922,24 @@ abstract class AppLocalizations {
   /// **'Which best describes your diabetes type?'**
   String get onboardingDiabetesTypeTitle;
 
+  /// No description provided for @onboardingFastingGlucoseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your fasting glucose target?'**
+  String get onboardingFastingGlucoseTitle;
+
+  /// No description provided for @onboardingFastingGlucoseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your goal and track your daily progress'**
+  String get onboardingFastingGlucoseSubtitle;
+
+  /// No description provided for @onboardingFastingGlucoseValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a value between {min} and {max}'**
+  String onboardingFastingGlucoseValidation(String min, String max);
+
   /// No description provided for @diabetesTypeUnknown.
   ///
   /// In en, this message translates to:

@@ -362,5 +362,18 @@
   "onboardingNext": "Siguiente",
   "onboardingSkip": "Saltar",
   "onboardingDiabetesTypeTitle": "¿Cuál describe mejor tu tipo de diabetes?",
+  "onboardingFastingGlucoseTitle": "¿Cuál es tu objetivo de glucosa en ayunas?",
+  "onboardingFastingGlucoseSubtitle": "Establece tu objetivo y registra tu día a día",
+  "onboardingFastingGlucoseValidation": "Por favor ingresa un valor entre {min} y {max}",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "No estoy seguro"
 }

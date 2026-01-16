@@ -362,5 +362,18 @@
   "onboardingNext": "Avanti",
   "onboardingSkip": "Salta",
   "onboardingDiabetesTypeTitle": "Quale descrive meglio il tuo tipo di diabete?",
+  "onboardingFastingGlucoseTitle": "Qual è il tuo obiettivo di glicemia a digiuno?",
+  "onboardingFastingGlucoseSubtitle": "Imposta il tuo obiettivo e registra la tua giornata",
+  "onboardingFastingGlucoseValidation": "Inserisci un valore tra {min} e {max}",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "Non lo so"
 }

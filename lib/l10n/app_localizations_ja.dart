@@ -937,5 +937,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingDiabetesTypeTitle => 'あなたの糖尿病のタイプを選択してください';
 
   @override
+  String get onboardingFastingGlucoseTitle => '空腹時血糖目標値はいくつですか？';
+
+  @override
+  String get onboardingFastingGlucoseSubtitle => '目標を設定して毎日の記録を始めましょう';
+
+  @override
+  String onboardingFastingGlucoseValidation(String min, String max) {
+    return '血糖目標値は$minから$maxの間の値を入力してください';
+  }
+
+  @override
   String get diabetesTypeUnknown => 'わからない';
 }

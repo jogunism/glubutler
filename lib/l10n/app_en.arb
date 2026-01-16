@@ -384,5 +384,18 @@
   "onboardingNext": "Next",
   "onboardingSkip": "Skip",
   "onboardingDiabetesTypeTitle": "Which best describes your diabetes type?",
+  "onboardingFastingGlucoseTitle": "What's your fasting glucose target?",
+  "onboardingFastingGlucoseSubtitle": "Set your goal and track your daily progress",
+  "onboardingFastingGlucoseValidation": "Please enter a value between {min} and {max}",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "I don't know"
 }

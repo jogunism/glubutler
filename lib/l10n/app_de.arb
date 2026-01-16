@@ -362,5 +362,18 @@
   "onboardingNext": "Weiter",
   "onboardingSkip": "Überspringen",
   "onboardingDiabetesTypeTitle": "Welcher Diabetes-Typ beschreibt Sie am besten?",
+  "onboardingFastingGlucoseTitle": "Was ist Ihr Nüchternblutzucker-Ziel?",
+  "onboardingFastingGlucoseSubtitle": "Setzen Sie Ihr Ziel und dokumentieren Sie Ihren Alltag",
+  "onboardingFastingGlucoseValidation": "Bitte geben Sie einen Wert zwischen {min} und {max} ein",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "Ich weiß es nicht"
 }

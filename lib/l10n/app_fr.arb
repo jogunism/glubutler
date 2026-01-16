@@ -362,5 +362,18 @@
   "onboardingNext": "Suivant",
   "onboardingSkip": "Passer",
   "onboardingDiabetesTypeTitle": "Quel type de diabète vous correspond le mieux?",
+  "onboardingFastingGlucoseTitle": "Quel est votre objectif de glycémie à jeun?",
+  "onboardingFastingGlucoseSubtitle": "Définissez votre objectif et suivez votre quotidien",
+  "onboardingFastingGlucoseValidation": "Veuillez entrer une valeur entre {min} et {max}",
+  "@onboardingFastingGlucoseValidation": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "diabetesTypeUnknown": "Je ne sais pas"
 }

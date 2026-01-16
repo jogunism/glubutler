@@ -964,5 +964,18 @@ class AppLocalizationsIt extends AppLocalizations {
       'Quale descrive meglio il tuo tipo di diabete?';
 
   @override
+  String get onboardingFastingGlucoseTitle =>
+      'Qual è il tuo obiettivo di glicemia a digiuno?';
+
+  @override
+  String get onboardingFastingGlucoseSubtitle =>
+      'Imposta il tuo obiettivo e registra la tua giornata';
+
+  @override
+  String onboardingFastingGlucoseValidation(String min, String max) {
+    return 'Inserisci un valore tra $min e $max';
+  }
+
+  @override
   String get diabetesTypeUnknown => 'Non lo so';
 }

@@ -937,5 +937,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingDiabetesTypeTitle => '당뇨 유형을 선택해주세요';
 
   @override
+  String get onboardingFastingGlucoseTitle => '공복 혈당 목표 수치는 얼마인가요?';
+
+  @override
+  String get onboardingFastingGlucoseSubtitle => '목표를 설정하고 당신의 매일을 기록하세요';
+
+  @override
+  String onboardingFastingGlucoseValidation(String min, String max) {
+    return '혈당 목표 수치는 $min에서 $max 사이의 값으로 해주세요';
+  }
+
+  @override
   String get diabetesTypeUnknown => '잘 모르겠어요';
 }

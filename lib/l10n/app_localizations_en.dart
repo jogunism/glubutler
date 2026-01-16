@@ -962,5 +962,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Which best describes your diabetes type?';
 
   @override
+  String get onboardingFastingGlucoseTitle =>
+      'What\'s your fasting glucose target?';
+
+  @override
+  String get onboardingFastingGlucoseSubtitle =>
+      'Set your goal and track your daily progress';
+
+  @override
+  String onboardingFastingGlucoseValidation(String min, String max) {
+    return 'Please enter a value between $min and $max';
+  }
+
+  @override
   String get diabetesTypeUnknown => 'I don\'t know';
 }

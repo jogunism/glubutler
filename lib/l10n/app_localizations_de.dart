@@ -964,5 +964,18 @@ class AppLocalizationsDe extends AppLocalizations {
       'Welcher Diabetes-Typ beschreibt Sie am besten?';
 
   @override
+  String get onboardingFastingGlucoseTitle =>
+      'Was ist Ihr Nüchternblutzucker-Ziel?';
+
+  @override
+  String get onboardingFastingGlucoseSubtitle =>
+      'Setzen Sie Ihr Ziel und dokumentieren Sie Ihren Alltag';
+
+  @override
+  String onboardingFastingGlucoseValidation(String min, String max) {
+    return 'Bitte geben Sie einen Wert zwischen $min und $max ein';
+  }
+
+  @override
   String get diabetesTypeUnknown => 'Ich weiß es nicht';
 }
