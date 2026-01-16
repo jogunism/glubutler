@@ -6,12 +6,10 @@ import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button
 /// Notification permission page
 class NotificationPage extends StatefulWidget {
   final VoidCallback onNext;
-  final VoidCallback onSkip;
 
   const NotificationPage({
     super.key,
     required this.onNext,
-    required this.onSkip,
   });
 
   @override
@@ -143,20 +141,34 @@ class _NotificationPageState extends State<NotificationPage> {
 
           const Spacer(),
 
+          // Skip button - always visible
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: widget.onNext,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              child: Text(
+                'Skip',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.textSecondary(context),
+                  letterSpacing: -0.3,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
           // Enable button
           OnboardingPrimaryButton(
             text: 'Enable Notifications',
             onPressed: _requestNotificationPermission,
             isLoading: _isRequesting,
           ),
-
-          const SizedBox(height: 8),
-
-          // Skip button - TODO: 나중에 "다음"과 다른 동작 구현 시 주석 해제
-          // Align(
-          //   alignment: Alignment.centerRight,
-          //   child: OnboardingSkipButton(onPressed: widget.onSkip),
-          // ),
 
           const SizedBox(height: 16),
         ],

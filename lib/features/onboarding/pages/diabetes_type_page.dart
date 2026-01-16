@@ -10,12 +10,10 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 /// Diabetes type selection page
 class DiabetesTypePage extends StatefulWidget {
   final VoidCallback onNext;
-  final VoidCallback onSkip;
 
   const DiabetesTypePage({
     super.key,
     required this.onNext,
-    required this.onSkip,
   });
 
   @override
@@ -23,7 +21,7 @@ class DiabetesTypePage extends StatefulWidget {
 }
 
 class _DiabetesTypePageState extends State<DiabetesTypePage> {
-  DiabetesType _selectedType = DiabetesType.unknown; // Default selection
+  DiabetesType? _selectedType; // No default selection
 
   @override
   void initState() {
@@ -40,8 +38,10 @@ class _DiabetesTypePageState extends State<DiabetesTypePage> {
   }
 
   Future<void> _handleNext() async {
-    final settings = context.read<SettingsService>();
-    await settings.setDiabetesType(_selectedType.value);
+    if (_selectedType != null) {
+      final settings = context.read<SettingsService>();
+      await settings.setDiabetesType(_selectedType!.value);
+    }
     widget.onNext();
   }
 
@@ -105,32 +105,32 @@ class _DiabetesTypePageState extends State<DiabetesTypePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Skip button - TODO: 나중에 "다음"과 다른 동작 구현 시 주석 해제
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: widget.onSkip,
-              //     style: TextButton.styleFrom(
-              //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              //     ),
-              //     child: Text(
-              //       l10n.onboardingSkip,
-              //       style: TextStyle(
-              //         fontSize: 17,
-              //         fontWeight: FontWeight.w500,
-              //         color: AppTheme.textSecondary(context),
-              //         letterSpacing: -0.3,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 8),
-              // Next button
+              // Skip button - always visible, just moves to next page without saving
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: widget.onNext,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  child: Text(
+                    l10n.onboardingSkip,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.textSecondary(context),
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Next button - disabled when no selection
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
                 child: OnboardingPrimaryButton(
                   text: l10n.onboardingNext,
-                  onPressed: _handleNext,
+                  onPressed: _selectedType != null ? () => _handleNext() : null,
                 ),
               ),
             ],

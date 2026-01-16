@@ -46,21 +46,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (_currentPage < _totalPages - 1) {
       _isAnimating = true;
 
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      ).then((_) {
-        _isAnimating = false;
-      });
+      _pageController
+          .nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          )
+          .then((_) {
+            _isAnimating = false;
+          });
     }
-  }
-
-  void _skipToEnd() {
-    _pageController.animateToPage(
-      _totalPages - 1,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
@@ -83,11 +77,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   WelcomePage(onNext: _nextPage),
                   NameInputPage(onNext: _nextPage),
-                  DiabetesTypePage(onNext: _nextPage, onSkip: _skipToEnd),
-                  FastingGlucosePage(onNext: _nextPage, onSkip: _skipToEnd),
-                  HealthPermissionPage(onNext: _nextPage, onSkip: _skipToEnd),
-                  ICloudSyncPage(onNext: _nextPage, onSkip: _skipToEnd),
-                  NotificationPage(onNext: _nextPage, onSkip: _skipToEnd),
+                  DiabetesTypePage(onNext: _nextPage),
+                  FastingGlucosePage(onNext: _nextPage),
+                  HealthPermissionPage(onNext: _nextPage),
+                  ICloudSyncPage(onNext: _nextPage),
+                  NotificationPage(onNext: _nextPage),
                   const CompletionPage(),
                 ],
               ),
@@ -96,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
           // Page indicator at the bottom
           Padding(
-            padding: const EdgeInsets.only(bottom: 36),
+            padding: const EdgeInsets.only(bottom: 28, top: 3),
             child: OnboardingPageIndicator(
               currentPage: _currentPage,
               totalPages: _totalPages,
