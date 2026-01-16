@@ -33,6 +33,8 @@ class HealthKitBridge {
       HKObjectType.quantityType(forIdentifier: .dietaryWater)!,
       HKObjectType.categoryType(forIdentifier: .menstrualFlow)!,
       HKObjectType.categoryType(forIdentifier: .mindfulSession)!,
+      HKObjectType.characteristicType(forIdentifier: .biologicalSex)!,
+      HKObjectType.characteristicType(forIdentifier: .dateOfBirth)!,
     ]
 
     let writeTypes: Set<HKSampleType> = [
@@ -74,10 +76,12 @@ class HealthKitBridge {
           // 생년월일 가져오기 - characteristic이므로 권한 불필요
           do {
             let dateOfBirthComponents = try self.healthStore.dateOfBirthComponents()
-            if let date = Calendar.current.date(from: dateOfBirthComponents) {
-              let formatter = ISO8601DateFormatter()
-              formatter.formatOptions = [.withFullDate]
-              responseData["dateOfBirth"] = formatter.string(from: date)
+            // DateComponents에서 직접 년-월-일 추출 (타임존 변환 방지)
+            if let year = dateOfBirthComponents.year,
+               let month = dateOfBirthComponents.month,
+               let day = dateOfBirthComponents.day {
+              // ISO 8601 형식: YYYY-MM-DD
+              responseData["dateOfBirth"] = String(format: "%04d-%02d-%02d", year, month, day)
               print("[HealthKitBridge] Date of birth: \(responseData["dateOfBirth"] ?? "nil")")
             } else {
               responseData["dateOfBirth"] = nil
