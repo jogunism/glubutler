@@ -2120,6 +2120,42 @@ abstract class AppLocalizations {
   /// **'Purchase'**
   String get onboardingSubscriptionPurchase;
 
+  /// No description provided for @onboardingCompletionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all set!'**
+  String get onboardingCompletionTitle;
+
+  /// No description provided for @onboardingCompletionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your glucose smarter with Glu Butler'**
+  String get onboardingCompletionSubtitle;
+
+  /// No description provided for @onboardingCompletionFeature1.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered health insights'**
+  String get onboardingCompletionFeature1;
+
+  /// No description provided for @onboardingCompletionFeature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited data sync'**
+  String get onboardingCompletionFeature2;
+
+  /// No description provided for @onboardingCompletionFeature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced reports'**
+  String get onboardingCompletionFeature3;
+
+  /// No description provided for @onboardingGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get onboardingGetStarted;
+
   /// No description provided for @diabetesTypeUnknown.
   ///
   /// In en, this message translates to:

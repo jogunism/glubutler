@@ -405,5 +405,12 @@
   "onboardingSubscriptionRedeem": "Canjear código",
   "onboardingSubscriptionRestore": "Restaurar compra",
   "onboardingSubscriptionPurchase": "Comprar",
+
+  "onboardingCompletionTitle": "¡Todo listo!",
+  "onboardingCompletionSubtitle": "Gestiona tu glucosa de forma más inteligente con Glu Butler",
+  "onboardingCompletionFeature1": "Insights de salud con IA",
+  "onboardingCompletionFeature2": "Sincronización ilimitada",
+  "onboardingCompletionFeature3": "Informes avanzados",
+  "onboardingGetStarted": "Empezar",
   "diabetesTypeUnknown": "No estoy seguro"
 }

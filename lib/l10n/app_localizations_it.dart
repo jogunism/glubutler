@@ -1074,5 +1074,24 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboardingSubscriptionPurchase => 'Acquista';
 
   @override
+  String get onboardingCompletionTitle => 'Tutto pronto!';
+
+  @override
+  String get onboardingCompletionSubtitle =>
+      'Gestisci la tua glicemia in modo più intelligente con Glu Butler';
+
+  @override
+  String get onboardingCompletionFeature1 => 'Insights sulla salute con IA';
+
+  @override
+  String get onboardingCompletionFeature2 => 'Sincronizzazione illimitata';
+
+  @override
+  String get onboardingCompletionFeature3 => 'Report avanzati';
+
+  @override
+  String get onboardingGetStarted => 'Inizia';
+
+  @override
   String get diabetesTypeUnknown => 'Non lo so';
 }

@@ -1038,5 +1038,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingSubscriptionPurchase => '결제하기';
 
   @override
+  String get onboardingCompletionTitle => '준비가 다 되었습니다!';
+
+  @override
+  String get onboardingCompletionSubtitle => 'Glu Butler와 함께 더 스마트하게 혈당을 관리하세요';
+
+  @override
+  String get onboardingCompletionFeature1 => 'AI 기반 건강 인사이트';
+
+  @override
+  String get onboardingCompletionFeature2 => '무제한 데이터 동기화';
+
+  @override
+  String get onboardingCompletionFeature3 => '고급 리포트';
+
+  @override
+  String get onboardingGetStarted => '시작하기';
+
+  @override
   String get diabetesTypeUnknown => '잘 모르겠어요';
 }

@@ -115,7 +115,7 @@ class _MainShellState extends State<MainShell> {
             children: [
               _buildTabItem(
                 context: context,
-                imagePath: 'assets/images/icon_mini.png',
+                imagePath: 'assets/images/main_icon.png',
                 label: l10n.home,
                 index: 0,
                 currentIndex: currentIndex,

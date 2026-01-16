@@ -1038,5 +1038,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingSubscriptionPurchase => '購入する';
 
   @override
+  String get onboardingCompletionTitle => '準備完了！';
+
+  @override
+  String get onboardingCompletionSubtitle => 'Glu Butlerでよりスマートに血糖値を管理しましょう';
+
+  @override
+  String get onboardingCompletionFeature1 => 'AI搭載の健康インサイト';
+
+  @override
+  String get onboardingCompletionFeature2 => '無制限データ同期';
+
+  @override
+  String get onboardingCompletionFeature3 => '高度なレポート';
+
+  @override
+  String get onboardingGetStarted => '始める';
+
+  @override
   String get diabetesTypeUnknown => 'わからない';
 }

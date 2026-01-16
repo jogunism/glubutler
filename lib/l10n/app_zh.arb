@@ -405,5 +405,12 @@
   "onboardingSubscriptionRedeem": "兑换代码",
   "onboardingSubscriptionRestore": "恢复购买",
   "onboardingSubscriptionPurchase": "购买",
+
+  "onboardingCompletionTitle": "一切就绪！",
+  "onboardingCompletionSubtitle": "使用Glu Butler更智能地管理您的血糖",
+  "onboardingCompletionFeature1": "AI驱动的健康洞察",
+  "onboardingCompletionFeature2": "无限数据同步",
+  "onboardingCompletionFeature3": "高级报告",
+  "onboardingGetStarted": "开始使用",
   "diabetesTypeUnknown": "不确定"
 }

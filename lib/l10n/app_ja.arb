@@ -409,5 +409,12 @@
   "onboardingSubscriptionRedeem": "コードを使用",
   "onboardingSubscriptionRestore": "購入を復元",
   "onboardingSubscriptionPurchase": "購入する",
+
+  "onboardingCompletionTitle": "準備完了！",
+  "onboardingCompletionSubtitle": "Glu Butlerでよりスマートに血糖値を管理しましょう",
+  "onboardingCompletionFeature1": "AI搭載の健康インサイト",
+  "onboardingCompletionFeature2": "無制限データ同期",
+  "onboardingCompletionFeature3": "高度なレポート",
+  "onboardingGetStarted": "始める",
   "diabetesTypeUnknown": "わからない"
 }

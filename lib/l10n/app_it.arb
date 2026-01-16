@@ -405,5 +405,12 @@
   "onboardingSubscriptionRedeem": "Riscatta codice",
   "onboardingSubscriptionRestore": "Ripristina acquisto",
   "onboardingSubscriptionPurchase": "Acquista",
+
+  "onboardingCompletionTitle": "Tutto pronto!",
+  "onboardingCompletionSubtitle": "Gestisci la tua glicemia in modo più intelligente con Glu Butler",
+  "onboardingCompletionFeature1": "Insights sulla salute con IA",
+  "onboardingCompletionFeature2": "Sincronizzazione illimitata",
+  "onboardingCompletionFeature3": "Report avanzati",
+  "onboardingGetStarted": "Inizia",
   "diabetesTypeUnknown": "Non lo so"
 }

@@ -1039,5 +1039,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingSubscriptionPurchase => '购买';
 
   @override
+  String get onboardingCompletionTitle => '一切就绪！';
+
+  @override
+  String get onboardingCompletionSubtitle => '使用Glu Butler更智能地管理您的血糖';
+
+  @override
+  String get onboardingCompletionFeature1 => 'AI驱动的健康洞察';
+
+  @override
+  String get onboardingCompletionFeature2 => '无限数据同步';
+
+  @override
+  String get onboardingCompletionFeature3 => '高级报告';
+
+  @override
+  String get onboardingGetStarted => '开始使用';
+
+  @override
   String get diabetesTypeUnknown => '不确定';
 }
