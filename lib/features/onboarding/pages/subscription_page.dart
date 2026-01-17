@@ -130,8 +130,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 _buildFeatureItem(l10n.onboardingSubscriptionFeature2),
                 const SizedBox(height: 12),
                 _buildFeatureItem(l10n.onboardingSubscriptionFeature3),
-                const SizedBox(height: 12),
-                _buildFeatureItem(l10n.onboardingSubscriptionFeature4),
 
                 const SizedBox(height: 32),
 

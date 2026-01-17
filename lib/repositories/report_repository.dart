@@ -161,8 +161,15 @@ class ReportRepository {
   }
 
   /// Get all reports from database (sorted by creation date, newest first)
+  /// This excludes soft-deleted reports (reports with empty content)
   Future<List<Report>> getAllReports() async {
     return await _databaseService.getAllReports();
+  }
+
+  /// Get all reports including soft-deleted ones (for date range validation)
+  /// Returns all reports regardless of content being empty or not
+  Future<List<Report>> getAllReportsIncludingDeleted() async {
+    return await _databaseService.getAllReportsIncludingDeleted();
   }
 
   /// Get a specific report by ID

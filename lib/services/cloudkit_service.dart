@@ -251,11 +251,15 @@ class CloudKitService {
           // id를 int로 파싱 (CloudKit에서는 String으로 저장했지만 로컬 DB는 auto-increment int)
           final int? localId = int.tryParse(jsonMap['id'] as String);
 
+          // content 가져오기 (빈 문자열이면 null로 변환)
+          final contentStr = jsonMap['content'] as String?;
+          final content = (contentStr == null || contentStr.isEmpty) ? null : contentStr;
+
           final report = Report(
             id: localId,
             startDate: startDate,
             endDate: endDate,
-            content: jsonMap['content'] as String,
+            content: content,
             createdAt: createdAt,
           );
 
@@ -264,8 +268,12 @@ class CloudKitService {
             final existing = await _databaseService.reportDao.getReportById(localId);
             if (existing == null) {
               await _databaseService.reportDao.insertReport(report);
+            } else {
+              // content가 빈 문자열로 변경되었다면 (soft delete) 로컬도 업데이트
+              if (content == null && existing.content != null) {
+                await _databaseService.reportDao.deleteReport(localId);
+              }
             }
-            // 이미 있으면 스킵 (리포트는 수정되지 않으므로)
           }
 
           savedCount++;
@@ -373,6 +381,38 @@ class CloudKitService {
       await _channel.invokeMethod('deleteReportGuideSummary', {'summaryId': summaryId.toString()});
     } on PlatformException catch (e) {
       throw Exception('Failed to delete report guide summary from CloudKit: ${e.message}');
+    }
+  }
+
+  // MARK: - App Settings Sync
+
+  /// 서비스 시작일을 iCloud에 저장
+  ///
+  /// [serviceStartDate]: 앱 설치 날짜 (첫 실행일)
+  ///
+  /// 이 메서드는 iCloud 연동 시 한 번만 호출되며, 이후 업데이트하지 않습니다.
+  /// iCloud에 이미 저장된 날짜가 있으면 덮어쓰지 않습니다.
+  static Future<void> saveServiceStartDate(DateTime serviceStartDate) async {
+    try {
+      final dateString = serviceStartDate.toIso8601String();
+      await _channel.invokeMethod('saveServiceStartDate', {'serviceStartDate': dateString});
+    } on PlatformException catch (e) {
+      throw Exception('Failed to save service start date to CloudKit: ${e.message}');
+    }
+  }
+
+  /// iCloud에서 서비스 시작일 가져오기
+  ///
+  /// Returns: 저장된 서비스 시작일 (없으면 null)
+  static Future<DateTime?> fetchServiceStartDate() async {
+    try {
+      final String? dateString = await _channel.invokeMethod('fetchServiceStartDate');
+      if (dateString == null || dateString.isEmpty) {
+        return null;
+      }
+      return DateTime.parse(dateString);
+    } on PlatformException catch (e) {
+      throw Exception('Failed to fetch service start date from CloudKit: ${e.message}');
     }
   }
 }

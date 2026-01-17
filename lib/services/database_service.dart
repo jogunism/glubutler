@@ -157,6 +157,7 @@ class DatabaseService {
   Future<int> insertReport(Report report) => reportDao.insertReport(report);
   Future<Report?> getLatestReport() => reportDao.getLatestReport();
   Future<List<Report>> getAllReports() => reportDao.getAllReports();
+  Future<List<Report>> getAllReportsIncludingDeleted() => reportDao.getAllReportsIncludingDeleted();
   Future<Report?> getReportById(int id) => reportDao.getReportById(id);
   Future<int> deleteReport(int id) => reportDao.deleteReport(id);
 

@@ -66,15 +66,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.iosBackground(context),
-      body: Column(
-        children: [
-          // Main content with SafeArea
-          Expanded(
-            child: SafeArea(
-              bottom: false, // Don't apply SafeArea to bottom
-              child: PageView(
+    return MediaQuery(
+      // 온보딩 화면은 항상 "작게" 텍스트 크기(0.85) 사용
+      data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(0.85),
+      ),
+      child: Scaffold(
+        backgroundColor: AppTheme.iosBackground(context),
+        body: Column(
+          children: [
+            // Main content with SafeArea
+            Expanded(
+              child: SafeArea(
+                bottom: false, // Don't apply SafeArea to bottom
+                child: PageView(
                 controller: _pageController,
                 physics: kDevMode
                     ? null
@@ -109,6 +114,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

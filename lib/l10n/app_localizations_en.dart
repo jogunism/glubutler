@@ -871,7 +871,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• Blood glucose is affected by various aspects of life. Therefore, to generate reports, detailed health-related data is required.\n\n• All basic information is based on data from the Apple Health app.\n\n• We reference your basic information, exercise records, and lifestyle patterns recorded in the Apple Health app, and track your current status based on glucose records from Glu Butler or other apps.\n\n• The more data accumulated and the more detailed it is, the more factors can be considered, resulting in more comprehensive reports.\n\n• Therefore, we recommend generating reports when you have at least 2-3 days of activity and glucose data.\n(Single-day reports are not supported)\n\n• For your first report, you can generate reports starting from one week before today.\n\n• You cannot create reports for dates that already have existing reports.\n\n※ Personal information used for report generation is never stored elsewhere. It is used solely for report generation and is immediately discarded after use.';
+      '• Blood glucose is affected by various aspects of life. Therefore, to generate reports, detailed health-related data is required.\n\n• All basic information is based on data from the Apple Health app.\n\n• We reference your basic information, exercise records, and lifestyle patterns recorded in the Apple Health app, and track your current status based on glucose records from Glu Butler or other apps.\n\n• The more data accumulated and the more detailed it is, the more factors can be considered, resulting in more comprehensive reports.\n\n• Therefore, we recommend generating reports when you have at least 3 days or more of activity and glucose data.\n(Single-day reports are not supported)\n\n• For your first report, you can generate reports starting from one week before today.\n\n• You cannot create reports for dates that already have existing reports.\n\n※ Personal information used for report generation is never stored elsewhere. It is used solely for report generation and is immediately discarded after use.';
 
   @override
   String get doNotShowAgain => 'Don\'t show again';
@@ -890,6 +890,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectStartAndEndDate => 'Select start and end dates';
+
+  @override
+  String get firstReportInfo =>
+      '* The first report is generated with the last 7 days of data.';
+
+  @override
+  String get subsequentReportInfo =>
+      '* New reports require at least 3 days of data.';
 
   @override
   String get month => 'month';
@@ -1073,11 +1081,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionTitle =>
-      'Upgrade to Pro and unlock all features';
+      'Try all features for the first week';
 
   @override
   String get onboardingSubscriptionSubtitle =>
-      'Experience premium features for better glucose management';
+      'Upgrade to Pro to access all premium features';
 
   @override
   String get onboardingSubscriptionFeature1 => 'Unlimited AI Insights';
@@ -1087,9 +1095,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionFeature3 => 'Data export';
-
-  @override
-  String get onboardingSubscriptionFeature4 => 'Priority support';
 
   @override
   String get onboardingSubscriptionMonthly => 'Plus Monthly';

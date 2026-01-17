@@ -452,7 +452,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
                     text: TextSpan(
                       style: TextStyle(
                         color: context.colors.textSecondary,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                       children: [
                         // 첫 번째 줄

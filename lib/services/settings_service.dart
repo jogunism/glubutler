@@ -10,6 +10,7 @@ import 'package:glu_butler/models/user_profile.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 
 class SettingsService extends ChangeNotifier {
   late SharedPreferences _prefs;
@@ -328,6 +329,36 @@ class SettingsService extends ChangeNotifier {
   Future<void> setICloudSync(bool enabled) async {
     _iCloudSyncEnabled = enabled;
     await _prefs.setBool(AppConstants.keyICloudSyncEnabled, enabled);
+
+    // iCloud 동기화를 켤 때, serviceStartDate를 iCloud에 저장
+    if (enabled && _serviceStartDate != null) {
+      try {
+        // CloudKit 사용 가능 여부 확인
+        final isAvailable = await CloudKitService.isAvailable();
+
+        if (isAvailable) {
+          // iCloud에 이미 저장된 serviceStartDate가 있는지 확인
+          final cloudServiceStartDate = await CloudKitService.fetchServiceStartDate();
+
+          if (cloudServiceStartDate == null) {
+            // iCloud에 없으면 로컬 날짜를 업로드
+            await CloudKitService.saveServiceStartDate(_serviceStartDate!);
+            debugPrint('[SettingsService] Service start date uploaded to iCloud: $_serviceStartDate');
+          } else {
+            // iCloud에 이미 있으면 iCloud 날짜로 로컬 업데이트
+            _serviceStartDate = cloudServiceStartDate;
+            await _prefs.setString(
+              AppConstants.keyServiceStartDate,
+              cloudServiceStartDate.toIso8601String(),
+            );
+            debugPrint('[SettingsService] Service start date synced from iCloud: $cloudServiceStartDate');
+          }
+        }
+      } catch (e) {
+        debugPrint('[SettingsService] Failed to sync service start date: $e');
+      }
+    }
+
     notifyListeners();
   }
 

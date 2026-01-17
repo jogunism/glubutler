@@ -873,7 +873,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.\n\n• Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.\n\n• Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.\n\n• Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.\n\n• Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.\n(Eintägige Berichte werden nicht unterstützt)\n\n• Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.\n\n• Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.\n\n※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.';
+      '• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.\n\n• Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.\n\n• Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.\n\n• Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.\n\n• Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 3 Tage oder mehr an Aktivitäts- und Glukosedaten haben.\n(Eintägige Berichte werden nicht unterstützt)\n\n• Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.\n\n• Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.\n\n※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.';
 
   @override
   String get doNotShowAgain => 'Nicht mehr anzeigen';
@@ -892,6 +892,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get selectStartAndEndDate => 'Start- und Enddatum auswählen';
+
+  @override
+  String get firstReportInfo =>
+      '* Der erste Bericht wird mit den Daten der letzten 7 Tage erstellt.';
+
+  @override
+  String get subsequentReportInfo =>
+      '* Neue Berichte erfordern mindestens 3 Tage Daten.';
 
   @override
   String get month => 'Monat';
@@ -1078,11 +1086,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionTitle =>
-      'Upgraden Sie auf Pro und schalten Sie alle Funktionen frei';
+      'Testen Sie die erste Woche lang alle Funktionen';
 
   @override
   String get onboardingSubscriptionSubtitle =>
-      'Erleben Sie Premium-Funktionen für besseres Blutzuckermanagement';
+      'Upgraden Sie auf Pro, um alle Premium-Funktionen zu nutzen';
 
   @override
   String get onboardingSubscriptionFeature1 => 'Unbegrenzte KI-Insights';
@@ -1092,9 +1100,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionFeature3 => 'Datenexport';
-
-  @override
-  String get onboardingSubscriptionFeature4 => 'Prioritäts-Support';
 
   @override
   String get onboardingSubscriptionMonthly => 'Plus Monatlich';

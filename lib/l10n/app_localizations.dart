@@ -1763,7 +1763,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportGuideMessage.
   ///
   /// In en, this message translates to:
-  /// **'• Blood glucose is affected by various aspects of life. Therefore, to generate reports, detailed health-related data is required.\n\n• All basic information is based on data from the Apple Health app.\n\n• We reference your basic information, exercise records, and lifestyle patterns recorded in the Apple Health app, and track your current status based on glucose records from Glu Butler or other apps.\n\n• The more data accumulated and the more detailed it is, the more factors can be considered, resulting in more comprehensive reports.\n\n• Therefore, we recommend generating reports when you have at least 2-3 days of activity and glucose data.\n(Single-day reports are not supported)\n\n• For your first report, you can generate reports starting from one week before today.\n\n• You cannot create reports for dates that already have existing reports.\n\n※ Personal information used for report generation is never stored elsewhere. It is used solely for report generation and is immediately discarded after use.'**
+  /// **'• Blood glucose is affected by various aspects of life. Therefore, to generate reports, detailed health-related data is required.\n\n• All basic information is based on data from the Apple Health app.\n\n• We reference your basic information, exercise records, and lifestyle patterns recorded in the Apple Health app, and track your current status based on glucose records from Glu Butler or other apps.\n\n• The more data accumulated and the more detailed it is, the more factors can be considered, resulting in more comprehensive reports.\n\n• Therefore, we recommend generating reports when you have at least 3 days or more of activity and glucose data.\n(Single-day reports are not supported)\n\n• For your first report, you can generate reports starting from one week before today.\n\n• You cannot create reports for dates that already have existing reports.\n\n※ Personal information used for report generation is never stored elsewhere. It is used solely for report generation and is immediately discarded after use.'**
   String get reportGuideMessage;
 
   /// No description provided for @doNotShowAgain.
@@ -1801,6 +1801,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select start and end dates'**
   String get selectStartAndEndDate;
+
+  /// No description provided for @firstReportInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'* The first report is generated with the last 7 days of data.'**
+  String get firstReportInfo;
+
+  /// No description provided for @subsequentReportInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'* New reports require at least 3 days of data.'**
+  String get subsequentReportInfo;
 
   /// No description provided for @month.
   ///
@@ -2123,13 +2135,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSubscriptionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to Pro and unlock all features'**
+  /// **'Try all features for the first week'**
   String get onboardingSubscriptionTitle;
 
   /// No description provided for @onboardingSubscriptionSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Experience premium features for better glucose management'**
+  /// **'Upgrade to Pro to access all premium features'**
   String get onboardingSubscriptionSubtitle;
 
   /// No description provided for @onboardingSubscriptionFeature1.
@@ -2149,12 +2161,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data export'**
   String get onboardingSubscriptionFeature3;
-
-  /// No description provided for @onboardingSubscriptionFeature4.
-  ///
-  /// In en, this message translates to:
-  /// **'Priority support'**
-  String get onboardingSubscriptionFeature4;
 
   /// No description provided for @onboardingSubscriptionMonthly.
   ///

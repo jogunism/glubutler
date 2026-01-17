@@ -62,11 +62,30 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
           await settings.setGender(biologicalSex);
         }
 
-        // 생년월일 저장
+        // 생년월일 저장 및 나이별 폰트 크기 자동 설정
         if (dateOfBirth != null) {
           try {
             final birthDate = DateTime.parse(dateOfBirth);
             await settings.setBirthDate(birthDate);
+
+            // 나이 계산
+            final now = DateTime.now();
+            final age = now.year - birthDate.year -
+                (now.month < birthDate.month ||
+                 (now.month == birthDate.month && now.day < birthDate.day) ? 1 : 0);
+
+            // 나이대별 폰트 크기 설정
+            double textScale;
+            if (age < 40) {
+              textScale = AppConstants.textScaleSmall; // 30대까지: 작게 (0.85)
+            } else if (age < 50) {
+              textScale = AppConstants.textScaleMedium; // 40대: 보통 (1.0)
+            } else {
+              textScale = AppConstants.textScaleLarge; // 50대 이상: 크게 (1.15)
+            }
+
+            await settings.setTextScale(textScale);
+            debugPrint('[HealthPermissionPage] Age: $age, Text scale set to: $textScale');
           } catch (e) {
             debugPrint('[HealthPermissionPage] Error parsing birth date: $e');
           }

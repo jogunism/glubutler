@@ -158,7 +158,7 @@ class DatabaseSchema {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         start_date TEXT NOT NULL,
         end_date TEXT NOT NULL,
-        content TEXT NOT NULL,
+        content TEXT,
         created_at TEXT NOT NULL
       )
     ''');

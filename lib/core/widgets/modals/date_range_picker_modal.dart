@@ -18,6 +18,12 @@ import 'package:glu_butler/models/report.dart';
 class DateRangePickerModal extends StatefulWidget {
   const DateRangePickerModal({super.key});
 
+  // 리포트 생성 최소 기간 (일)
+  static const int minReportDays = 3;
+
+  // 첫 리포트 기간 (일)
+  static const int firstReportDays = 7;
+
   /// 모달 표시 및 선택된 날짜 범위 반환
   ///
   /// Returns: [startDate, endDate] 또는 null (취소 시)
@@ -67,17 +73,15 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
   }
 
   Future<void> _loadExistingReportsAndSetStartDate() async {
-    // BuildContext를 async gap 전에 미리 읽기
-    final settings = context.read<SettingsService>();
-
-    // DB에서 모든 리포트 조회
-    _existingReports = await _reportRepository.getAllReports();
+    // DB에서 모든 리포트 조회 (삭제된 것 포함)
+    // 삭제된 리포트도 날짜 범위 검증에 사용되므로 포함해야 함
+    _existingReports = await _reportRepository.getAllReportsIncludingDeleted();
 
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
 
     if (_existingReports.isNotEmpty) {
-      // 가장 최근 리포트의 종료일 다음 날을 시작일로 설정
+      // 가장 최근 리포트의 종료일 다음 날을 시작일로 고정
       final latestReport = _existingReports.first;
       final nextDay = DateTime(
         latestReport.endDate.year,
@@ -85,25 +89,19 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
         latestReport.endDate.day + 1,
       );
 
-      // setState 없이 직접 값 설정 (initState에서 호출되므로)
       _rangeStart = nextDay;
-      // focusedDay는 오늘보다 미래면 안되므로, 오늘과 nextDay 중 작은 값 사용
-      _focusedDay = nextDay.isAfter(today) ? today : nextDay;
+      _focusedDay = nextDay.isAfter(yesterday) ? yesterday : nextDay;
     } else {
-      // 리포트가 없을 때: 서비스 시작일 - 7일을 시작일로 설정
-      final serviceStartDate = settings.serviceStartDate;
+      // 첫 리포트: 어제부터 7일 전까지 고정 (총 7일간)
+      final startDate = DateTime(
+        yesterday.year,
+        yesterday.month,
+        yesterday.day - (DateRangePickerModal.firstReportDays - 1),
+      );
 
-      if (serviceStartDate != null) {
-        // 서비스 시작일 - 7일
-        final startDate = DateTime(
-          serviceStartDate.year,
-          serviceStartDate.month,
-          serviceStartDate.day - 7,
-        );
-
-        _rangeStart = startDate;
-        _focusedDay = startDate.isAfter(today) ? today : startDate;
-      }
+      _rangeStart = startDate;
+      _rangeEnd = yesterday;
+      _focusedDay = yesterday;
     }
   }
 
@@ -150,6 +148,14 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
       }
     }
     return false;
+  }
+
+  /// 선택된 날짜 범위가 최소 기간을 충족하는지 확인
+  bool _isValidDateRange() {
+    if (_rangeStart == null || _rangeEnd == null) return false;
+
+    final days = _rangeEnd!.difference(_rangeStart!).inDays + 1;
+    return days >= DateRangePickerModal.minReportDays;
   }
 
   /// 겹치는 리포트의 날짜 범위를 반환
@@ -316,21 +322,20 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   }
                 },
                 onDaySelected: (selectedDay, focusedDay) {
+                  // 첫 리포트는 날짜 선택 불가 (7일 고정)
+                  if (_existingReports.isEmpty) {
+                    return;
+                  }
+
                   setState(() {
                     _focusedDay = focusedDay;
-                    if (_rangeStart == null || _rangeEnd != null) {
-                      // 새로운 범위 시작
-                      _rangeStart = selectedDay;
-                      _rangeEnd = null;
+                    // 두 번째 리포트부터: 시작일 고정, 종료일만 선택 가능
+                    if (_rangeEnd != null) {
+                      // 이미 범위가 선택된 경우, 새로운 종료일로 업데이트
+                      _rangeEnd = selectedDay;
                     } else {
-                      // 범위 종료
-                      if (selectedDay.isBefore(_rangeStart!)) {
-                        // 시작일보다 이전 날짜 선택 시 순서 바꿈
-                        _rangeEnd = _rangeStart;
-                        _rangeStart = selectedDay;
-                      } else {
-                        _rangeEnd = selectedDay;
-                      }
+                      // 첫 선택은 종료일로 설정
+                      _rangeEnd = selectedDay;
                     }
                   });
                 },
@@ -434,7 +439,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                     return Container(
                       margin: const EdgeInsets.all(7),
                       decoration: const BoxDecoration(
-                        color: AppTheme.primaryColor,
+                        color: AppTheme.primaryColor, // 시작일은 항상 빨간색
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -465,11 +470,12 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   rangeEndBuilder: (context, day, focusedDay) {
                     final normalizedDate = DateTime(day.year, day.month, day.day);
                     final hasData = _datesWithData.contains(normalizedDate);
+                    final isValid = _isValidDateRange();
 
                     return Container(
                       margin: const EdgeInsets.all(7),
-                      decoration: const BoxDecoration(
-                        color: AppTheme.primaryColor,
+                      decoration: BoxDecoration(
+                        color: isValid ? AppTheme.primaryColor : Colors.grey,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -500,6 +506,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   withinRangeBuilder: (context, day, focusedDay) {
                     final normalizedDate = DateTime(day.year, day.month, day.day);
                     final hasData = _datesWithData.contains(normalizedDate);
+                    final isValid = _isValidDateRange();
 
                     return Center(
                       child: Column(
@@ -508,7 +515,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                           Text(
                             '${day.day}',
                             style: context.textStyles.tileSubtitle.copyWith(
-                              color: AppTheme.primaryColor,
+                              color: isValid ? AppTheme.primaryColor : Colors.grey,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -516,7 +523,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: hasData ? Colors.red : Colors.transparent,
+                              color: hasData ? (isValid ? Colors.red : Colors.grey) : Colors.transparent,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -527,13 +534,15 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                 ),
                 // 스타일링
                 calendarStyle: CalendarStyle(
-                  rangeHighlightColor: AppTheme.primaryColor.withOpacity(0.2),
-                  rangeStartDecoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
+                  rangeHighlightColor: _isValidDateRange()
+                      ? AppTheme.primaryColor.withOpacity(0.2)
+                      : Colors.grey.withOpacity(0.2),
+                  rangeStartDecoration: const BoxDecoration(
+                    color: AppTheme.primaryColor, // 시작일은 항상 빨간색
                     shape: BoxShape.circle,
                   ),
                   rangeEndDecoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
+                    color: _isValidDateRange() ? AppTheme.primaryColor : Colors.grey,
                     shape: BoxShape.circle,
                   ),
                   todayDecoration: BoxDecoration(
@@ -577,13 +586,32 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                 ),
               ),
             ),
+              const SizedBox(height: 16),
+
+              // 안내 메시지 (첫 리포트 여부에 따라 다른 메시지 표시)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _existingReports.isEmpty
+                      ? l10n.firstReportInfo
+                      : l10n.subsequentReportInfo,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
 
               // 리포트 생성 버튼
               SizedBox(
                 width: double.infinity,
                 child: CupertinoButton(
-                  onPressed: _rangeStart != null && _rangeEnd != null
+                  onPressed: _isValidDateRange()
                       ? () {
                           // 겹침 검증
                           if (_hasOverlapWithExistingReports()) {
@@ -610,7 +638,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                           Navigator.of(context).pop([_rangeStart!, _rangeEnd!]);
                         }
                       : null,
-                  color: _rangeStart != null && _rangeEnd != null
+                  color: _isValidDateRange()
                       ? AppTheme.primaryColor
                       : Colors.grey[300],
                   disabledColor: Colors.grey[300]!,
@@ -619,7 +647,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   child: Text(
                     l10n.generateReport,
                     style: TextStyle(
-                      color: _rangeStart != null && _rangeEnd != null
+                      color: _isValidDateRange()
                           ? Colors.white
                           : Colors.grey[700],
                       fontWeight: FontWeight.w600,
@@ -646,14 +674,32 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
     String startFormat;
     String endFormat;
 
+    // 언어별 날짜 형식 설정
+    // 한국어, 중국어, 일본어는 "월 일" 순서, 그 외는 "일 월" 순서
+    final isAsianLocale = locale.startsWith('ko') ||
+                          locale.startsWith('zh') ||
+                          locale.startsWith('ja');
+
     if (isSameYear) {
-      // 같은 년도: "24 Dec - 27 Dec"
-      startFormat = 'd MMM';
-      endFormat = 'd MMM';
+      if (isAsianLocale) {
+        // 같은 년도 (동아시아): "1월 10일 - 1월 16일"
+        startFormat = 'M월 d일';
+        endFormat = 'M월 d일';
+      } else {
+        // 같은 년도 (기타): "24 Dec - 27 Dec"
+        startFormat = 'd MMM';
+        endFormat = 'd MMM';
+      }
     } else {
-      // 다른 년도: "24 Dec 2024 - 3 Jan 2025"
-      startFormat = 'd MMM y';
-      endFormat = 'd MMM y';
+      if (isAsianLocale) {
+        // 다른 년도 (동아시아): "2024년 12월 24일 - 2025년 1월 3일"
+        startFormat = 'y년 M월 d일';
+        endFormat = 'y년 M월 d일';
+      } else {
+        // 다른 년도 (기타): "24 Dec 2024 - 3 Jan 2025"
+        startFormat = 'd MMM y';
+        endFormat = 'd MMM y';
+      }
     }
 
     final startFormatter = DateFormat(startFormat, locale);

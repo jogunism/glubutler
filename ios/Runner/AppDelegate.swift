@@ -109,6 +109,16 @@ import CloudKit
           result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
         }
 
+      case "saveServiceStartDate":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.saveServiceStartDate(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "fetchServiceStartDate":
+        self.cloudKitBridge.fetchServiceStartDate(result: result)
+
       default:
         result(FlutterMethodNotImplemented)
       }

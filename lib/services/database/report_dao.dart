@@ -43,12 +43,14 @@ class ReportDao {
     throw Exception('Failed to insert report after $maxRetries attempts');
   }
 
-  /// 가장 최근 리포트 조회
+  /// 가장 최근 리포트 조회 (삭제된 리포트 제외)
   ///
   /// Returns: 가장 최근에 생성된 리포트, 없으면 null
   Future<Report?> getLatestReport() async {
     final List<Map<String, dynamic>> maps = await db.query(
       DatabaseSchema.tableReports,
+      where: 'content IS NOT NULL AND content != ?',
+      whereArgs: [''],
       orderBy: 'created_at DESC',
       limit: 1,
     );
@@ -60,10 +62,26 @@ class ReportDao {
     return Report.fromMap(maps.first);
   }
 
-  /// 모든 리포트 조회 (최신순)
+  /// 모든 리포트 조회 (최신순, 삭제된 리포트 제외)
   ///
   /// Returns: 생성일 기준 내림차순으로 정렬된 리포트 리스트
   Future<List<Report>> getAllReports() async {
+    final List<Map<String, dynamic>> maps = await db.query(
+      DatabaseSchema.tableReports,
+      where: 'content IS NOT NULL AND content != ?',
+      whereArgs: [''],
+      orderBy: 'created_at DESC',
+    );
+
+    return List.generate(maps.length, (i) {
+      return Report.fromMap(maps[i]);
+    });
+  }
+
+  /// 모든 리포트 조회 (삭제된 리포트 포함, 날짜 범위 검증용)
+  ///
+  /// Returns: 생성일 기준 내림차순으로 정렬된 모든 리포트 리스트
+  Future<List<Report>> getAllReportsIncludingDeleted() async {
     final List<Map<String, dynamic>> maps = await db.query(
       DatabaseSchema.tableReports,
       orderBy: 'created_at DESC',
@@ -74,14 +92,14 @@ class ReportDao {
     });
   }
 
-  /// ID로 특정 리포트 조회
+  /// ID로 특정 리포트 조회 (삭제된 리포트 제외)
   ///
   /// Returns: 해당 ID의 리포트, 없으면 null
   Future<Report?> getReportById(int id) async {
     final List<Map<String, dynamic>> maps = await db.query(
       DatabaseSchema.tableReports,
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ? AND content IS NOT NULL AND content != ?',
+      whereArgs: [id, ''],
       limit: 1,
     );
 
@@ -92,18 +110,19 @@ class ReportDao {
     return Report.fromMap(maps.first);
   }
 
-  /// 리포트 삭제
+  /// 리포트 삭제 (Soft Delete - content를 빈 문자열로 변경)
   ///
-  /// Returns: 삭제된 행의 수
+  /// Returns: 업데이트된 행의 수
   Future<int> deleteReport(int id) async {
-    return await db.delete(
+    return await db.update(
       DatabaseSchema.tableReports,
+      {'content': ''},
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
-  /// 날짜 범위로 리포트 조회
+  /// 날짜 범위로 리포트 조회 (삭제된 리포트 제외)
   ///
   /// [startDate]: 검색 시작일
   /// [endDate]: 검색 종료일
@@ -113,10 +132,11 @@ class ReportDao {
       DateTime startDate, DateTime endDate) async {
     final List<Map<String, dynamic>> maps = await db.query(
       DatabaseSchema.tableReports,
-      where: 'start_date >= ? AND end_date <= ?',
+      where: 'start_date >= ? AND end_date <= ? AND content IS NOT NULL AND content != ?',
       whereArgs: [
         startDate.toIso8601String(),
         endDate.toIso8601String(),
+        '',
       ],
       orderBy: 'created_at DESC',
     );
@@ -131,10 +151,11 @@ class ReportDao {
     return await db.delete(DatabaseSchema.tableReports);
   }
 
-  /// 리포트 개수 조회
+  /// 리포트 개수 조회 (삭제된 리포트 제외)
   Future<int> getReportCount() async {
     final result = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM ${DatabaseSchema.tableReports}',
+      'SELECT COUNT(*) as count FROM ${DatabaseSchema.tableReports} WHERE content IS NOT NULL AND content != ?',
+      [''],
     );
     return Sqflite.firstIntValue(result) ?? 0;
   }

@@ -873,7 +873,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.\n\n• Tutte le informazioni di base si basano sui dati dell\'app Apple Health.\n\n• Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell\'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.\n\n• Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.\n\n• Pertanto, consigliamo di generare rapporti quando si dispone di almeno 2-3 giorni di dati di attività e glucosio.\n(I rapporti di un solo giorno non sono supportati)\n\n• Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.\n\n• Non puoi creare rapporti per date che hanno già rapporti esistenti.\n\n※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l\'uso.';
+      '• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.\n\n• Tutte le informazioni di base si basano sui dati dell\'app Apple Health.\n\n• Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell\'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.\n\n• Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.\n\n• Pertanto, consigliamo di generare rapporti quando si dispone di almeno 3 giorni o più di dati di attività e glucosio.\n(I rapporti di un solo giorno non sono supportati)\n\n• Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.\n\n• Non puoi creare rapporti per date che hanno già rapporti esistenti.\n\n※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l\'uso.';
 
   @override
   String get doNotShowAgain => 'Non mostrare più';
@@ -892,6 +892,14 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get selectStartAndEndDate => 'Seleziona le date di inizio e fine';
+
+  @override
+  String get firstReportInfo =>
+      '* Il primo rapporto viene generato con i dati degli ultimi 7 giorni.';
+
+  @override
+  String get subsequentReportInfo =>
+      '* I nuovi rapporti richiedono almeno 3 giorni di dati.';
 
   @override
   String get month => 'mese';
@@ -1077,11 +1085,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionTitle =>
-      'Passa a Pro e sblocca tutte le funzionalità';
+      'Prova tutte le funzionalità per la prima settimana';
 
   @override
   String get onboardingSubscriptionSubtitle =>
-      'Sperimenta le funzionalità premium per una migliore gestione della glicemia';
+      'Passa a Pro per accedere a tutte le funzionalità premium';
 
   @override
   String get onboardingSubscriptionFeature1 => 'Insights AI illimitati';
@@ -1091,9 +1099,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionFeature3 => 'Esportazione dati';
-
-  @override
-  String get onboardingSubscriptionFeature4 => 'Supporto prioritario';
 
   @override
   String get onboardingSubscriptionMonthly => 'Plus Mensile';

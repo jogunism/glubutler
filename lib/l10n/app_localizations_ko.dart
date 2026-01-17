@@ -852,7 +852,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• 혈당은 생활의 전반적인 것에 영향을 받습니다. 그렇기 때문에, 리포트 생성을 위해선 사용자님의 건강에 관련된 상세한 데이터가 필요합니다.\n\n• 모든 기본적인 정보는 애플 건강앱의 데이터를 기본으로 합니다.\n\n• 애플 건강앱에 기록된 사용자님의 기본정보, 운동기록, 생활패턴 등을 참고하고, Glu Butler 혹은 타사 앱을 사용한 혈당기록들을 바탕으로 사용자님의 현 상태를 추적합니다.\n\n• 쌓여있는 데이터가 많을수록, 그 데이터가 상세할수록 더 많은것이 고려될 수 있고, 그만큼 리포트도 더더욱 자세히 작성될 수 있습니다.\n\n• 따라서, 적어도 2~3일 정도의 활동 데이터와 혈당데이터가 있는 상태에서 리포트를 생성하시는걸 권장합니다.\n(하루 단위의 리포트 생성은 지원하지 않습니다)\n\n• 리포트를 처음 생성하시는 경우, 오늘기준 일주일 전 날짜 부터 리포트를 생성할 수 있습니다.\n\n• 리포트가 이미 작성된 날짜는 다시 리포트를 작성하실 수 없습니다.\n\n※ 리포트 작성에 사용된 사용자의 개인정보는 다른곳에 절대 저장되지 않습니다. 오로지 리포트 작성용으로만 사용되며, 사용후엔 곧바로 폐기됩니다.';
+      '• 혈당은 생활의 전반적인 것에 영향을 받습니다. 그렇기 때문에, 리포트 생성을 위해선 사용자님의 건강에 관련된 상세한 데이터가 필요합니다.\n\n• 모든 기본적인 정보는 애플 건강앱의 데이터를 기본으로 합니다.\n\n• 애플 건강앱에 기록된 사용자님의 기본정보, 운동기록, 생활패턴 등을 참고하고, Glu Butler 혹은 타사 앱을 사용한 혈당기록들을 바탕으로 사용자님의 현 상태를 추적합니다.\n\n• 쌓여있는 데이터가 많을수록, 그 데이터가 상세할수록 더 많은것이 고려될 수 있고, 그만큼 리포트도 더더욱 자세히 작성될 수 있습니다.\n\n• 따라서, 적어도 3일 이상의 활동 데이터와 혈당데이터가 있는 상태에서 리포트를 생성하시는걸 권장합니다.\n(하루 단위의 리포트 생성은 지원하지 않습니다)\n\n• 리포트를 처음 생성하시는 경우, 오늘기준 일주일 전 날짜 부터 리포트를 생성할 수 있습니다.\n\n• 리포트가 이미 작성된 날짜는 다시 리포트를 작성하실 수 없습니다.\n\n※ 리포트 작성에 사용된 사용자의 개인정보는 다른곳에 절대 저장되지 않습니다. 오로지 리포트 작성용으로만 사용되며, 사용후엔 곧바로 폐기됩니다.';
 
   @override
   String get doNotShowAgain => '다시 보지 않기';
@@ -871,6 +871,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get selectStartAndEndDate => '시작일과 종료일을 선택하세요';
+
+  @override
+  String get firstReportInfo => '* 첫 리포트는 지난 7일간의 데이터로 생성됩니다.';
+
+  @override
+  String get subsequentReportInfo => '* 새로운 리포트 생성은 최소 3일의 데이터가 필요합니다.';
 
   @override
   String get month => '월';
@@ -1041,10 +1047,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingNotificationEnable => '알림 켜기';
 
   @override
-  String get onboardingSubscriptionTitle => 'Pro로 업그레이드하고 모든 기능을 사용해 보세요';
+  String get onboardingSubscriptionTitle => '처음 일주일간 모든 기능을 사용해 보세요';
 
   @override
-  String get onboardingSubscriptionSubtitle => '더 나은 혈당 관리를 위한 프리미엄 기능을 경험하세요';
+  String get onboardingSubscriptionSubtitle =>
+      'Pro로 업그레이드하면 모든 프리미엄 기능을 사용할 수 있어요';
 
   @override
   String get onboardingSubscriptionFeature1 => '무제한 AI 인사이트';
@@ -1054,9 +1061,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionFeature3 => '데이터 내보내기';
-
-  @override
-  String get onboardingSubscriptionFeature4 => '우선 지원';
 
   @override
   String get onboardingSubscriptionMonthly => 'Plus Monthly';

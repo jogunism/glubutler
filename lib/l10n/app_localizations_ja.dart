@@ -852,7 +852,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• 血糖値は生活全般の影響を受けます。そのため、レポート生成には健康に関する詳細なデータが必要です。\n\n• すべての基本情報はApple Healthアプリのデータを基にしています。\n\n• Apple Healthアプリに記録された基本情報、運動記録、生活パターンなどを参照し、Glu Butlerまたは他社アプリの血糖記録に基づいて、現在の状態を追跡します。\n\n• 蓄積されたデータが多いほど、そのデータが詳細であるほど、より多くの要素を考慮でき、レポートもより詳細に作成できます。\n\n• したがって、少なくとも2〜3日分の活動データと血糖データがある状態でレポートを生成することをお勧めします。\n（1日単位のレポート生成はサポートしていません）\n\n• 初めてレポートを生成する場合、今日から1週間前の日付からレポートを生成できます。\n\n• 既にレポートが作成されている日付には、再度レポートを作成できません。\n\n※ レポート作成に使用されたユーザーの個人情報は、他の場所に保存されることは一切ありません。レポート作成のためだけに使用され、使用後は直ちに破棄されます。';
+      '• 血糖値は生活全般の影響を受けます。そのため、レポート生成には健康に関する詳細なデータが必要です。\n\n• すべての基本情報はApple Healthアプリのデータを基にしています。\n\n• Apple Healthアプリに記録された基本情報、運動記録、生活パターンなどを参照し、Glu Butlerまたは他社アプリの血糖記録に基づいて、現在の状態を追跡します。\n\n• 蓄積されたデータが多いほど、そのデータが詳細であるほど、より多くの要素を考慮でき、レポートもより詳細に作成できます。\n\n• したがって、少なくとも3日以上の活動データと血糖データがある状態でレポートを生成することをお勧めします。\n（1日単位のレポート生成はサポートしていません）\n\n• 初めてレポートを生成する場合、今日から1週間前の日付からレポートを生成できます。\n\n• 既にレポートが作成されている日付には、再度レポートを作成できません。\n\n※ レポート作成に使用されたユーザーの個人情報は、他の場所に保存されることは一切ありません。レポート作成のためだけに使用され、使用後は直ちに破棄されます。';
 
   @override
   String get doNotShowAgain => '今後表示しない';
@@ -871,6 +871,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get selectStartAndEndDate => '開始日と終了日を選択してください';
+
+  @override
+  String get firstReportInfo => '* 最初のレポートは過去7日間のデータで生成されます。';
+
+  @override
+  String get subsequentReportInfo => '* 新しいレポート生成には、最低3日間のデータが必要です。';
 
   @override
   String get month => '月';
@@ -1041,10 +1047,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingNotificationEnable => '通知を有効にする';
 
   @override
-  String get onboardingSubscriptionTitle => 'Proにアップグレードしてすべての機能を使いましょう';
+  String get onboardingSubscriptionTitle => '最初の1週間すべての機能をお試しください';
 
   @override
-  String get onboardingSubscriptionSubtitle => 'より良い血糖管理のためのプレミアム機能を体験してください';
+  String get onboardingSubscriptionSubtitle =>
+      'Proにアップグレードしてすべてのプレミアム機能を利用できます';
 
   @override
   String get onboardingSubscriptionFeature1 => '無制限AIインサイト';
@@ -1054,9 +1061,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get onboardingSubscriptionFeature3 => 'データエクスポート';
-
-  @override
-  String get onboardingSubscriptionFeature4 => '優先サポート';
 
   @override
   String get onboardingSubscriptionMonthly => 'Plus Monthly';

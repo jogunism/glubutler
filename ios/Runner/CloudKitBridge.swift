@@ -11,6 +11,7 @@ class CloudKitBridge {
   private static let DiaryFileRecordType = "DiaryFile"
   private static let ReportRecordType = "Report"
   private static let ReportGuideSummaryRecordType = "ReportGuideSummary"
+  private static let AppSettingsRecordType = "AppSettings"
 
   init() {
     privateDatabase = container.privateCloudDatabase
@@ -919,7 +920,7 @@ class CloudKitBridge {
     }
   }
 
-  // MARK: - Delete Report
+  // MARK: - Delete Report (Soft Delete)
 
   func deleteReport(arguments: [String: Any], result: @escaping FlutterResult) {
     guard let reportId = arguments["reportId"] as? String else {
@@ -929,16 +930,43 @@ class CloudKitBridge {
 
     let recordID = CKRecord.ID(recordName: reportId)
 
-    privateDatabase.delete(withRecordID: recordID) { _, error in
+    // Fetch the record first, then update content to empty string (soft delete)
+    privateDatabase.fetch(withRecordID: recordID) { record, error in
       DispatchQueue.main.async {
         if let error = error {
           result(FlutterError(
-            code: "DELETE_FAILED",
-            message: "Failed to delete report",
+            code: "FETCH_FAILED",
+            message: "Failed to fetch report for deletion",
             details: error.localizedDescription
           ))
-        } else {
-          result(true)
+          return
+        }
+
+        guard let record = record else {
+          result(FlutterError(
+            code: "NOT_FOUND",
+            message: "Report not found",
+            details: nil
+          ))
+          return
+        }
+
+        // Set content to empty string (soft delete)
+        record["content"] = "" as CKRecordValue
+
+        // Save the updated record
+        self.privateDatabase.save(record) { savedRecord, error in
+          DispatchQueue.main.async {
+            if let error = error {
+              result(FlutterError(
+                code: "DELETE_FAILED",
+                message: "Failed to soft delete report",
+                details: error.localizedDescription
+              ))
+            } else {
+              result(true)
+            }
+          }
         }
       }
     }
@@ -1050,6 +1078,105 @@ class CloudKitBridge {
           message: "Failed to delete some records",
           details: errors.map { $0.localizedDescription }.joined(separator: ", ")
         ))
+      }
+    }
+  }
+
+  // MARK: - App Settings (Service Start Date)
+
+  /// 서비스 시작일을 iCloud에 저장 (한 번만 저장, 업데이트하지 않음)
+  func saveServiceStartDate(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard let dateString = arguments["serviceStartDate"] as? String else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing serviceStartDate", details: nil))
+      return
+    }
+
+    // ISO8601 형식의 문자열을 Date로 변환
+    let formatter = ISO8601DateFormatter()
+    guard let date = formatter.date(from: dateString) else {
+      result(FlutterError(code: "INVALID_DATE", message: "Invalid date format", details: nil))
+      return
+    }
+
+    // 먼저 iCloud에 이미 저장된 날짜가 있는지 확인
+    let query = CKQuery(recordType: CloudKitBridge.AppSettingsRecordType, predicate: NSPredicate(value: true))
+
+    privateDatabase.perform(query, inZoneWith: nil) { [weak self] records, error in
+      guard let self = self else { return }
+
+      DispatchQueue.main.async {
+        if let error = error {
+          result(FlutterError(
+            code: "QUERY_FAILED",
+            message: "Failed to check existing service start date",
+            details: error.localizedDescription
+          ))
+          return
+        }
+
+        // 이미 레코드가 있으면 저장하지 않음 (한 번만 저장)
+        if let existingRecord = records?.first {
+          print("[CloudKit] Service start date already exists: \(existingRecord)")
+          result(true)
+          return
+        }
+
+        // 레코드가 없으면 새로 생성
+        let recordID = CKRecord.ID(recordName: "appSettings")
+        let record = CKRecord(recordType: CloudKitBridge.AppSettingsRecordType, recordID: recordID)
+        record["serviceStartDate"] = date as CKRecordValue
+
+        self.privateDatabase.save(record) { savedRecord, error in
+          DispatchQueue.main.async {
+            if let error = error {
+              result(FlutterError(
+                code: "SAVE_FAILED",
+                message: "Failed to save service start date",
+                details: error.localizedDescription
+              ))
+              return
+            }
+
+            print("[CloudKit] Service start date saved: \(date)")
+            result(true)
+          }
+        }
+      }
+    }
+  }
+
+  /// iCloud에서 서비스 시작일 가져오기
+  func fetchServiceStartDate(result: @escaping FlutterResult) {
+    let recordID = CKRecord.ID(recordName: "appSettings")
+
+    privateDatabase.fetch(withRecordID: recordID) { record, error in
+      DispatchQueue.main.async {
+        if let error = error {
+          let ckError = error as NSError
+          // 레코드가 없으면 nil 반환 (에러가 아님)
+          if ckError.code == CKError.unknownItem.rawValue {
+            result(nil)
+            return
+          }
+
+          result(FlutterError(
+            code: "FETCH_FAILED",
+            message: "Failed to fetch service start date",
+            details: error.localizedDescription
+          ))
+          return
+        }
+
+        guard let record = record,
+              let date = record["serviceStartDate"] as? Date else {
+          result(nil)
+          return
+        }
+
+        // Date를 ISO8601 문자열로 변환
+        let formatter = ISO8601DateFormatter()
+        let dateString = formatter.string(from: date)
+        result(dateString)
       }
     }
   }

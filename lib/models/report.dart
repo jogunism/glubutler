@@ -3,24 +3,25 @@ class Report {
   final int? id;
   final DateTime startDate;
   final DateTime endDate;
-  final String content; // Markdown 형식
+  final String? content; // Markdown 형식 (삭제된 리포트는 빈 문자열)
   final DateTime createdAt;
 
   Report({
     this.id,
     required this.startDate,
     required this.endDate,
-    required this.content,
+    this.content,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
   /// 데이터베이스에서 읽어온 Map을 Report 객체로 변환
   factory Report.fromMap(Map<String, dynamic> map) {
+    final contentStr = map['content'] as String?;
     return Report(
       id: map['id'] as int?,
       startDate: DateTime.parse(map['start_date'] as String),
       endDate: DateTime.parse(map['end_date'] as String),
-      content: map['content'] as String,
+      content: (contentStr == null || contentStr.isEmpty) ? null : contentStr,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
