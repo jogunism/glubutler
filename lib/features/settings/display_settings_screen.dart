@@ -56,8 +56,14 @@ class DisplaySettingsScreen extends StatelessWidget {
       showLargeTitle: false,
       onRefresh: null,
       slivers: [
+        // Appearance Section Title
+        SliverToBoxAdapter(
+          child: _buildSectionTitle(context, l10n.appearance),
+        ),
+
+        // Theme Mode Section
         SliverPadding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           sliver: SliverToBoxAdapter(
             child: Container(
               decoration: context.decorations.card,
@@ -101,7 +107,38 @@ class DisplaySettingsScreen extends StatelessWidget {
             ),
           ),
         ),
+
+        // Text Size Section Title
+        SliverToBoxAdapter(
+          child: _buildSectionTitle(context, l10n.textSizeTitle),
+        ),
+
+        // Text Size Section
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          sliver: SliverToBoxAdapter(
+            child: Container(
+              decoration: context.decorations.card,
+              padding: const EdgeInsets.all(16),
+              child: _buildTextSizeSlider(context, settings),
+            ),
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 24, 16, 8),
+      child: Text(
+        title.toUpperCase(),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: context.colors.textSecondary,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+        ),
+      ),
     );
   }
 
@@ -176,6 +213,77 @@ class DisplaySettingsScreen extends StatelessWidget {
         height: 1,
         color: context.colors.divider,
       ),
+    );
+  }
+
+  Widget _buildTextSizeSlider(BuildContext context, SettingsService settings) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Convert scale to slider value (0, 1, 2)
+    int sliderValue;
+    if (settings.textScale == AppConstants.textScaleSmall) {
+      sliderValue = 0;
+    } else if (settings.textScale == AppConstants.textScaleMedium) {
+      sliderValue = 1;
+    } else {
+      sliderValue = 2;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              l10n.textSizeSmall,
+              style: context.textStyles.tileSubtitle.copyWith(fontSize: 12),
+            ),
+            Expanded(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: AppTheme.primaryColor,
+                  inactiveTrackColor: context.colors.divider,
+                  thumbColor: AppTheme.primaryColor,
+                  overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                  trackHeight: 4,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                ),
+                child: Slider(
+                  value: sliderValue.toDouble(),
+                  min: 0,
+                  max: 2,
+                  divisions: 2,
+                  onChanged: (value) {
+                    double newScale;
+                    if (value == 0) {
+                      newScale = AppConstants.textScaleSmall;
+                    } else if (value == 1) {
+                      newScale = AppConstants.textScaleMedium;
+                    } else {
+                      newScale = AppConstants.textScaleLarge;
+                    }
+                    settings.setTextScale(newScale);
+                  },
+                ),
+              ),
+            ),
+            Text(
+              l10n.textSizeLarge,
+              style: context.textStyles.tileSubtitle.copyWith(fontSize: 16),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Center(
+          child: Text(
+            sliderValue == 0 ? l10n.textSizeSmall : (sliderValue == 1 ? l10n.textSizeMedium : l10n.textSizeLarge),
+            style: context.textStyles.tileSubtitle.copyWith(
+              color: AppTheme.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

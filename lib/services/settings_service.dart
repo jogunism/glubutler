@@ -32,6 +32,7 @@ class SettingsService extends ChangeNotifier {
   bool _hasCompletedOnboarding = false;
   String? _diabetesType;
   double? _fastingGlucoseTarget;
+  double _textScale = AppConstants.defaultTextScale;
 
   String get language => _language;
   String get unit => _unit;
@@ -50,6 +51,7 @@ class SettingsService extends ChangeNotifier {
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   String? get diabetesType => _diabetesType;
   double? get fastingGlucoseTarget => _fastingGlucoseTarget;
+  double get textScale => _textScale;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -149,6 +151,9 @@ class SettingsService extends ChangeNotifier {
     _hasCompletedOnboarding = _prefs.getBool('has_completed_onboarding') ?? false;
     _diabetesType = _prefs.getString('diabetes_type');
     _fastingGlucoseTarget = _prefs.getDouble('fasting_glucose_target');
+
+    // Load text scale
+    _textScale = _prefs.getDouble(AppConstants.keyTextScale) ?? AppConstants.defaultTextScale;
 
     // Load or generate UserIdentity
     final userIdentityJson = _prefs.getString(AppConstants.keyUserIdentity);
@@ -370,6 +375,16 @@ class SettingsService extends ChangeNotifier {
   Future<void> setOnboardingComplete() async {
     _hasCompletedOnboarding = true;
     await _prefs.setBool('has_completed_onboarding', true);
+    notifyListeners();
+  }
+
+  /// Set text scale
+  Future<void> setTextScale(double scale) async {
+    if (scale != AppConstants.textScaleSmall &&
+        scale != AppConstants.textScaleMedium &&
+        scale != AppConstants.textScaleLarge) return;
+    _textScale = scale;
+    await _prefs.setDouble(AppConstants.keyTextScale, scale);
     notifyListeners();
   }
 

@@ -202,6 +202,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get displaySettings => 'Affichage';
 
   @override
+  String get appearance => 'Apparence';
+
+  @override
+  String get textSizeTitle => 'Taille du texte';
+
+  @override
   String get general => 'Général';
 
   @override
@@ -218,6 +224,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get darkModeOption => 'Sombre';
+
+  @override
+  String get textSize => 'Taille du texte';
+
+  @override
+  String get textSizeSmall => 'Petit';
+
+  @override
+  String get textSizeMedium => 'Moyen';
+
+  @override
+  String get textSizeLarge => 'Grand';
 
   @override
   String get notifications => 'Notifications';

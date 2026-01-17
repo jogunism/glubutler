@@ -201,6 +201,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get displaySettings => '화면';
 
   @override
+  String get appearance => '테마';
+
+  @override
+  String get textSizeTitle => '글자크기';
+
+  @override
   String get general => '일반';
 
   @override
@@ -217,6 +223,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get darkModeOption => '다크';
+
+  @override
+  String get textSize => '텍스트 크기';
+
+  @override
+  String get textSizeSmall => '작게';
+
+  @override
+  String get textSizeMedium => '보통';
+
+  @override
+  String get textSizeLarge => '크게';
 
   @override
   String get notifications => '알림';

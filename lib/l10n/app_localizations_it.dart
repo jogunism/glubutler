@@ -202,6 +202,12 @@ class AppLocalizationsIt extends AppLocalizations {
   String get displaySettings => 'Schermo';
 
   @override
+  String get appearance => 'Aspetto';
+
+  @override
+  String get textSizeTitle => 'Dimensione testo';
+
+  @override
   String get general => 'Generale';
 
   @override
@@ -218,6 +224,18 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get darkModeOption => 'Scuro';
+
+  @override
+  String get textSize => 'Dimensione testo';
+
+  @override
+  String get textSizeSmall => 'Piccolo';
+
+  @override
+  String get textSizeMedium => 'Medio';
+
+  @override
+  String get textSizeLarge => 'Grande';
 
   @override
   String get notifications => 'Notifiche';

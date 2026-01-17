@@ -202,6 +202,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get displaySettings => '显示';
 
   @override
+  String get appearance => '外观';
+
+  @override
+  String get textSizeTitle => '文字大小';
+
+  @override
   String get general => '通用';
 
   @override
@@ -218,6 +224,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get darkModeOption => '深色';
+
+  @override
+  String get textSize => '文字大小';
+
+  @override
+  String get textSizeSmall => '小';
+
+  @override
+  String get textSizeMedium => '中';
+
+  @override
+  String get textSizeLarge => '大';
 
   @override
   String get notifications => '通知';

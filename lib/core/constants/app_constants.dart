@@ -90,4 +90,11 @@ class AppConstants {
 
   // iCloud Sync
   static const String keyICloudSyncEnabled = 'icloud_sync_enabled';
+
+  // Text Scale
+  static const double textScaleSmall = 0.85;
+  static const double textScaleMedium = 1.0;
+  static const double textScaleLarge = 1.15;
+  static const double defaultTextScale = textScaleSmall;
+  static const String keyTextScale = 'text_scale';
 }

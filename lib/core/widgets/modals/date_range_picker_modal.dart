@@ -89,9 +89,6 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
       _rangeStart = nextDay;
       // focusedDay는 오늘보다 미래면 안되므로, 오늘과 nextDay 중 작은 값 사용
       _focusedDay = nextDay.isAfter(today) ? today : nextDay;
-
-      debugPrint('[DateRangePickerModal] Auto-set start date to: $_rangeStart');
-      debugPrint('[DateRangePickerModal] Focused day: $_focusedDay');
     } else {
       // 리포트가 없을 때: 서비스 시작일 - 7일을 시작일로 설정
       final serviceStartDate = settings.serviceStartDate;
@@ -106,8 +103,6 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
 
         _rangeStart = startDate;
         _focusedDay = startDate.isAfter(today) ? today : startDate;
-
-        debugPrint('[DateRangePickerModal] First report - auto-set start date to: $_rangeStart (service start: $serviceStartDate)');
       }
     }
   }

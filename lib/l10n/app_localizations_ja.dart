@@ -202,6 +202,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get displaySettings => '表示';
 
   @override
+  String get appearance => '外観';
+
+  @override
+  String get textSizeTitle => '文字サイズ';
+
+  @override
   String get general => '一般';
 
   @override
@@ -218,6 +224,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get darkModeOption => 'ダーク';
+
+  @override
+  String get textSize => 'テキストサイズ';
+
+  @override
+  String get textSizeSmall => '小';
+
+  @override
+  String get textSizeMedium => '中';
+
+  @override
+  String get textSizeLarge => '大';
 
   @override
   String get notifications => '通知';

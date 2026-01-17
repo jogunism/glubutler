@@ -84,6 +84,20 @@ class GluButlerApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: settings.flutterThemeMode,
 
+          // Text scaling
+          builder: (context, child) {
+            // Initialize Jiffy locale based on current locale
+            final locale = Localizations.localeOf(context);
+            _setJiffyLocale(locale.languageCode);
+
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(settings.textScale),
+              ),
+              child: child!,
+            );
+          },
+
           // Localization - uses iOS per-app language settings
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -105,14 +119,6 @@ class GluButlerApp extends StatelessWidget {
           // Navigation - basic Navigator instead of GoRouter
           initialRoute: initialRoute,
           onGenerateRoute: AppRoutes.generateRoute,
-
-          // Set up locale change callback
-          builder: (context, child) {
-            // Initialize Jiffy locale based on current locale
-            final locale = Localizations.localeOf(context);
-            _setJiffyLocale(locale.languageCode);
-            return child!;
-          },
         );
       },
     );

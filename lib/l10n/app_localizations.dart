@@ -494,6 +494,18 @@ abstract class AppLocalizations {
   /// **'Display'**
   String get displaySettings;
 
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @textSizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Size'**
+  String get textSizeTitle;
+
   /// No description provided for @general.
   ///
   /// In en, this message translates to:
@@ -529,6 +541,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get darkModeOption;
+
+  /// No description provided for @textSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Size'**
+  String get textSize;
+
+  /// No description provided for @textSizeSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get textSizeSmall;
+
+  /// No description provided for @textSizeMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get textSizeMedium;
+
+  /// No description provided for @textSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get textSizeLarge;
 
   /// No description provided for @notifications.
   ///
