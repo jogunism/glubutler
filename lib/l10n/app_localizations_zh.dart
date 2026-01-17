@@ -452,7 +452,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scoreInfoLifestyleDesc => '结合睡眠时间、运动记录等健康App数据计算评分。';
 
   @override
-  String get scoreInfoPrivacy => '*应用中使用的所有信息不会单独存储或分享到外部。';
+  String get scoreInfoPrivacy => '※ 应用中使用的所有信息不会单独存储或分享到外部。';
 
   @override
   String get times => '次';
@@ -820,11 +820,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get generateReport => '生成报告';
 
   @override
-  String get reportGuideTitle => '关于报告';
+  String get reportGuideTitle => '报告生成指南';
 
   @override
   String get reportGuideMessage =>
-      '• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。  • 所有基本信息都基于Apple健康应用的数据。  • 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。  • 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。  • 因此，建议在至少有2-3天的活动数据和血糖数据时生成报告。  • 首次生成报告时，可以从今天起一周前的日期开始生成报告。  • 不支持单日报告生成。  • 已生成报告的日期无法再次生成报告。  ※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。';
+      '• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。\n\n• 所有基本信息都基于Apple健康应用的数据。\n\n• 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。\n\n• 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。\n\n• 因此，建议在至少有2-3天的活动数据和血糖数据时生成报告。\n（不支持单日报告生成）\n\n• 首次生成报告时，可以从今天起一周前的日期开始生成报告。\n\n• 已生成报告的日期无法再次生成报告。\n\n※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。';
 
   @override
   String get doNotShowAgain => '不再显示';

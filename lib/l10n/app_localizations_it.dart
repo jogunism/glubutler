@@ -461,7 +461,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get scoreInfoPrivacy =>
-      '*Tutte le informazioni utilizzate nell\'app non vengono memorizzate separatamente né condivise esternamente.';
+      '※ Tutte le informazioni utilizzate nell\'app non vengono memorizzate separatamente né condivise esternamente.';
 
   @override
   String get times => '×';
@@ -841,11 +841,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get generateReport => 'Genera rapporto';
 
   @override
-  String get reportGuideTitle => 'Informazioni sui rapporti';
+  String get reportGuideTitle => 'Guida alla generazione di rapporti';
 
   @override
   String get reportGuideMessage =>
-      '• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.  • Tutte le informazioni di base si basano sui dati dell\'app Apple Health.  • Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell\'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.  • Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.  • Pertanto, consigliamo di generare rapporti quando si dispone di almeno 2-3 giorni di dati di attività e glucosio.  • Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.  • I rapporti di un solo giorno non sono supportati.  • Non puoi creare rapporti per date che hanno già rapporti esistenti.  ※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l\'uso.';
+      '• La glicemia è influenzata da vari aspetti della vita. Pertanto, per generare rapporti sono necessari dati dettagliati relativi alla salute.\n\n• Tutte le informazioni di base si basano sui dati dell\'app Apple Health.\n\n• Facciamo riferimento alle informazioni di base, ai record di esercizio e ai modelli di stile di vita registrati nell\'app Apple Health, e tracciamo il tuo stato attuale in base ai record di glucosio di Glu Butler o altre app.\n\n• Più dati sono accumulati e più dettagliati sono, più fattori possono essere considerati, risultando in rapporti più completi.\n\n• Pertanto, consigliamo di generare rapporti quando si dispone di almeno 2-3 giorni di dati di attività e glucosio.\n(I rapporti di un solo giorno non sono supportati)\n\n• Per il tuo primo rapporto, puoi generare rapporti a partire da una settimana prima di oggi.\n\n• Non puoi creare rapporti per date che hanno già rapporti esistenti.\n\n※ Le informazioni personali utilizzate per la generazione di rapporti non vengono mai archiviate altrove. Vengono utilizzate esclusivamente per la generazione di rapporti e vengono eliminate immediatamente dopo l\'uso.';
 
   @override
   String get doNotShowAgain => 'Non mostrare più';

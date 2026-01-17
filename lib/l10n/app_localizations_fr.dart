@@ -463,7 +463,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scoreInfoPrivacy =>
-      '*Toutes les informations utilisées dans l\'app ne sont pas stockées séparément ni partagées en externe.';
+      '※ Toutes les informations utilisées dans l\'app ne sont pas stockées séparément ni partagées en externe.';
 
   @override
   String get times => '×';
@@ -848,11 +848,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get generateReport => 'Générer un rapport';
 
   @override
-  String get reportGuideTitle => 'À propos des rapports';
+  String get reportGuideTitle => 'Guide de génération de rapports';
 
   @override
   String get reportGuideMessage =>
-      '• La glycémie est affectée par divers aspects de la vie. Par conséquent, pour générer des rapports, des données détaillées liées à la santé sont nécessaires.  • Toutes les informations de base sont basées sur les données de l\'application Apple Health.  • Nous nous référons à vos informations de base, enregistrements d\'exercice et schémas de mode de vie enregistrés dans l\'application Apple Health, et suivons votre état actuel en fonction des enregistrements de glucose de Glu Butler ou d\'autres applications.  • Plus les données accumulées sont nombreuses et détaillées, plus de facteurs peuvent être pris en compte, ce qui donne des rapports plus complets.  • Par conséquent, nous recommandons de générer des rapports lorsque vous disposez d\'au moins 2-3 jours de données d\'activité et de glucose.  • Pour votre premier rapport, vous pouvez générer des rapports à partir d\'une semaine avant aujourd\'hui.  • Les rapports d\'une seule journée ne sont pas pris en charge.  • Vous ne pouvez pas créer de rapports pour des dates qui ont déjà des rapports existants.  ※ Les informations personnelles utilisées pour la génération de rapports ne sont jamais stockées ailleurs. Elles sont utilisées uniquement pour la génération de rapports et sont immédiatement supprimées après utilisation.';
+      '• La glycémie est affectée par divers aspects de la vie. Par conséquent, pour générer des rapports, des données détaillées liées à la santé sont nécessaires.\n\n• Toutes les informations de base sont basées sur les données de l\'application Apple Health.\n\n• Nous nous référons à vos informations de base, enregistrements d\'exercice et schémas de mode de vie enregistrés dans l\'application Apple Health, et suivons votre état actuel en fonction des enregistrements de glucose de Glu Butler ou d\'autres applications.\n\n• Plus les données accumulées sont nombreuses et détaillées, plus de facteurs peuvent être pris en compte, ce qui donne des rapports plus complets.\n\n• Par conséquent, nous recommandons de générer des rapports lorsque vous disposez d\'au moins 2-3 jours de données d\'activité et de glucose.\n(Les rapports d\'une seule journée ne sont pas pris en charge)\n\n• Pour votre premier rapport, vous pouvez générer des rapports à partir d\'une semaine avant aujourd\'hui.\n\n• Vous ne pouvez pas créer de rapports pour des dates qui ont déjà des rapports existants.\n\n※ Les informations personnelles utilisées pour la génération de rapports ne sont jamais stockées ailleurs. Elles sont utilisées uniquement pour la génération de rapports et sont immédiatement supprimées après utilisation.';
 
   @override
   String get doNotShowAgain => 'Ne plus afficher';

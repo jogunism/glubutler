@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -50,13 +51,30 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
+  bool _showInfoIcon = false;
+
   @override
   void initState() {
     super.initState();
     // Provider에서 최신 리포트 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReportProvider>().loadLatestReport();
+      _checkInfoIconVisibility();
     });
+  }
+
+  Future<void> _checkInfoIconVisibility() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hideGuide = prefs.getBool('hide_report_guide') ?? false;
+    if (mounted) {
+      setState(() {
+        _showInfoIcon = hideGuide;
+      });
+    }
+  }
+
+  Future<void> _showInfoModal() async {
+    await ReportGuideModal.show(context, infoMode: true);
   }
 
   Future<void> _generateReport() async {
@@ -68,6 +86,9 @@ class _ReportScreenState extends State<ReportScreen> {
     if (!mounted) return;
     final confirmed = await ReportGuideModal.show(context);
     if (!confirmed) return;
+
+    // 안내 모달 닫힌 후 info 아이콘 상태 업데이트
+    await _checkInfoIconVisibility();
 
     // 날짜 범위 선택 모달 표시
     if (!mounted) return;
@@ -93,7 +114,9 @@ class _ReportScreenState extends State<ReportScreen> {
     // TopBanner로 성공/실패 알림 표시
     TopBanner.show(
       context,
-      message: success ? l10n.reportGenerationSuccess : _getErrorMessage(reportProvider, l10n),
+      message: success
+          ? l10n.reportGenerationSuccess
+          : _getErrorMessage(reportProvider, l10n),
       isSuccess: success,
     );
   }
@@ -151,83 +174,104 @@ class _ReportScreenState extends State<ReportScreen> {
           children: [
             LargeTitleScrollView(
               title: l10n.report,
+              titleTrailing: _showInfoIcon
+                  ? CupertinoButton(
+                      padding: const EdgeInsets.only(
+                        bottom: 10,
+                        left: 44,
+                        right: 0,
+                      ),
+                      minimumSize: Size.zero,
+                      onPressed: _showInfoModal,
+                      child: const Icon(
+                        CupertinoIcons.info_circle,
+                        size: 24,
+                        color: AppTheme.primaryColor,
+                      ),
+                    )
+                  : null,
               trailing: const SettingsIconButton(),
               // 레포트가 없을 때는 스크롤로 탭바 숨김 비활성화
-              onScrollDirectionChanged: reportContent != null ? widget.onScrollDirectionChanged : null,
+              onScrollDirectionChanged: reportContent != null
+                  ? widget.onScrollDirectionChanged
+                  : null,
               slivers: [
-            if (reportContent == null)
-              // 레포트 없을 때: 빈 화면 + 생성 버튼
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 80),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          CupertinoIcons.doc_text_fill,
-                          size: 80,
-                          color: AppTheme.primaryColor,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(l10n.report, style: theme.textTheme.titleLarge),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.noReportYet,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 32),
-                        // 레포트 생성 버튼
-                        CupertinoButton(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 12,
-                          ),
-                          color: AppTheme.primaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                          onPressed: _generateReport,
-                          child: Text(
-                            l10n.generateReport,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                if (reportContent == null)
+                  // 레포트 없을 때: 빈 화면 + 생성 버튼
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 80),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              CupertinoIcons.doc_text_fill,
+                              size: 80,
+                              color: AppTheme.primaryColor,
                             ),
-                          ),
+                            const SizedBox(height: 16),
+                            Text(
+                              l10n.report,
+                              style: theme.textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.noReportYet,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            const SizedBox(height: 32),
+                            // 레포트 생성 버튼
+                            CupertinoButton(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                              color: AppTheme.primaryColor,
+                              borderRadius: BorderRadius.circular(12),
+                              onPressed: _generateReport,
+                              child: Text(
+                                l10n.generateReport,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ),
+                  )
+                else
+                  // 레포트 있을 때: 기간 + 지난 리포트 버튼 + 내용
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        // 기간 + 지난 리포트 보기 버튼
+                        _buildReportHeader(l10n, isLoading),
+                        const SizedBox(height: 16),
+                        // 레포트 내용 (마크다운)
+                        _buildReportContent(theme, reportContent),
+                      ]),
                     ),
                   ),
-                ),
-              )
-            else
-              // 레포트 있을 때: 기간 + 지난 리포트 버튼 + 내용
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    // 기간 + 지난 리포트 보기 버튼
-                    _buildReportHeader(l10n, isLoading),
-                    const SizedBox(height: 16),
-                    // 레포트 내용 (마크다운)
-                    _buildReportContent(theme, reportContent),
-                  ]),
-                ),
-              ),
-            ],
-          ),
-          // 로딩 오버레이
-          if (isLoading)
-            WaterDropLoadingOverlay(
-              progress: uploadProgress,
-              message: l10n.generatingReport,
+              ],
             ),
-        ],
-      );
-    },
-  );
-}
+            // 로딩 오버레이
+            if (isLoading)
+              WaterDropLoadingOverlay(
+                progress: uploadProgress,
+                message: l10n.generatingReport,
+              ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildReportHeader(AppLocalizations l10n, bool isLoading) {
     return Padding(
@@ -343,11 +387,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
-                p: const TextStyle(
-                  color: textColor,
-                  height: 1.6,
-                  fontSize: 14,
-                ),
+                p: const TextStyle(color: textColor, height: 1.6, fontSize: 14),
                 listBullet: const TextStyle(
                   color: textColor,
                   height: 1.6,
@@ -374,10 +414,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
-                tableBody: const TextStyle(
-                  color: textColor,
-                  fontSize: 14,
-                ),
+                tableBody: const TextStyle(color: textColor, fontSize: 14),
                 blockSpacing: 11,
                 listIndent: 22,
               ),

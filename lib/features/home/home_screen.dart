@@ -225,8 +225,10 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildDateButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
+    return CupertinoButton(
+      padding: const EdgeInsets.only(bottom: 10, left: 44, right: 0),
+      minimumSize: Size.zero,
+      onPressed: () async {
         // 모달을 열기 전에 탭바 숨김
         MainScreen.globalKey.currentState?.setTabBarVisibility(false);
 
@@ -247,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen>
       },
       child: const Icon(
         Icons.calendar_today,
-        size: 20,
+        size: 24,
         color: AppTheme.primaryColor,
       ),
     );
@@ -1103,10 +1105,22 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             ),
                             const SizedBox(height: 8),
-                            _buildRecommendationItem(context, l10n.scoreInfoMorning),
-                            _buildRecommendationItem(context, l10n.scoreInfoLunch),
-                            _buildRecommendationItem(context, l10n.scoreInfoDinner),
-                            _buildRecommendationItem(context, l10n.scoreInfoBedtime),
+                            _buildRecommendationItem(
+                              context,
+                              l10n.scoreInfoMorning,
+                            ),
+                            _buildRecommendationItem(
+                              context,
+                              l10n.scoreInfoLunch,
+                            ),
+                            _buildRecommendationItem(
+                              context,
+                              l10n.scoreInfoDinner,
+                            ),
+                            _buildRecommendationItem(
+                              context,
+                              l10n.scoreInfoBedtime,
+                            ),
                           ],
                         ),
                       ),

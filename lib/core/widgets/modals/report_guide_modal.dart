@@ -17,14 +17,18 @@ class ReportGuideModal {
   /// 레포트 안내 모달 표시
   ///
   /// [context]: BuildContext
+  /// [infoMode]: true이면 닫기 버튼만 표시, false이면 체크박스+확인 버튼 표시
   /// Returns: true if user confirmed, false if dismissed
-  static Future<bool> show(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final hideGuide = prefs.getBool(_prefKey) ?? false;
+  static Future<bool> show(BuildContext context, {bool infoMode = false}) async {
+    // info 모드가 아닐 때만 "다시 보지 않기" 설정 확인
+    if (!infoMode) {
+      final prefs = await SharedPreferences.getInstance();
+      final hideGuide = prefs.getBool(_prefKey) ?? false;
 
-    // 다시 보지 않기 설정되어 있으면 바로 true 반환
-    if (hideGuide) {
-      return true;
+      // 다시 보지 않기 설정되어 있으면 바로 true 반환
+      if (hideGuide) {
+        return true;
+      }
     }
 
     final result = await showModalBottomSheet<bool>(
@@ -33,7 +37,7 @@ class ReportGuideModal {
       backgroundColor: Colors.transparent,
       isDismissible: true,
       enableDrag: true,
-      builder: (context) => const _ReportGuideSheet(),
+      builder: (context) => _ReportGuideSheet(infoMode: infoMode),
     );
 
     return result ?? false;
@@ -41,7 +45,9 @@ class ReportGuideModal {
 }
 
 class _ReportGuideSheet extends StatefulWidget {
-  const _ReportGuideSheet();
+  const _ReportGuideSheet({this.infoMode = false});
+
+  final bool infoMode;
 
   @override
   State<_ReportGuideSheet> createState() => _ReportGuideSheetState();
@@ -59,6 +65,182 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
     if (mounted) {
       Navigator.of(context).pop(true);
     }
+  }
+
+  void _onClose() {
+    Navigator.of(context).pop(false);
+  }
+
+  Widget _buildCloseButton(AppLocalizations l10n) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        color: AppTheme.primaryColor,
+        borderRadius: BorderRadius.circular(12),
+        onPressed: _onClose,
+        child: Text(
+          l10n.close,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConfirmSection(AppLocalizations l10n, BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 다시 보지 않기 체크박스
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _doNotShowAgain = !_doNotShowAgain;
+            });
+          },
+          child: Padding(
+            padding: EdgeInsets.zero,
+            child: Row(
+              children: [
+                Transform.scale(
+                  scale: 1.2,
+                  child: CupertinoCheckbox(
+                    value: _doNotShowAgain,
+                    onChanged: (value) {
+                      setState(() {
+                        _doNotShowAgain = value ?? false;
+                      });
+                    },
+                    activeColor: context.colors.textPrimary,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.doNotShowAgain,
+                  style: context.textStyles.bodyText.copyWith(
+                    fontSize: 14,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 확인 버튼
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            color: AppTheme.primaryColor,
+            borderRadius: BorderRadius.circular(12),
+            onPressed: _onConfirm,
+            child: Text(
+              l10n.confirm,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMessageContent(BuildContext context, AppLocalizations l10n) {
+    // 메시지를 줄바꿈으로 분리
+    final lines = l10n.reportGuideMessage.split('\n\n');
+    final items = <Widget>[];
+
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i].trim();
+
+      if (line.startsWith('•')) {
+        // Bullet point 항목
+        final text = line.substring(1).trim();
+        items.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '• ',
+                style: context.textStyles.bodyText.copyWith(
+                  fontSize: 15,
+                  height: 1.6,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  text,
+                  style: context.textStyles.bodyText.copyWith(
+                    fontSize: 15,
+                    height: 1.6,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (line.startsWith('※')) {
+        // 개인정보 안내
+        final text = line.substring(1).trim();
+        items.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '※ ',
+                style: context.textStyles.bodyText.copyWith(
+                  fontSize: 15,
+                  height: 1.6,
+                  decoration: TextDecoration.none,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.accentRedColorDarkMode
+                      : AppTheme.primaryColor,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  text,
+                  style: context.textStyles.bodyText.copyWith(
+                    fontSize: 15,
+                    height: 1.6,
+                    decoration: TextDecoration.none,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppTheme.accentRedColorDarkMode
+                        : AppTheme.primaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      // 항목 간 간격
+      if (i < lines.length - 1) {
+        items.add(const SizedBox(height: 16));
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items,
+    );
   }
 
   @override
@@ -109,19 +291,12 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
           // 스크롤 가능한 내용
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                l10n.reportGuideMessage,
-                style: context.textStyles.bodyText.copyWith(
-                  height: 1.6,
-                  fontSize: 15,
-                  decoration: TextDecoration.none,
-                ),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildMessageContent(context, l10n),
             ),
           ),
 
-          // 하단 고정 영역 (체크박스 + 확인 버튼)
+          // 하단 고정 영역 (체크박스 + 확인 버튼 또는 닫기 버튼)
           Container(
             padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomPadding),
             decoration: BoxDecoration(
@@ -133,69 +308,9 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
                 ),
               ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 다시 보지 않기 체크박스
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _doNotShowAgain = !_doNotShowAgain;
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.zero,
-                    child: Row(
-                      children: [
-                        Transform.scale(
-                          scale: 1.2,
-                          child: CupertinoCheckbox(
-                            value: _doNotShowAgain,
-                            onChanged: (value) {
-                              setState(() {
-                                _doNotShowAgain = value ?? false;
-                              });
-                            },
-                            activeColor: context.colors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.doNotShowAgain,
-                          style: context.textStyles.bodyText.copyWith(
-                            fontSize: 14,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // 확인 버튼
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(12),
-                    onPressed: _onConfirm,
-                    child: Text(
-                      l10n.confirm,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: widget.infoMode
+                ? _buildCloseButton(l10n)
+                : _buildConfirmSection(l10n, context),
           ),
         ],
       ),

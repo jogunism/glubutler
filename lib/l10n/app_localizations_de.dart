@@ -461,7 +461,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get scoreInfoPrivacy =>
-      '*Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.';
+      '※ Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.';
 
   @override
   String get times => '×';
@@ -841,11 +841,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generateReport => 'Bericht erstellen';
 
   @override
-  String get reportGuideTitle => 'Über Berichte';
+  String get reportGuideTitle => 'Leitfaden zur Berichtgenerierung';
 
   @override
   String get reportGuideMessage =>
-      '• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.  • Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.  • Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.  • Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.  • Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.  • Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.  • Eintägige Berichte werden nicht unterstützt.  • Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.  ※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.';
+      '• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.\n\n• Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.\n\n• Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.\n\n• Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.\n\n• Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 2-3 Tage an Aktivitäts- und Glukosedaten haben.\n(Eintägige Berichte werden nicht unterstützt)\n\n• Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.\n\n• Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.\n\n※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.';
 
   @override
   String get doNotShowAgain => 'Nicht mehr anzeigen';
