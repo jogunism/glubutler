@@ -820,6 +820,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get generateReport => '生成报告';
 
   @override
+  String get reportRequiresICloud => '生成报告';
+
+  @override
+  String get reportRequiresICloudMessage => '生成报告需要iCloud同步。\n设置 > iCloud同步';
+
+  @override
   String get reportGuideTitle => '报告生成指南';
 
   @override

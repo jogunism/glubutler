@@ -848,6 +848,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get generateReport => 'Générer un rapport';
 
   @override
+  String get reportRequiresICloud => 'Générer un rapport';
+
+  @override
+  String get reportRequiresICloudMessage =>
+      'La synchronisation iCloud est requise pour générer des rapports.\nRéglages > Synchronisation iCloud';
+
+  @override
   String get reportGuideTitle => 'Guide de génération de rapports';
 
   @override

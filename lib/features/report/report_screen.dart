@@ -82,6 +82,25 @@ class _ReportScreenState extends State<ReportScreen> {
     final settingsService = context.read<SettingsService>();
     final l10n = AppLocalizations.of(context)!;
 
+    // iCloud 연동 확인
+    if (!settingsService.iCloudSyncEnabled) {
+      if (!mounted) return;
+      await showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text(l10n.reportRequiresICloud),
+          content: Text(l10n.reportRequiresICloudMessage),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.confirm),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     // 안내 모달 표시
     if (!mounted) return;
     final confirmed = await ReportGuideModal.show(context);

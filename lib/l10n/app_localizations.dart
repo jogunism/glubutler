@@ -1700,6 +1700,18 @@ abstract class AppLocalizations {
   /// **'Generate Report'**
   String get generateReport;
 
+  /// No description provided for @reportRequiresICloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Report'**
+  String get reportRequiresICloud;
+
+  /// No description provided for @reportRequiresICloudMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud sync is required to generate reports.\nSettings > iCloud Sync'**
+  String get reportRequiresICloudMessage;
+
   /// No description provided for @reportGuideTitle.
   ///
   /// In en, this message translates to:

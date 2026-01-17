@@ -820,6 +820,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get generateReport => 'レポート生成';
 
   @override
+  String get reportRequiresICloud => 'レポート生成';
+
+  @override
+  String get reportRequiresICloudMessage =>
+      'レポートを生成するにはiCloud連携が必要です。\n設定 > iCloud連携';
+
+  @override
   String get reportGuideTitle => 'レポート生成ガイド';
 
   @override

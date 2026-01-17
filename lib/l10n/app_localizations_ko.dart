@@ -820,6 +820,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get generateReport => '리포트 생성하기';
 
   @override
+  String get reportRequiresICloud => '리포트 생성';
+
+  @override
+  String get reportRequiresICloudMessage =>
+      '리포트를 생성하기 위해선 iCloud연동이 되어 있어야 합니다.\n설정 > iCloud 연동';
+
+  @override
   String get reportGuideTitle => '리포트 생성 안내';
 
   @override
