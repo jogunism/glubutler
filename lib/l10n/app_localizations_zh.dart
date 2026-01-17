@@ -241,6 +241,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notifications => '通知';
 
   @override
+  String get notificationPermissionRequired => '需要通知权限';
+
+  @override
+  String get notificationPermissionDescription => '在iOS设置中启用通知权限即可接收通知。';
+
+  @override
+  String get allowNotifications => '允许';
+
+  @override
+  String get goToSettings => '前往设置';
+
+  @override
   String get notificationTime => '通知时间';
 
   @override
@@ -372,9 +384,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       '要附加照片，需要允许访问照片库。  请在设置 > Glu Butler中启用照片访问。';
-
-  @override
-  String get goToSettings => '前往设置';
 
   @override
   String get noRecords => '暂无记录';
@@ -745,6 +754,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get initLocalDatabase => '正在初始化本地数据库...';
 
   @override
+  String get initNotifications => '正在设置通知...';
+
+  @override
   String get initDone => '完成';
 
   @override
@@ -1107,4 +1119,40 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => '不确定';
+
+  @override
+  String get manageNotifications => '通知管理';
+
+  @override
+  String get mealGlucoseReminders => '早餐、午餐、晚餐前血糖测量通知';
+
+  @override
+  String get longTermGlucoseAbsence => '长期血糖记录缺失通知';
+
+  @override
+  String get longTermDiaryAbsence => '长期日记记录缺失通知';
+
+  @override
+  String get reportGenerationReminder => '报告生成通知';
+
+  @override
+  String get notifFirstReportTitle => '生成您的第一份血糖报告';
+
+  @override
+  String get notifReportReminderTitle => '生成血糖报告并查看结果';
+
+  @override
+  String get notifGlucoseReminderTitle => '检查并记录您的血糖水平';
+
+  @override
+  String get notifDiaryReminderTitle => '记录您的饮食';
+
+  @override
+  String get notifDiaryReminderBody => '了解您的饮食模式';
+
+  @override
+  String get notifGlucoseRecordReminderTitle => '别忘了测量血糖';
+
+  @override
+  String get notifGlucoseRecordReminderBody => '持续记录是血糖管理的第一步';
 }

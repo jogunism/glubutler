@@ -241,6 +241,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
+  String get notificationPermissionRequired =>
+      'Notification Permission Required';
+
+  @override
+  String get notificationPermissionDescription =>
+      'Enable notification permissions in iOS Settings to receive notifications.';
+
+  @override
+  String get allowNotifications => 'Allow';
+
+  @override
+  String get goToSettings => 'Go to Settings';
+
+  @override
   String get notificationTime => 'Notification Time';
 
   @override
@@ -373,9 +387,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       'To attach photos, you need to allow access to your photo library.\n\nGo to Settings > Glu Butler to enable photo access.';
-
-  @override
-  String get goToSettings => 'Go to Settings';
 
   @override
   String get noRecords => 'No records yet';
@@ -758,6 +769,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get initLocalDatabase => 'Initializing local database...';
+
+  @override
+  String get initNotifications => 'Setting up notifications...';
 
   @override
   String get initDone => 'Done';
@@ -1144,4 +1158,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => 'I don\'t know';
+
+  @override
+  String get manageNotifications => 'Manage Notifications';
+
+  @override
+  String get mealGlucoseReminders =>
+      'Pre-meal Glucose Reminders (Breakfast, Lunch, Dinner)';
+
+  @override
+  String get longTermGlucoseAbsence => 'Long-term Glucose Record Absence Alert';
+
+  @override
+  String get longTermDiaryAbsence => 'Long-term Diary Entry Absence Alert';
+
+  @override
+  String get reportGenerationReminder => 'Report Generation Reminder';
+
+  @override
+  String get notifFirstReportTitle => 'Create your first glucose report';
+
+  @override
+  String get notifReportReminderTitle =>
+      'Generate your glucose report and check the results';
+
+  @override
+  String get notifGlucoseReminderTitle => 'Check and record your glucose level';
+
+  @override
+  String get notifDiaryReminderTitle => 'Record your meal';
+
+  @override
+  String get notifDiaryReminderBody => 'Track your eating patterns';
+
+  @override
+  String get notifGlucoseRecordReminderTitle =>
+      'Don\'t forget to check your glucose';
+
+  @override
+  String get notifGlucoseRecordReminderBody =>
+      'Consistent tracking is the first step to glucose management';
 }

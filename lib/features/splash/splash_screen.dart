@@ -189,6 +189,8 @@ class _SplashScreenState extends State<SplashScreen>
         return l10n.initCheckingiCloud;
       case InitializationStep.localDatabase:
         return l10n.initLocalDatabase;
+      case InitializationStep.notifications:
+        return l10n.initNotifications;
       case InitializationStep.done:
         return l10n.initDone;
     }

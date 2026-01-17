@@ -84,6 +84,10 @@
   "textSizeMedium": "Mittel",
   "textSizeLarge": "Groß",
   "notifications": "Benachrichtigungen",
+  "notificationPermissionRequired": "Benachrichtigungsberechtigung erforderlich",
+  "notificationPermissionDescription": "Aktivieren Sie Benachrichtigungsberechtigungen in den iOS-Einstellungen, um Benachrichtigungen zu erhalten.",
+  "allowNotifications": "Erlauben",
+  "goToSettings": "Zu den Einstellungen",
   "notificationTime": "Benachrichtigungszeit",
   "sync": "Synchronisierung",
   "healthConnect": "Health Connect",
@@ -252,6 +256,7 @@
   "initCheckingHealth": "Gesundheitsdaten-Sync wird überprüft...",
   "initCheckingiCloud": "iCloud-Sync wird überprüft...",
   "initLocalDatabase": "Lokale Datenbank wird initialisiert...",
+  "initNotifications": "Benachrichtigungen werden eingerichtet...",
   "initDone": "Fertig",
 
   "glucoseSaved": "Blutzucker gespeichert",
@@ -436,5 +441,19 @@
   "onboardingCompletionFeature2": "Unbegrenzte Datensynchronisation",
   "onboardingCompletionFeature3": "Erweiterte Berichte",
   "onboardingGetStarted": "Loslegen",
-  "diabetesTypeUnknown": "Ich weiß es nicht"
+  "diabetesTypeUnknown": "Ich weiß es nicht",
+
+  "manageNotifications": "Benachrichtigungen verwalten",
+  "mealGlucoseReminders": "Blutzuckermessung vor Frühstück, Mittagessen, Abendessen",
+  "longTermGlucoseAbsence": "Langfristige Blutzuckeraufzeichnung fehlt Alarm",
+  "longTermDiaryAbsence": "Langfristiger Tagebucheintrag fehlt Alarm",
+  "reportGenerationReminder": "Berichtserstellung Erinnerung",
+
+  "notifFirstReportTitle": "Erstellen Sie Ihren ersten Blutzuckerbericht",
+  "notifReportReminderTitle": "Erstellen Sie Ihren Blutzuckerbericht und prüfen Sie die Ergebnisse",
+  "notifGlucoseReminderTitle": "Überprüfen und erfassen Sie Ihren Blutzuckerspiegel",
+  "notifDiaryReminderTitle": "Zeichnen Sie Ihre Mahlzeit auf",
+  "notifDiaryReminderBody": "Verfolgen Sie Ihre Essgewohnheiten",
+  "notifGlucoseRecordReminderTitle": "Vergessen Sie nicht, Ihren Blutzucker zu messen",
+  "notifGlucoseRecordReminderBody": "Konsequente Aufzeichnung ist der erste Schritt zum Blutzuckermanagement"
 }

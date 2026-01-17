@@ -10,6 +10,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/notification_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
@@ -28,6 +29,10 @@ void main() async {
 
   // Initialize database first (tables, migrations)
   await DatabaseService().initialize();
+
+  // Initialize notification service (권한 요청은 온보딩에서 처리)
+  final notificationService = NotificationService();
+  await notificationService.initialize();
 
   final settingsService = SettingsService();
   await settingsService.init();

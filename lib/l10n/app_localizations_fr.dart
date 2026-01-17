@@ -241,6 +241,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
+  String get notificationPermissionRequired =>
+      'Autorisation de notification requise';
+
+  @override
+  String get notificationPermissionDescription =>
+      'Activez les autorisations de notification dans les paramètres iOS pour recevoir des notifications.';
+
+  @override
+  String get allowNotifications => 'Autoriser';
+
+  @override
+  String get goToSettings => 'Aller aux Réglages';
+
+  @override
   String get notificationTime => 'Heure de notification';
 
   @override
@@ -376,9 +390,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       'Pour joindre des photos, vous devez autoriser l\'accès à votre bibliothèque de photos.  Allez dans Réglages > Glu Butler pour activer l\'accès aux photos.';
-
-  @override
-  String get goToSettings => 'Aller aux Réglages';
 
   @override
   String get noRecords => 'Aucun enregistrement';
@@ -766,6 +777,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get initLocalDatabase =>
       'Initialisation de la base de données locale...';
+
+  @override
+  String get initNotifications => 'Configuration des notifications...';
 
   @override
   String get initDone => 'Terminé';
@@ -1156,4 +1170,47 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => 'Je ne sais pas';
+
+  @override
+  String get manageNotifications => 'Gérer les notifications';
+
+  @override
+  String get mealGlucoseReminders =>
+      'Rappels de glycémie avant petit-déjeuner, déjeuner, dîner';
+
+  @override
+  String get longTermGlucoseAbsence =>
+      'Alerte d\'absence prolongée d\'enregistrement de glycémie';
+
+  @override
+  String get longTermDiaryAbsence =>
+      'Alerte d\'absence prolongée d\'entrées de journal';
+
+  @override
+  String get reportGenerationReminder => 'Rappel de génération de rapport';
+
+  @override
+  String get notifFirstReportTitle => 'Créez votre premier rapport de glycémie';
+
+  @override
+  String get notifReportReminderTitle =>
+      'Générez votre rapport de glycémie et consultez les résultats';
+
+  @override
+  String get notifGlucoseReminderTitle =>
+      'Vérifiez et enregistrez votre glycémie';
+
+  @override
+  String get notifDiaryReminderTitle => 'Enregistrez votre repas';
+
+  @override
+  String get notifDiaryReminderBody => 'Suivez vos habitudes alimentaires';
+
+  @override
+  String get notifGlucoseRecordReminderTitle =>
+      'N\'oubliez pas de mesurer votre glycémie';
+
+  @override
+  String get notifGlucoseRecordReminderBody =>
+      'Un enregistrement régulier est la première étape de la gestion de la glycémie';
 }

@@ -84,6 +84,10 @@
   "textSizeMedium": "中",
   "textSizeLarge": "大",
   "notifications": "通知",
+  "notificationPermissionRequired": "通知権限が必要です",
+  "notificationPermissionDescription": "iOS設定で通知権限を有効にすると通知を受け取れます。",
+  "allowNotifications": "許可",
+  "goToSettings": "設定に移動",
   "notificationTime": "通知時間",
   "sync": "連携",
   "healthConnect": "ヘルスケア連携",
@@ -252,6 +256,7 @@
   "initCheckingHealth": "ヘルスデータ同期を確認中...",
   "initCheckingiCloud": "iCloud同期を確認中...",
   "initLocalDatabase": "ローカルデータベースを初期化中...",
+  "initNotifications": "通知を設定中...",
   "initDone": "完了",
   "initFirstTime": "初回起動の準備をしています。",
 
@@ -440,5 +445,19 @@
   "onboardingCompletionFeature2": "無制限データ同期",
   "onboardingCompletionFeature3": "高度なレポート",
   "onboardingGetStarted": "始める",
-  "diabetesTypeUnknown": "わからない"
+  "diabetesTypeUnknown": "わからない",
+
+  "manageNotifications": "通知管理",
+  "mealGlucoseReminders": "朝食、昼食、夕食前の血糖測定通知",
+  "longTermGlucoseAbsence": "長期間血糖記録なし通知",
+  "longTermDiaryAbsence": "長期間日記記録なし通知",
+  "reportGenerationReminder": "レポート作成通知",
+
+  "notifFirstReportTitle": "初めての血糖レポートを作成してみましょう",
+  "notifReportReminderTitle": "血糖レポートを作成して結果を確認してみましょう",
+  "notifGlucoseReminderTitle": "血糖値を確認して記録を残してみましょう",
+  "notifDiaryReminderTitle": "食事内容を記録してみましょう",
+  "notifDiaryReminderBody": "自分の食生活パターンを把握できます",
+  "notifGlucoseRecordReminderTitle": "血糖測定を忘れないでください",
+  "notifGlucoseRecordReminderBody": "継続的な記録が血糖管理の第一歩です"
 }

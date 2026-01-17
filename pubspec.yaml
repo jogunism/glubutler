@@ -32,6 +32,9 @@ dependencies:
 
   # Notifications
   flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
+  workmanager: ^0.5.2
+  app_settings: ^5.1.1
 
   # Internationalization (version pinned by flutter_localizations)
   intl: any

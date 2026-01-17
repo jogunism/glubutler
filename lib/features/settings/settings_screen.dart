@@ -294,13 +294,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: CupertinoIcons.bell_fill,
                     iconColor: AppTheme.iconOrange,
                     title: l10n.notifications,
-                    subtitle: l10n.changeInSettings,
-                    trailing: Icon(
-                      CupertinoIcons.arrow_up_right,
-                      size: 16,
-                      color: context.colors.iconGrey,
-                    ),
-                    onTap: () => AppSettingsService.openAppSettings(),
+                    subtitle: l10n.manageNotifications,
+                    onTap: () => AppRoutes.goToNotificationSettings(context),
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(

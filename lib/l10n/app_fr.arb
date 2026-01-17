@@ -84,6 +84,10 @@
   "textSizeMedium": "Moyen",
   "textSizeLarge": "Grand",
   "notifications": "Notifications",
+  "notificationPermissionRequired": "Autorisation de notification requise",
+  "notificationPermissionDescription": "Activez les autorisations de notification dans les paramètres iOS pour recevoir des notifications.",
+  "allowNotifications": "Autoriser",
+  "goToSettings": "Aller aux paramètres",
   "notificationTime": "Heure de notification",
   "sync": "Synchronisation",
   "healthConnect": "Connexion santé",
@@ -252,6 +256,7 @@
   "initCheckingHealth": "Vérification de la synchronisation santé...",
   "initCheckingiCloud": "Vérification de la synchronisation iCloud...",
   "initLocalDatabase": "Initialisation de la base de données locale...",
+  "initNotifications": "Configuration des notifications...",
   "initDone": "Terminé",
 
   "glucoseSaved": "Glycémie enregistrée",
@@ -436,5 +441,19 @@
   "onboardingCompletionFeature2": "Synchronisation illimitée",
   "onboardingCompletionFeature3": "Rapports avancés",
   "onboardingGetStarted": "Commencer",
-  "diabetesTypeUnknown": "Je ne sais pas"
+  "diabetesTypeUnknown": "Je ne sais pas",
+
+  "manageNotifications": "Gérer les notifications",
+  "mealGlucoseReminders": "Rappels de glycémie avant petit-déjeuner, déjeuner, dîner",
+  "longTermGlucoseAbsence": "Alerte d'absence prolongée d'enregistrement de glycémie",
+  "longTermDiaryAbsence": "Alerte d'absence prolongée d'entrées de journal",
+  "reportGenerationReminder": "Rappel de génération de rapport",
+
+  "notifFirstReportTitle": "Créez votre premier rapport de glycémie",
+  "notifReportReminderTitle": "Générez votre rapport de glycémie et consultez les résultats",
+  "notifGlucoseReminderTitle": "Vérifiez et enregistrez votre glycémie",
+  "notifDiaryReminderTitle": "Enregistrez votre repas",
+  "notifDiaryReminderBody": "Suivez vos habitudes alimentaires",
+  "notifGlucoseRecordReminderTitle": "N'oubliez pas de mesurer votre glycémie",
+  "notifGlucoseRecordReminderBody": "Un enregistrement régulier est la première étape de la gestion de la glycémie"
 }

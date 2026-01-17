@@ -84,6 +84,10 @@
   "textSizeMedium": "Medium",
   "textSizeLarge": "Large",
   "notifications": "Notifications",
+  "notificationPermissionRequired": "Notification Permission Required",
+  "notificationPermissionDescription": "Enable notification permissions in iOS Settings to receive notifications.",
+  "allowNotifications": "Allow",
+  "goToSettings": "Go to Settings",
   "notificationTime": "Notification Time",
   "sync": "Sync",
   "healthConnect": "Health Connect",
@@ -275,6 +279,7 @@
   "initCheckingHealth": "Checking health data sync...",
   "initCheckingiCloud": "Checking iCloud sync...",
   "initLocalDatabase": "Initializing local database...",
+  "initNotifications": "Setting up notifications...",
   "initDone": "Done",
   "initFirstTime": "Preparing to start the app for the first time...",
 
@@ -457,5 +462,19 @@
   "onboardingCompletionFeature2": "Unlimited data sync",
   "onboardingCompletionFeature3": "Advanced reports",
   "onboardingGetStarted": "Get Started",
-  "diabetesTypeUnknown": "I don't know"
+  "diabetesTypeUnknown": "I don't know",
+
+  "manageNotifications": "Manage Notifications",
+  "mealGlucoseReminders": "Pre-meal Glucose Reminders (Breakfast, Lunch, Dinner)",
+  "longTermGlucoseAbsence": "Long-term Glucose Record Absence Alert",
+  "longTermDiaryAbsence": "Long-term Diary Entry Absence Alert",
+  "reportGenerationReminder": "Report Generation Reminder",
+
+  "notifFirstReportTitle": "Create your first glucose report",
+  "notifReportReminderTitle": "Generate your glucose report and check the results",
+  "notifGlucoseReminderTitle": "Check and record your glucose level",
+  "notifDiaryReminderTitle": "Record your meal",
+  "notifDiaryReminderBody": "Track your eating patterns",
+  "notifGlucoseRecordReminderTitle": "Don't forget to check your glucose",
+  "notifGlucoseRecordReminderBody": "Consistent tracking is the first step to glucose management"
 }

@@ -84,6 +84,10 @@
   "textSizeMedium": "Medio",
   "textSizeLarge": "Grande",
   "notifications": "Notifiche",
+  "notificationPermissionRequired": "Autorizzazione notifica richiesta",
+  "notificationPermissionDescription": "Abilita le autorizzazioni di notifica nelle impostazioni iOS per ricevere notifiche.",
+  "allowNotifications": "Consenti",
+  "goToSettings": "Vai alle impostazioni",
   "notificationTime": "Orario notifiche",
   "sync": "Sincronizzazione",
   "healthConnect": "Connessione salute",
@@ -252,6 +256,7 @@
   "initCheckingHealth": "Verifica sincronizzazione salute...",
   "initCheckingiCloud": "Verifica sincronizzazione iCloud...",
   "initLocalDatabase": "Inizializzazione database locale...",
+  "initNotifications": "Configurazione delle notifiche...",
   "initDone": "Fatto",
 
   "glucoseSaved": "Glicemia salvata",
@@ -436,5 +441,19 @@
   "onboardingCompletionFeature2": "Sincronizzazione illimitata",
   "onboardingCompletionFeature3": "Report avanzati",
   "onboardingGetStarted": "Inizia",
-  "diabetesTypeUnknown": "Non lo so"
+  "diabetesTypeUnknown": "Non lo so",
+
+  "manageNotifications": "Gestisci notifiche",
+  "mealGlucoseReminders": "Promemoria glicemia prima di colazione, pranzo, cena",
+  "longTermGlucoseAbsence": "Avviso di assenza prolungata di registrazione glicemia",
+  "longTermDiaryAbsence": "Avviso di assenza prolungata di voci del diario",
+  "reportGenerationReminder": "Promemoria generazione report",
+
+  "notifFirstReportTitle": "Crea il tuo primo report glicemico",
+  "notifReportReminderTitle": "Genera il tuo report glicemico e consulta i risultati",
+  "notifGlucoseReminderTitle": "Verifica e registra la tua glicemia",
+  "notifDiaryReminderTitle": "Registra il tuo pasto",
+  "notifDiaryReminderBody": "Tieni traccia delle tue abitudini alimentari",
+  "notifGlucoseRecordReminderTitle": "Non dimenticare di misurare la tua glicemia",
+  "notifGlucoseRecordReminderBody": "La registrazione costante è il primo passo per la gestione della glicemia"
 }

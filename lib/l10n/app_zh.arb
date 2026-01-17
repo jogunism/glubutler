@@ -84,6 +84,10 @@
   "textSizeMedium": "中",
   "textSizeLarge": "大",
   "notifications": "通知",
+  "notificationPermissionRequired": "需要通知权限",
+  "notificationPermissionDescription": "在iOS设置中启用通知权限即可接收通知。",
+  "allowNotifications": "允许",
+  "goToSettings": "前往设置",
   "notificationTime": "通知时间",
   "sync": "同步",
   "healthConnect": "健康连接",
@@ -252,6 +256,7 @@
   "initCheckingHealth": "正在检查健康数据同步...",
   "initCheckingiCloud": "正在检查 iCloud 同步...",
   "initLocalDatabase": "正在初始化本地数据库...",
+  "initNotifications": "正在设置通知...",
   "initDone": "完成",
 
   "glucoseSaved": "血糖记录已保存",
@@ -436,5 +441,19 @@
   "onboardingCompletionFeature2": "无限数据同步",
   "onboardingCompletionFeature3": "高级报告",
   "onboardingGetStarted": "开始使用",
-  "diabetesTypeUnknown": "不确定"
+  "diabetesTypeUnknown": "不确定",
+
+  "manageNotifications": "通知管理",
+  "mealGlucoseReminders": "早餐、午餐、晚餐前血糖测量通知",
+  "longTermGlucoseAbsence": "长期血糖记录缺失通知",
+  "longTermDiaryAbsence": "长期日记记录缺失通知",
+  "reportGenerationReminder": "报告生成通知",
+
+  "notifFirstReportTitle": "生成您的第一份血糖报告",
+  "notifReportReminderTitle": "生成血糖报告并查看结果",
+  "notifGlucoseReminderTitle": "检查并记录您的血糖水平",
+  "notifDiaryReminderTitle": "记录您的饮食",
+  "notifDiaryReminderBody": "了解您的饮食模式",
+  "notifGlucoseRecordReminderTitle": "别忘了测量血糖",
+  "notifGlucoseRecordReminderBody": "持续记录是血糖管理的第一步"
 }

@@ -241,6 +241,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get notifications => '通知';
 
   @override
+  String get notificationPermissionRequired => '通知権限が必要です';
+
+  @override
+  String get notificationPermissionDescription => 'iOS設定で通知権限を有効にすると通知を受け取れます。';
+
+  @override
+  String get allowNotifications => '許可';
+
+  @override
+  String get goToSettings => '設定へ移動';
+
+  @override
   String get notificationTime => '通知時間';
 
   @override
@@ -372,9 +384,6 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       '写真を添付するには、フォトライブラリへのアクセス権限が必要です。\n\n設定 > Glu Butlerで写真アクセスを許可してください。';
-
-  @override
-  String get goToSettings => '設定へ移動';
 
   @override
   String get noRecords => '記録がありません';
@@ -745,6 +754,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get initLocalDatabase => 'ローカルデータベースを初期化中...';
 
   @override
+  String get initNotifications => '通知を設定中...';
+
+  @override
   String get initDone => '完了';
 
   @override
@@ -1109,4 +1121,40 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => 'わからない';
+
+  @override
+  String get manageNotifications => '通知管理';
+
+  @override
+  String get mealGlucoseReminders => '朝食、昼食、夕食前の血糖測定通知';
+
+  @override
+  String get longTermGlucoseAbsence => '長期間血糖記録なし通知';
+
+  @override
+  String get longTermDiaryAbsence => '長期間日記記録なし通知';
+
+  @override
+  String get reportGenerationReminder => 'レポート作成通知';
+
+  @override
+  String get notifFirstReportTitle => '初めての血糖レポートを作成してみましょう';
+
+  @override
+  String get notifReportReminderTitle => '血糖レポートを作成して結果を確認してみましょう';
+
+  @override
+  String get notifGlucoseReminderTitle => '血糖値を確認して記録を残してみましょう';
+
+  @override
+  String get notifDiaryReminderTitle => '食事内容を記録してみましょう';
+
+  @override
+  String get notifDiaryReminderBody => '自分の食生活パターンを把握できます';
+
+  @override
+  String get notifGlucoseRecordReminderTitle => '血糖測定を忘れないでください';
+
+  @override
+  String get notifGlucoseRecordReminderBody => '継続的な記録が血糖管理の第一歩です';
 }

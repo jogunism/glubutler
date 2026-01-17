@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/notification_service.dart';
 
 /// 앱 초기화 서비스
 ///
@@ -30,6 +31,7 @@ enum InitializationStep {
   healthSync,
   iCloudSync,
   localDatabase,
+  notifications,
   done,
 }
 
@@ -61,15 +63,19 @@ class InitializationService {
     onStepChanged?.call(InitializationStep.healthSync);
     await _syncHealthData();
 
-    // 3. (향후) iCloud 동기화
+    // 3. iCloud 동기화
     onStepChanged?.call(InitializationStep.iCloudSync);
     await _synciCloudData();
 
-    // 4. (향후) 로컬 DB 초기화
+    // 4. 로컬 DB 초기화
     onStepChanged?.call(InitializationStep.localDatabase);
     await _initializeLocalDatabase();
 
-    // 5. 완료
+    // 5. 알림 스케줄링
+    onStepChanged?.call(InitializationStep.notifications);
+    await _scheduleNotifications();
+
+    // 6. 완료
     if (settingsService.hapticEnabled) {
       HapticFeedback.lightImpact(); // 완료 "툭" (가볍게)
     }
@@ -150,11 +156,32 @@ class InitializationService {
   /// - 데이터 마이그레이션
   /// - 스키마 업데이트
   /// - 캐시 정리
-  /// - 기타 데이터베이스 관련 유지보수 작업
   Future<void> _initializeLocalDatabase() async {
     // 최소 표시 시간
     await Future.delayed(const Duration(milliseconds: 400));
+  }
 
-    // 향후 업데이트 시 필요한 작업을 여기에 추가
+  /// 알림 스케줄링
+  ///
+  /// 온보딩을 완료한 사용자만 설정에 따라 알림을 스케줄링합니다.
+  Future<void> _scheduleNotifications() async {
+    // 최소 표시 시간 보장
+    const minDisplayTime = Duration(milliseconds: 400);
+    final startTime = DateTime.now();
+
+    if (settingsService.hasCompletedOnboarding) {
+      try {
+        await NotificationService().scheduleAllNotifications();
+        debugPrint('[InitializationService] Notifications scheduled successfully');
+      } catch (e) {
+        debugPrint('[InitializationService] Notification scheduling error: $e');
+      }
+    }
+
+    // 최소 표시 시간까지 대기
+    final elapsed = DateTime.now().difference(startTime);
+    if (elapsed < minDisplayTime) {
+      await Future.delayed(minDisplayTime - elapsed);
+    }
   }
 }

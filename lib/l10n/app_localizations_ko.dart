@@ -240,6 +240,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get notifications => '알림';
 
   @override
+  String get notificationPermissionRequired => '알림 권한이 필요합니다';
+
+  @override
+  String get notificationPermissionDescription =>
+      'iOS 설정에서 알림 권한을 활성화하면 알림을 받을 수 있습니다.';
+
+  @override
+  String get allowNotifications => '알림 허용';
+
+  @override
+  String get goToSettings => '설정으로 이동';
+
+  @override
   String get notificationTime => '알림 시간';
 
   @override
@@ -370,9 +383,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       '사진을 첨부하려면 사진 라이브러리 접근 권한이 필요합니다.\n\n설정 > Glu Butler에서 사진 접근을 허용해주세요.';
-
-  @override
-  String get goToSettings => '설정으로 이동';
 
   @override
   String get noRecords => '기록이 없습니다';
@@ -745,6 +755,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get initLocalDatabase => '로컬 데이터베이스 초기화 중...';
 
   @override
+  String get initNotifications => '알림 설정 중...';
+
+  @override
   String get initDone => '완료';
 
   @override
@@ -1109,4 +1122,40 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => '잘 모르겠어요';
+
+  @override
+  String get manageNotifications => '알림 관리';
+
+  @override
+  String get mealGlucoseReminders => '아침, 점심, 저녁 식전 혈당 측정 알림';
+
+  @override
+  String get longTermGlucoseAbsence => '장기간 혈당 기록 부재 알림';
+
+  @override
+  String get longTermDiaryAbsence => '장기간 일기 작성 부재 알림';
+
+  @override
+  String get reportGenerationReminder => '리포트 생성 알림';
+
+  @override
+  String get notifFirstReportTitle => '첫 혈당 리포트를 생성해 보세요';
+
+  @override
+  String get notifReportReminderTitle => '혈당 리포트를 생성하고 결과를 확인해 보세요';
+
+  @override
+  String get notifGlucoseReminderTitle => '혈당을 확인하고 기록을 남겨보세요';
+
+  @override
+  String get notifDiaryReminderTitle => '식사 내용을 기록해 보세요';
+
+  @override
+  String get notifDiaryReminderBody => '자신의 식생활 패턴을 파악할 수 있습니다';
+
+  @override
+  String get notifGlucoseRecordReminderTitle => '혈당 측정을 잊지 마세요';
+
+  @override
+  String get notifGlucoseRecordReminderBody => '꾸준한 기록이 혈당 관리의 첫걸음입니다';
 }

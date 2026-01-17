@@ -241,6 +241,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifications => 'Benachrichtigungen';
 
   @override
+  String get notificationPermissionRequired =>
+      'Benachrichtigungsberechtigung erforderlich';
+
+  @override
+  String get notificationPermissionDescription =>
+      'Aktivieren Sie Benachrichtigungsberechtigungen in den iOS-Einstellungen, um Benachrichtigungen zu erhalten.';
+
+  @override
+  String get allowNotifications => 'Erlauben';
+
+  @override
+  String get goToSettings => 'Zu Einstellungen';
+
+  @override
   String get notificationTime => 'Benachrichtigungszeit';
 
   @override
@@ -374,9 +388,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       'Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.  Gehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.';
-
-  @override
-  String get goToSettings => 'Zu Einstellungen';
 
   @override
   String get noRecords => 'Keine Einträge vorhanden';
@@ -759,6 +770,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get initLocalDatabase => 'Lokale Datenbank wird initialisiert...';
+
+  @override
+  String get initNotifications => 'Benachrichtigungen werden eingerichtet...';
 
   @override
   String get initDone => 'Fertig';
@@ -1150,4 +1164,48 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => 'Ich weiß es nicht';
+
+  @override
+  String get manageNotifications => 'Benachrichtigungen verwalten';
+
+  @override
+  String get mealGlucoseReminders =>
+      'Blutzuckermessung vor Frühstück, Mittagessen, Abendessen';
+
+  @override
+  String get longTermGlucoseAbsence =>
+      'Langfristige Blutzuckeraufzeichnung fehlt Alarm';
+
+  @override
+  String get longTermDiaryAbsence =>
+      'Langfristiger Tagebucheintrag fehlt Alarm';
+
+  @override
+  String get reportGenerationReminder => 'Berichtserstellung Erinnerung';
+
+  @override
+  String get notifFirstReportTitle =>
+      'Erstellen Sie Ihren ersten Blutzuckerbericht';
+
+  @override
+  String get notifReportReminderTitle =>
+      'Erstellen Sie Ihren Blutzuckerbericht und prüfen Sie die Ergebnisse';
+
+  @override
+  String get notifGlucoseReminderTitle =>
+      'Überprüfen und erfassen Sie Ihren Blutzuckerspiegel';
+
+  @override
+  String get notifDiaryReminderTitle => 'Zeichnen Sie Ihre Mahlzeit auf';
+
+  @override
+  String get notifDiaryReminderBody => 'Verfolgen Sie Ihre Essgewohnheiten';
+
+  @override
+  String get notifGlucoseRecordReminderTitle =>
+      'Vergessen Sie nicht, Ihren Blutzucker zu messen';
+
+  @override
+  String get notifGlucoseRecordReminderBody =>
+      'Konsequente Aufzeichnung ist der erste Schritt zum Blutzuckermanagement';
 }

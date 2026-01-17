@@ -84,6 +84,10 @@
   "textSizeMedium": "Medio",
   "textSizeLarge": "Grande",
   "notifications": "Notificaciones",
+  "notificationPermissionRequired": "Se requiere permiso de notificación",
+  "notificationPermissionDescription": "Habilite los permisos de notificación en Configuración de iOS para recibir notificaciones.",
+  "allowNotifications": "Permitir",
+  "goToSettings": "Ir a Configuración",
   "notificationTime": "Hora de notificación",
   "sync": "Sincronización",
   "healthConnect": "Conexión de salud",
@@ -252,6 +256,7 @@
   "initCheckingHealth": "Verificando sincronización de salud...",
   "initCheckingiCloud": "Verificando sincronización de iCloud...",
   "initLocalDatabase": "Inicializando base de datos local...",
+  "initNotifications": "Configurando notificaciones...",
   "initDone": "Listo",
 
   "glucoseSaved": "Glucosa guardada",
@@ -436,5 +441,19 @@
   "onboardingCompletionFeature2": "Sincronización ilimitada",
   "onboardingCompletionFeature3": "Informes avanzados",
   "onboardingGetStarted": "Empezar",
-  "diabetesTypeUnknown": "No estoy seguro"
+  "diabetesTypeUnknown": "No estoy seguro",
+
+  "manageNotifications": "Gestionar notificaciones",
+  "mealGlucoseReminders": "Recordatorios de glucosa antes de desayuno, almuerzo, cena",
+  "longTermGlucoseAbsence": "Alerta de ausencia prolongada de registro de glucosa",
+  "longTermDiaryAbsence": "Alerta de ausencia prolongada de entradas de diario",
+  "reportGenerationReminder": "Recordatorio de generación de informe",
+
+  "notifFirstReportTitle": "Crea tu primer informe de glucosa",
+  "notifReportReminderTitle": "Genera tu informe de glucosa y consulta los resultados",
+  "notifGlucoseReminderTitle": "Verifica y registra tu glucosa",
+  "notifDiaryReminderTitle": "Registra tu comida",
+  "notifDiaryReminderBody": "Sigue tus hábitos alimenticios",
+  "notifGlucoseRecordReminderTitle": "No olvides medir tu glucosa",
+  "notifGlucoseRecordReminderBody": "El registro constante es el primer paso para el manejo de la glucosa"
 }

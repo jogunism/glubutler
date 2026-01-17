@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/services/notification_service.dart';
+import 'package:glu_butler/models/notification_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Notification permission page
 class NotificationPage extends StatefulWidget {
@@ -25,9 +28,17 @@ class _NotificationPageState extends State<NotificationPage> {
     });
 
     try {
-      // TODO: Implement actual notification permission request
-      // For now, just delay and continue
-      await Future.delayed(const Duration(milliseconds: 500));
+      // 알림 권한 요청
+      final notificationService = NotificationService();
+      final granted = await notificationService.requestPermissions();
+
+      if (granted) {
+        // 권한이 허용된 경우에만 알림 스케줄링
+        await notificationService.scheduleAllNotifications();
+      } else {
+        // 권한이 거부된 경우 모든 알림 설정을 OFF로 저장
+        await _disableAllNotifications();
+      }
 
       if (mounted) {
         setState(() {
@@ -36,6 +47,8 @@ class _NotificationPageState extends State<NotificationPage> {
         widget.onNext();
       }
     } catch (e) {
+      // 에러 발생 시에도 알림 설정 OFF
+      await _disableAllNotifications();
       if (mounted) {
         setState(() {
           _isRequesting = false;
@@ -43,6 +56,21 @@ class _NotificationPageState extends State<NotificationPage> {
         widget.onNext();
       }
     }
+  }
+
+  /// 건너뛰기 또는 권한 거부 시 모든 알림 설정 OFF
+  Future<void> _disableAllNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    for (final type in NotificationType.values) {
+      await prefs.setBool(type.prefsKey, false);
+    }
+    debugPrint('[NotificationPage] All notifications disabled due to permission denial or skip');
+  }
+
+  Future<void> _handleSkip() async {
+    // 건너뛰기 시 모든 알림 설정 OFF
+    await _disableAllNotifications();
+    widget.onNext();
   }
 
   @override
@@ -152,7 +180,7 @@ class _NotificationPageState extends State<NotificationPage> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: widget.onNext,
+                  onPressed: _handleSkip,
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),

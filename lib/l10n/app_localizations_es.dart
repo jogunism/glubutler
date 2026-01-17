@@ -241,6 +241,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifications => 'Notificaciones';
 
   @override
+  String get notificationPermissionRequired =>
+      'Se requiere permiso de notificación';
+
+  @override
+  String get notificationPermissionDescription =>
+      'Habilite los permisos de notificación en Configuración de iOS para recibir notificaciones.';
+
+  @override
+  String get allowNotifications => 'Permitir';
+
+  @override
+  String get goToSettings => 'Ir a Ajustes';
+
+  @override
   String get notificationTime => 'Hora de notificación';
 
   @override
@@ -373,9 +387,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get photoPermissionMessage =>
       'Para adjuntar fotos, necesita permitir el acceso a su biblioteca de fotos.  Vaya a Ajustes > Glu Butler para habilitar el acceso a fotos.';
-
-  @override
-  String get goToSettings => 'Ir a Ajustes';
 
   @override
   String get noRecords => 'No hay registros';
@@ -759,6 +770,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get initLocalDatabase => 'Inicializando base de datos local...';
+
+  @override
+  String get initNotifications => 'Configurando notificaciones...';
 
   @override
   String get initDone => 'Listo';
@@ -1147,4 +1161,46 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get diabetesTypeUnknown => 'No estoy seguro';
+
+  @override
+  String get manageNotifications => 'Gestionar notificaciones';
+
+  @override
+  String get mealGlucoseReminders =>
+      'Recordatorios de glucosa antes de desayuno, almuerzo, cena';
+
+  @override
+  String get longTermGlucoseAbsence =>
+      'Alerta de ausencia prolongada de registro de glucosa';
+
+  @override
+  String get longTermDiaryAbsence =>
+      'Alerta de ausencia prolongada de entradas de diario';
+
+  @override
+  String get reportGenerationReminder =>
+      'Recordatorio de generación de informe';
+
+  @override
+  String get notifFirstReportTitle => 'Crea tu primer informe de glucosa';
+
+  @override
+  String get notifReportReminderTitle =>
+      'Genera tu informe de glucosa y consulta los resultados';
+
+  @override
+  String get notifGlucoseReminderTitle => 'Verifica y registra tu glucosa';
+
+  @override
+  String get notifDiaryReminderTitle => 'Registra tu comida';
+
+  @override
+  String get notifDiaryReminderBody => 'Sigue tus hábitos alimenticios';
+
+  @override
+  String get notifGlucoseRecordReminderTitle => 'No olvides medir tu glucosa';
+
+  @override
+  String get notifGlucoseRecordReminderBody =>
+      'El registro constante es el primer paso para el manejo de la glucosa';
 }

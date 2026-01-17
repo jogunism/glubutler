@@ -572,6 +572,30 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get notifications;
 
+  /// No description provided for @notificationPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission Required'**
+  String get notificationPermissionRequired;
+
+  /// No description provided for @notificationPermissionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable notification permissions in iOS Settings to receive notifications.'**
+  String get notificationPermissionDescription;
+
+  /// No description provided for @allowNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get allowNotifications;
+
+  /// No description provided for @goToSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get goToSettings;
+
   /// No description provided for @notificationTime.
   ///
   /// In en, this message translates to:
@@ -829,12 +853,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To attach photos, you need to allow access to your photo library.\n\nGo to Settings > Glu Butler to enable photo access.'**
   String get photoPermissionMessage;
-
-  /// No description provided for @goToSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Go to Settings'**
-  String get goToSettings;
 
   /// No description provided for @noRecords.
   ///
@@ -1568,6 +1586,12 @@ abstract class AppLocalizations {
   /// **'Initializing local database...'**
   String get initLocalDatabase;
 
+  /// No description provided for @initNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting up notifications...'**
+  String get initNotifications;
+
   /// No description provided for @initDone.
   ///
   /// In en, this message translates to:
@@ -2257,6 +2281,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I don\'t know'**
   String get diabetesTypeUnknown;
+
+  /// No description provided for @manageNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Notifications'**
+  String get manageNotifications;
+
+  /// No description provided for @mealGlucoseReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-meal Glucose Reminders (Breakfast, Lunch, Dinner)'**
+  String get mealGlucoseReminders;
+
+  /// No description provided for @longTermGlucoseAbsence.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-term Glucose Record Absence Alert'**
+  String get longTermGlucoseAbsence;
+
+  /// No description provided for @longTermDiaryAbsence.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-term Diary Entry Absence Alert'**
+  String get longTermDiaryAbsence;
+
+  /// No description provided for @reportGenerationReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Generation Reminder'**
+  String get reportGenerationReminder;
+
+  /// No description provided for @notifFirstReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first glucose report'**
+  String get notifFirstReportTitle;
+
+  /// No description provided for @notifReportReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate your glucose report and check the results'**
+  String get notifReportReminderTitle;
+
+  /// No description provided for @notifGlucoseReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check and record your glucose level'**
+  String get notifGlucoseReminderTitle;
+
+  /// No description provided for @notifDiaryReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your meal'**
+  String get notifDiaryReminderTitle;
+
+  /// No description provided for @notifDiaryReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your eating patterns'**
+  String get notifDiaryReminderBody;
+
+  /// No description provided for @notifGlucoseRecordReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t forget to check your glucose'**
+  String get notifGlucoseRecordReminderTitle;
+
+  /// No description provided for @notifGlucoseRecordReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent tracking is the first step to glucose management'**
+  String get notifGlucoseRecordReminderBody;
 }
 
 class _AppLocalizationsDelegate
