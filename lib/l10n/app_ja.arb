@@ -273,9 +273,13 @@
   "scoreInfoLifestyleDesc": "睡眠時間、運動記録などのヘルスケアデータを一緒に評価してスコアを計算します。",
   "scoreInfoPrivacy": "*アプリで使用されるすべての情報は、別途保存されたり外部に共有されることはありません。",
 
+  "deleteGlucose": "血糖記録を削除",
+  "deleteInsulin": "インスリン記録を削除",
+  "deleteGlucoseConfirmation": "この血糖記録を削除します。",
+  "deleteInsulinConfirmation": "このインスリン記録を削除します。",
   "deleteDiary": "日記を削除",
-  "deleteDiaryConfirmation": "削除しますか？\n元に戻すことはできません。",
-  "deleteDiaryWithMealConfirmation": "この日記を削除しますか？\nフィードに登録された食事情報も一緒に削除され、\n元に戻すことはできません。",
+  "deleteDiaryConfirmation": "この日記を本当に削除しますか？",
+  "deleteDiaryWithMealConfirmation": "この日記を本当に削除しますか？\nフィードに登録された食事情報も一緒に削除されます。",
   "diaryDeleted": "削除されました",
   "diaryDeleteFailed": "削除に失敗しました",
   "diaryUpdated": "日記が更新されました",
@@ -298,7 +302,8 @@
   },
   "error": "エラー",
   "confirm": "確認",
-  "dataSyncPeriodInfo": "最近{period}のデータが表示されます。Apple Healthの設定で期間変更が可能です",
+  "dataSyncPeriodInfo": "* 最近{period}のデータが表示されます。\n* 設定 > Apple Health > 連動期間設定で変更できます。",
+  "syncPeriodSetting": "連動期間設定",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -318,9 +323,18 @@
   "selectStartAndEndDate": "開始日と終了日を選択してください",
   "month": "月",
   "day": "日",
+  "monthSuffix": "月",
+  "daySuffix": "日",
   "newReport": "新しいレポートを作成",
   "deleteReport": "レポートを削除",
-  "reportWillBeDeleted": "レポートが削除されます",
+  "reportWillBeDeleted": "{period}のレポートを本当に削除しますか？\n削除されたレポートは再生成できません。",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "AIレポート生成中...",
   "reportGenerationFailed": "レポート生成失敗",
   "reportGenerationSuccess": "レポートが生成されました",

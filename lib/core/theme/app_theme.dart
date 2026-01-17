@@ -14,6 +14,7 @@ class AppTheme {
   static const Color secondaryColor = Color(0xFF27343D); // Dark Blue Gray
   static const Color accentColor = Color(0xFFFF6B6B); // Coral/Salmon (Light mode)
   static const Color accentColorDark = Color(0xFF9B8FE4); // Lavender/Purple (Dark mode)
+  static const Color accentRedColorDarkMode = Color(0xFFFF5252); // Bright red for dark mode visibility
 
   // ==========================================================================
   // Blood Glucose Status Colors (5 levels)

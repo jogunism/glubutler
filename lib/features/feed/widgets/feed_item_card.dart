@@ -63,11 +63,20 @@ class FeedItemCard extends StatelessWidget {
   void _deleteItem(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
 
+    // 아이템 타입에 따라 타이틀과 메시지 결정
+    final title = item.type == FeedItemType.glucose
+        ? l10n.deleteGlucose
+        : l10n.deleteInsulin;
+    final message = item.type == FeedItemType.glucose
+        ? l10n.deleteGlucoseConfirmation
+        : l10n.deleteInsulinConfirmation;
+
     // 삭제 확인 다이얼로그 표시
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        content: Text(l10n.deleteGlucoseConfirmation),
+        title: Text(title),
+        content: Text(message),
         actions: [
           CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(false),
@@ -82,8 +91,11 @@ class FeedItemCard extends StatelessWidget {
       ),
     );
 
-    // 사용자가 취소를 선택한 경우
-    if (confirmed != true) return;
+    // 사용자가 취소를 선택한 경우 열려있는 스와이프 카드 닫기
+    if (confirmed != true) {
+      SwipeableCardState.closeAnyOpenCard();
+      return;
+    }
 
     print('[FeedItemCard] Delete button pressed for item: ${item.id}');
     final feedProvider = context.read<FeedProvider>();

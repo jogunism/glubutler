@@ -37,13 +37,31 @@ class Report {
   }
 
   /// 리포트 기간 문자열 반환 (예: "12월 28일 - 29일" 또는 "11월 30일 - 12월 2일")
-  String getPeriodString() {
-    final start = '${startDate.month}월 ${startDate.day}일';
-    // 같은 달이면 월 생략
-    final end = startDate.month == endDate.month
-        ? '${endDate.day}일'
-        : '${endDate.month}월 ${endDate.day}일';
-    return '$start - $end';
+  /// [monthLabel]과 [dayLabel]을 전달하여 국제화 지원
+  /// 영어 등 레이블이 필요 없는 언어는 빈 문자열 전달
+  String getPeriodString({String monthLabel = '월', String dayLabel = '일'}) {
+    final hasLabel = monthLabel.isNotEmpty || dayLabel.isNotEmpty;
+
+    if (hasLabel) {
+      // 한국어, 일본어, 중국어 등: "1월 10일 - 11일"
+      final start = '${startDate.month}$monthLabel ${startDate.day}$dayLabel';
+      final end = startDate.month == endDate.month
+          ? '${endDate.day}$dayLabel'
+          : '${endDate.month}$monthLabel ${endDate.day}$dayLabel';
+      return '$start - $end';
+    } else {
+      // 영어, 유럽 언어 등: "Jan 10 - 11" 또는 "Nov 30 - Dec 2"
+      final monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      final startMonth = monthNames[startDate.month];
+      final endMonth = monthNames[endDate.month];
+
+      final start = '$startMonth ${startDate.day}';
+      final end = startDate.month == endDate.month
+          ? '${endDate.day}'
+          : '$endMonth ${endDate.day}';
+      return '$start - $end';
+    }
   }
 
   /// copyWith 메서드

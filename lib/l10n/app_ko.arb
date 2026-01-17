@@ -275,14 +275,17 @@
   "syncPartialMessage": "{total}개 중 {success}개 동기화 완료. 나머지는 다음에 재시도합니다.",
   "syncFailedMessage": "동기화에 실패했습니다. 다음 실행시 재시도합니다.",
 
-  "deleteGlucoseConfirmation": "정말 삭제하시겠습니까?\n삭제하면 되돌릴 수 없습니다.",
+  "deleteGlucose": "혈당기록 삭제",
+  "deleteInsulin": "인슐린기록 삭제",
+  "deleteGlucoseConfirmation": "해당 혈당 기록을 삭제합니다.",
+  "deleteInsulinConfirmation": "해당 인슐린 기록을 삭제합니다.",
   "glucoseDeleted": "혈당 기록이 삭제되었습니다",
   "insulinDeleted": "인슐린 기록이 삭제되었습니다",
   "deleteFailed": "삭제에 실패했습니다",
 
   "deleteDiary": "일기 삭제",
-  "deleteDiaryConfirmation": "삭제하시겠습니까?\n되돌릴 수 없습니다.",
-  "deleteDiaryWithMealConfirmation": "해당 일기를 삭제하시겠습니까?\n피드에 등록된 식사정보도 같이 삭제되고,\n이는 되돌릴 수 없습니다.",
+  "deleteDiaryConfirmation": "해당 일기를 정말 삭제하시겠습니까?",
+  "deleteDiaryWithMealConfirmation": "해당 일기를 정말 삭제하시겠습니까?\n피드에 등록된 식사정보도 같이 삭제됩니다.",
   "diaryDeleted": "삭제되었습니다",
   "diaryDeleteFailed": "삭제에 실패했습니다",
   "diaryUpdated": "일기가 수정되었습니다",
@@ -305,7 +308,8 @@
   },
   "error": "오류",
   "confirm": "확인",
-  "dataSyncPeriodInfo": "최근 {period} 데이터가 표시됩니다. 애플 건강앱 설정에서 기간변경이 가능합니다",
+  "dataSyncPeriodInfo": "* 최근 {period} 데이터가 표시됩니다.\n* 설정 > 애플건강 > 연동기간 설정에서 변경 가능합니다.",
+  "syncPeriodSetting": "연동기간 설정",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -325,9 +329,18 @@
   "selectStartAndEndDate": "시작일과 종료일을 선택하세요",
   "month": "월",
   "day": "일",
+  "monthSuffix": "월",
+  "daySuffix": "일",
   "newReport": "신규 리포트 생성",
   "deleteReport": "리포트 삭제",
-  "reportWillBeDeleted": "리포트가 삭제됩니다",
+  "reportWillBeDeleted": "{period} 리포트를 정말 삭제하시겠습니까?\n지워진 리포트는 재생성할 수 없습니다.",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "AI 리포트 생성 중...",
   "reportGenerationFailed": "리포트 생성 실패",
   "reportGenerationSuccess": "리포트가 생성되었습니다",

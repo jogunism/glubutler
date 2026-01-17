@@ -272,9 +272,13 @@
   "scoreInfoLifestyleDesc": "结合睡眠时间、运动记录等健康App数据计算评分。",
   "scoreInfoPrivacy": "*应用中使用的所有信息不会单独存储或分享到外部。",
 
+  "deleteGlucose": "删除血糖记录",
+  "deleteInsulin": "删除胰岛素记录",
+  "deleteGlucoseConfirmation": "将删除此血糖记录。",
+  "deleteInsulinConfirmation": "将删除此胰岛素记录。",
   "deleteDiary": "删除日记",
-  "deleteDiaryConfirmation": "确定要删除吗？ 此操作无法撤销。",
-  "deleteDiaryWithMealConfirmation": "确定要删除该日记吗？ 动态中的相关餐食信息也将被删除， 此操作无法撤销。",
+  "deleteDiaryConfirmation": "确定要删除此日记吗？",
+  "deleteDiaryWithMealConfirmation": "确定要删除此日记吗？\n动态中的相关餐食信息也将被删除。",
   "diaryDeleted": "已删除",
   "diaryDeleteFailed": "删除失败",
   "diaryUpdated": "日记已更新",
@@ -297,7 +301,8 @@
   },
   "error": "错误",
   "confirm": "确定",
-  "dataSyncPeriodInfo": "显示最近{period}的数据。可在Apple Health设置中更改期间",
+  "dataSyncPeriodInfo": "* 显示最近{period}的数据。\n* 可在 设置 > Apple Health > 同步周期设置 中更改。",
+  "syncPeriodSetting": "同步周期设置",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -317,9 +322,18 @@
   "selectStartAndEndDate": "选择开始和结束日期",
   "month": "月",
   "day": "日",
+  "monthSuffix": "月",
+  "daySuffix": "日",
   "newReport": "创建新报告",
   "deleteReport": "删除报告",
-  "reportWillBeDeleted": "报告将被删除",
+  "reportWillBeDeleted": "确定要删除{period}报告吗？\n已删除的报告无法重新生成。",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "Generating AI Report...",
   "daysAgo": "{count}天前",
   "@daysAgo": {

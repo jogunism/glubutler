@@ -6,6 +6,7 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
+import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 
@@ -41,6 +42,39 @@ class _PastReportsScreenState extends State<PastReportsScreen> {
 
   Future<void> _deleteReport(Report report) async {
     if (!mounted || report.id == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    // 삭제 확인 다이얼로그
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(l10n.deleteReport),
+        content: Text(l10n.reportWillBeDeleted(
+          report.getPeriodString(monthLabel: l10n.monthSuffix, dayLabel: l10n.daySuffix),
+        )),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    // 취소를 누른 경우 열려있는 스와이프 카드 닫기
+    if (confirmed != true) {
+      SwipeableCardState.closeAnyOpenCard();
+      return;
+    }
+
+    if (!mounted) return;
 
     final reportProvider = context.read<ReportProvider>();
     final success = await reportProvider.deleteReport(report.id!);
@@ -138,128 +172,95 @@ class _ReportListItem extends StatelessWidget {
       builder: (context, reportProvider, child) {
         final isSelected = reportProvider.currentReport?.id == report.id;
 
-        return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Dismissible(
-        key: Key('report_${report.id}'),
-        direction: DismissDirection.endToStart,
-        confirmDismiss: (direction) async {
-          return await showCupertinoDialog<bool>(
-            context: context,
-            builder: (context) => CupertinoAlertDialog(
-              title: Text(l10n.deleteReport),
-              content: Text('${report.getPeriodString()} ${l10n.reportWillBeDeleted}'),
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(l10n.cancel),
-                ),
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(l10n.delete),
-                ),
-              ],
-            ),
-          );
-        },
-        onDismissed: (direction) {
-          onDelete();
-        },
-        background: Container(
-          padding: const EdgeInsets.only(right: 20),
-          alignment: Alignment.centerRight,
-          decoration: BoxDecoration(
-            color: AppTheme.iconRed,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(Icons.delete, color: Colors.white, size: 28),
-        ),
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: baseDecoration.copyWith(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // 아이콘 영역 (선택된 경우만 리포트 아이콘 표시)
-                      SizedBox(
-                        width: 32,
-                        height: 32,
-                        child: isSelected
-                            ? Container(
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(8),
+        return SwipeableCard(
+          swipeable: true,
+          useRemove: true,
+          useEdit: false,
+          onDelete: onDelete,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: baseDecoration.copyWith(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // 아이콘 영역 (선택된 경우만 리포트 아이콘 표시)
+                        SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: isSelected
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    CupertinoIcons.doc_text_fill,
+                                    color: AppTheme.primaryColor,
+                                    size: 16,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: 12),
+                        // 기간 및 날짜
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                l10n.report,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.secondary.withValues(alpha: 0.7),
                                 ),
-                                child: const Icon(
-                                  CupertinoIcons.doc_text_fill,
-                                  color: AppTheme.primaryColor,
-                                  size: 16,
+                              ),
+                              Text(
+                                report.getPeriodString(monthLabel: l10n.monthSuffix, dayLabel: l10n.daySuffix),
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 12),
-                      // 기간 및 날짜
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              ),
+                            ],
+                          ),
+                        ),
+                        // 생성 날짜 (항상 표시)
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              l10n.report,
+                              _formatCreatedAt(report.createdAt, l10n),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.secondary.withValues(alpha: 0.7),
                               ),
                             ),
-                            Text(
-                              report.getPeriodString(),
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                           ],
                         ),
-                      ),
-                      // 생성 날짜 (항상 표시)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _formatCreatedAt(report.createdAt, l10n),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.secondary.withValues(alpha: 0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
         );
       },
     );

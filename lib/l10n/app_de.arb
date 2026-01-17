@@ -272,9 +272,13 @@
   "scoreInfoLifestyleDesc": "Schlaf- und Bewegungsdaten aus der Health-App werden für eine genauere Bewertung berücksichtigt.",
   "scoreInfoPrivacy": "*Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.",
 
+  "deleteGlucose": "Blutzuckereintrag löschen",
+  "deleteInsulin": "Insulineintrag löschen",
+  "deleteGlucoseConfirmation": "Dieser Blutzuckereintrag wird gelöscht.",
+  "deleteInsulinConfirmation": "Dieser Insulineintrag wird gelöscht.",
   "deleteDiary": "Tagebuch löschen",
-  "deleteDiaryConfirmation": "Möchten Sie wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
-  "deleteDiaryWithMealConfirmation": "Dieses Tagebuch löschen? Zugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht, und diese Aktion kann nicht rückgängig gemacht werden.",
+  "deleteDiaryConfirmation": "Möchten Sie dieses Tagebuch wirklich löschen?",
+  "deleteDiaryWithMealConfirmation": "Möchten Sie dieses Tagebuch wirklich löschen?\nZugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht.",
   "diaryDeleted": "Gelöscht",
   "diaryDeleteFailed": "Löschen fehlgeschlagen",
   "diaryUpdated": "Tagebuch aktualisiert",
@@ -297,7 +301,8 @@
   },
   "error": "Fehler",
   "confirm": "OK",
-  "dataSyncPeriodInfo": "Zeigt Daten der letzten {period}. Zeitraum kann in Apple Health Einstellungen geändert werden",
+  "dataSyncPeriodInfo": "* Zeigt Daten der letzten {period}.\n* Änderbar unter Einstellungen > Apple Health > Synchronisierungszeitraum.",
+  "syncPeriodSetting": "Synchronisierungszeitraum",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -317,9 +322,18 @@
   "selectStartAndEndDate": "Start- und Enddatum auswählen",
   "month": "Monat",
   "day": "Tag",
+  "monthSuffix": "",
+  "daySuffix": "",
   "newReport": "Neuen Bericht erstellen",
   "deleteReport": "Bericht löschen",
-  "reportWillBeDeleted": "Der Bericht wird gelöscht",
+  "reportWillBeDeleted": "Möchten Sie den Bericht {period} wirklich löschen?\nGelöschte Berichte können nicht wiederhergestellt werden.",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "Generating AI Report...",
   "daysAgo": "vor {count} Tagen",
   "@daysAgo": {

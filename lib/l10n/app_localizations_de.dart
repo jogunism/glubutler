@@ -760,8 +760,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
+  String get deleteGlucose => 'Blutzuckereintrag löschen';
+
+  @override
+  String get deleteInsulin => 'Insulineintrag löschen';
+
+  @override
   String get deleteGlucoseConfirmation =>
-      'Möchten Sie wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.';
+      'Dieser Blutzuckereintrag wird gelöscht.';
+
+  @override
+  String get deleteInsulinConfirmation =>
+      'Dieser Insulineintrag wird gelöscht.';
 
   @override
   String get glucoseDeleted => 'Blutzucker gelöscht';
@@ -777,11 +787,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      'Möchten Sie wirklich löschen? Dies kann nicht rückgängig gemacht werden.';
+      'Möchten Sie dieses Tagebuch wirklich löschen?';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'Dieses Tagebuch löschen? Zugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht, und diese Aktion kann nicht rückgängig gemacht werden.';
+      'Möchten Sie dieses Tagebuch wirklich löschen?\nZugehörige Mahlzeitinformationen im Feed werden ebenfalls gelöscht.';
 
   @override
   String get diaryDeleted => 'Gelöscht';
@@ -821,8 +831,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return 'Zeigt Daten der letzten $period. Zeitraum kann in Apple Health Einstellungen geändert werden';
+    return '* Zeigt Daten der letzten $period.\n* Änderbar unter Einstellungen > Apple Health > Synchronisierungszeitraum.';
   }
+
+  @override
+  String get syncPeriodSetting => 'Synchronisierungszeitraum';
 
   @override
   String get generateReport => 'Bericht erstellen';
@@ -859,13 +872,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get day => 'Tag';
 
   @override
+  String get monthSuffix => '';
+
+  @override
+  String get daySuffix => '';
+
+  @override
   String get newReport => 'Neuen Bericht erstellen';
 
   @override
   String get deleteReport => 'Bericht löschen';
 
   @override
-  String get reportWillBeDeleted => 'Der Bericht wird gelöscht';
+  String reportWillBeDeleted(String period) {
+    return 'Möchten Sie den Bericht $period wirklich löschen?\nGelöschte Berichte können nicht wiederhergestellt werden.';
+  }
 
   @override
   String get generatingReport => 'Generating AI Report...';

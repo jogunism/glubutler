@@ -272,9 +272,13 @@
   "scoreInfoLifestyleDesc": "Les données de sommeil et d'exercice d'Apple Santé sont incluses pour un score plus précis.",
   "scoreInfoPrivacy": "*Toutes les informations utilisées dans l'app ne sont pas stockées séparément ni partagées en externe.",
 
+  "deleteGlucose": "Supprimer l'enregistrement de glucose",
+  "deleteInsulin": "Supprimer l'enregistrement d'insuline",
+  "deleteGlucoseConfirmation": "Cet enregistrement de glucose sera supprimé.",
+  "deleteInsulinConfirmation": "Cet enregistrement d'insuline sera supprimé.",
   "deleteDiary": "Supprimer le journal",
-  "deleteDiaryConfirmation": "Voulez-vous vraiment supprimer ? Cette action est irréversible.",
-  "deleteDiaryWithMealConfirmation": "Supprimer ce journal ? Les informations sur le repas associées dans le fil seront également supprimées, et cette action est irréversible.",
+  "deleteDiaryConfirmation": "Voulez-vous vraiment supprimer ce journal ?",
+  "deleteDiaryWithMealConfirmation": "Voulez-vous vraiment supprimer ce journal ?\nLes informations sur le repas associées dans le fil seront également supprimées.",
   "diaryDeleted": "Supprimé",
   "diaryDeleteFailed": "Échec de la suppression",
   "diaryUpdated": "Journal mis à jour",
@@ -297,7 +301,8 @@
   },
   "error": "Erreur",
   "confirm": "OK",
-  "dataSyncPeriodInfo": "Affichage des données de {period} récentes. La période peut être modifiée dans les paramètres Apple Health",
+  "dataSyncPeriodInfo": "* Affichage des données de {period} récentes.\n* Peut être modifié dans Paramètres > Apple Health > Paramètres de période de synchronisation.",
+  "syncPeriodSetting": "Paramètres de période de synchronisation",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -317,9 +322,18 @@
   "selectStartAndEndDate": "Sélectionnez les dates de début et de fin",
   "month": "mois",
   "day": "jour",
+  "monthSuffix": "",
+  "daySuffix": "",
   "newReport": "Créer un nouveau rapport",
   "deleteReport": "Supprimer le rapport",
-  "reportWillBeDeleted": "Le rapport sera supprimé",
+  "reportWillBeDeleted": "Voulez-vous vraiment supprimer le rapport {period} ?\nLes rapports supprimés ne peuvent pas être régénérés.",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "Generating AI Report...",
   "daysAgo": "il y a {count} jours",
   "@daysAgo": {

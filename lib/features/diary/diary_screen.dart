@@ -81,6 +81,7 @@ class DiaryScreenState extends State<DiaryScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
+        title: Text(l10n.deleteDiary),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
@@ -96,7 +97,13 @@ class DiaryScreenState extends State<DiaryScreen> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    // 취소를 누른 경우 열려있는 스와이프 카드 닫기
+    if (confirmed != true) {
+      SwipeableCardState.closeAnyOpenCard();
+      return;
+    }
+
+    if (mounted) {
       final provider = context.read<DiaryProvider>();
       final success = await provider.deleteEntry(entry.id);
 

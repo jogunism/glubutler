@@ -272,9 +272,13 @@
   "scoreInfoLifestyleDesc": "Los datos de sueño y ejercicio de Apple Salud se incluyen para una puntuación más precisa.",
   "scoreInfoPrivacy": "*Toda la información utilizada en la app no se almacena por separado ni se comparte externamente.",
 
+  "deleteGlucose": "Eliminar registro de glucosa",
+  "deleteInsulin": "Eliminar registro de insulina",
+  "deleteGlucoseConfirmation": "Se eliminará este registro de glucosa.",
+  "deleteInsulinConfirmation": "Se eliminará este registro de insulina.",
   "deleteDiary": "Eliminar diario",
-  "deleteDiaryConfirmation": "¿Está seguro de que desea eliminar? Esta acción no se puede deshacer.",
-  "deleteDiaryWithMealConfirmation": "¿Eliminar este diario? La información de comida asociada en el feed también se eliminará, y esta acción no se puede deshacer.",
+  "deleteDiaryConfirmation": "¿Está seguro de que desea eliminar este diario?",
+  "deleteDiaryWithMealConfirmation": "¿Está seguro de que desea eliminar este diario?\nLa información de comida asociada en el feed también se eliminará.",
   "diaryDeleted": "Eliminado",
   "diaryDeleteFailed": "Error al eliminar",
   "diaryUpdated": "Diario actualizado",
@@ -297,7 +301,8 @@
   },
   "error": "Error",
   "confirm": "Aceptar",
-  "dataSyncPeriodInfo": "Mostrando datos de {period} recientes. El período se puede cambiar en la configuración de Apple Health",
+  "dataSyncPeriodInfo": "* Mostrando datos de {period} recientes.\n* Se puede cambiar en Ajustes > Apple Health > Configuración del período de sincronización.",
+  "syncPeriodSetting": "Configuración del período de sincronización",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -317,9 +322,18 @@
   "selectStartAndEndDate": "Seleccione las fechas de inicio y fin",
   "month": "mes",
   "day": "día",
+  "monthSuffix": "",
+  "daySuffix": "",
   "newReport": "Crear nuevo informe",
   "deleteReport": "Eliminar informe",
-  "reportWillBeDeleted": "El informe será eliminado",
+  "reportWillBeDeleted": "¿Está seguro de que desea eliminar el informe {period}?\nLos informes eliminados no se pueden regenerar.",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "Generating AI Report...",
   "daysAgo": "hace {count} días",
   "@daysAgo": {

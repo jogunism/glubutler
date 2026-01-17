@@ -286,14 +286,17 @@
   },
   "syncFailedMessage": "Sync failed. Will retry on next app launch.",
 
-  "deleteGlucoseConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
+  "deleteGlucose": "Delete Glucose Record",
+  "deleteInsulin": "Delete Insulin Record",
+  "deleteGlucoseConfirmation": "This glucose record will be deleted.",
+  "deleteInsulinConfirmation": "This insulin record will be deleted.",
   "glucoseDeleted": "Glucose record deleted",
   "insulinDeleted": "Insulin record deleted",
   "deleteFailed": "Delete failed",
 
   "deleteDiary": "Delete Diary",
-  "deleteDiaryConfirmation": "Are you sure you want to delete?\nThis action cannot be undone.",
-  "deleteDiaryWithMealConfirmation": "Delete this diary?\nAssociated meal information in the feed will also be deleted,\nand this action cannot be undone.",
+  "deleteDiaryConfirmation": "Are you sure you want to delete this diary?",
+  "deleteDiaryWithMealConfirmation": "Are you sure you want to delete this diary?\nAssociated meal information in the feed will also be deleted.",
   "diaryDeleted": "Deleted",
   "diaryDeleteFailed": "Delete failed",
   "diaryUpdated": "Diary updated",
@@ -316,7 +319,8 @@
   },
   "error": "Error",
   "confirm": "OK",
-  "dataSyncPeriodInfo": "Showing recent {period} data. Period can be changed in Apple Health settings",
+  "dataSyncPeriodInfo": "* Showing recent {period} data.\n* You can change it in Settings > Apple Health > Sync Period Setting.",
+  "syncPeriodSetting": "Sync Period Setting",
   "@dataSyncPeriodInfo": {
     "placeholders": {
       "period": {
@@ -336,9 +340,18 @@
   "selectStartAndEndDate": "Select start and end dates",
   "month": "month",
   "day": "day",
+  "monthSuffix": "",
+  "daySuffix": "",
   "newReport": "Create New Report",
   "deleteReport": "Delete Report",
-  "reportWillBeDeleted": "Report will be deleted",
+  "reportWillBeDeleted": "Are you sure you want to delete the {period} report?\nDeleted reports cannot be regenerated.",
+  "@reportWillBeDeleted": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "generatingReport": "Generating AI Report...",
   "reportGenerationFailed": "Report Generation Failed",
   "reportGenerationSuccess": "Report has been generated",

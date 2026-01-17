@@ -743,7 +743,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get syncFailedMessage => '동기화에 실패했습니다. 다음 실행시 재시도합니다.';
 
   @override
-  String get deleteGlucoseConfirmation => '정말 삭제하시겠습니까?\n삭제하면 되돌릴 수 없습니다.';
+  String get deleteGlucose => '혈당기록 삭제';
+
+  @override
+  String get deleteInsulin => '인슐린기록 삭제';
+
+  @override
+  String get deleteGlucoseConfirmation => '해당 혈당 기록을 삭제합니다.';
+
+  @override
+  String get deleteInsulinConfirmation => '해당 인슐린 기록을 삭제합니다.';
 
   @override
   String get glucoseDeleted => '혈당 기록이 삭제되었습니다';
@@ -758,11 +767,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deleteDiary => '일기 삭제';
 
   @override
-  String get deleteDiaryConfirmation => '삭제하시겠습니까?\n되돌릴 수 없습니다.';
+  String get deleteDiaryConfirmation => '해당 일기를 정말 삭제하시겠습니까?';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      '해당 일기를 삭제하시겠습니까?\n피드에 등록된 식사정보도 같이 삭제되고,\n이는 되돌릴 수 없습니다.';
+      '해당 일기를 정말 삭제하시겠습니까?\n피드에 등록된 식사정보도 같이 삭제됩니다.';
 
   @override
   String get diaryDeleted => '삭제되었습니다';
@@ -801,8 +810,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return '최근 $period 데이터가 표시됩니다. 애플 건강앱 설정에서 기간변경이 가능합니다';
+    return '* 최근 $period 데이터가 표시됩니다.\n* 설정 > 애플건강 > 연동기간 설정에서 변경 가능합니다.';
   }
+
+  @override
+  String get syncPeriodSetting => '연동기간 설정';
 
   @override
   String get generateReport => '리포트 생성하기';
@@ -839,13 +851,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get day => '일';
 
   @override
+  String get monthSuffix => '월';
+
+  @override
+  String get daySuffix => '일';
+
+  @override
   String get newReport => '신규 리포트 생성';
 
   @override
   String get deleteReport => '리포트 삭제';
 
   @override
-  String get reportWillBeDeleted => '리포트가 삭제됩니다';
+  String reportWillBeDeleted(String period) {
+    return '$period 리포트를 정말 삭제하시겠습니까?\n지워진 리포트는 재생성할 수 없습니다.';
+  }
 
   @override
   String get generatingReport => 'AI 리포트 생성 중...';

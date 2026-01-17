@@ -759,8 +759,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
+  String get deleteGlucose => 'Delete Glucose Record';
+
+  @override
+  String get deleteInsulin => 'Delete Insulin Record';
+
+  @override
   String get deleteGlucoseConfirmation =>
-      'Are you sure you want to delete?\nThis action cannot be undone.';
+      'This glucose record will be deleted.';
+
+  @override
+  String get deleteInsulinConfirmation =>
+      'This insulin record will be deleted.';
 
   @override
   String get glucoseDeleted => 'Glucose record deleted';
@@ -776,11 +786,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      'Are you sure you want to delete?\nThis action cannot be undone.';
+      'Are you sure you want to delete this diary?';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'Delete this diary?\nAssociated meal information in the feed will also be deleted,\nand this action cannot be undone.';
+      'Are you sure you want to delete this diary?\nAssociated meal information in the feed will also be deleted.';
 
   @override
   String get diaryDeleted => 'Deleted';
@@ -819,8 +829,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return 'Showing recent $period data. Period can be changed in Apple Health settings';
+    return '* Showing recent $period data.\n* You can change it in Settings > Apple Health > Sync Period Setting.';
   }
+
+  @override
+  String get syncPeriodSetting => 'Sync Period Setting';
 
   @override
   String get generateReport => 'Generate Report';
@@ -857,13 +870,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get day => 'day';
 
   @override
+  String get monthSuffix => '';
+
+  @override
+  String get daySuffix => '';
+
+  @override
   String get newReport => 'Create New Report';
 
   @override
   String get deleteReport => 'Delete Report';
 
   @override
-  String get reportWillBeDeleted => 'Report will be deleted';
+  String reportWillBeDeleted(String period) {
+    return 'Are you sure you want to delete the $period report?\nDeleted reports cannot be regenerated.';
+  }
 
   @override
   String get generatingReport => 'Generating AI Report...';

@@ -744,7 +744,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
-  String get deleteGlucoseConfirmation => '确定要删除吗？ 此操作无法撤销。';
+  String get deleteGlucose => '删除血糖记录';
+
+  @override
+  String get deleteInsulin => '删除胰岛素记录';
+
+  @override
+  String get deleteGlucoseConfirmation => '将删除此血糖记录。';
+
+  @override
+  String get deleteInsulinConfirmation => '将删除此胰岛素记录。';
 
   @override
   String get glucoseDeleted => '血糖记录已删除';
@@ -759,11 +768,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteDiary => '删除日记';
 
   @override
-  String get deleteDiaryConfirmation => '确定要删除吗？ 此操作无法撤销。';
+  String get deleteDiaryConfirmation => '确定要删除此日记吗？';
 
   @override
-  String get deleteDiaryWithMealConfirmation =>
-      '确定要删除该日记吗？ 动态中的相关餐食信息也将被删除， 此操作无法撤销。';
+  String get deleteDiaryWithMealConfirmation => '确定要删除此日记吗？\n动态中的相关餐食信息也将被删除。';
 
   @override
   String get diaryDeleted => '已删除';
@@ -802,8 +810,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return '显示最近$period的数据。可在Apple Health设置中更改期间';
+    return '* 显示最近$period的数据。\n* 可在 设置 > Apple Health > 同步周期设置 中更改。';
   }
+
+  @override
+  String get syncPeriodSetting => '同步周期设置';
 
   @override
   String get generateReport => '生成报告';
@@ -840,13 +851,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get day => '日';
 
   @override
+  String get monthSuffix => '月';
+
+  @override
+  String get daySuffix => '日';
+
+  @override
   String get newReport => '创建新报告';
 
   @override
   String get deleteReport => '删除报告';
 
   @override
-  String get reportWillBeDeleted => '报告将被删除';
+  String reportWillBeDeleted(String period) {
+    return '确定要删除$period报告吗？\n已删除的报告无法重新生成。';
+  }
 
   @override
   String get generatingReport => 'Generating AI Report...';

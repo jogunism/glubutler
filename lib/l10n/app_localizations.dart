@@ -1556,11 +1556,29 @@ abstract class AppLocalizations {
   /// **'Sync failed. Will retry on next app launch.'**
   String get syncFailedMessage;
 
+  /// No description provided for @deleteGlucose.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Glucose Record'**
+  String get deleteGlucose;
+
+  /// No description provided for @deleteInsulin.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Insulin Record'**
+  String get deleteInsulin;
+
   /// No description provided for @deleteGlucoseConfirmation.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete?\nThis action cannot be undone.'**
+  /// **'This glucose record will be deleted.'**
   String get deleteGlucoseConfirmation;
+
+  /// No description provided for @deleteInsulinConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'This insulin record will be deleted.'**
+  String get deleteInsulinConfirmation;
 
   /// No description provided for @glucoseDeleted.
   ///
@@ -1589,13 +1607,13 @@ abstract class AppLocalizations {
   /// No description provided for @deleteDiaryConfirmation.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete?\nThis action cannot be undone.'**
+  /// **'Are you sure you want to delete this diary?'**
   String get deleteDiaryConfirmation;
 
   /// No description provided for @deleteDiaryWithMealConfirmation.
   ///
   /// In en, this message translates to:
-  /// **'Delete this diary?\nAssociated meal information in the feed will also be deleted,\nand this action cannot be undone.'**
+  /// **'Are you sure you want to delete this diary?\nAssociated meal information in the feed will also be deleted.'**
   String get deleteDiaryWithMealConfirmation;
 
   /// No description provided for @diaryDeleted.
@@ -1667,8 +1685,14 @@ abstract class AppLocalizations {
   /// No description provided for @dataSyncPeriodInfo.
   ///
   /// In en, this message translates to:
-  /// **'Showing recent {period} data. Period can be changed in Apple Health settings'**
+  /// **'* Showing recent {period} data.\n* You can change it in Settings > Apple Health > Sync Period Setting.'**
   String dataSyncPeriodInfo(String period);
+
+  /// No description provided for @syncPeriodSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Period Setting'**
+  String get syncPeriodSetting;
 
   /// No description provided for @generateReport.
   ///
@@ -1736,6 +1760,18 @@ abstract class AppLocalizations {
   /// **'day'**
   String get day;
 
+  /// No description provided for @monthSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get monthSuffix;
+
+  /// No description provided for @daySuffix.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get daySuffix;
+
   /// No description provided for @newReport.
   ///
   /// In en, this message translates to:
@@ -1751,8 +1787,8 @@ abstract class AppLocalizations {
   /// No description provided for @reportWillBeDeleted.
   ///
   /// In en, this message translates to:
-  /// **'Report will be deleted'**
-  String get reportWillBeDeleted;
+  /// **'Are you sure you want to delete the {period} report?\nDeleted reports cannot be regenerated.'**
+  String reportWillBeDeleted(String period);
 
   /// No description provided for @generatingReport.
   ///

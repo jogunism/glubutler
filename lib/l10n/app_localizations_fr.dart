@@ -767,8 +767,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
+  String get deleteGlucose => 'Supprimer l\'enregistrement de glucose';
+
+  @override
+  String get deleteInsulin => 'Supprimer l\'enregistrement d\'insuline';
+
+  @override
   String get deleteGlucoseConfirmation =>
-      'Êtes-vous sûr de vouloir supprimer ? Cette action ne peut pas être annulée.';
+      'Cet enregistrement de glucose sera supprimé.';
+
+  @override
+  String get deleteInsulinConfirmation =>
+      'Cet enregistrement d\'insuline sera supprimé.';
 
   @override
   String get glucoseDeleted => 'Glycémie supprimée';
@@ -784,11 +794,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteDiaryConfirmation =>
-      'Voulez-vous vraiment supprimer ? Cette action est irréversible.';
+      'Voulez-vous vraiment supprimer ce journal ?';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'Supprimer ce journal ? Les informations sur le repas associées dans le fil seront également supprimées, et cette action est irréversible.';
+      'Voulez-vous vraiment supprimer ce journal ?\nLes informations sur le repas associées dans le fil seront également supprimées.';
 
   @override
   String get diaryDeleted => 'Supprimé';
@@ -828,8 +838,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return 'Affichage des données de $period récentes. La période peut être modifiée dans les paramètres Apple Health';
+    return '* Affichage des données de $period récentes.\n* Peut être modifié dans Paramètres > Apple Health > Paramètres de période de synchronisation.';
   }
+
+  @override
+  String get syncPeriodSetting => 'Paramètres de période de synchronisation';
 
   @override
   String get generateReport => 'Générer un rapport';
@@ -867,13 +880,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get day => 'jour';
 
   @override
+  String get monthSuffix => '';
+
+  @override
+  String get daySuffix => '';
+
+  @override
   String get newReport => 'Créer un nouveau rapport';
 
   @override
   String get deleteReport => 'Supprimer le rapport';
 
   @override
-  String get reportWillBeDeleted => 'Le rapport sera supprimé';
+  String reportWillBeDeleted(String period) {
+    return 'Voulez-vous vraiment supprimer le rapport $period ?\nLes rapports supprimés ne peuvent pas être régénérés.';
+  }
 
   @override
   String get generatingReport => 'Generating AI Report...';

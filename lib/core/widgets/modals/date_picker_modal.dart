@@ -8,6 +8,7 @@ import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
@@ -431,13 +432,18 @@ class _DatePickerModalState extends State<DatePickerModal> {
                 }
 
                 final message = l10n.dataSyncPeriodInfo(periodText);
-                // "최근 {기간} 데이터만..." 형태에서 기간 부분만 볼드 처리
-                // 메시지를 ". "로 분리하여 두 줄로 표시
-                final messageParts = message.split('. ');
+                final settingText = l10n.syncPeriodSetting;
+
+                // 메시지를 '\n'로 분리하여 두 줄로 표시
+                final messageParts = message.split('\n');
                 final firstLine = messageParts.isNotEmpty ? messageParts[0] : '';
                 final secondLine = messageParts.length > 1 ? messageParts[1] : '';
 
-                final parts = firstLine.split(periodText);
+                // 첫 번째 줄에서 기간 부분만 볼드 처리
+                final firstLineParts = firstLine.split(periodText);
+
+                // 두 번째 줄에서 "연동기간 설정" 부분을 클릭 가능하게 처리
+                final secondLineParts = secondLine.split(settingText);
 
                 return Align(
                   alignment: Alignment.centerLeft,
@@ -449,15 +455,58 @@ class _DatePickerModalState extends State<DatePickerModal> {
                         fontSize: 12,
                       ),
                       children: [
-                        if (parts.isNotEmpty) TextSpan(text: parts[0]),
+                        // 첫 번째 줄
+                        if (firstLineParts.isNotEmpty) TextSpan(text: firstLineParts[0]),
                         TextSpan(
                           text: periodText,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        if (parts.length > 1) TextSpan(text: parts[1]),
+                        if (firstLineParts.length > 1) TextSpan(text: firstLineParts[1]),
+
+                        // 두 번째 줄
                         if (secondLine.isNotEmpty) ...[
                           const TextSpan(text: '\n'),
-                          TextSpan(text: secondLine),
+                          if (secondLineParts.isNotEmpty) TextSpan(text: secondLineParts[0]),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.baseline,
+                            baseline: TextBaseline.alphabetic,
+                            child: GestureDetector(
+                              onTap: () {
+                                // 모달 닫기
+                                Navigator.of(context).pop();
+                                // 설정 화면의 애플 건강 섹션으로 이동
+                                AppRoutes.goToHealthConnect(context);
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    settingText,
+                                    style: TextStyle(
+                                      color: Theme.of(context).brightness == Brightness.dark
+                                          ? AppTheme.accentRedColorDarkMode
+                                          : AppTheme.primaryColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Theme.of(context).brightness == Brightness.dark
+                                          ? const Color(0xFFFF5252)
+                                          : AppTheme.primaryColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Icon(
+                                    CupertinoIcons.arrow_up_right_square,
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                        ? const Color(0xFFFF5252)
+                                        : AppTheme.primaryColor,
+                                    size: 13,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (secondLineParts.length > 1) TextSpan(text: secondLineParts[1]),
                         ],
                       ],
                     ),

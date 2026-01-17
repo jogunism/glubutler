@@ -743,7 +743,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncFailedMessage => 'Sync failed. Will retry on next app launch.';
 
   @override
-  String get deleteGlucoseConfirmation => '本当に削除しますか？\nこの操作は元に戻せません。';
+  String get deleteGlucose => '血糖記録を削除';
+
+  @override
+  String get deleteInsulin => 'インスリン記録を削除';
+
+  @override
+  String get deleteGlucoseConfirmation => 'この血糖記録を削除します。';
+
+  @override
+  String get deleteInsulinConfirmation => 'このインスリン記録を削除します。';
 
   @override
   String get glucoseDeleted => '血糖値を削除しました';
@@ -758,11 +767,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deleteDiary => '日記を削除';
 
   @override
-  String get deleteDiaryConfirmation => '削除しますか？\n元に戻すことはできません。';
+  String get deleteDiaryConfirmation => 'この日記を本当に削除しますか？';
 
   @override
   String get deleteDiaryWithMealConfirmation =>
-      'この日記を削除しますか？\nフィードに登録された食事情報も一緒に削除され、\n元に戻すことはできません。';
+      'この日記を本当に削除しますか？\nフィードに登録された食事情報も一緒に削除されます。';
 
   @override
   String get diaryDeleted => '削除されました';
@@ -801,8 +810,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String dataSyncPeriodInfo(String period) {
-    return '最近$periodのデータが表示されます。Apple Healthの設定で期間変更が可能です';
+    return '* 最近$periodのデータが表示されます。\n* 設定 > Apple Health > 連動期間設定で変更できます。';
   }
+
+  @override
+  String get syncPeriodSetting => '連動期間設定';
 
   @override
   String get generateReport => 'レポート生成';
@@ -839,13 +851,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get day => '日';
 
   @override
+  String get monthSuffix => '月';
+
+  @override
+  String get daySuffix => '日';
+
+  @override
   String get newReport => '新しいレポートを作成';
 
   @override
   String get deleteReport => 'レポートを削除';
 
   @override
-  String get reportWillBeDeleted => 'レポートが削除されます';
+  String reportWillBeDeleted(String period) {
+    return '$periodのレポートを本当に削除しますか？\n削除されたレポートは再生成できません。';
+  }
 
   @override
   String get generatingReport => 'AIレポート生成中...';

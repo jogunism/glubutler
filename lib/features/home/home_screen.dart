@@ -1031,12 +1031,15 @@ class _HomeScreenState extends State<HomeScreen>
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        CupertinoIcons.checkmark_circle_fill,
-                        size: 20,
-                        color: CupertinoColors.systemGreen,
+                      Text(
+                        '• ',
+                        style: context.textStyles.tileTitle.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1064,12 +1067,15 @@ class _HomeScreenState extends State<HomeScreen>
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        CupertinoIcons.checkmark_circle_fill,
-                        size: 20,
-                        color: CupertinoColors.systemGreen,
+                      Text(
+                        '• ',
+                        style: context.textStyles.tileTitle.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1087,6 +1093,20 @@ class _HomeScreenState extends State<HomeScreen>
                                 color: context.colors.textSecondary,
                               ),
                             ),
+                            const SizedBox(height: 12),
+                            // 권장 측정 횟수를 여기에 포함
+                            Text(
+                              l10n.scoreInfoRecommendation,
+                              style: context.textStyles.tileSubtitle.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildRecommendationItem(context, l10n.scoreInfoMorning),
+                            _buildRecommendationItem(context, l10n.scoreInfoLunch),
+                            _buildRecommendationItem(context, l10n.scoreInfoDinner),
+                            _buildRecommendationItem(context, l10n.scoreInfoBedtime),
                           ],
                         ),
                       ),
@@ -1097,12 +1117,15 @@ class _HomeScreenState extends State<HomeScreen>
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        CupertinoIcons.checkmark_circle_fill,
-                        size: 20,
-                        color: CupertinoColors.systemGreen,
+                      Text(
+                        '• ',
+                        style: context.textStyles.tileTitle.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1126,24 +1149,13 @@ class _HomeScreenState extends State<HomeScreen>
                     ],
                   ),
                   const SizedBox(height: 24),
-                  // 권장 측정 횟수
-                  Text(
-                    l10n.scoreInfoRecommendation,
-                    style: context.textStyles.tileTitle.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildRecommendationItem(context, l10n.scoreInfoMorning),
-                  _buildRecommendationItem(context, l10n.scoreInfoLunch),
-                  _buildRecommendationItem(context, l10n.scoreInfoDinner),
-                  _buildRecommendationItem(context, l10n.scoreInfoBedtime),
-                  const SizedBox(height: 24),
                   // 개인정보 안내
                   Text(
                     l10n.scoreInfoPrivacy,
                     style: context.textStyles.tileSubtitle.copyWith(
-                      color: AppTheme.primaryColor,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.accentRedColorDarkMode
+                          : AppTheme.primaryColor,
                     ),
                   ),
                 ],
