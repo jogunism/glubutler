@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:glu_butler/models/diary_item.dart';
+import 'package:glu_butler/models/report.dart';
+import 'package:glu_butler/models/report_guide_summary.dart';
 import 'package:glu_butler/services/database_service.dart';
 
 /// CloudKit 서비스
@@ -199,6 +201,178 @@ class CloudKitService {
       await _channel.invokeMethod('deleteAllCloudKitData');
     } on PlatformException catch (e) {
       throw Exception('Failed to delete CloudKit data: ${e.message}');
+    }
+  }
+
+  // MARK: - Report Sync
+
+  /// 단일 리포트를 iCloud로 업로드
+  ///
+  /// [report]: 업로드할 리포트
+  static Future<void> uploadReport(Report report) async {
+    try {
+      // Report를 Map으로 변환 (id를 String으로)
+      final reportData = {
+        'id': report.id.toString(),
+        'content': report.content,
+        'startDate': report.startDate.toIso8601String(),
+        'endDate': report.endDate.toIso8601String(),
+        'createdAt': report.createdAt.toIso8601String(),
+      };
+
+      await _channel.invokeMethod('saveReport', {'report': reportData});
+    } catch (e) {
+      throw Exception('Failed to upload report: $e');
+    }
+  }
+
+  /// iCloud에서 리포트 다운로드하여 로컬 DB에 저장
+  ///
+  /// Returns: 다운로드된 리포트 개수
+  static Future<int> downloadReports() async {
+    try {
+      final List<dynamic> reports = await _channel.invokeMethod('fetchReports');
+
+      if (reports.isEmpty) {
+        return 0;
+      }
+
+      int savedCount = 0;
+
+      for (final reportData in reports) {
+        try {
+          final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(reportData as Map);
+
+          // Parse dates
+          final startDate = DateTime.parse(jsonMap['startDate'] as String);
+          final endDate = DateTime.parse(jsonMap['endDate'] as String);
+          final createdAt = DateTime.parse(jsonMap['createdAt'] as String);
+
+          // id를 int로 파싱 (CloudKit에서는 String으로 저장했지만 로컬 DB는 auto-increment int)
+          final int? localId = int.tryParse(jsonMap['id'] as String);
+
+          final report = Report(
+            id: localId,
+            startDate: startDate,
+            endDate: endDate,
+            content: jsonMap['content'] as String,
+            createdAt: createdAt,
+          );
+
+          // 로컬 DB에 저장 (기존 데이터 확인 후 insert 또는 update)
+          if (localId != null) {
+            final existing = await _databaseService.reportDao.getReportById(localId);
+            if (existing == null) {
+              await _databaseService.reportDao.insertReport(report);
+            }
+            // 이미 있으면 스킵 (리포트는 수정되지 않으므로)
+          }
+
+          savedCount++;
+        } catch (e) {
+          // 하나 실패해도 계속 진행
+        }
+      }
+
+      return savedCount;
+    } catch (e) {
+      throw Exception('Failed to download reports: $e');
+    }
+  }
+
+  /// 리포트 삭제 (iCloud에서)
+  ///
+  /// [reportId]: 삭제할 리포트 ID
+  static Future<void> deleteReport(int reportId) async {
+    try {
+      await _channel.invokeMethod('deleteReport', {'reportId': reportId.toString()});
+    } on PlatformException catch (e) {
+      throw Exception('Failed to delete report from CloudKit: ${e.message}');
+    }
+  }
+
+  // MARK: - ReportGuideSummary Sync
+
+  /// 단일 리포트 가이드 요약을 iCloud로 업로드
+  ///
+  /// [summary]: 업로드할 가이드 요약
+  static Future<void> uploadReportGuideSummary(ReportGuideSummary summary) async {
+    try {
+      // ReportGuideSummary를 Map으로 변환
+      final summaryData = {
+        'id': summary.id.toString(),
+        'reportDate': summary.reportDate,
+        'improvements': summary.toMap()['improvements'], // JSON 문자열
+        'needsImprovement': summary.toMap()['needs_improvement'], // JSON 문자열
+        'createdAt': summary.createdAt.toIso8601String(),
+      };
+
+      await _channel.invokeMethod('saveReportGuideSummary', {'summary': summaryData});
+    } catch (e) {
+      throw Exception('Failed to upload report guide summary: $e');
+    }
+  }
+
+  /// iCloud에서 리포트 가이드 요약 다운로드하여 로컬 DB에 저장
+  ///
+  /// Returns: 다운로드된 가이드 요약 개수
+  static Future<int> downloadReportGuideSummaries() async {
+    try {
+      final List<dynamic> summaries = await _channel.invokeMethod('fetchReportGuideSummaries');
+
+      if (summaries.isEmpty) {
+        return 0;
+      }
+
+      int savedCount = 0;
+
+      for (final summaryData in summaries) {
+        try {
+          final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(summaryData as Map);
+
+          // Parse date
+          final createdAt = DateTime.parse(jsonMap['createdAt'] as String);
+
+          // id를 int로 파싱
+          final int? localId = int.tryParse(jsonMap['id'] as String);
+
+          final summary = ReportGuideSummary.fromMap({
+            'id': localId,
+            'report_date': jsonMap['reportDate'],
+            'improvements': jsonMap['improvements'], // JSON 문자열
+            'needs_improvement': jsonMap['needsImprovement'], // JSON 문자열
+            'created_at': createdAt.toIso8601String(),
+          });
+
+          // 로컬 DB에 저장 (기존 데이터 확인 후 insert)
+          if (localId != null) {
+            final existing = await _databaseService.reportDao.getGuideSummaryByDate(summary.reportDate);
+            if (existing == null) {
+              await _databaseService.reportDao.insertGuideSummary(summary);
+            }
+            // 이미 있으면 스킵
+          }
+
+          savedCount++;
+        } catch (e) {
+          // 하나 실패해도 계속 진행
+        }
+      }
+
+      return savedCount;
+    } catch (e) {
+      throw Exception('Failed to download report guide summaries: $e');
+    }
+  }
+
+  /// 리포트 가이드 요약 삭제 (iCloud에서)
+  ///
+  /// [summaryId]: 삭제할 가이드 요약 ID
+  static Future<void> deleteReportGuideSummary(int summaryId) async {
+    try {
+      await _channel.invokeMethod('deleteReportGuideSummary', {'summaryId': summaryId.toString()});
+    } on PlatformException catch (e) {
+      throw Exception('Failed to delete report guide summary from CloudKit: ${e.message}');
     }
   }
 }

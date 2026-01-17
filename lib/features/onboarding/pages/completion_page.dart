@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
@@ -29,6 +30,8 @@ class _CompletionPageState extends State<CompletionPage> {
 
   Future<void> _initializeProviders() async {
     try {
+      final settings = context.read<SettingsService>();
+
       // FeedProvider를 refresh하여 health connection 상태 업데이트
       if (mounted) {
         final feedProvider = context.read<FeedProvider>();
@@ -41,7 +44,26 @@ class _CompletionPageState extends State<CompletionPage> {
         await diaryProvider.syncFromICloud();
       }
 
-      // ReportProvider 초기화
+      // iCloud에서 리포트 다운로드 (iCloud 동기화가 활성화된 경우)
+      if (settings.iCloudSyncEnabled && mounted) {
+        try {
+          final isAvailable = await CloudKitService.isAvailable();
+          final isSignedIn = await CloudKitService.isUserSignedIn();
+
+          debugPrint('[CompletionPage] iCloud available: $isAvailable, signed in: $isSignedIn');
+
+          if (isAvailable && isSignedIn) {
+            final reportCount = await CloudKitService.downloadReports();
+            final summaryCount = await CloudKitService.downloadReportGuideSummaries();
+            debugPrint('[CompletionPage] Downloaded $reportCount reports, $summaryCount summaries from iCloud');
+          }
+        } catch (e) {
+          debugPrint('[CompletionPage] Failed to download reports from iCloud: $e');
+          // iCloud 동기화 실패해도 계속 진행
+        }
+      }
+
+      // ReportProvider 초기화 (로컬 DB에서 최신 리포트 로드)
       if (mounted) {
         final reportProvider = context.read<ReportProvider>();
         await reportProvider.initialize();

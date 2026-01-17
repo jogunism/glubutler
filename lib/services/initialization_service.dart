@@ -126,6 +126,10 @@ class InitializationService {
         if (isAvailable && isSignedIn) {
           // iCloud에서 최신 데이터 다운로드
           await CloudKitService.downloadDiaryEntries();
+
+          // 리포트 및 가이드 요약 다운로드
+          await CloudKitService.downloadReports();
+          await CloudKitService.downloadReportGuideSummaries();
         }
       } catch (e) {
         debugPrint('[InitializationService] iCloud sync error: $e');

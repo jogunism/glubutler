@@ -75,6 +75,40 @@ import CloudKit
       case "deleteAllCloudKitData":
         self.cloudKitBridge.deleteAllCloudKitData(result: result)
 
+      case "saveReport":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.saveReport(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "saveReportGuideSummary":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.saveReportGuideSummary(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "fetchReports":
+        self.cloudKitBridge.fetchReports(result: result)
+
+      case "fetchReportGuideSummaries":
+        self.cloudKitBridge.fetchReportGuideSummaries(result: result)
+
+      case "deleteReport":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.deleteReport(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "deleteReportGuideSummary":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.deleteReportGuideSummary(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
       default:
         result(FlutterMethodNotImplemented)
       }

@@ -8,6 +8,7 @@ import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/utils/report_parser.dart';
 
 /// Repository for report generation and management.
@@ -104,7 +105,19 @@ class ReportRepository {
         endDate: endDate,
         content: reportContent,
       );
-      await _databaseService.insertReport(report);
+      final reportId = await _databaseService.insertReport(report);
+      final savedReport = report.copyWith(id: reportId);
+
+      // iCloud에 업로드 (iCloud 동기화가 활성화된 경우)
+      if (_settingsService.iCloudSyncEnabled) {
+        try {
+          await CloudKitService.uploadReport(savedReport);
+          debugPrint('[ReportRepository] Report uploaded to iCloud');
+        } catch (e) {
+          debugPrint('[ReportRepository] Failed to upload report to iCloud: $e');
+          // iCloud 업로드 실패해도 로컬 저장은 성공했으므로 계속 진행
+        }
+      }
 
       // 리포트에서 가이드 요약 추출 및 저장
       try {
@@ -112,8 +125,19 @@ class ReportRepository {
         final guideSummary = ReportParser.extractGuideSummary(reportContent, reportDate);
 
         if (guideSummary != null) {
-          await _databaseService.insertGuideSummary(guideSummary);
+          final summaryId = await _databaseService.insertGuideSummary(guideSummary);
+          final savedSummary = guideSummary.copyWith(id: summaryId);
           debugPrint('[ReportRepository] Guide summary extracted and saved');
+
+          // iCloud에 업로드
+          if (_settingsService.iCloudSyncEnabled) {
+            try {
+              await CloudKitService.uploadReportGuideSummary(savedSummary);
+              debugPrint('[ReportRepository] Guide summary uploaded to iCloud');
+            } catch (e) {
+              debugPrint('[ReportRepository] Failed to upload guide summary to iCloud: $e');
+            }
+          }
         } else {
           debugPrint('[ReportRepository] No guide summary found in report');
         }
@@ -122,7 +146,7 @@ class ReportRepository {
         // 가이드 요약 저장 실패해도 리포트는 반환
       }
 
-      return report;
+      return savedReport;
     } catch (e) {
       debugPrint('[ReportRepository] API call failed: $e');
       rethrow;
@@ -150,6 +174,17 @@ class ReportRepository {
   Future<void> deleteReport(int id) async {
     await _databaseService.deleteReport(id);
     debugPrint('[ReportRepository] Report deleted: $id');
+
+    // iCloud에서도 삭제 (iCloud 동기화가 활성화된 경우)
+    if (_settingsService.iCloudSyncEnabled) {
+      try {
+        await CloudKitService.deleteReport(id);
+        debugPrint('[ReportRepository] Report deleted from iCloud');
+      } catch (e) {
+        debugPrint('[ReportRepository] Failed to delete report from iCloud: $e');
+        // iCloud 삭제 실패해도 로컬 삭제는 성공했으므로 무시
+      }
+    }
   }
 
   /// Clean up resources

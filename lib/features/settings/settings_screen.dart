@@ -16,6 +16,8 @@ import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
+import 'package:glu_butler/providers/report_provider.dart';
 
 /// 앱 설정 화면
 ///
@@ -75,6 +77,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
+    // Provider들을 미리 가져오기 (async gap 전)
+    final settings = context.read<SettingsService>();
+    final feedProvider = context.read<FeedProvider>();
+    final diaryProvider = context.read<DiaryProvider>();
+    final reportProvider = context.read<ReportProvider>();
+
     setState(() {
       _isTogglingSync = true;
     });
@@ -112,9 +120,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return;
       }
 
-      final settings = context.read<SettingsService>();
-
       if (value) {
+
         // Enable iCloud sync: Get CloudKit ID and save it
         final cloudKitId = await CloudKitService.getUserRecordID();
         await settings.updateCloudKitId(cloudKitId);
@@ -122,7 +129,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // 동기화 실행: 로컬 → iCloud 업로드, iCloud → 로컬 다운로드
         debugPrint('[SettingsScreen] Starting initial iCloud sync...');
         final (uploaded, downloaded) = await CloudKitService.syncDiaryEntries();
-        debugPrint('[SettingsScreen] Sync complete: $uploaded uploaded, $downloaded downloaded');
+        debugPrint('[SettingsScreen] Diary sync complete: $uploaded uploaded, $downloaded downloaded');
+
+        // 리포트 및 가이드 요약 다운로드
+        final reportCount = await CloudKitService.downloadReports();
+        final summaryCount = await CloudKitService.downloadReportGuideSummaries();
+        debugPrint('[SettingsScreen] Report sync complete: $reportCount reports, $summaryCount summaries downloaded');
+
+        // 모든 Provider 리프레시
+        if (mounted) {
+          debugPrint('[SettingsScreen] Refreshing all providers...');
+          await feedProvider.refreshData();
+          await diaryProvider.refreshData();
+          await reportProvider.loadLatestReport();
+          debugPrint('[SettingsScreen] All providers refreshed');
+        }
       }
 
       await settings.setICloudSync(value);
