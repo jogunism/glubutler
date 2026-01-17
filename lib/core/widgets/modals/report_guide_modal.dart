@@ -71,28 +71,6 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
     Navigator.of(context).pop(false);
   }
 
-  Widget _buildCloseButton(AppLocalizations l10n) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        color: AppTheme.primaryColor,
-        borderRadius: BorderRadius.circular(12),
-        onPressed: _onClose,
-        child: Text(
-          l10n.close,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            decoration: TextDecoration.none,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildConfirmSection(AppLocalizations l10n, BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -277,14 +255,41 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
           // 타이틀
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-            child: Text(
-              l10n.reportGuideTitle,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: context.colors.textPrimary,
-                decoration: TextDecoration.none,
-              ),
+            child: Stack(
+              children: [
+                // 닫기 버튼 (info 모드일 때만, 왼쪽 상단)
+                if (widget.infoMode)
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: _onClose,
+                      child: Text(
+                        l10n.close,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.textSecondary,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                // 타이틀 (중앙 정렬)
+                Center(
+                  child: Text(
+                    l10n.reportGuideTitle,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: context.colors.textPrimary,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -296,22 +301,21 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
             ),
           ),
 
-          // 하단 고정 영역 (체크박스 + 확인 버튼 또는 닫기 버튼)
-          Container(
-            padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomPadding),
-            decoration: BoxDecoration(
-              color: context.colors.background,
-              border: Border(
-                top: BorderSide(
-                  color: context.colors.divider,
-                  width: 0.5,
+          // 하단 고정 영역 (체크박스 + 확인 버튼, info 모드일 때는 표시 안 함)
+          if (!widget.infoMode)
+            Container(
+              padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomPadding),
+              decoration: BoxDecoration(
+                color: context.colors.background,
+                border: Border(
+                  top: BorderSide(
+                    color: context.colors.divider,
+                    width: 0.5,
+                  ),
                 ),
               ),
+              child: _buildConfirmSection(l10n, context),
             ),
-            child: widget.infoMode
-                ? _buildCloseButton(l10n)
-                : _buildConfirmSection(l10n, context),
-          ),
         ],
       ),
     );
