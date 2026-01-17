@@ -146,7 +146,7 @@ class DiaryScreenState extends State<DiaryScreen> {
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 80),
+                padding: const EdgeInsets.only(bottom: 155),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +159,12 @@ class DiaryScreenState extends State<DiaryScreen> {
                       const SizedBox(height: 16),
                       Text(l10n.noRecords, style: theme.textTheme.titleLarge),
                       const SizedBox(height: 8),
-                      Text(l10n.startTracking, style: theme.textTheme.bodyMedium),
+                      Text(
+                        l10n.startTracking,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -172,7 +177,9 @@ class DiaryScreenState extends State<DiaryScreen> {
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final entry = diaryProvider.entries[index];
                   return _DiaryItemCard(
-                    key: ValueKey('${entry.id}_${diaryProvider.refreshTimestamp}'),
+                    key: ValueKey(
+                      '${entry.id}_${diaryProvider.refreshTimestamp}',
+                    ),
                     entry: entry,
                     onEdit: () => _editEntry(entry),
                     onDelete: () => _deleteEntry(entry),
@@ -226,10 +233,7 @@ class _DiaryImageWidget extends StatelessWidget {
               color: context.colors.divider,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(
-              Icons.broken_image,
-              color: context.colors.iconGrey,
-            ),
+            child: Icon(Icons.broken_image, color: context.colors.iconGrey),
           );
         }
 
@@ -248,10 +252,7 @@ class _DiaryImageWidget extends StatelessWidget {
                   color: context.colors.divider,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Icon(
-                  Icons.broken_image,
-                  color: context.colors.iconGrey,
-                ),
+                child: Icon(Icons.broken_image, color: context.colors.iconGrey),
               );
             },
           ),

@@ -363,7 +363,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noRecords => 'No records yet';
 
   @override
-  String get noReportYet => 'No report yet.';
+  String get noReportTitle => 'No report available';
+
+  @override
+  String get noReportYet => 'Generate your glucose report!';
 
   @override
   String get startTracking => 'Start tracking your health!';

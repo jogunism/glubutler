@@ -806,10 +806,16 @@ abstract class AppLocalizations {
   /// **'No records yet'**
   String get noRecords;
 
+  /// No description provided for @noReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No report available'**
+  String get noReportTitle;
+
   /// No description provided for @noReportYet.
   ///
   /// In en, this message translates to:
-  /// **'No report yet.'**
+  /// **'Generate your glucose report!'**
   String get noReportYet;
 
   /// No description provided for @startTracking.

@@ -113,6 +113,7 @@
   "goToSettings": "前往设置",
 
   "noRecords": "暂无记录",
+  "noReportTitle": "暂无报告",
   "startTracking": "开始记录您的健康！",
   "feedEmptyHint": "连接健康 App 查看更多信息",
 
@@ -137,7 +138,7 @@
   "currentPlan": "当前方案",
   "freePlan": "免费版",
   "proPlan": "Pro",
-  "noReportYet": "暂无报告",
+  "noReportYet": "生成您的血糖报告！",
 
   "home": "今天",
   "yourToday": "你的今天",

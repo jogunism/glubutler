@@ -113,6 +113,7 @@
   "goToSettings": "Zu Einstellungen",
 
   "noRecords": "Keine Einträge vorhanden",
+  "noReportTitle": "Kein Bericht verfügbar",
   "startTracking": "Beginnen Sie mit der Gesundheitsüberwachung!",
   "feedEmptyHint": "Verbinden Sie Apple Health für mehr Einblicke",
 
@@ -137,7 +138,7 @@
   "currentPlan": "Aktueller Plan",
   "freePlan": "Kostenlos",
   "proPlan": "Pro",
-  "noReportYet": "Noch kein Bericht.",
+  "noReportYet": "Erstellen Sie Ihren Glukosebericht!",
 
   "home": "Heute",
   "yourToday": "Dein Heute",

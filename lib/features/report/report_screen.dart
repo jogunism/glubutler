@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
+import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/water_drop_loading.dart';
@@ -232,13 +233,15 @@ class _ReportScreenState extends State<ReportScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              l10n.report,
+                              l10n.noReportTitle,
                               style: theme.textTheme.titleLarge,
                             ),
                             const SizedBox(height: 8),
                             Text(
                               l10n.noReportYet,
-                              style: theme.textTheme.bodyMedium,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
                             ),
                             const SizedBox(height: 32),
                             // 레포트 생성 버튼

@@ -137,7 +137,8 @@
   "goToSettings": "Go to Settings",
 
   "noRecords": "No records yet",
-  "noReportYet": "No report yet.",
+  "noReportTitle": "No report available",
+  "noReportYet": "Generate your glucose report!",
   "startTracking": "Start tracking your health!",
   "feedEmptyHint": "Connect Apple Health to see more insights",
 

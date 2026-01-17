@@ -137,7 +137,8 @@
   "goToSettings": "설정으로 이동",
 
   "noRecords": "기록이 없습니다",
-  "noReportYet": "리포트가 없습니다",
+  "noReportTitle": "리포트가 없습니다",
+  "noReportYet": "당신의 혈당 리포트를 생성하세요!",
   "startTracking": "건강 기록을 시작하세요!",
   "feedEmptyHint": "건강 앱을 연동해 더 많은 정보를 확인하세요",
 

@@ -362,7 +362,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get noRecords => '暂无记录';
 
   @override
-  String get noReportYet => '暂无报告';
+  String get noReportTitle => '暂无报告';
+
+  @override
+  String get noReportYet => '生成您的血糖报告！';
 
   @override
   String get startTracking => '开始记录您的健康！';

@@ -117,7 +117,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   Widget _buildEmptyState(ThemeData theme, AppLocalizations l10n) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 80),
+      padding: const EdgeInsets.only(bottom: 155),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -341,7 +341,8 @@ class _FeedScreenState extends State<FeedScreen> {
     required double waterLiters,
     required bool hasMenstruation,
   }) {
-    final RenderBox? renderBox = iconKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox =
+        iconKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
     final position = renderBox.localToGlobal(Offset.zero);

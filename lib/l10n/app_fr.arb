@@ -113,6 +113,7 @@
   "goToSettings": "Aller aux Réglages",
 
   "noRecords": "Aucun enregistrement",
+  "noReportTitle": "Aucun rapport",
   "startTracking": "Commencez à suivre votre santé !",
   "feedEmptyHint": "Connectez Apple Santé pour plus d'informations",
 
@@ -137,7 +138,7 @@
   "currentPlan": "Plan actuel",
   "freePlan": "Gratuit",
   "proPlan": "Pro",
-  "noReportYet": "Pas encore de rapport.",
+  "noReportYet": "Générez votre rapport de glycémie !",
 
   "home": "Aujourd'hui",
   "yourToday": "Votre Aujourd'hui",

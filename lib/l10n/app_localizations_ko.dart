@@ -360,7 +360,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get noRecords => '기록이 없습니다';
 
   @override
-  String get noReportYet => '리포트가 없습니다';
+  String get noReportTitle => '리포트가 없습니다';
+
+  @override
+  String get noReportYet => '당신의 혈당 리포트를 생성하세요!';
 
   @override
   String get startTracking => '건강 기록을 시작하세요!';

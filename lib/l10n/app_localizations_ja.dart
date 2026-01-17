@@ -362,7 +362,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noRecords => '記録がありません';
 
   @override
-  String get noReportYet => 'レポートがありません';
+  String get noReportTitle => 'レポートがありません';
+
+  @override
+  String get noReportYet => '血糖レポートを生成しましょう！';
 
   @override
   String get startTracking => '健康記録を始めましょう！';
