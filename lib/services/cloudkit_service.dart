@@ -299,6 +299,17 @@ class CloudKitService {
     }
   }
 
+  /// 모든 리포트 삭제 (iCloud에서, 개발용)
+  ///
+  /// ⚠️ 주의: 이 메서드는 CloudKit Private Database의 모든 Report 레코드를 삭제합니다.
+  static Future<void> deleteAllReports() async {
+    try {
+      await _channel.invokeMethod('deleteAllReports');
+    } on PlatformException catch (e) {
+      throw Exception('Failed to delete all reports from CloudKit: ${e.message}');
+    }
+  }
+
   // MARK: - ReportGuideSummary Sync
 
   /// 단일 리포트 가이드 요약을 iCloud로 업로드

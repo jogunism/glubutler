@@ -194,6 +194,32 @@ class ReportRepository {
     }
   }
 
+  /// Delete all reports from database (개발용)
+  ///
+  /// ⚠️ Hard delete - DB에서 완전히 삭제하고 iCloud에서도 삭제
+  Future<int> deleteAllReports() async {
+    // 로컬 DB에서 hard delete
+    final deletedCount = await _databaseService.deleteAllReports();
+    debugPrint('[ReportRepository] All reports hard deleted from DB: $deletedCount');
+
+    // iCloud에서도 모두 삭제 (iCloud 동기화가 활성화된 경우)
+    if (_settingsService.iCloudSyncEnabled) {
+      try {
+        await CloudKitService.deleteAllReports();
+        debugPrint('[ReportRepository] All reports deleted from iCloud');
+      } catch (e) {
+        debugPrint('[ReportRepository] Failed to delete all reports from iCloud: $e');
+        // iCloud 삭제 실패해도 로컬 삭제는 성공했으므로 무시
+      }
+    }
+
+    // 가이드 요약도 모두 삭제
+    final deletedSummaries = await _databaseService.reportDao.deleteAllGuideSummaries();
+    debugPrint('[ReportRepository] All guide summaries deleted: $deletedSummaries');
+
+    return deletedCount;
+  }
+
   /// Clean up resources
   void dispose() {
     _reportApi.dispose();

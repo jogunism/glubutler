@@ -102,6 +102,9 @@ import CloudKit
           result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
         }
 
+      case "deleteAllReports":
+        self.cloudKitBridge.deleteAllReports(result: result)
+
       case "deleteReportGuideSummary":
         if let args = call.arguments as? [String: Any] {
           self.cloudKitBridge.deleteReportGuideSummary(arguments: args, result: result)

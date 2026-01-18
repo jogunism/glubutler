@@ -972,6 +972,91 @@ class CloudKitBridge {
     }
   }
 
+  // MARK: - Delete All Reports (Hard Delete, Development Only)
+
+  func deleteAllReports(result: @escaping FlutterResult) {
+    let group = DispatchGroup()
+    var errors: [Error] = []
+
+    // Delete all Report records
+    group.enter()
+    let reportPredicate = NSPredicate(format: "id != %@", "")
+    let reportQuery = CKQuery(recordType: CloudKitBridge.ReportRecordType, predicate: reportPredicate)
+
+    privateDatabase.perform(reportQuery, inZoneWith: nil) { records, error in
+      if let error = error {
+        errors.append(error)
+        group.leave()
+        return
+      }
+
+      guard let records = records, !records.isEmpty else {
+        group.leave()
+        return
+      }
+
+      let recordIDs = records.map { $0.recordID }
+      let deleteOperation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: recordIDs)
+
+      deleteOperation.modifyRecordsResultBlock = { result in
+        switch result {
+        case .success:
+          break
+        case .failure(let error):
+          errors.append(error)
+        }
+        group.leave()
+      }
+
+      self.privateDatabase.add(deleteOperation)
+    }
+
+    // Delete all ReportGuideSummary records
+    group.enter()
+    let summaryPredicate = NSPredicate(format: "id != %@", "")
+    let summaryQuery = CKQuery(recordType: CloudKitBridge.ReportGuideSummaryRecordType, predicate: summaryPredicate)
+
+    privateDatabase.perform(summaryQuery, inZoneWith: nil) { records, error in
+      if let error = error {
+        errors.append(error)
+        group.leave()
+        return
+      }
+
+      guard let records = records, !records.isEmpty else {
+        group.leave()
+        return
+      }
+
+      let recordIDs = records.map { $0.recordID }
+      let deleteOperation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: recordIDs)
+
+      deleteOperation.modifyRecordsResultBlock = { result in
+        switch result {
+        case .success:
+          break
+        case .failure(let error):
+          errors.append(error)
+        }
+        group.leave()
+      }
+
+      self.privateDatabase.add(deleteOperation)
+    }
+
+    group.notify(queue: .main) {
+      if errors.isEmpty {
+        result(true)
+      } else {
+        result(FlutterError(
+          code: "DELETE_FAILED",
+          message: "Failed to delete all reports",
+          details: errors.map { $0.localizedDescription }.joined(separator: ", ")
+        ))
+      }
+    }
+  }
+
   // MARK: - Delete ReportGuideSummary
 
   func deleteReportGuideSummary(arguments: [String: Any], result: @escaping FlutterResult) {

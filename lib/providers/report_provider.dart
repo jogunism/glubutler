@@ -269,6 +269,27 @@ class ReportProvider extends ChangeNotifier {
   /// Check if currently viewing the latest report
   bool get isViewingLatest => _selectedReport == null || _selectedReport?.id == _latestReport?.id;
 
+  /// Delete all reports (개발용)
+  ///
+  /// ⚠️ Hard delete - DB와 iCloud에서 완전히 삭제
+  Future<int> deleteAllReports() async {
+    try {
+      final deletedCount = await _reportRepository.deleteAllReports();
+
+      // 현재 선택된 리포트와 최신 리포트 초기화
+      _selectedReport = null;
+      _latestReport = null;
+      notifyListeners();
+
+      return deletedCount;
+    } catch (e) {
+      _error = 'Failed to delete all reports: $e';
+      debugPrint('[ReportProvider] Error deleting all reports: $e');
+      notifyListeners();
+      return 0;
+    }
+  }
+
   /// Clear error message
   void clearError() {
     _error = null;

@@ -18,7 +18,6 @@ import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
-import 'package:glu_butler/services/database_service.dart';
 
 /// 리포트 화면
 ///
@@ -105,19 +104,14 @@ class _ReportScreenState extends State<ReportScreen> {
 
     if (confirmed != true || !mounted) return;
 
-    debugPrint('[ReportScreen] Hard deleting all reports from DB...');
+    debugPrint('[ReportScreen] Hard deleting all reports from DB and iCloud...');
 
-    final databaseService = DatabaseService();
+    final reportProvider = context.read<ReportProvider>();
 
-    // DB에서 완전히 삭제 (hard delete)
-    final deletedCount = await databaseService.deleteAllReports();
+    // DB와 iCloud에서 완전히 삭제 (hard delete)
+    final deletedCount = await reportProvider.deleteAllReports();
 
-    debugPrint('[ReportScreen] Successfully hard deleted $deletedCount reports');
-
-    if (mounted) {
-      // 리포트 목록 갱신
-      context.read<ReportProvider>().loadLatestReport();
-    }
+    debugPrint('[ReportScreen] Successfully hard deleted $deletedCount reports from DB and iCloud');
   }
 
   Widget _buildTitleTrailingButtons() {
