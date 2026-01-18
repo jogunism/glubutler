@@ -40,7 +40,8 @@
       "Bash(find:*)",
       "Bash(git mv:*)",
       "Bash(tree:*)",
-      "Bash(/Users/hyunwoo/flutter/bin/flutter gen-l10n:*)"
+      "Bash(/Users/hyunwoo/flutter/bin/flutter gen-l10n:*)",
+      "Bash(pod deintegrate:*)"
     ]
   }
 }
