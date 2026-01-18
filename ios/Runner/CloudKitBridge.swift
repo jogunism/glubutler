@@ -147,24 +147,29 @@ class CloudKitBridge {
           return
         }
 
-        // Save files if any
-        if let files = entryData["files"] as? [[String: Any]], !files.isEmpty {
-          self.saveDiaryFiles(files: files, diaryId: id) { success, error in
-            DispatchQueue.main.async {
-              if let error = error {
-                result(FlutterError(
-                  code: "SAVE_FILES_FAILED",
-                  message: "Diary saved but files failed",
-                  details: error.localizedDescription
-                ))
-              } else {
-                result(true)
+        // 기존 파일들을 먼저 삭제 (업데이트 시 이전 이미지 제거)
+        self.deleteDiaryFiles(diaryId: id) { filesDeleted, deleteError in
+          // 파일 삭제 실패해도 계속 진행 (새 파일 저장)
+
+          // Save files if any
+          if let files = entryData["files"] as? [[String: Any]], !files.isEmpty {
+            self.saveDiaryFiles(files: files, diaryId: id) { success, error in
+              DispatchQueue.main.async {
+                if let error = error {
+                  result(FlutterError(
+                    code: "SAVE_FILES_FAILED",
+                    message: "Diary saved but files failed",
+                    details: error.localizedDescription
+                  ))
+                } else {
+                  result(true)
+                }
               }
             }
-          }
-        } else {
-          DispatchQueue.main.async {
-            result(true)
+          } else {
+            DispatchQueue.main.async {
+              result(true)
+            }
           }
         }
       }
