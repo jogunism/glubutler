@@ -55,7 +55,7 @@ class ReportApiService {
     }
 
     final jwt = JWT({
-      'userIdentity': userIdentity.toJson(),
+      'cloudKitId': userIdentity.cloudKitId ?? '',
       'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
       'exp':
           DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/
@@ -103,7 +103,7 @@ class ReportApiService {
       // debugPrint('[ReportApiService] Simplified diary data count: ${simplifiedDiaryData.length}');
       try {
         formData.fields.addAll([
-          MapEntry('userIdentity', _encodeJson(userIdentity.toJson())),
+          MapEntry('cloudKitId', userIdentity.cloudKitId ?? ''),
           MapEntry('userProfile', _encodeJson(userProfile.toJson())),
           MapEntry('target', glucoseRange.target.toString()),
           MapEntry('lang', language),

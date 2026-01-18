@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,7 @@ import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
+import 'package:glu_butler/services/database_service.dart';
 
 /// 리포트 화면
 ///
@@ -76,6 +78,87 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _showInfoModal() async {
     await ReportGuideModal.show(context, infoMode: true);
+  }
+
+  Future<void> _deleteAllReports() async {
+    if (!mounted) return;
+
+    // 삭제 확인 다이얼로그
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: const Text('모두삭제'),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('취소'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    debugPrint('[ReportScreen] Hard deleting all reports from DB...');
+
+    final databaseService = DatabaseService();
+
+    // DB에서 완전히 삭제 (hard delete)
+    final deletedCount = await databaseService.deleteAllReports();
+
+    debugPrint('[ReportScreen] Successfully hard deleted $deletedCount reports');
+
+    if (mounted) {
+      // 리포트 목록 갱신
+      context.read<ReportProvider>().loadLatestReport();
+    }
+  }
+
+  Widget _buildTitleTrailingButtons() {
+    final isDevMode = dotenv.env['APP_ENV'] == 'development';
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Development mode: 삭제 버튼
+        if (isDevMode)
+          CupertinoButton(
+            padding: const EdgeInsets.only(
+              bottom: 10,
+              left: 0,
+              right: 8,
+            ),
+            minimumSize: Size.zero,
+            onPressed: _deleteAllReports,
+            child: const Icon(
+              CupertinoIcons.trash,
+              size: 22,
+              color: Colors.red,
+            ),
+          ),
+        // 정보 버튼
+        CupertinoButton(
+          padding: EdgeInsets.only(
+            bottom: 10,
+            left: isDevMode ? 0 : 44,
+            right: 0,
+          ),
+          minimumSize: Size.zero,
+          onPressed: _showInfoModal,
+          child: const Icon(
+            CupertinoIcons.info_circle,
+            size: 24,
+            color: AppTheme.primaryColor,
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _generateReport() async {
@@ -195,20 +278,7 @@ class _ReportScreenState extends State<ReportScreen> {
             LargeTitleScrollView(
               title: l10n.report,
               titleTrailing: _showInfoIcon
-                  ? CupertinoButton(
-                      padding: const EdgeInsets.only(
-                        bottom: 10,
-                        left: 44,
-                        right: 0,
-                      ),
-                      minimumSize: Size.zero,
-                      onPressed: _showInfoModal,
-                      child: const Icon(
-                        CupertinoIcons.info_circle,
-                        size: 24,
-                        color: AppTheme.primaryColor,
-                      ),
-                    )
+                  ? _buildTitleTrailingButtons()
                   : null,
               trailing: const SettingsIconButton(),
               // 레포트가 없을 때는 스크롤로 탭바 숨김 비활성화

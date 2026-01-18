@@ -7,7 +7,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/initialization_service.dart';
-import 'package:glu_butler/features/onboarding/onboarding_screen.dart' show kDevMode;
+import 'package:glu_butler/features/onboarding/onboarding_screen.dart' show kShowOnboarding;
 
 /// 스플래시/로딩 화면
 ///
@@ -155,13 +155,13 @@ class _SplashScreenState extends State<SplashScreen>
     if (mounted) {
       final settingsService = context.read<SettingsService>();
 
-      // Development mode: always show onboarding
-      if (kDevMode) {
+      // SHOW_ONBOARDING=true: always show onboarding
+      if (kShowOnboarding) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
         return;
       }
 
-      // Production mode: check if onboarding is completed
+      // Normal mode: check if onboarding is completed
       if (settingsService.hasCompletedOnboarding) {
         AppRoutes.goToMain(context);
       } else {
@@ -174,8 +174,8 @@ class _SplashScreenState extends State<SplashScreen>
     final l10n = AppLocalizations.of(context)!;
     final settingsService = context.read<SettingsService>();
 
-    // 첫 사용자인 경우 (또는 개발 모드) 항상 동일한 메시지 표시 (완료 메시지 제외)
-    if (!settingsService.hasCompletedOnboarding || kDevMode) {
+    // 첫 사용자인 경우 (또는 온보딩 표시 모드) 항상 동일한 메시지 표시 (완료 메시지 제외)
+    if (!settingsService.hasCompletedOnboarding || kShowOnboarding) {
       return l10n.initFirstTime;
     }
 

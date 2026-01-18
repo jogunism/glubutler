@@ -864,7 +864,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• 血糖値は生活全般の影響を受けます。そのため、レポート生成には健康に関する詳細なデータが必要です。\n\n• すべての基本情報はApple Healthアプリのデータを基にしています。\n\n• Apple Healthアプリに記録された基本情報、運動記録、生活パターンなどを参照し、Glu Butlerまたは他社アプリの血糖記録に基づいて、現在の状態を追跡します。\n\n• 蓄積されたデータが多いほど、そのデータが詳細であるほど、より多くの要素を考慮でき、レポートもより詳細に作成できます。\n\n• したがって、少なくとも3日以上の活動データと血糖データがある状態でレポートを生成することをお勧めします。\n（1日単位のレポート生成はサポートしていません）\n\n• 初めてレポートを生成する場合、今日から1週間前の日付からレポートを生成できます。\n\n• 既にレポートが作成されている日付には、再度レポートを作成できません。\n\n※ レポート作成に使用されたユーザーの個人情報は、他の場所に保存されることは一切ありません。レポート作成のためだけに使用され、使用後は直ちに破棄されます。';
+      '• 血糖値は生活全般の影響を受けます。そのため、レポート作成には健康に関する詳細なデータが必要です。\n\n• すべての基本情報はApple Healthアプリのデータを基にしています。\n\n• Apple Healthアプリに記録された基本情報、運動記録、生活パターンなどを参照し、Glu Butlerまたは他社アプリの血糖記録に基づいて、現在の状態を追跡します。\n\n• 蓄積されたデータが多いほど、そのデータが詳細であるほど、より多くの要素を考慮でき、レポートもより詳細に作成できます。\n\n• したがって、少なくとも3日以上の活動データと血糖データがある状態でレポートを作成することをお勧めします。\n（1日単位のレポート作成はサポートしていません）\n\n• 初めてレポートを作成する場合、今日から1週間前の日付からレポートを作成できます。\n\n• 既にレポートが作成されている日付には、再度レポートを作成できません。\n\n※ レポート作成に使用されたユーザーの個人情報は、他の場所に保存されることは一切ありません。レポート作成のためだけに使用され、使用後は直ちに破棄されます。';
 
   @override
   String get doNotShowAgain => '今後表示しない';
@@ -1057,6 +1057,30 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get onboardingNotificationEnable => '通知を有効にする';
+
+  @override
+  String get notificationGlucoseReminderTitle => '血糖値を確認して記録しましょう';
+
+  @override
+  String get notificationGlucoseReminderBody => '食前血糖値を測定してください';
+
+  @override
+  String get notificationGlucoseAbsenceTitle => '血糖値測定を忘れずに';
+
+  @override
+  String get notificationGlucoseAbsenceBody => '継続的な記録が血糖管理の第一歩です';
+
+  @override
+  String get notificationDiaryReminderTitle => '食事内容を記録しましょう';
+
+  @override
+  String get notificationDiaryReminderBody => '食生活パターンを把握できます';
+
+  @override
+  String get notificationReportReminderTitle => '健康レポートを作成しましょう';
+
+  @override
+  String get notificationReportReminderBody => '血糖レポートを確認してください';
 
   @override
   String get onboardingSubscriptionTitle => '最初の1週間すべての機能をお試しください';

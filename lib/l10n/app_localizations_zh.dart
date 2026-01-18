@@ -863,7 +863,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• 血糖受生活各方面的影响。因此，生成报告需要与健康相关的详细数据。\n\n• 所有基本信息都基于Apple健康应用的数据。\n\n• 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。\n\n• 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。\n\n• 因此，建议在至少有3天或更多的活动数据和血糖数据时生成报告。\n（不支持单日报告生成）\n\n• 首次生成报告时，可以从今天起一周前的日期开始生成报告。\n\n• 已生成报告的日期无法再次生成报告。\n\n※ 用于报告生成的个人信息绝不会存储在其他地方。仅用于报告生成，使用后立即销毁。';
+      '• 血糖受生活各方面的影响。因此，创建报告需要与健康相关的详细数据。\n\n• 所有基本信息都基于Apple健康应用的数据。\n\n• 我们参考Apple健康应用中记录的基本信息、运动记录、生活模式等，并基于Glu Butler或其他应用的血糖记录来追踪您的当前状态。\n\n• 积累的数据越多、越详细，可以考虑的因素就越多，报告也会更加详细。\n\n• 因此，建议在至少有3天或更多的活动数据和血糖数据时创建报告。\n（不支持单日报告创建）\n\n• 首次创建报告时，可以从今天起一周前的日期开始创建报告。\n\n• 已创建报告的日期无法再次创建报告。\n\n※ 用于报告创建的个人信息绝不会存储在其他地方。仅用于报告创建，使用后立即销毁。';
 
   @override
   String get doNotShowAgain => '不再显示';
@@ -1056,6 +1056,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingNotificationEnable => '启用通知';
+
+  @override
+  String get notificationGlucoseReminderTitle => '检查并记录血糖';
+
+  @override
+  String get notificationGlucoseReminderBody => '请测量餐前血糖';
+
+  @override
+  String get notificationGlucoseAbsenceTitle => '别忘了测量血糖';
+
+  @override
+  String get notificationGlucoseAbsenceBody => '坚持记录是血糖管理的第一步';
+
+  @override
+  String get notificationDiaryReminderTitle => '记录您的饮食';
+
+  @override
+  String get notificationDiaryReminderBody => '追踪您的饮食习惯';
+
+  @override
+  String get notificationReportReminderTitle => '创建健康报告';
+
+  @override
+  String get notificationReportReminderBody => '生成血糖报告';
 
   @override
   String get onboardingSubscriptionTitle => '前一周试用所有功能';

@@ -13,9 +13,10 @@ import 'package:glu_butler/features/onboarding/pages/notification_page.dart';
 import 'package:glu_butler/features/onboarding/pages/subscription_page.dart';
 import 'package:glu_butler/features/onboarding/pages/completion_page.dart';
 
-/// Development mode settings
-/// Read from .env file: APP_ENV=dev for development, APP_ENV=prod for production
-bool get kDevMode => dotenv.env['APP_ENV'] == 'dev';
+/// Show onboarding mode
+/// Read from .env file: SHOW_ONBOARDING=true to always show onboarding with swipe enabled
+/// If not set or false, onboarding is shown only once and swipe is disabled
+bool get kShowOnboarding => dotenv.env['SHOW_ONBOARDING'] == 'true';
 
 /// Main onboarding screen with PageView
 class OnboardingScreen extends StatefulWidget {
@@ -81,9 +82,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 bottom: false, // Don't apply SafeArea to bottom
                 child: PageView(
                 controller: _pageController,
-                physics: kDevMode
+                physics: kShowOnboarding
                     ? null
-                    : const NeverScrollableScrollPhysics(), // Enable swipe in dev mode
+                    : const NeverScrollableScrollPhysics(), // Enable swipe when SHOW_ONBOARDING=true
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;

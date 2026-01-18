@@ -73,26 +73,60 @@ class SettingsService extends ChangeNotifier {
   }
 
   Future<void> _loadSettings() async {
+    // 현재 시스템/앱별 언어 감지 (platformDispatcher.locale은 앱별 언어 우선 반영)
+    final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    final systemLanguage = systemLocale.languageCode;
+
     // 저장된 언어 확인
     final savedLanguage = _prefs.getString(AppConstants.keyLanguage);
 
-    if (savedLanguage == null) {
-      // 저장된 언어가 없으면 시스템 언어 감지
-      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-      final systemLanguage = systemLocale.languageCode;
+    // 1단계: iCloud에서 언어 가져오기 시도 (다른 기기에서 복원 시)
+    String? iCloudLanguage;
+    try {
+      iCloudLanguage = await CloudKitService.fetchLanguage();
+      if (iCloudLanguage != null && iCloudLanguage.isNotEmpty) {
+        debugPrint('[SettingsService] Language fetched from iCloud: $iCloudLanguage');
+      }
+    } catch (e) {
+      debugPrint('[SettingsService] Failed to fetch language from iCloud: $e');
+    }
 
-      // 지원하는 언어인지 확인
+    // 2단계: 언어 우선순위 결정
+    // - iCloud 언어가 있으면 사용 (다른 기기에서 동기화된 설정)
+    // - 없으면 저장된 언어와 시스템 언어 비교
+    if (iCloudLanguage != null &&
+        iCloudLanguage.isNotEmpty &&
+        AppConstants.supportedLanguages.contains(iCloudLanguage)) {
+      // iCloud에서 가져온 언어 사용 (복원 시나리오)
+      _language = iCloudLanguage;
+
+      // 로컬에도 저장
+      if (savedLanguage != iCloudLanguage) {
+        await _prefs.setString(AppConstants.keyLanguage, _language);
+        debugPrint('[SettingsService] Language restored from iCloud: $_language');
+      }
+    } else if (savedLanguage != systemLanguage) {
+      // iCloud 언어가 없고, 저장된 언어와 시스템 언어가 다른 경우
+      // (사용자가 iOS 설정에서 언어 변경한 경우)
       if (AppConstants.supportedLanguages.contains(systemLanguage)) {
         _language = systemLanguage;
       } else {
         _language = AppConstants.defaultLanguage;
       }
 
-      // 감지한 언어를 저장
+      // 업데이트된 언어 저장
       await _prefs.setString(AppConstants.keyLanguage, _language);
+
+      // iCloud에도 저장
+      try {
+        await CloudKitService.saveLanguage(_language);
+        debugPrint('[SettingsService] Language synced to iCloud: $_language');
+      } catch (e) {
+        debugPrint('[SettingsService] Failed to sync language to iCloud: $e');
+      }
     } else {
-      // 저장된 언어 사용
-      _language = savedLanguage;
+      // 저장된 언어 사용 (이미 동기화됨)
+      _language = savedLanguage ?? AppConstants.defaultLanguage;
     }
 
     _unit = _prefs.getString(AppConstants.keyUnit) ?? AppConstants.defaultUnit;
@@ -212,6 +246,17 @@ class SettingsService extends ChangeNotifier {
     if (!AppConstants.supportedLanguages.contains(language)) return;
     _language = language;
     await _prefs.setString(AppConstants.keyLanguage, language);
+
+    // iCloud에도 저장 (iCloud 동기화가 활성화된 경우)
+    if (_iCloudSyncEnabled) {
+      try {
+        await CloudKitService.saveLanguage(language);
+        debugPrint('[SettingsService] Language saved to iCloud: $language');
+      } catch (e) {
+        debugPrint('[SettingsService] Failed to save language to iCloud: $e');
+      }
+    }
+
     notifyListeners();
   }
 

@@ -415,4 +415,27 @@ class CloudKitService {
       throw Exception('Failed to fetch service start date from CloudKit: ${e.message}');
     }
   }
+
+  /// iCloud에 언어 설정 저장
+  ///
+  /// [language]: 저장할 언어 코드 (예: 'ko', 'en', 'ja')
+  static Future<void> saveLanguage(String language) async {
+    try {
+      await _channel.invokeMethod('saveLanguage', {'language': language});
+    } on PlatformException catch (e) {
+      throw Exception('Failed to save language to CloudKit: ${e.message}');
+    }
+  }
+
+  /// iCloud에서 언어 설정 가져오기
+  ///
+  /// Returns: 저장된 언어 코드 (없으면 null)
+  static Future<String?> fetchLanguage() async {
+    try {
+      final String? language = await _channel.invokeMethod('fetchLanguage');
+      return language;
+    } on PlatformException catch (e) {
+      throw Exception('Failed to fetch language from CloudKit: ${e.message}');
+    }
+  }
 }

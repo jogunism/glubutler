@@ -110,7 +110,8 @@ class ReportDao {
     return Report.fromMap(maps.first);
   }
 
-  /// 리포트 삭제 (Soft Delete - content를 빈 문자열로 변경)
+  /// 리포트 삭제 (Soft Delete)
+  /// content를 빈 문자열로 변경하여 삭제 표시
   ///
   /// Returns: 업데이트된 행의 수
   Future<int> deleteReport(int id) async {

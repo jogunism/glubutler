@@ -1060,6 +1060,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingNotificationEnable => '알림 켜기';
 
   @override
+  String get notificationGlucoseReminderTitle => '혈당을 확인하고 기록을 남겨보세요';
+
+  @override
+  String get notificationGlucoseReminderBody => '식전 혈당을 측정해보세요';
+
+  @override
+  String get notificationGlucoseAbsenceTitle => '혈당 측정을 잊지 마세요';
+
+  @override
+  String get notificationGlucoseAbsenceBody => '꾸준한 기록이 혈당 관리의 첫걸음입니다';
+
+  @override
+  String get notificationDiaryReminderTitle => '식사 내용을 기록해 보세요';
+
+  @override
+  String get notificationDiaryReminderBody => '자신의 식생활 패턴을 파악할 수 있습니다';
+
+  @override
+  String get notificationReportReminderTitle => '혈당 리포트를 생성해 보세요';
+
+  @override
+  String get notificationReportReminderBody => '건강 리포트를 확인하세요';
+
+  @override
   String get onboardingSubscriptionTitle => '처음 일주일간 모든 기능을 사용해 보세요';
 
   @override

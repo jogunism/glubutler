@@ -1180,4 +1180,82 @@ class CloudKitBridge {
       }
     }
   }
+
+  /// iCloud에 언어 설정 저장
+  func saveLanguage(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard let language = arguments["language"] as? String else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing language", details: nil))
+      return
+    }
+
+    let recordID = CKRecord.ID(recordName: "appSettings")
+
+    // 기존 레코드 가져와서 업데이트 또는 새로 생성
+    privateDatabase.fetch(withRecordID: recordID) { [weak self] record, error in
+      guard let self = self else { return }
+
+      DispatchQueue.main.async {
+        let recordToSave: CKRecord
+
+        if let existingRecord = record {
+          // 기존 레코드 업데이트
+          recordToSave = existingRecord
+        } else {
+          // 새 레코드 생성
+          recordToSave = CKRecord(recordType: CloudKitBridge.AppSettingsRecordType, recordID: recordID)
+        }
+
+        recordToSave["language"] = language as CKRecordValue
+
+        self.privateDatabase.save(recordToSave) { savedRecord, saveError in
+          DispatchQueue.main.async {
+            if let saveError = saveError {
+              result(FlutterError(
+                code: "SAVE_FAILED",
+                message: "Failed to save language",
+                details: saveError.localizedDescription
+              ))
+              return
+            }
+
+            print("[CloudKit] Language saved: \(language)")
+            result(true)
+          }
+        }
+      }
+    }
+  }
+
+  /// iCloud에서 언어 설정 가져오기
+  func fetchLanguage(result: @escaping FlutterResult) {
+    let recordID = CKRecord.ID(recordName: "appSettings")
+
+    privateDatabase.fetch(withRecordID: recordID) { record, error in
+      DispatchQueue.main.async {
+        if let error = error {
+          let ckError = error as NSError
+          // 레코드가 없으면 nil 반환 (에러가 아님)
+          if ckError.code == CKError.unknownItem.rawValue {
+            result(nil)
+            return
+          }
+
+          result(FlutterError(
+            code: "FETCH_FAILED",
+            message: "Failed to fetch language",
+            details: error.localizedDescription
+          ))
+          return
+        }
+
+        guard let record = record,
+              let language = record["language"] as? String else {
+          result(nil)
+          return
+        }
+
+        result(language)
+      }
+    }
+  }
 }

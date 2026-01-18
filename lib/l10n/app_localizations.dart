@@ -1787,7 +1787,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportGuideMessage.
   ///
   /// In en, this message translates to:
-  /// **'• Blood glucose is affected by various aspects of life. Therefore, to generate reports, detailed health-related data is required.\n\n• All basic information is based on data from the Apple Health app.\n\n• We reference your basic information, exercise records, and lifestyle patterns recorded in the Apple Health app, and track your current status based on glucose records from Glu Butler or other apps.\n\n• The more data accumulated and the more detailed it is, the more factors can be considered, resulting in more comprehensive reports.\n\n• Therefore, we recommend generating reports when you have at least 3 days or more of activity and glucose data.\n(Single-day reports are not supported)\n\n• For your first report, you can generate reports starting from one week before today.\n\n• You cannot create reports for dates that already have existing reports.\n\n※ Personal information used for report generation is never stored elsewhere. It is used solely for report generation and is immediately discarded after use.'**
+  /// **'• Blood glucose is affected by various aspects of life. Therefore, to create reports, detailed health-related data is required.\n\n• All basic information is based on data from the Apple Health app.\n\n• We reference your basic information, exercise records, and lifestyle patterns recorded in the Apple Health app, and track your current status based on glucose records from Glu Butler or other apps.\n\n• The more data accumulated and the more detailed it is, the more factors can be considered, resulting in more comprehensive reports.\n\n• Therefore, we recommend creating reports when you have at least 3 days or more of activity and glucose data.\n(Single-day reports are not supported)\n\n• For your first report, you can create reports starting from one week before today.\n\n• You cannot create reports for dates that already have existing reports.\n\n※ Personal information used for report creation is never stored elsewhere. It is used solely for report creation and is immediately discarded after use.'**
   String get reportGuideMessage;
 
   /// No description provided for @doNotShowAgain.
@@ -2155,6 +2155,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable Notifications'**
   String get onboardingNotificationEnable;
+
+  /// No description provided for @notificationGlucoseReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your glucose'**
+  String get notificationGlucoseReminderTitle;
+
+  /// No description provided for @notificationGlucoseReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your blood glucose level'**
+  String get notificationGlucoseReminderBody;
+
+  /// No description provided for @notificationGlucoseAbsenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t forget to measure'**
+  String get notificationGlucoseAbsenceTitle;
+
+  /// No description provided for @notificationGlucoseAbsenceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent tracking is the first step to glucose management'**
+  String get notificationGlucoseAbsenceBody;
+
+  /// No description provided for @notificationDiaryReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your meal'**
+  String get notificationDiaryReminderTitle;
+
+  /// No description provided for @notificationDiaryReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your eating patterns'**
+  String get notificationDiaryReminderBody;
+
+  /// No description provided for @notificationReportReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a health report'**
+  String get notificationReportReminderTitle;
+
+  /// No description provided for @notificationReportReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate your glucose report'**
+  String get notificationReportReminderBody;
 
   /// No description provided for @onboardingSubscriptionTitle.
   ///

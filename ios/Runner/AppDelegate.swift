@@ -119,6 +119,16 @@ import CloudKit
       case "fetchServiceStartDate":
         self.cloudKitBridge.fetchServiceStartDate(result: result)
 
+      case "saveLanguage":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.saveLanguage(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "fetchLanguage":
+        self.cloudKitBridge.fetchLanguage(result: result)
+
       default:
         result(FlutterMethodNotImplemented)
       }

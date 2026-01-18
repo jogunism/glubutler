@@ -887,7 +887,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get reportGuideMessage =>
-      '• La glucosa en sangre se ve afectada por diversos aspectos de la vida. Por lo tanto, para generar informes se requieren datos detallados relacionados con la salud.\n\n• Toda la información básica se basa en datos de la aplicación Apple Health.\n\n• Nos referimos a su información básica, registros de ejercicio y patrones de estilo de vida registrados en la aplicación Apple Health, y rastreamos su estado actual basándonos en registros de glucosa de Glu Butler u otras aplicaciones.\n\n• Cuantos más datos se acumulen y más detallados sean, más factores se pueden considerar, lo que resulta en informes más completos.\n\n• Por lo tanto, recomendamos generar informes cuando tenga al menos 3 días o más de datos de actividad y glucosa.\n(No se admiten informes de un solo día)\n\n• Para su primer informe, puede generar informes a partir de una semana antes de hoy.\n\n• No puede crear informes para fechas que ya tienen informes existentes.\n\n※ La información personal utilizada para la generación de informes nunca se almacena en otro lugar. Se utiliza únicamente para la generación de informes y se descarta inmediatamente después de su uso.';
+      '• La glucosa en sangre se ve afectada por diversos aspectos de la vida. Por lo tanto, para crear informes se requieren datos detallados relacionados con la salud.\n\n• Toda la información básica se basa en datos de la aplicación Apple Health.\n\n• Nos referimos a su información básica, registros de ejercicio y patrones de estilo de vida registrados en la aplicación Apple Health, y rastreamos su estado actual basándonos en registros de glucosa de Glu Butler u otras aplicaciones.\n\n• Cuantos más datos se acumulen y más detallados sean, más factores se pueden considerar, lo que resulta en informes más completos.\n\n• Por lo tanto, recomendamos crear informes cuando tenga al menos 3 días o más de datos de actividad y glucosa.\n(No se admiten informes de un solo día)\n\n• Para su primer informe, puede crear informes a partir de una semana antes de hoy.\n\n• No puede crear informes para fechas que ya tienen informes existentes.\n\n※ La información personal utilizada para la creación de informes nunca se almacena en otro lugar. Se utiliza únicamente para la creación de informes y se descarta inmediatamente después de su uso.';
 
   @override
   String get doNotShowAgain => 'No mostrar de nuevo';
@@ -1095,6 +1095,33 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingNotificationEnable => 'Activar Notificaciones';
+
+  @override
+  String get notificationGlucoseReminderTitle => 'Revisa tu glucosa';
+
+  @override
+  String get notificationGlucoseReminderBody =>
+      'Registra tu nivel de glucosa en sangre';
+
+  @override
+  String get notificationGlucoseAbsenceTitle => 'No olvides medir';
+
+  @override
+  String get notificationGlucoseAbsenceBody =>
+      'El seguimiento constante es el primer paso';
+
+  @override
+  String get notificationDiaryReminderTitle => 'Registra tu comida';
+
+  @override
+  String get notificationDiaryReminderBody =>
+      'Haz seguimiento de tus hábitos alimenticios';
+
+  @override
+  String get notificationReportReminderTitle => 'Crea un informe de salud';
+
+  @override
+  String get notificationReportReminderBody => 'Genera tu informe de glucosa';
 
   @override
   String get onboardingSubscriptionTitle =>
