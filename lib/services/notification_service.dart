@@ -9,6 +9,105 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
+/// 알림 메시지 헬퍼 - SharedPreferences에서 언어 설정 읽어오기
+class _NotificationMessages {
+  static Future<Map<String, String>> getMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final locale = prefs.getString('locale') ?? 'ko';
+
+    switch (locale) {
+      case 'en':
+        return {
+          'glucoseReminderTitle': 'Check your glucose',
+          'glucoseReminderBody': 'Record your blood glucose level',
+          'glucoseAbsenceTitle': 'Don\'t forget to measure',
+          'glucoseAbsenceBody': 'Consistent tracking is the first step to glucose management',
+          'diaryReminderTitle': 'Record your meal',
+          'diaryReminderBody': 'Track your eating patterns',
+          'reportReminderTitle': 'Create a health report',
+          'reportReminderBody': 'Generate your glucose report',
+        };
+      case 'ja':
+        return {
+          'glucoseReminderTitle': '血糖値を確認して記録しましょう',
+          'glucoseReminderBody': '食前血糖値を測定してください',
+          'glucoseAbsenceTitle': '血糖値測定を忘れずに',
+          'glucoseAbsenceBody': '継続的な記録が血糖管理の第一歩です',
+          'diaryReminderTitle': '食事内容を記録しましょう',
+          'diaryReminderBody': '食生活パターンを把握できます',
+          'reportReminderTitle': '健康レポートを作成しましょう',
+          'reportReminderBody': '血糖レポートを確認してください',
+        };
+      case 'zh':
+        return {
+          'glucoseReminderTitle': '检查并记录血糖',
+          'glucoseReminderBody': '请测量餐前血糖',
+          'glucoseAbsenceTitle': '别忘了测量血糖',
+          'glucoseAbsenceBody': '坚持记录是血糖管理的第一步',
+          'diaryReminderTitle': '记录您的饮食',
+          'diaryReminderBody': '追踪您的饮食习惯',
+          'reportReminderTitle': '创建健康报告',
+          'reportReminderBody': '生成血糖报告',
+        };
+      case 'de':
+        return {
+          'glucoseReminderTitle': 'Überprüfen Sie Ihren Blutzucker',
+          'glucoseReminderBody': 'Messen Sie Ihren Blutzuckerspiegel',
+          'glucoseAbsenceTitle': 'Vergessen Sie nicht zu messen',
+          'glucoseAbsenceBody': 'Konsequentes Tracking ist der erste Schritt',
+          'diaryReminderTitle': 'Zeichnen Sie Ihre Mahlzeit auf',
+          'diaryReminderBody': 'Verfolgen Sie Ihre Essgewohnheiten',
+          'reportReminderTitle': 'Erstellen Sie einen Gesundheitsbericht',
+          'reportReminderBody': 'Generieren Sie Ihren Glukosebericht',
+        };
+      case 'es':
+        return {
+          'glucoseReminderTitle': 'Revisa tu glucosa',
+          'glucoseReminderBody': 'Registra tu nivel de glucosa en sangre',
+          'glucoseAbsenceTitle': 'No olvides medir',
+          'glucoseAbsenceBody': 'El seguimiento constante es el primer paso',
+          'diaryReminderTitle': 'Registra tu comida',
+          'diaryReminderBody': 'Haz seguimiento de tus hábitos alimenticios',
+          'reportReminderTitle': 'Crea un informe de salud',
+          'reportReminderBody': 'Genera tu informe de glucosa',
+        };
+      case 'fr':
+        return {
+          'glucoseReminderTitle': 'Vérifiez votre glycémie',
+          'glucoseReminderBody': 'Enregistrez votre taux de glucose sanguin',
+          'glucoseAbsenceTitle': 'N\'oubliez pas de mesurer',
+          'glucoseAbsenceBody': 'Le suivi régulier est la première étape',
+          'diaryReminderTitle': 'Enregistrez votre repas',
+          'diaryReminderBody': 'Suivez vos habitudes alimentaires',
+          'reportReminderTitle': 'Créez un rapport de santé',
+          'reportReminderBody': 'Générez votre rapport de glucose',
+        };
+      case 'it':
+        return {
+          'glucoseReminderTitle': 'Controlla il tuo glucosio',
+          'glucoseReminderBody': 'Registra il tuo livello di glucosio nel sangue',
+          'glucoseAbsenceTitle': 'Non dimenticare di misurare',
+          'glucoseAbsenceBody': 'Il monitoraggio costante è il primo passo',
+          'diaryReminderTitle': 'Registra il tuo pasto',
+          'diaryReminderBody': 'Monitora le tue abitudini alimentari',
+          'reportReminderTitle': 'Crea un report sulla salute',
+          'reportReminderBody': 'Genera il tuo report sul glucosio',
+        };
+      default: // ko
+        return {
+          'glucoseReminderTitle': '혈당을 확인하고 기록을 남겨보세요',
+          'glucoseReminderBody': '식전 혈당을 측정해보세요',
+          'glucoseAbsenceTitle': '혈당 측정을 잊지 마세요',
+          'glucoseAbsenceBody': '꾸준한 기록이 혈당 관리의 첫걸음입니다',
+          'diaryReminderTitle': '식사 내용을 기록해 보세요',
+          'diaryReminderBody': '자신의 식생활 패턴을 파악할 수 있습니다',
+          'reportReminderTitle': '혈당 리포트를 생성해 보세요',
+          'reportReminderBody': '건강 리포트를 확인하세요',
+        };
+    }
+  }
+}
+
 /// Workmanager 백그라운드 작업 콜백
 ///
 /// 이 함수는 앱이 종료된 상태에서도 실행됩니다.
@@ -138,11 +237,14 @@ Future<void> _checkAndSendMealGlucoseReminder(
     return;
   }
 
+  // 국제화 메시지 가져오기
+  final messages = await _NotificationMessages.getMessages();
+
   // 알림 발송
   await notifications.show(
     type.id,
-    '혈당을 확인하고 기록을 남겨보세요',
-    null,
+    messages['glucoseReminderTitle'],
+    messages['glucoseReminderBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'meal_glucose_reminders',
@@ -178,19 +280,14 @@ Future<void> _checkAndSendLongTermAbsenceReminder(
     endDate: DateTime.now(),
   );
 
-  // 3일 이상 기록이 없으면 메시지 앞에 추가 문구 포함
-  String title;
-  if (records.isEmpty) {
-    title = '장기간 혈당측정을 하지 않으셨어요\n혈당 측정을 잊지 마세요';
-  } else {
-    title = '혈당 측정을 잊지 마세요';
-  }
+  // 국제화 메시지 가져오기
+  final messages = await _NotificationMessages.getMessages();
 
   // 알림 발송
   await notifications.show(
     NotificationType.glucoseRecordReminder.id,
-    title,
-    '꾸준한 기록이 혈당 관리의 첫걸음입니다',
+    messages['glucoseAbsenceTitle'],
+    messages['glucoseAbsenceBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'glucose_absence_reminder',
@@ -232,11 +329,14 @@ Future<void> _checkAndSendDiaryReminder(
     return;
   }
 
+  // 국제화 메시지 가져오기
+  final messages = await _NotificationMessages.getMessages();
+
   // 알림 발송
   await notifications.show(
     NotificationType.diaryReminder.id,
-    '식사 내용을 기록해 보세요',
-    '자신의 식생활 패턴을 파악할 수 있습니다',
+    messages['diaryReminderTitle'],
+    messages['diaryReminderBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'diary_absence_reminder',
@@ -270,17 +370,17 @@ Future<void> _checkAndSendReportReminder(
   // 리포트 생성 이력 체크
   final reports = await databaseService.getAllReports();
 
-  String title;
+  bool shouldSend = false;
   if (reports.isEmpty && isFirstEnabled) {
     // 첫 리포트 미생성
-    title = '첫 혈당 리포트를 생성해 보세요';
+    shouldSend = true;
   } else if (reports.isNotEmpty && isRegularEnabled) {
     // 마지막 리포트 이후 3일 경과 체크
     final latestReport = await databaseService.getLatestReport();
     if (latestReport != null) {
       final threeDaysAgo = DateTime.now().subtract(const Duration(days: 3));
       if (latestReport.createdAt.isBefore(threeDaysAgo)) {
-        title = '혈당 리포트를 생성하고 결과를 확인해 보세요';
+        shouldSend = true;
       } else {
         debugPrint('[NotificationService] Last report is within 3 days, skipping notification');
         return;
@@ -292,11 +392,16 @@ Future<void> _checkAndSendReportReminder(
     return;
   }
 
+  if (!shouldSend) return;
+
+  // 국제화 메시지 가져오기
+  final messages = await _NotificationMessages.getMessages();
+
   // 알림 발송
   await notifications.show(
     NotificationType.reportReminder.id,
-    title,
-    null,
+    messages['reportReminderTitle'],
+    messages['reportReminderBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'report_reminder',
@@ -411,30 +516,31 @@ class NotificationService {
       return;
     }
 
-    switch (payload) {
-      case 'feed_glucose':
-        // 피드 탭으로 이동 후 혈당 기록 팝업
-        MainScreen.switchToTab(0); // Feed tab
-        // TODO: 혈당 기록 팝업 표시
-        AppRouter.router.go('/main');
-        break;
+    // 먼저 메인 화면으로 이동
+    AppRouter.router.go('/home');
 
-      case 'diary':
-        // 일기 탭으로 이동
-        MainScreen.switchToTab(2); // Diary tab
-        AppRouter.router.go('/main');
-        break;
+    // 딜레이 후 탭 전환 및 모달 열기
+    Future.delayed(const Duration(milliseconds: 300), () {
+      switch (payload) {
+        case 'feed_glucose':
+          // 피드 탭으로 이동 후 혈당 기록 팝업
+          MainScreen.switchToTabAndOpenModal(0, 'open_glucose_input');
+          break;
 
-      case 'report':
-        // 리포트 탭으로 이동
-        MainScreen.switchToTab(3); // Report tab
-        AppRouter.router.go('/main');
-        // TODO: 리포트 생성 버튼 자동 클릭 (필요시)
-        break;
+        case 'diary':
+          // 일기 탭으로 이동 후 일기 입력 팝업
+          MainScreen.switchToTabAndOpenModal(2, 'open_diary_input');
+          break;
 
-      default:
-        debugPrint('[NotificationService] Unknown payload: $payload');
-    }
+        case 'report':
+          // 리포트 탭으로 이동 후 리포트 생성 트리거
+          MainScreen.switchToTabAndOpenModal(3, 'trigger_report_generation');
+          break;
+
+        default:
+          debugPrint('[NotificationService] Unknown payload: $payload');
+      }
+    });
   }
 
   /// 모든 알림 스케줄 업데이트
@@ -485,13 +591,16 @@ class NotificationService {
 
   /// iOS용 알림 스케줄링 (매일 반복)
   Future<void> _scheduleNotificationIOS(NotificationType type) async {
+    // 국제화 메시지 가져오기
+    final messages = await _NotificationMessages.getMessages();
+
     switch (type) {
       case NotificationType.glucoseReminderMorning:
         await _scheduleDailyNotificationIOS(
           type.id,
           8, 0,
-          '혈당을 확인하고 기록을 남겨보세요',
-          null,
+          messages['glucoseReminderTitle']!,
+          messages['glucoseReminderBody'],
           'feed_glucose',
         );
         break;
@@ -499,8 +608,8 @@ class NotificationService {
         await _scheduleDailyNotificationIOS(
           type.id,
           11, 0,
-          '혈당을 확인하고 기록을 남겨보세요',
-          null,
+          messages['glucoseReminderTitle']!,
+          messages['glucoseReminderBody'],
           'feed_glucose',
         );
         break;
@@ -508,8 +617,8 @@ class NotificationService {
         await _scheduleDailyNotificationIOS(
           type.id,
           18, 0,
-          '혈당을 확인하고 기록을 남겨보세요',
-          null,
+          messages['glucoseReminderTitle']!,
+          messages['glucoseReminderBody'],
           'feed_glucose',
         );
         break;
@@ -517,8 +626,8 @@ class NotificationService {
         await _scheduleDailyNotificationIOS(
           type.id,
           10, 0,
-          '혈당 측정을 잊지 마세요',
-          '꾸준한 기록이 혈당 관리의 첫걸음입니다',
+          messages['glucoseAbsenceTitle']!,
+          messages['glucoseAbsenceBody'],
           'feed_glucose',
         );
         break;
@@ -526,8 +635,8 @@ class NotificationService {
         await _scheduleDailyNotificationIOS(
           type.id,
           20, 0,
-          '식사 내용을 기록해 보세요',
-          '자신의 식생활 패턴을 파악할 수 있습니다',
+          messages['diaryReminderTitle']!,
+          messages['diaryReminderBody'],
           'diary',
         );
         break;
@@ -536,8 +645,8 @@ class NotificationService {
         await _scheduleDailyNotificationIOS(
           type.id,
           10, 0,
-          '혈당 리포트를 생성해 보세요',
-          null,
+          messages['reportReminderTitle']!,
+          messages['reportReminderBody'],
           'report',
         );
         break;

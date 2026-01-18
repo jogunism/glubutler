@@ -30,6 +30,10 @@ class MainScreen extends StatefulWidget {
     globalKey.currentState?.switchToTab(index);
   }
 
+  static void switchToTabAndOpenModal(int index, String action) {
+    globalKey.currentState?.switchToTabAndOpenModal(index, action);
+  }
+
   @override
   State<MainScreen> createState() => MainScreenState();
 }
@@ -48,6 +52,38 @@ class MainScreenState extends State<MainScreen> {
         _currentIndex = index;
       });
     }
+  }
+
+  void switchToTabAndOpenModal(int index, String action) {
+    // 먼저 탭 전환
+    switchToTab(index);
+
+    // 다음 프레임에서 모달 열기
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
+      switch (action) {
+        case 'open_glucose_input':
+          await RecordInputModal.show(context);
+          break;
+        case 'open_diary_input':
+          final result = await DiaryInputModal.show(context);
+          if (result == true) {
+            DiaryScreen.globalKey.currentState?.loadEntries();
+          }
+          break;
+        case 'trigger_report_generation':
+          // ReportScreen의 리포트 생성 트리거
+          _triggerReportGeneration();
+          break;
+      }
+    });
+  }
+
+  void _triggerReportGeneration() {
+    // 리포트 탭으로 이동했으므로 사용자가 버튼을 누르도록 유도
+    // 자동으로 리포트를 생성하지 않고, 리포트 화면으로만 이동
+    // (리포트 생성은 사용자 확인이 필요하므로)
   }
 
   void setTabBarVisibility(bool visible) {

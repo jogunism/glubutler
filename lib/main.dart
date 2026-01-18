@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -111,7 +112,7 @@ class GluButlerApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [
-            Locale('en'),
+            Locale('en'), // Default fallback
             Locale('ko'),
             Locale('ja'),
             Locale('zh'),
@@ -120,6 +121,19 @@ class GluButlerApp extends StatelessWidget {
             Locale('fr'),
             Locale('it'),
           ],
+          // Fallback to English when user locale is not supported
+          localeResolutionCallback: (locale, supportedLocales) {
+            // User's locale (e.g., 'hi' for Hindi)
+            if (locale != null) {
+              for (var supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
+                }
+              }
+            }
+            // Fallback to English
+            return const Locale('en');
+          },
 
           // Navigation - basic Navigator instead of GoRouter
           initialRoute: initialRoute,
@@ -161,5 +175,10 @@ class GluButlerApp extends StatelessWidget {
 
     // Set Jiffy locale asynchronously (fire and forget since builder is not async)
     Jiffy.setLocale(jiffyLocale);
+
+    // Save locale to SharedPreferences for notification service
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('locale', languageCode);
+    });
   }
 }
