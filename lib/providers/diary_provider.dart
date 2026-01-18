@@ -140,7 +140,7 @@ class DiaryProvider extends ChangeNotifier {
     }
 
     // 백그라운드에서 단일 엔트리 업로드
-    CloudKitService.uploadDiaryEntries().then((_) {
+    CloudKitService.uploadDiaryEntry(entry).then((_) {
     }).catchError((error) {
       // 에러 무시 (로컬 저장은 이미 성공했으므로)
     });

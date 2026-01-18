@@ -181,6 +181,21 @@ class CloudKitService {
     }
   }
 
+  /// 단일 다이어리 엔트리를 iCloud로 업로드
+  ///
+  /// [entry]: 업로드할 다이어리 엔트리 (파일 포함)
+  static Future<void> uploadDiaryEntry(DiaryItem entry) async {
+    try {
+      // DiaryItem을 Map으로 변환
+      final entryData = entry.toJson();
+
+      // CloudKit에 저장 (CKAsset으로 이미지 자동 업로드)
+      await _channel.invokeMethod('saveDiaryEntry', {'entry': entryData});
+    } catch (e) {
+      throw Exception('Failed to upload diary entry: $e');
+    }
+  }
+
   /// 단일 다이어리 엔트리 삭제 (iCloud에서)
   ///
   /// [entryId]: 삭제할 다이어리 ID
