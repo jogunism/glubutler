@@ -41,7 +41,7 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
   }
 
   void _startImageCycling() {
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (mounted) {
         setState(() {
           _currentImageIndex = (_currentImageIndex + 1) % _screenImages.length;
