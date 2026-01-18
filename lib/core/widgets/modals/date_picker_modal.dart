@@ -130,9 +130,9 @@ class _DatePickerModalState extends State<DatePickerModal> {
             ),
           ),
 
-          // 헤더
+          // 닫기/오늘 버튼
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -142,12 +142,6 @@ class _DatePickerModalState extends State<DatePickerModal> {
                   child: Text(
                     l10n.close,
                     style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                  ),
-                ),
-                Text(
-                  l10n.selectDate,
-                  style: context.textStyles.tileTitle.copyWith(
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 CupertinoButton(
@@ -169,7 +163,18 @@ class _DatePickerModalState extends State<DatePickerModal> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          // 타이틀
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Center(
+              child: Text(
+                l10n.selectDate,
+                style: context.textStyles.tileTitle.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
 
           // 커스텀 헤더
           Padding(

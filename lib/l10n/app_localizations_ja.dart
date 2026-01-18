@@ -860,7 +860,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'レポートを生成するにはiCloud連携が必要です。\n設定 > iCloud連携';
 
   @override
-  String get reportGuideTitle => 'レポート生成ガイド';
+  String get reportGuideTitle => 'レポート作成ガイド';
 
   @override
   String get reportGuideMessage =>
@@ -914,13 +914,13 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get generatingReport => 'AIレポート生成中...';
+  String get generatingReport => 'AIレポート作成中...';
 
   @override
-  String get reportGenerationFailed => 'レポート生成失敗';
+  String get reportCreationFailed => 'レポート作成失敗';
 
   @override
-  String get reportGenerationSuccess => 'レポートが生成されました';
+  String get reportCreationSuccess => 'レポートが作成されました';
 
   @override
   String get ok => '確認';
@@ -1135,7 +1135,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get longTermDiaryAbsence => '長期間日記記録なし通知';
 
   @override
-  String get reportGenerationReminder => 'レポート作成通知';
+  String get reportCreationReminder => 'レポート作成通知';
 
   @override
   String get notifFirstReportTitle => '初めての血糖レポートを作成してみましょう';

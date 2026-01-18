@@ -890,7 +890,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'La synchronisation iCloud est requise pour générer des rapports.\nRéglages > Synchronisation iCloud';
 
   @override
-  String get reportGuideTitle => 'Guide de génération de rapports';
+  String get reportGuideTitle => 'Guide de création de rapports';
 
   @override
   String get reportGuideMessage =>
@@ -947,13 +947,13 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get generatingReport => 'Generating AI Report...';
+  String get generatingReport => 'Création du rapport IA...';
 
   @override
-  String get reportGenerationFailed => 'Report Generation Failed';
+  String get reportCreationFailed => 'Échec de la création du rapport';
 
   @override
-  String get reportGenerationSuccess => 'Report has been generated';
+  String get reportCreationSuccess => 'Rapport créé';
 
   @override
   String get ok => 'OK';
@@ -1187,7 +1187,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Alerte d\'absence prolongée d\'entrées de journal';
 
   @override
-  String get reportGenerationReminder => 'Rappel de génération de rapport';
+  String get reportCreationReminder => 'Rappel de création de rapport';
 
   @override
   String get notifFirstReportTitle => 'Créez votre premier rapport de glycémie';

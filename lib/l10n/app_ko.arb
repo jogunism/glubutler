@@ -358,8 +358,8 @@
     }
   },
   "generatingReport": "AI 리포트 생성 중...",
-  "reportGenerationFailed": "리포트 생성 실패",
-  "reportGenerationSuccess": "리포트가 생성되었습니다",
+  "reportCreationFailed": "리포트 생성 실패",
+  "reportCreationSuccess": "리포트가 생성되었습니다",
   "ok": "확인",
   "daysAgo": "{count}일 전",
   "@daysAgo": {
@@ -457,7 +457,7 @@
   "mealGlucoseReminders": "아침, 점심, 저녁 식전 혈당 측정 알림",
   "longTermGlucoseAbsence": "장기간 혈당 기록 부재 알림",
   "longTermDiaryAbsence": "장기간 일기 작성 부재 알림",
-  "reportGenerationReminder": "리포트 생성 알림",
+  "reportCreationReminder": "리포트 생성 알림",
 
   "notifFirstReportTitle": "첫 혈당 리포트를 생성해 보세요",
   "notifReportReminderTitle": "혈당 리포트를 생성하고 결과를 확인해 보세요",

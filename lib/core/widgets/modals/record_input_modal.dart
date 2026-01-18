@@ -215,9 +215,9 @@ class _RecordInputModalState extends State<RecordInputModal> {
                 ),
               ),
 
-              // 헤더
+              // 취소/저장 버튼
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -230,12 +230,6 @@ class _RecordInputModalState extends State<RecordInputModal> {
                           color: Colors.grey[600],
                           fontSize: 16,
                         ),
-                      ),
-                    ),
-                    Text(
-                      l10n.addRecord,
-                      style: context.textStyles.tileTitle.copyWith(
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     CupertinoButton(
@@ -254,7 +248,18 @@ class _RecordInputModalState extends State<RecordInputModal> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              // 타이틀
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Center(
+                  child: Text(
+                    l10n.addRecord,
+                    style: context.textStyles.tileTitle.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
 
               // 세그먼트 컨트롤 (혈당 / 인슐린)
               Padding(

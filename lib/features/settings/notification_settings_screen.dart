@@ -224,7 +224,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       NotificationType.firstReportReminder,
                       NotificationType.reportReminder,
                     ],
-                    title: l10n.reportGenerationReminder,
+                    title: l10n.reportCreationReminder,
                   ),
                 ],
               ),

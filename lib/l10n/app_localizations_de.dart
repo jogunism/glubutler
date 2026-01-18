@@ -883,7 +883,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'iCloud-Synchronisierung ist erforderlich, um Berichte zu erstellen.\nEinstellungen > iCloud-Synchronisierung';
 
   @override
-  String get reportGuideTitle => 'Leitfaden zur Berichtgenerierung';
+  String get reportGuideTitle => 'Leitfaden zur Berichterstellung';
 
   @override
   String get reportGuideMessage =>
@@ -939,13 +939,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get generatingReport => 'Generating AI Report...';
+  String get generatingReport => 'KI-Bericht wird erstellt...';
 
   @override
-  String get reportGenerationFailed => 'Report Generation Failed';
+  String get reportCreationFailed => 'Berichterstellung fehlgeschlagen';
 
   @override
-  String get reportGenerationSuccess => 'Report has been generated';
+  String get reportCreationSuccess => 'Bericht wurde erstellt';
 
   @override
   String get ok => 'OK';
@@ -1181,7 +1181,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Langfristiger Tagebucheintrag fehlt Alarm';
 
   @override
-  String get reportGenerationReminder => 'Berichtserstellung Erinnerung';
+  String get reportCreationReminder => 'Berichterstellung Erinnerung';
 
   @override
   String get notifFirstReportTitle =>

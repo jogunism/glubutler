@@ -918,10 +918,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get generatingReport => 'AI 리포트 생성 중...';
 
   @override
-  String get reportGenerationFailed => '리포트 생성 실패';
+  String get reportCreationFailed => '리포트 생성 실패';
 
   @override
-  String get reportGenerationSuccess => '리포트가 생성되었습니다';
+  String get reportCreationSuccess => '리포트가 생성되었습니다';
 
   @override
   String get ok => '확인';
@@ -1136,7 +1136,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get longTermDiaryAbsence => '장기간 일기 작성 부재 알림';
 
   @override
-  String get reportGenerationReminder => '리포트 생성 알림';
+  String get reportCreationReminder => '리포트 생성 알림';
 
   @override
   String get notifFirstReportTitle => '첫 혈당 리포트를 생성해 보세요';

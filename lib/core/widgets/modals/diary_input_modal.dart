@@ -643,9 +643,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                   ),
                 ),
 
-                // 헤더
+                // 취소/저장 버튼
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -663,12 +663,6 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                             color: AppTheme.textSecondaryLight,
                             fontSize: 16,
                           ),
-                        ),
-                      ),
-                      Text(
-                        widget.entry != null ? l10n.editDiary : l10n.addDiaryItem,
-                        style: context.textStyles.tileTitle.copyWith(
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       CupertinoButton(
@@ -691,7 +685,18 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                // 타이틀
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Center(
+                    child: Text(
+                      widget.entry != null ? l10n.editDiary : l10n.addDiaryItem,
+                      style: context.textStyles.tileTitle.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
 
                 // 날짜 선택
                 Padding(

@@ -859,7 +859,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reportRequiresICloudMessage => '生成报告需要iCloud同步。\n设置 > iCloud同步';
 
   @override
-  String get reportGuideTitle => '报告生成指南';
+  String get reportGuideTitle => '报告创建指南';
 
   @override
   String get reportGuideMessage =>
@@ -913,13 +913,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get generatingReport => 'Generating AI Report...';
+  String get generatingReport => '创建AI报告中...';
 
   @override
-  String get reportGenerationFailed => 'Report Generation Failed';
+  String get reportCreationFailed => '报告创建失败';
 
   @override
-  String get reportGenerationSuccess => 'Report has been generated';
+  String get reportCreationSuccess => '报告已创建';
 
   @override
   String get ok => 'OK';
@@ -1133,7 +1133,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get longTermDiaryAbsence => '长期日记记录缺失通知';
 
   @override
-  String get reportGenerationReminder => '报告生成通知';
+  String get reportCreationReminder => '报告创建通知';
 
   @override
   String get notifFirstReportTitle => '生成您的第一份血糖报告';

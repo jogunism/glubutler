@@ -326,7 +326,7 @@
   "generateReport": "Generar informe",
   "reportRequiresICloud": "Generar informe",
   "reportRequiresICloudMessage": "Se requiere sincronización con iCloud para generar informes.\nAjustes > Sincronización de iCloud",
-  "reportGuideTitle": "Guía de generación de informes",
+  "reportGuideTitle": "Guía de creación de informes",
   "reportGuideMessage": "• La glucosa en sangre se ve afectada por diversos aspectos de la vida. Por lo tanto, para generar informes se requieren datos detallados relacionados con la salud.\n\n• Toda la información básica se basa en datos de la aplicación Apple Health.\n\n• Nos referimos a su información básica, registros de ejercicio y patrones de estilo de vida registrados en la aplicación Apple Health, y rastreamos su estado actual basándonos en registros de glucosa de Glu Butler u otras aplicaciones.\n\n• Cuantos más datos se acumulen y más detallados sean, más factores se pueden considerar, lo que resulta en informes más completos.\n\n• Por lo tanto, recomendamos generar informes cuando tenga al menos 3 días o más de datos de actividad y glucosa.\n(No se admiten informes de un solo día)\n\n• Para su primer informe, puede generar informes a partir de una semana antes de hoy.\n\n• No puede crear informes para fechas que ya tienen informes existentes.\n\n※ La información personal utilizada para la generación de informes nunca se almacena en otro lugar. Se utiliza únicamente para la generación de informes y se descarta inmediatamente después de su uso.",
   "doNotShowAgain": "No mostrar de nuevo",
   "viewPastReports": "Ver informes anteriores",
@@ -350,7 +350,9 @@
       }
     }
   },
-  "generatingReport": "Generating AI Report...",
+  "generatingReport": "Creando Informe IA...",
+  "reportCreationFailed": "Creación de informe fallida",
+  "reportCreationSuccess": "Informe creado",
   "daysAgo": "hace {count} días",
   "@daysAgo": {
     "placeholders": {
@@ -447,7 +449,7 @@
   "mealGlucoseReminders": "Recordatorios de glucosa antes de desayuno, almuerzo, cena",
   "longTermGlucoseAbsence": "Alerta de ausencia prolongada de registro de glucosa",
   "longTermDiaryAbsence": "Alerta de ausencia prolongada de entradas de diario",
-  "reportGenerationReminder": "Recordatorio de generación de informe",
+  "reportCreationReminder": "Recordatorio de creación de informe",
 
   "notifFirstReportTitle": "Crea tu primer informe de glucosa",
   "notifReportReminderTitle": "Genera tu informe de glucosa y consulta los resultados",

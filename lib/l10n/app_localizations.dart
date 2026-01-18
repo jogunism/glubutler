@@ -1781,7 +1781,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportGuideTitle.
   ///
   /// In en, this message translates to:
-  /// **'Report Generation Guide'**
+  /// **'Report Creation Guide'**
   String get reportGuideTitle;
 
   /// No description provided for @reportGuideMessage.
@@ -1883,20 +1883,20 @@ abstract class AppLocalizations {
   /// No description provided for @generatingReport.
   ///
   /// In en, this message translates to:
-  /// **'Generating AI Report...'**
+  /// **'Creating AI Report...'**
   String get generatingReport;
 
-  /// No description provided for @reportGenerationFailed.
+  /// No description provided for @reportCreationFailed.
   ///
   /// In en, this message translates to:
-  /// **'Report Generation Failed'**
-  String get reportGenerationFailed;
+  /// **'Report Creation Failed'**
+  String get reportCreationFailed;
 
-  /// No description provided for @reportGenerationSuccess.
+  /// No description provided for @reportCreationSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Report has been generated'**
-  String get reportGenerationSuccess;
+  /// **'Report has been created'**
+  String get reportCreationSuccess;
 
   /// No description provided for @ok.
   ///
@@ -2306,11 +2306,11 @@ abstract class AppLocalizations {
   /// **'Long-term Diary Entry Absence Alert'**
   String get longTermDiaryAbsence;
 
-  /// No description provided for @reportGenerationReminder.
+  /// No description provided for @reportCreationReminder.
   ///
   /// In en, this message translates to:
-  /// **'Report Generation Reminder'**
-  String get reportGenerationReminder;
+  /// **'Report Creation Reminder'**
+  String get reportCreationReminder;
 
   /// No description provided for @notifFirstReportTitle.
   ///

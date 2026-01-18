@@ -19,7 +19,10 @@ class ReportGuideModal {
   /// [context]: BuildContext
   /// [infoMode]: true이면 닫기 버튼만 표시, false이면 체크박스+확인 버튼 표시
   /// Returns: true if user confirmed, false if dismissed
-  static Future<bool> show(BuildContext context, {bool infoMode = false}) async {
+  static Future<bool> show(
+    BuildContext context, {
+    bool infoMode = false,
+  }) async {
     // info 모드가 아닐 때만 "다시 보지 않기" 설정 확인
     if (!infoMode) {
       final prefs = await SharedPreferences.getInstance();
@@ -252,51 +255,46 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
             ),
           ),
 
-          // 타이틀
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-            child: Stack(
-              children: [
-                // 닫기 버튼 (info 모드일 때만, 왼쪽 상단)
-                if (widget.infoMode)
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      onPressed: _onClose,
-                      child: Text(
-                        l10n.close,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: context.colors.textSecondary,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                // 타이틀 (중앙 정렬)
-                Center(
+          // 닫기 버튼 (info 모드일 때만)
+          if (widget.infoMode)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: _onClose,
                   child: Text(
-                    l10n.reportGuideTitle,
+                    l10n.close,
                     style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: context.colors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textSecondary,
                       decoration: TextDecoration.none,
                     ),
                   ),
                 ),
-              ],
+              ),
+            ),
+
+          // 타이틀
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Center(
+              child: Text(
+                l10n.reportGuideTitle,
+                style: context.textStyles.tileTitle.copyWith(
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ),
           ),
 
           // 스크롤 가능한 내용
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
               child: _buildMessageContent(context, l10n),
             ),
           ),
@@ -308,10 +306,7 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
               decoration: BoxDecoration(
                 color: context.colors.background,
                 border: Border(
-                  top: BorderSide(
-                    color: context.colors.divider,
-                    width: 0.5,
-                  ),
+                  top: BorderSide(color: context.colors.divider, width: 0.5),
                 ),
               ),
               child: _buildConfirmSection(l10n, context),

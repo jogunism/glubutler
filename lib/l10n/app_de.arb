@@ -326,7 +326,7 @@
   "generateReport": "Bericht erstellen",
   "reportRequiresICloud": "Bericht erstellen",
   "reportRequiresICloudMessage": "iCloud-Synchronisierung ist erforderlich, um Berichte zu erstellen.\nEinstellungen > iCloud-Synchronisierung",
-  "reportGuideTitle": "Leitfaden zur Berichtgenerierung",
+  "reportGuideTitle": "Leitfaden zur Berichterstellung",
   "reportGuideMessage": "• Der Blutzucker wird von verschiedenen Aspekten des Lebens beeinflusst. Daher sind für die Berichtserstellung detaillierte gesundheitsbezogene Daten erforderlich.\n\n• Alle grundlegenden Informationen basieren auf Daten aus der Apple Health-App.\n\n• Wir beziehen uns auf Ihre in der Apple Health-App aufgezeichneten Grundinformationen, Bewegungsaufzeichnungen, Lebensmuster usw. und verfolgen Ihren aktuellen Status basierend auf Glukoseaufzeichnungen von Glu Butler oder anderen Apps.\n\n• Je mehr Daten gesammelt werden und je detaillierter sie sind, desto mehr Faktoren können berücksichtigt werden, was zu umfassenderen Berichten führt.\n\n• Daher empfehlen wir, Berichte zu erstellen, wenn Sie mindestens 3 Tage oder mehr an Aktivitäts- und Glukosedaten haben.\n(Eintägige Berichte werden nicht unterstützt)\n\n• Für Ihren ersten Bericht können Sie Berichte ab einer Woche vor heute erstellen.\n\n• Sie können keine Berichte für Daten erstellen, für die bereits Berichte vorhanden sind.\n\n※ Persönliche Informationen, die für die Berichtserstellung verwendet werden, werden niemals anderswo gespeichert. Sie werden ausschließlich für die Berichtserstellung verwendet und nach Gebrauch sofort gelöscht.",
   "doNotShowAgain": "Nicht mehr anzeigen",
   "viewPastReports": "Frühere Berichte",
@@ -350,7 +350,9 @@
       }
     }
   },
-  "generatingReport": "Generating AI Report...",
+  "generatingReport": "KI-Bericht wird erstellt...",
+  "reportCreationFailed": "Berichterstellung fehlgeschlagen",
+  "reportCreationSuccess": "Bericht wurde erstellt",
   "daysAgo": "vor {count} Tagen",
   "@daysAgo": {
     "placeholders": {
@@ -447,7 +449,7 @@
   "mealGlucoseReminders": "Blutzuckermessung vor Frühstück, Mittagessen, Abendessen",
   "longTermGlucoseAbsence": "Langfristige Blutzuckeraufzeichnung fehlt Alarm",
   "longTermDiaryAbsence": "Langfristiger Tagebucheintrag fehlt Alarm",
-  "reportGenerationReminder": "Berichtserstellung Erinnerung",
+  "reportCreationReminder": "Berichterstellung Erinnerung",
 
   "notifFirstReportTitle": "Erstellen Sie Ihren ersten Blutzuckerbericht",
   "notifReportReminderTitle": "Erstellen Sie Ihren Blutzuckerbericht und prüfen Sie die Ergebnisse",

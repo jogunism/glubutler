@@ -881,7 +881,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'iCloud sync is required to generate reports.\nSettings > iCloud Sync';
 
   @override
-  String get reportGuideTitle => 'Report Generation Guide';
+  String get reportGuideTitle => 'Report Creation Guide';
 
   @override
   String get reportGuideMessage =>
@@ -937,13 +937,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get generatingReport => 'Generating AI Report...';
+  String get generatingReport => 'Creating AI Report...';
 
   @override
-  String get reportGenerationFailed => 'Report Generation Failed';
+  String get reportCreationFailed => 'Report Creation Failed';
 
   @override
-  String get reportGenerationSuccess => 'Report has been generated';
+  String get reportCreationSuccess => 'Report has been created';
 
   @override
   String get ok => 'OK';
@@ -1173,7 +1173,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get longTermDiaryAbsence => 'Long-term Diary Entry Absence Alert';
 
   @override
-  String get reportGenerationReminder => 'Report Generation Reminder';
+  String get reportCreationReminder => 'Report Creation Reminder';
 
   @override
   String get notifFirstReportTitle => 'Create your first glucose report';

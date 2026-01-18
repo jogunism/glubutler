@@ -135,7 +135,7 @@ class _ReportScreenState extends State<ReportScreen> {
     TopBanner.show(
       context,
       message: success
-          ? l10n.reportGenerationSuccess
+          ? l10n.reportCreationSuccess
           : _getErrorMessage(reportProvider, l10n),
       isSuccess: success,
     );
