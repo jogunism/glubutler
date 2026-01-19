@@ -461,5 +461,12 @@
   "notifDiaryReminderTitle": "Zeichnen Sie Ihre Mahlzeit auf",
   "notifDiaryReminderBody": "Verfolgen Sie Ihre Essgewohnheiten",
   "notifGlucoseRecordReminderTitle": "Vergessen Sie nicht, Ihren Blutzucker zu messen",
-  "notifGlucoseRecordReminderBody": "Konsequente Aufzeichnung ist der erste Schritt zum Blutzuckermanagement"
+  "notifGlucoseRecordReminderBody": "Konsequente Aufzeichnung ist der erste Schritt zum Blutzuckermanagement",
+
+  "exportReport": "Bericht per E-Mail exportieren",
+  "exportReportTitle": "E-Mail senden",
+  "exportReportMessage": "Bitte geben Sie die E-Mail-Adresse ein, um den Bericht zu erhalten",
+  "send": "Senden",
+  "exportSuccess": "Bericht wurde per E-Mail gesendet",
+  "exportFailed": "Fehler beim Senden des Berichts"
 }

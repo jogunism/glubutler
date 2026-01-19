@@ -339,7 +339,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     ),
                   )
                 else
-                  // 레포트 있을 때: 기간 + 지난 리포트 버튼 + 내용
+                  // 레포트 있을 때: 기간 + 지난 리포트 버튼 + 내용 + Export 버튼
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                     sliver: SliverList(
@@ -349,6 +349,9 @@ class _ReportScreenState extends State<ReportScreen> {
                         const SizedBox(height: 16),
                         // 레포트 내용 (마크다운)
                         _buildReportContent(theme, reportContent),
+                        const SizedBox(height: 16),
+                        // Export 버튼
+                        _buildExportButton(l10n),
                       ]),
                     ),
                   ),
@@ -515,6 +518,122 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildExportButton(AppLocalizations l10n) {
+    const backgroundColor = Colors.white;
+    const borderColor = Color(0xFFCCCCCC);
+
+    return GestureDetector(
+      onTap: _showEmailInputDialog,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(color: borderColor, width: 1),
+        ),
+        child: Container(
+          margin: const EdgeInsets.all(3),
+          padding: const EdgeInsets.all(3),
+          child: CustomPaint(
+            painter: _DashedBorderPainter(
+              color: borderColor,
+              strokeWidth: 1,
+              dashWidth: 4,
+              dashSpace: 3,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    CupertinoIcons.mail,
+                    size: 20,
+                    color: AppTheme.primaryColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.exportReport,
+                    style: const TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showEmailInputDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController();
+
+    final email = await showCupertinoDialog<String>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(l10n.exportReportTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Text(
+              l10n.exportReportMessage,
+              style: const TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            CupertinoTextField(
+              controller: controller,
+              placeholder: 'email@example.com',
+              keyboardType: TextInputType.emailAddress,
+              autofocus: true,
+              autocorrect: false,
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              final email = controller.text.trim();
+              if (email.isEmpty) return;
+
+              // 간단한 이메일 형식 검증
+              final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+              if (!emailRegex.hasMatch(email)) {
+                // 형식이 잘못된 경우 다이얼로그는 닫지 않고 리턴
+                return;
+              }
+
+              Navigator.pop(context, email);
+            },
+            child: Text(l10n.send),
+          ),
+        ],
+      ),
+    );
+
+    if (email == null || email.isEmpty || !mounted) return;
+
+    // TODO: /export API 호출
+    debugPrint('[ReportScreen] Export report to email: $email');
+
+    // TopBanner로 성공/실패 알림 표시
+    if (!mounted) return;
+    TopBanner.show(
+      context,
+      message: l10n.exportSuccess,
+      isSuccess: true,
     );
   }
 }

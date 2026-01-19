@@ -1167,4 +1167,22 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get notifGlucoseRecordReminderBody => '継続的な記録が血糖管理の第一歩です';
+
+  @override
+  String get exportReport => 'メールでレポートをエクスポート';
+
+  @override
+  String get exportReportTitle => 'メール送信';
+
+  @override
+  String get exportReportMessage => 'レポートを受け取るメールアドレスを入力してください';
+
+  @override
+  String get send => '送信';
+
+  @override
+  String get exportSuccess => 'レポートがメールで送信されました';
+
+  @override
+  String get exportFailed => 'レポートの送信に失敗しました';
 }

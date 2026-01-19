@@ -480,5 +480,12 @@
   "notifDiaryReminderTitle": "Record your meal",
   "notifDiaryReminderBody": "Track your eating patterns",
   "notifGlucoseRecordReminderTitle": "Don't forget to check your glucose",
-  "notifGlucoseRecordReminderBody": "Consistent tracking is the first step to glucose management"
+  "notifGlucoseRecordReminderBody": "Consistent tracking is the first step to glucose management",
+
+  "exportReport": "Export Report via Email",
+  "exportReportTitle": "Send Email",
+  "exportReportMessage": "Please enter the email address to receive the report",
+  "send": "Send",
+  "exportSuccess": "Report has been sent to your email",
+  "exportFailed": "Failed to send report"
 }

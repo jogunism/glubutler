@@ -461,5 +461,12 @@
   "notifDiaryReminderTitle": "记录您的饮食",
   "notifDiaryReminderBody": "了解您的饮食模式",
   "notifGlucoseRecordReminderTitle": "别忘了测量血糖",
-  "notifGlucoseRecordReminderBody": "持续记录是血糖管理的第一步"
+  "notifGlucoseRecordReminderBody": "持续记录是血糖管理的第一步",
+
+  "exportReport": "通过电子邮件导出报告",
+  "exportReportTitle": "发送邮件",
+  "exportReportMessage": "请输入接收报告的电子邮件地址",
+  "send": "发送",
+  "exportSuccess": "报告已通过电子邮件发送",
+  "exportFailed": "发送报告失败"
 }

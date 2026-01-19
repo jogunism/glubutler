@@ -1168,4 +1168,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get notifGlucoseRecordReminderBody => '꾸준한 기록이 혈당 관리의 첫걸음입니다';
+
+  @override
+  String get exportReport => '이메일로 리포트 내보내기';
+
+  @override
+  String get exportReportTitle => '이메일 전송';
+
+  @override
+  String get exportReportMessage => '리포트를 전달받을 이메일을 입력해 주세요';
+
+  @override
+  String get send => '전송';
+
+  @override
+  String get exportSuccess => '리포트가 이메일로 전송되었습니다';
+
+  @override
+  String get exportFailed => '리포트 전송에 실패했습니다';
 }

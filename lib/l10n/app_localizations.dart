@@ -2371,6 +2371,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Consistent tracking is the first step to glucose management'**
   String get notifGlucoseRecordReminderBody;
+
+  /// No description provided for @exportReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Report via Email'**
+  String get exportReport;
+
+  /// No description provided for @exportReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get exportReportTitle;
+
+  /// No description provided for @exportReportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the email address to receive the report'**
+  String get exportReportMessage;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @exportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Report has been sent to your email'**
+  String get exportSuccess;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send report'**
+  String get exportFailed;
 }
 
 class _AppLocalizationsDelegate

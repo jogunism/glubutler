@@ -1217,4 +1217,23 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get notifGlucoseRecordReminderBody =>
       'La registrazione costante è il primo passo per la gestione della glicemia';
+
+  @override
+  String get exportReport => 'Esporta report via email';
+
+  @override
+  String get exportReportTitle => 'Invia email';
+
+  @override
+  String get exportReportMessage =>
+      'Inserisci l\'indirizzo email per ricevere il report';
+
+  @override
+  String get send => 'Invia';
+
+  @override
+  String get exportSuccess => 'Il report è stato inviato via email';
+
+  @override
+  String get exportFailed => 'Invio del report non riuscito';
 }

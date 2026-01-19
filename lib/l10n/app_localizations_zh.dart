@@ -1164,4 +1164,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notifGlucoseRecordReminderBody => '持续记录是血糖管理的第一步';
+
+  @override
+  String get exportReport => '通过电子邮件导出报告';
+
+  @override
+  String get exportReportTitle => '发送邮件';
+
+  @override
+  String get exportReportMessage => '请输入接收报告的电子邮件地址';
+
+  @override
+  String get send => '发送';
+
+  @override
+  String get exportSuccess => '报告已通过电子邮件发送';
+
+  @override
+  String get exportFailed => '发送报告失败';
 }

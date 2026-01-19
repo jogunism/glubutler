@@ -1209,4 +1209,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notifGlucoseRecordReminderBody =>
       'Consistent tracking is the first step to glucose management';
+
+  @override
+  String get exportReport => 'Export Report via Email';
+
+  @override
+  String get exportReportTitle => 'Send Email';
+
+  @override
+  String get exportReportMessage =>
+      'Please enter the email address to receive the report';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get exportSuccess => 'Report has been sent to your email';
+
+  @override
+  String get exportFailed => 'Failed to send report';
 }

@@ -41,7 +41,9 @@
       "Bash(git mv:*)",
       "Bash(tree:*)",
       "Bash(/Users/hyunwoo/flutter/bin/flutter gen-l10n:*)",
-      "Bash(pod deintegrate:*)"
+      "Bash(pod deintegrate:*)",
+      "Bash(for file in /Users/hyunwoo/Documents/workspace/glubutler/lib/l10n/app_{ja,zh,de,es,fr,it}.arb)",
+      "Bash(do tail -3 \"$file\")"
     ]
   }
 }

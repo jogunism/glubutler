@@ -461,5 +461,12 @@
   "notifDiaryReminderTitle": "Registra il tuo pasto",
   "notifDiaryReminderBody": "Tieni traccia delle tue abitudini alimentari",
   "notifGlucoseRecordReminderTitle": "Non dimenticare di misurare la tua glicemia",
-  "notifGlucoseRecordReminderBody": "La registrazione costante è il primo passo per la gestione della glicemia"
+  "notifGlucoseRecordReminderBody": "La registrazione costante è il primo passo per la gestione della glicemia",
+
+  "exportReport": "Esporta report via email",
+  "exportReportTitle": "Invia email",
+  "exportReportMessage": "Inserisci l'indirizzo email per ricevere il report",
+  "send": "Invia",
+  "exportSuccess": "Il report è stato inviato via email",
+  "exportFailed": "Invio del report non riuscito"
 }

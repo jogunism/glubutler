@@ -463,5 +463,12 @@
   "notifDiaryReminderTitle": "食事内容を記録してみましょう",
   "notifDiaryReminderBody": "自分の食生活パターンを把握できます",
   "notifGlucoseRecordReminderTitle": "血糖測定を忘れないでください",
-  "notifGlucoseRecordReminderBody": "継続的な記録が血糖管理の第一歩です"
+  "notifGlucoseRecordReminderBody": "継続的な記録が血糖管理の第一歩です",
+
+  "exportReport": "メールでレポートをエクスポート",
+  "exportReportTitle": "メール送信",
+  "exportReportMessage": "レポートを受け取るメールアドレスを入力してください",
+  "send": "送信",
+  "exportSuccess": "レポートがメールで送信されました",
+  "exportFailed": "レポートの送信に失敗しました"
 }

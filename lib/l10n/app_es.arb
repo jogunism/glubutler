@@ -461,5 +461,12 @@
   "notifDiaryReminderTitle": "Registra tu comida",
   "notifDiaryReminderBody": "Sigue tus hábitos alimenticios",
   "notifGlucoseRecordReminderTitle": "No olvides medir tu glucosa",
-  "notifGlucoseRecordReminderBody": "El registro constante es el primer paso para el manejo de la glucosa"
+  "notifGlucoseRecordReminderBody": "El registro constante es el primer paso para el manejo de la glucosa",
+
+  "exportReport": "Exportar informe por correo electrónico",
+  "exportReportTitle": "Enviar correo",
+  "exportReportMessage": "Por favor, ingrese la dirección de correo electrónico para recibir el informe",
+  "send": "Enviar",
+  "exportSuccess": "El informe se ha enviado por correo electrónico",
+  "exportFailed": "Error al enviar el informe"
 }

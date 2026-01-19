@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
@@ -123,7 +124,7 @@ class _DiaryImageViewerState extends State<DiaryImageViewer> {
                 },
                 itemBuilder: (context, index) {
                   return _ImageZoomView(
-                    filePath: widget.files[index].filePath,
+                    file: widget.files[index],
                     transformationController: _transformationControllers[index]!,
                   );
                 },
@@ -244,21 +245,47 @@ class _DiaryImageViewerState extends State<DiaryImageViewer> {
 }
 
 class _ImageZoomView extends StatelessWidget {
-  final String filePath;
+  final DiaryFile file;
   final TransformationController transformationController;
 
   const _ImageZoomView({
-    required this.filePath,
+    required this.file,
     required this.transformationController,
   });
 
+  /// 언어별로 날짜 포맷을 생성합니다
+  String _formatCapturedTime(DateTime capturedAt, String languageCode) {
+    switch (languageCode) {
+      case 'ko':
+        return DateFormat('yyyy년 M월 d일 HH:mm', 'ko').format(capturedAt);
+      case 'ja':
+        return DateFormat('yyyy年M月d日 HH:mm', 'ja').format(capturedAt);
+      case 'zh':
+        return DateFormat('yyyy年M月d日 HH:mm', 'zh').format(capturedAt);
+      case 'en':
+        return DateFormat('MMM d, yyyy HH:mm', 'en').format(capturedAt);
+      case 'de':
+        return DateFormat('d. MMM yyyy HH:mm', 'de').format(capturedAt);
+      case 'es':
+        return DateFormat('d MMM yyyy HH:mm', 'es').format(capturedAt);
+      case 'fr':
+        return DateFormat('d MMM yyyy HH:mm', 'fr').format(capturedAt);
+      case 'it':
+        return DateFormat('d MMM yyyy HH:mm', 'it').format(capturedAt);
+      default:
+        return DateFormat('yyyy-MM-dd HH:mm').format(capturedAt);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final file = File(filePath);
+    final imageFile = File(file.filePath);
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final languageCode = locale.languageCode;
 
     return FutureBuilder<bool>(
-      future: file.exists(),
+      future: imageFile.exists(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -294,41 +321,76 @@ class _ImageZoomView extends StatelessWidget {
           );
         }
 
-        return InteractiveViewer(
-          transformationController: transformationController,
-          minScale: 0.5,
-          maxScale: 4.0,
-          panEnabled: true,
-          scaleEnabled: true,
-          child: Center(
-            child: Image.file(
-              file,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                final l10n = AppLocalizations.of(context)!;
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.exclamationmark_triangle,
-                        color: Colors.white.withValues(alpha: 0.5),
-                        size: 48,
+        return Stack(
+          children: [
+            // 이미지 (전체 화면)
+            SafeArea(
+              child: InteractiveViewer(
+                transformationController: transformationController,
+                minScale: 0.5,
+                maxScale: 4.0,
+                panEnabled: true,
+                scaleEnabled: true,
+                child: SizedBox.expand(
+                  child: Image.file(
+                    imageFile,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      final l10n = AppLocalizations.of(context)!;
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              CupertinoIcons.exclamationmark_triangle,
+                              color: Colors.white.withValues(alpha: 0.5),
+                              size: 48,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              l10n.imageLoadError,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.5),
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            // 캡처 시간 표시 (이미지 위, 중앙 상단)
+            if (file.capturedAt != null)
+              IgnorePointer(
+                child: SafeArea(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 72),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.imageLoadError,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _formatCapturedTime(file.capturedAt!, languageCode),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                );
-              },
-            ),
-          ),
+                ),
+              ),
+          ],
         );
       },
     );

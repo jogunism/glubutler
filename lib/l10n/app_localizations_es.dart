@@ -1213,4 +1213,23 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get notifGlucoseRecordReminderBody =>
       'El registro constante es el primer paso para el manejo de la glucosa';
+
+  @override
+  String get exportReport => 'Exportar informe por correo electrónico';
+
+  @override
+  String get exportReportTitle => 'Enviar correo';
+
+  @override
+  String get exportReportMessage =>
+      'Por favor, ingrese la dirección de correo electrónico para recibir el informe';
+
+  @override
+  String get send => 'Enviar';
+
+  @override
+  String get exportSuccess => 'El informe se ha enviado por correo electrónico';
+
+  @override
+  String get exportFailed => 'Error al enviar el informe';
 }

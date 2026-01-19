@@ -1220,4 +1220,23 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get notifGlucoseRecordReminderBody =>
       'Konsequente Aufzeichnung ist der erste Schritt zum Blutzuckermanagement';
+
+  @override
+  String get exportReport => 'Bericht per E-Mail exportieren';
+
+  @override
+  String get exportReportTitle => 'E-Mail senden';
+
+  @override
+  String get exportReportMessage =>
+      'Bitte geben Sie die E-Mail-Adresse ein, um den Bericht zu erhalten';
+
+  @override
+  String get send => 'Senden';
+
+  @override
+  String get exportSuccess => 'Bericht wurde per E-Mail gesendet';
+
+  @override
+  String get exportFailed => 'Fehler beim Senden des Berichts';
 }
