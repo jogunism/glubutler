@@ -18,6 +18,7 @@ import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
+import 'package:glu_butler/widgets/common/input_dialog.dart';
 
 /// 리포트 화면
 ///
@@ -573,53 +574,28 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _showEmailInputDialog() async {
     final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController();
 
-    final email = await showCupertinoDialog<String>(
+    final email = await showDialog<String>(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.exportReportTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 8),
-            Text(
-              l10n.exportReportMessage,
-              style: const TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 16),
-            CupertinoTextField(
-              controller: controller,
-              placeholder: 'email@example.com',
-              keyboardType: TextInputType.emailAddress,
-              autofocus: true,
-              autocorrect: false,
-            ),
-          ],
-        ),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            onPressed: () {
-              final email = controller.text.trim();
-              if (email.isEmpty) return;
+      barrierColor: Colors.black.withValues(alpha: 0.85),
+      builder: (context) => InputDialog(
+        title: l10n.exportReportTitle,
+        message: l10n.exportReportMessage,
+        placeholder: 'your.id@email.com',
+        buttonTitle: l10n.send,
+        validator: (input) {
+          if (input.isEmpty) {
+            return '이메일을 입력해 주세요';
+          }
 
-              // 간단한 이메일 형식 검증
-              final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-              if (!emailRegex.hasMatch(email)) {
-                // 형식이 잘못된 경우 다이얼로그는 닫지 않고 리턴
-                return;
-              }
+          // 이메일 형식 검증
+          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+          if (!emailRegex.hasMatch(input)) {
+            return '올바른 이메일 형식이 아닙니다';
+          }
 
-              Navigator.pop(context, email);
-            },
-            child: Text(l10n.send),
-          ),
-        ],
+          return null; // 검증 성공
+        },
       ),
     );
 
