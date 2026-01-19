@@ -574,27 +574,42 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _showEmailInputDialog() async {
     final l10n = AppLocalizations.of(context)!;
+    bool isButtonEnabled = false;
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
     final email = await showDialog<String>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.85),
-      builder: (context) => InputDialog(
-        title: l10n.exportReportTitle,
-        message: l10n.exportReportMessage,
-        placeholder: 'your.id@email.com',
-        buttonTitle: l10n.send,
-        validator: (input) {
-          if (input.isEmpty) {
-            return '이메일을 입력해 주세요';
-          }
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return InputDialog(
+            title: l10n.exportReportTitle,
+            message: l10n.exportReportMessage,
+            placeholder: 'your.id@email.com',
+            buttonTitle: l10n.send,
+            isButtonEnabled: isButtonEnabled,
+            onChanged: (value) {
+              final trimmedValue = value.trim();
+              final isValid = trimmedValue.isNotEmpty && emailRegex.hasMatch(trimmedValue);
 
-          // 이메일 형식 검증
-          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-          if (!emailRegex.hasMatch(input)) {
-            return '올바른 이메일 형식이 아닙니다';
-          }
+              if (isValid != isButtonEnabled) {
+                setState(() {
+                  isButtonEnabled = isValid;
+                });
+              }
+            },
+            validator: (input) {
+              if (input.isEmpty) {
+                return '이메일을 입력해 주세요';
+              }
 
-          return null; // 검증 성공
+              if (!emailRegex.hasMatch(input)) {
+                return '올바른 이메일 형식이 아닙니다';
+              }
+
+              return null; // 검증 성공
+            },
+          );
         },
       ),
     );

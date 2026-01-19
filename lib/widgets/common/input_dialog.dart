@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:glu_butler/core/theme/app_theme.dart';
+import 'package:glu_butler/core/theme/app_text_styles.dart';
+import 'package:glu_butler/core/theme/app_colors.dart';
+import 'package:glu_butler/core/theme/app_decorations.dart';
+import 'package:glu_butler/core/widgets/keyboard_dismiss_button.dart';
 
 /// 검증 기능이 있는 입력 다이얼로그
 class InputDialog extends StatefulWidget {
@@ -10,6 +14,8 @@ class InputDialog extends StatefulWidget {
   final String placeholder;
   final String buttonTitle;
   final String? Function(String)? validator;
+  final ValueChanged<String>? onChanged;
+  final bool isButtonEnabled;
 
   const InputDialog({
     super.key,
@@ -18,6 +24,8 @@ class InputDialog extends StatefulWidget {
     required this.placeholder,
     required this.buttonTitle,
     this.validator,
+    this.onChanged,
+    this.isButtonEnabled = true,
   });
 
   @override
@@ -26,21 +34,49 @@ class InputDialog extends StatefulWidget {
 
 class _InputDialogState extends State<InputDialog> {
   late final TextEditingController _controller;
+  late final FocusNode _focusNode;
   String? _errorMessage;
+  OverlayEntry? _keyboardToolbarOverlay;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
   }
 
   @override
   void dispose() {
+    _keyboardToolbarOverlay?.remove();
+    _keyboardToolbarOverlay = null;
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
+  void _onFocusChange() {
+    if (_focusNode.hasFocus) {
+      _showKeyboardToolbar();
+    } else {
+      _hideKeyboardToolbar();
+    }
+  }
+
+  void _showKeyboardToolbar() {
+    if (_keyboardToolbarOverlay != null) return;
+    _keyboardToolbarOverlay = KeyboardDismissButton.show(context, _focusNode);
+  }
+
+  void _hideKeyboardToolbar() {
+    KeyboardDismissButton.hide(_keyboardToolbarOverlay);
+    _keyboardToolbarOverlay = null;
+  }
+
   void _validateAndSubmit() {
+    if (!widget.isButtonEnabled) return;
+
     final input = _controller.text.trim();
 
     // validator가 있으면 실행
@@ -123,26 +159,33 @@ class _InputDialogState extends State<InputDialog> {
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 16),
-                  CupertinoTextField(
-                    controller: _controller,
-                    placeholder: widget.placeholder,
-                    keyboardType: TextInputType.emailAddress,
-                    autofocus: true,
-                    autocorrect: false,
-                    onSubmitted: (_) => _validateAndSubmit(),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: _errorMessage != null
-                            ? Colors.red
-                            : Colors.grey[300]!,
-                        width: 1,
+                  SizedBox(
+                    height: 48,
+                    child: CupertinoTextField(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      placeholder: widget.placeholder,
+                      keyboardType: TextInputType.emailAddress,
+                      autofocus: true,
+                      autocorrect: false,
+                      onChanged: widget.onChanged,
+                      onSubmitted: (_) => _validateAndSubmit(),
+                      style: context.textStyles.bodyText,
+                      placeholderStyle: context.textStyles.bodyText.copyWith(
+                        color: context.colors.textSecondary,
                       ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
+                      decoration: context.decorations.card.copyWith(
+                        border: Border.all(
+                          color: _errorMessage != null
+                              ? context.colors.error
+                              : context.colors.divider,
+                          width: 1,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                   if (_errorMessage != null) ...[
@@ -156,17 +199,22 @@ class _InputDialogState extends State<InputDialog> {
                   // 확인 버튼
                   SizedBox(
                     width: double.infinity,
+                    height: 48,
                     child: CupertinoButton(
-                      color: AppTheme.primaryColor,
-                      borderRadius: BorderRadius.circular(8),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      onPressed: _validateAndSubmit,
+                      color: widget.isButtonEnabled
+                          ? AppTheme.primaryColor
+                          : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                      padding: EdgeInsets.zero,
+                      onPressed: widget.isButtonEnabled ? _validateAndSubmit : null,
                       child: Text(
                         widget.buttonTitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: widget.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey[700],
                         ),
                       ),
                     ),

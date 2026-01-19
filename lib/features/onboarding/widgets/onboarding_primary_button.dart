@@ -24,8 +24,8 @@ class OnboardingPrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: Colors.grey,
-          disabledForegroundColor: Colors.white.withValues(alpha: 0.6),
+          disabledBackgroundColor: AppTheme.disabledButtonColor,
+          disabledForegroundColor: AppTheme.disabledButtonTextColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),

@@ -54,6 +54,12 @@ class AppTheme {
   static const Color textSecondaryDark = Color(0xFF8E8E93); // Gray
 
   // ==========================================================================
+  // Button Colors
+  // ==========================================================================
+  static const Color disabledButtonColor = Color(0xFFE0E0E0); // Disabled button background (grey[300])
+  static const Color disabledButtonTextColor = Color(0xFF616161); // Disabled button text (grey[700])
+
+  // ==========================================================================
   // Icon Colors (for Settings, Features, etc.)
   // ==========================================================================
   static const Color iconOrange = Colors.orange;
