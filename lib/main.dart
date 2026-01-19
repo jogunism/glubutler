@@ -31,12 +31,18 @@ void main() async {
   // Initialize database first (tables, migrations)
   await DatabaseService().initialize();
 
+  final settingsService = SettingsService();
+  await settingsService.init();
+
   // Initialize notification service (권한 요청은 온보딩에서 처리)
   final notificationService = NotificationService();
   await notificationService.initialize();
 
-  final settingsService = SettingsService();
-  await settingsService.init();
+  // 만료된 알림 정리
+  await notificationService.cleanupExpiredNotifications();
+
+  // 리포트 알림 조건부 스케줄링
+  await notificationService.scheduleReportReminderIfNeeded();
 
   final feedProvider = FeedProvider();
   feedProvider.setSettingsService(settingsService);

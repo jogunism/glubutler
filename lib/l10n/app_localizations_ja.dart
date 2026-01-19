@@ -1059,28 +1059,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingNotificationEnable => '通知を有効にする';
 
   @override
-  String get notificationGlucoseReminderTitle => '血糖値を確認して記録しましょう';
+  String get notificationGlucoseReminderBody =>
+      '定期的な血糖測定をお勧めします\n食前食後の血糖変化を観察してみましょう';
 
   @override
-  String get notificationGlucoseReminderBody => '食前血糖値を測定してください';
+  String get notificationDiaryReminderBody => '今日の血糖日記を書いてみましょう';
 
   @override
-  String get notificationGlucoseAbsenceTitle => '血糖値測定を忘れずに';
-
-  @override
-  String get notificationGlucoseAbsenceBody => '継続的な記録が血糖管理の第一歩です';
-
-  @override
-  String get notificationDiaryReminderTitle => '食事内容を記録しましょう';
-
-  @override
-  String get notificationDiaryReminderBody => '食生活パターンを把握できます';
-
-  @override
-  String get notificationReportReminderTitle => '健康レポートを作成しましょう';
-
-  @override
-  String get notificationReportReminderBody => '血糖レポートを確認してください';
+  String get notificationReportReminderBody => '健康レポートを確認してください';
 
   @override
   String get onboardingSubscriptionTitle => '最初の1週間すべての機能をお試しください';

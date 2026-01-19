@@ -6,29 +6,17 @@ enum NotificationType {
   /// 리포트 생성 권장 (마지막 리포트 후 3일 경과)
   reportReminder,
 
-  /// 혈당 측정 리마인더 (아침)
-  glucoseReminderMorning,
-
-  /// 혈당 측정 리마인더 (점심)
-  glucoseReminderLunch,
-
-  /// 혈당 측정 리마인더 (저녁)
-  glucoseReminderDinner,
-
-  /// 일기 작성 권장 (3일 이상 일기 없음)
-  diaryReminder,
-
-  /// 혈당 기록 권장 (3일 이상 혈당 기록 없음)
+  /// 혈당 측정 알림 (하루 3회 미만 측정 시, 18:00)
   glucoseRecordReminder,
+
+  /// 일기 작성 알림 (오늘 일기 없을 시, 22:00)
+  diaryReminder,
 }
 
 extension NotificationTypeExtension on NotificationType {
   /// 알림 카테고리
   NotificationCategory get category {
     switch (this) {
-      case NotificationType.glucoseReminderMorning:
-      case NotificationType.glucoseReminderLunch:
-      case NotificationType.glucoseReminderDinner:
       case NotificationType.glucoseRecordReminder:
         return NotificationCategory.glucose;
 
@@ -51,16 +39,10 @@ extension NotificationTypeExtension on NotificationType {
         return 1;
       case NotificationType.reportReminder:
         return 2;
-      case NotificationType.glucoseReminderMorning:
-        return 3;
-      case NotificationType.glucoseReminderLunch:
-        return 4;
-      case NotificationType.glucoseReminderDinner:
-        return 5;
-      case NotificationType.diaryReminder:
-        return 6;
       case NotificationType.glucoseRecordReminder:
         return 7;
+      case NotificationType.diaryReminder:
+        return 6;
     }
   }
 }

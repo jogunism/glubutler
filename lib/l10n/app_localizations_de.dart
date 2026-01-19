@@ -1099,34 +1099,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingNotificationEnable => 'Benachrichtigungen aktivieren';
 
   @override
-  String get notificationGlucoseReminderTitle =>
-      'Überprüfen Sie Ihren Blutzucker';
-
-  @override
   String get notificationGlucoseReminderBody =>
-      'Messen Sie Ihren Blutzuckerspiegel';
-
-  @override
-  String get notificationGlucoseAbsenceTitle => 'Vergessen Sie nicht zu messen';
-
-  @override
-  String get notificationGlucoseAbsenceBody =>
-      'Konsequentes Tracking ist der erste Schritt';
-
-  @override
-  String get notificationDiaryReminderTitle => 'Zeichnen Sie Ihre Mahlzeit auf';
+      'Regelmäßige Blutzuckermessung wird empfohlen\nBeobachten Sie Blutzuckerveränderungen vor und nach den Mahlzeiten';
 
   @override
   String get notificationDiaryReminderBody =>
-      'Verfolgen Sie Ihre Essgewohnheiten';
-
-  @override
-  String get notificationReportReminderTitle =>
-      'Erstellen Sie einen Gesundheitsbericht';
+      'Schreiben Sie Ihr heutiges Blutzucker-Tagebuch';
 
   @override
   String get notificationReportReminderBody =>
-      'Generieren Sie Ihren Glukosebericht';
+      'Überprüfen Sie Ihren Gesundheitsbericht';
 
   @override
   String get onboardingSubscriptionTitle =>

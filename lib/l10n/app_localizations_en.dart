@@ -1094,30 +1094,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingNotificationEnable => 'Enable Notifications';
 
   @override
-  String get notificationGlucoseReminderTitle => 'Check your glucose';
-
-  @override
   String get notificationGlucoseReminderBody =>
-      'Record your blood glucose level';
+      'Regular glucose monitoring is recommended\nObserve glucose changes before and after meals';
 
   @override
-  String get notificationGlucoseAbsenceTitle => 'Don\'t forget to measure';
+  String get notificationDiaryReminderBody =>
+      'Write your glucose diary for today';
 
   @override
-  String get notificationGlucoseAbsenceBody =>
-      'Consistent tracking is the first step to glucose management';
-
-  @override
-  String get notificationDiaryReminderTitle => 'Record your meal';
-
-  @override
-  String get notificationDiaryReminderBody => 'Track your eating patterns';
-
-  @override
-  String get notificationReportReminderTitle => 'Create a health report';
-
-  @override
-  String get notificationReportReminderBody => 'Generate your glucose report';
+  String get notificationReportReminderBody => 'Check your health report';
 
   @override
   String get onboardingSubscriptionTitle =>

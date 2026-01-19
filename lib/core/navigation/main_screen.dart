@@ -14,6 +14,7 @@ import 'package:glu_butler/features/feed/feed_screen.dart';
 import 'package:glu_butler/features/diary/diary_screen.dart';
 import 'package:glu_butler/features/report/report_screen.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/notification_service.dart';
 
 /// 메인 화면 - iOS 상태바 탭 scroll-to-top 지원
 ///
@@ -42,6 +43,16 @@ class MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   bool _isTabBarVisible = true;
 
+  @override
+  void initState() {
+    super.initState();
+
+    // 알림으로 앱이 시작된 경우 pending payload 처리
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NotificationService.handlePendingPayloadIfReady();
+    });
+  }
+
   void switchToTab(int index) {
     if (index >= 0 && index < 4 && index != _currentIndex) {
       final settings = context.read<SettingsService>();
@@ -55,10 +66,8 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void switchToTabAndOpenModal(int index, String action) {
-    // 먼저 탭 전환
     switchToTab(index);
 
-    // 다음 프레임에서 모달 열기
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
 
@@ -73,7 +82,6 @@ class MainScreenState extends State<MainScreen> {
           }
           break;
         case 'trigger_report_generation':
-          // ReportScreen의 리포트 생성 트리거
           _triggerReportGeneration();
           break;
       }
@@ -81,9 +89,7 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void _triggerReportGeneration() {
-    // 리포트 탭으로 이동했으므로 사용자가 버튼을 누르도록 유도
-    // 자동으로 리포트를 생성하지 않고, 리포트 화면으로만 이동
-    // (리포트 생성은 사용자 확인이 필요하므로)
+    ReportScreen.triggerReportGeneration();
   }
 
   void setTabBarVisibility(bool visible) {
@@ -110,6 +116,7 @@ class MainScreenState extends State<MainScreen> {
           _buildOffstageTab(
             3,
             ReportScreen(
+              key: ReportScreen.globalKey,
               onScrollDirectionChanged: (scrollingDown) {
                 setState(() {
                   _isTabBarVisible = !scrollingDown;

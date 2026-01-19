@@ -2156,52 +2156,22 @@ abstract class AppLocalizations {
   /// **'Enable Notifications'**
   String get onboardingNotificationEnable;
 
-  /// No description provided for @notificationGlucoseReminderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Check your glucose'**
-  String get notificationGlucoseReminderTitle;
-
   /// No description provided for @notificationGlucoseReminderBody.
   ///
   /// In en, this message translates to:
-  /// **'Record your blood glucose level'**
+  /// **'Regular glucose monitoring is recommended\nObserve glucose changes before and after meals'**
   String get notificationGlucoseReminderBody;
-
-  /// No description provided for @notificationGlucoseAbsenceTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Don\'t forget to measure'**
-  String get notificationGlucoseAbsenceTitle;
-
-  /// No description provided for @notificationGlucoseAbsenceBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Consistent tracking is the first step to glucose management'**
-  String get notificationGlucoseAbsenceBody;
-
-  /// No description provided for @notificationDiaryReminderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Record your meal'**
-  String get notificationDiaryReminderTitle;
 
   /// No description provided for @notificationDiaryReminderBody.
   ///
   /// In en, this message translates to:
-  /// **'Track your eating patterns'**
+  /// **'Write your glucose diary for today'**
   String get notificationDiaryReminderBody;
-
-  /// No description provided for @notificationReportReminderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a health report'**
-  String get notificationReportReminderTitle;
 
   /// No description provided for @notificationReportReminderBody.
   ///
   /// In en, this message translates to:
-  /// **'Generate your glucose report'**
+  /// **'Check your health report'**
   String get notificationReportReminderBody;
 
   /// No description provided for @onboardingSubscriptionTitle.

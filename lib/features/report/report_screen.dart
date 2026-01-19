@@ -48,6 +48,13 @@ class ReportScreen extends StatefulWidget {
 
   final void Function(bool scrollingDown)? onScrollDirectionChanged;
 
+  static final GlobalKey<_ReportScreenState> globalKey =
+      GlobalKey<_ReportScreenState>();
+
+  static void triggerReportGeneration() {
+    globalKey.currentState?.generateReport();
+  }
+
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
@@ -155,7 +162,7 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Future<void> _generateReport() async {
+  Future<void> generateReport() async {
     final reportProvider = context.read<ReportProvider>();
     final settingsService = context.read<SettingsService>();
     final l10n = AppLocalizations.of(context)!;
@@ -316,7 +323,7 @@ class _ReportScreenState extends State<ReportScreen> {
                               ),
                               color: AppTheme.primaryColor,
                               borderRadius: BorderRadius.circular(12),
-                              onPressed: _generateReport,
+                              onPressed: generateReport,
                               child: Text(
                                 l10n.generateReport,
                                 style: const TextStyle(
@@ -372,7 +379,7 @@ class _ReportScreenState extends State<ReportScreen> {
             minSize: 0,
             color: AppTheme.primaryColor,
             borderRadius: BorderRadius.circular(8),
-            onPressed: isLoading ? null : _generateReport,
+            onPressed: isLoading ? null : generateReport,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

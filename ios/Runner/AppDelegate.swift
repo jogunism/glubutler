@@ -12,6 +12,10 @@ import CloudKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // flutter_local_notifications를 위한 notification center delegate 설정
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
+    }
     let controller = window?.rootViewController as! FlutterViewController
 
     // App Settings Channel

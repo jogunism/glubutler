@@ -1058,28 +1058,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingNotificationEnable => '启用通知';
 
   @override
-  String get notificationGlucoseReminderTitle => '检查并记录血糖';
+  String get notificationGlucoseReminderBody => '建议定期测量血糖\n观察餐前餐后的血糖变化';
 
   @override
-  String get notificationGlucoseReminderBody => '请测量餐前血糖';
+  String get notificationDiaryReminderBody => '记录今天的血糖日记吧';
 
   @override
-  String get notificationGlucoseAbsenceTitle => '别忘了测量血糖';
-
-  @override
-  String get notificationGlucoseAbsenceBody => '坚持记录是血糖管理的第一步';
-
-  @override
-  String get notificationDiaryReminderTitle => '记录您的饮食';
-
-  @override
-  String get notificationDiaryReminderBody => '追踪您的饮食习惯';
-
-  @override
-  String get notificationReportReminderTitle => '创建健康报告';
-
-  @override
-  String get notificationReportReminderBody => '生成血糖报告';
+  String get notificationReportReminderBody => '查看健康报告';
 
   @override
   String get onboardingSubscriptionTitle => '前一周试用所有功能';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
@@ -26,10 +27,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   bool _isLoading = true;
   bool _hasPermission = true;
   bool _permissionDeniedOnce = false; // 권한 한 번이라도 거부했는지 추적
+  bool _isDevelopment = false;
 
   @override
   void initState() {
     super.initState();
+    _isDevelopment = dotenv.env['APP_ENV'] == 'development';
     WidgetsBinding.instance.addObserver(this);
     _loadSettings();
   }
@@ -173,51 +176,21 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              // 혈당 섹션
-              _buildSectionTitle(context, l10n.bloodGlucose),
               _buildGroupedSection(
                 context: context,
                 children: [
-                  _buildSimpleNotificationTile(
-                    context: context,
-                    types: [
-                      NotificationType.glucoseReminderMorning,
-                      NotificationType.glucoseReminderLunch,
-                      NotificationType.glucoseReminderDinner,
-                    ],
-                    title: l10n.mealGlucoseReminders,
-                  ),
-                  _buildDivider(context),
                   _buildSimpleNotificationTile(
                     context: context,
                     types: [NotificationType.glucoseRecordReminder],
                     title: l10n.longTermGlucoseAbsence,
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // 일기 섹션
-              _buildSectionTitle(context, l10n.diary),
-              _buildGroupedSection(
-                context: context,
-                children: [
+                  _buildDivider(context),
                   _buildSimpleNotificationTile(
                     context: context,
                     types: [NotificationType.diaryReminder],
                     title: l10n.longTermDiaryAbsence,
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // 리포트 섹션
-              _buildSectionTitle(context, l10n.report),
-              _buildGroupedSection(
-                context: context,
-                children: [
+                  _buildDivider(context),
                   _buildSimpleNotificationTile(
                     context: context,
                     types: [
@@ -231,6 +204,14 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
 
               const SizedBox(height: 24),
 
+              // 개발 환경에서만 테스트 버튼들 표시
+              if (_isDevelopment) ...[
+                _buildTestNotificationHandlerButton(context),
+                const SizedBox(height: 12),
+                _buildCancelTestNotificationsButton(context),
+                const SizedBox(height: 24),
+              ],
+
               // 권한이 없을 때 안내 배너 (페이지 맨 아래)
               if (!_hasPermission) ...[
                 _buildPermissionBanner(context, l10n),
@@ -242,6 +223,91 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTestNotificationHandlerButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: CupertinoButton(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        color: CupertinoColors.systemBlue,
+        borderRadius: BorderRadius.circular(12),
+        onPressed: () {
+          // 먼저 설정 화면을 닫고 메인 화면으로 돌아가기
+          Navigator.of(context).pop();
+
+          // 다음 프레임에서 알림 처리 로직 실행
+          Future.delayed(const Duration(milliseconds: 300), () {
+            final notificationService = NotificationService();
+            notificationService.testNotificationHandler('feed_glucose');
+          });
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              CupertinoIcons.play_fill,
+              size: 18,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              '[DEV] 알림 처리 테스트 (직접 실행)',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCancelTestNotificationsButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: CupertinoButton(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        color: CupertinoColors.systemRed,
+        borderRadius: BorderRadius.circular(12),
+        onPressed: () async {
+          final notificationService = NotificationService();
+          await notificationService.cancelAllTestNotifications();
+
+          if (!mounted) return;
+          // ignore: use_build_context_synchronously
+          final messenger = ScaffoldMessenger.of(context);
+
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text('모든 테스트 알림 스케줄이 취소되었습니다'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              CupertinoIcons.trash,
+              size: 18,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              '[DEV] 테스트 알림 스케줄 모두 취소',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -342,16 +408,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      child: Text(
-        title.toUpperCase(),
-        style: context.textStyles.sectionTitle,
-      ),
-    );
-  }
-
   Widget _buildGroupedSection({
     required BuildContext context,
     required List<Widget> children,
@@ -384,6 +440,43 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
+          // 개발 환경에서만 테스트 버튼 표시
+          if (_isDevelopment) ...[
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minSize: 0,
+              onPressed: () async {
+                // 첫 번째 타입으로 테스트 알림 스케줄
+                final notificationService = NotificationService();
+                await notificationService.scheduleTestNotification(types.first);
+
+                if (!mounted) return;
+                final messenger = ScaffoldMessenger.of(context);
+
+                // 스낵바 표시
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text('10초 후 알림이 발송됩니다: $title'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  CupertinoIcons.bell_fill,
+                  size: 16,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
           Expanded(
             child: Text(
               title,

@@ -164,6 +164,7 @@ class InitializationService {
   /// 알림 스케줄링
   ///
   /// 온보딩을 완료한 사용자만 설정에 따라 알림을 스케줄링합니다.
+  /// 권한 요청은 온보딩에서 이미 처리되었으므로 여기서는 스케줄링만 수행합니다.
   Future<void> _scheduleNotifications() async {
     // 최소 표시 시간 보장
     const minDisplayTime = Duration(milliseconds: 400);
@@ -171,7 +172,19 @@ class InitializationService {
 
     if (settingsService.hasCompletedOnboarding) {
       try {
-        await NotificationService().scheduleAllNotifications();
+        final notificationService = NotificationService();
+
+        // 만료된 알림 정리
+        await notificationService.cleanupExpiredNotifications();
+
+        // 모든 알림 스케줄링 (조건부 알림 제외)
+        await notificationService.scheduleAllNotifications();
+
+        // 조건부 알림 스케줄링/취소
+        await notificationService.scheduleReportReminderIfNeeded();
+        await notificationService.cancelGlucoseReminderIfNeeded();
+        await notificationService.cancelDiaryReminderIfNeeded();
+
         debugPrint('[InitializationService] Notifications scheduled successfully');
       } catch (e) {
         debugPrint('[InitializationService] Notification scheduling error: $e');

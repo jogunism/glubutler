@@ -7,6 +7,7 @@ import 'package:glu_butler/services/report_api_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/notification_service.dart';
 
 /// Provider for report generation and management
 ///
@@ -136,6 +137,9 @@ class ReportProvider extends ChangeNotifier {
 
       // Reset to viewing latest report
       _selectedReport = null;
+
+      // 리포트 생성 완료 시 알림 취소
+      await NotificationService().cancelReportReminder();
 
       return true;
     } on ReportApiException catch (e) {

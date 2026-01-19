@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:glu_butler/models/notification_type.dart';
 import 'package:glu_butler/services/database_service.dart';
-import 'package:glu_butler/core/navigation/app_router.dart';
 import 'package:glu_butler/core/navigation/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -18,90 +18,50 @@ class _NotificationMessages {
     switch (locale) {
       case 'en':
         return {
-          'glucoseReminderTitle': 'Check your glucose',
-          'glucoseReminderBody': 'Record your blood glucose level',
-          'glucoseAbsenceTitle': 'Don\'t forget to measure',
-          'glucoseAbsenceBody': 'Consistent tracking is the first step to glucose management',
-          'diaryReminderTitle': 'Record your meal',
-          'diaryReminderBody': 'Track your eating patterns',
-          'reportReminderTitle': 'Create a health report',
-          'reportReminderBody': 'Generate your glucose report',
+          'glucoseReminderBody': 'Regular glucose monitoring is recommended\nObserve glucose changes before and after meals',
+          'diaryReminderBody': 'Write your glucose diary for today',
+          'reportReminderBody': 'Check your health report',
         };
       case 'ja':
         return {
-          'glucoseReminderTitle': '血糖値を確認して記録しましょう',
-          'glucoseReminderBody': '食前血糖値を測定してください',
-          'glucoseAbsenceTitle': '血糖値測定を忘れずに',
-          'glucoseAbsenceBody': '継続的な記録が血糖管理の第一歩です',
-          'diaryReminderTitle': '食事内容を記録しましょう',
-          'diaryReminderBody': '食生活パターンを把握できます',
-          'reportReminderTitle': '健康レポートを作成しましょう',
-          'reportReminderBody': '血糖レポートを確認してください',
+          'glucoseReminderBody': '定期的な血糖測定をお勧めします\n食前食後の血糖変化を観察してみましょう',
+          'diaryReminderBody': '今日の血糖日記を書いてみましょう',
+          'reportReminderBody': '健康レポートを確認してください',
         };
       case 'zh':
         return {
-          'glucoseReminderTitle': '检查并记录血糖',
-          'glucoseReminderBody': '请测量餐前血糖',
-          'glucoseAbsenceTitle': '别忘了测量血糖',
-          'glucoseAbsenceBody': '坚持记录是血糖管理的第一步',
-          'diaryReminderTitle': '记录您的饮食',
-          'diaryReminderBody': '追踪您的饮食习惯',
-          'reportReminderTitle': '创建健康报告',
-          'reportReminderBody': '生成血糖报告',
+          'glucoseReminderBody': '建议定期测量血糖\n观察餐前餐后的血糖变化',
+          'diaryReminderBody': '记录今天的血糖日记吧',
+          'reportReminderBody': '查看健康报告',
         };
       case 'de':
         return {
-          'glucoseReminderTitle': 'Überprüfen Sie Ihren Blutzucker',
-          'glucoseReminderBody': 'Messen Sie Ihren Blutzuckerspiegel',
-          'glucoseAbsenceTitle': 'Vergessen Sie nicht zu messen',
-          'glucoseAbsenceBody': 'Konsequentes Tracking ist der erste Schritt',
-          'diaryReminderTitle': 'Zeichnen Sie Ihre Mahlzeit auf',
-          'diaryReminderBody': 'Verfolgen Sie Ihre Essgewohnheiten',
-          'reportReminderTitle': 'Erstellen Sie einen Gesundheitsbericht',
-          'reportReminderBody': 'Generieren Sie Ihren Glukosebericht',
+          'glucoseReminderBody': 'Regelmäßige Blutzuckermessung wird empfohlen\nBeobachten Sie Blutzuckerveränderungen vor und nach den Mahlzeiten',
+          'diaryReminderBody': 'Schreiben Sie Ihr heutiges Blutzucker-Tagebuch',
+          'reportReminderBody': 'Überprüfen Sie Ihren Gesundheitsbericht',
         };
       case 'es':
         return {
-          'glucoseReminderTitle': 'Revisa tu glucosa',
-          'glucoseReminderBody': 'Registra tu nivel de glucosa en sangre',
-          'glucoseAbsenceTitle': 'No olvides medir',
-          'glucoseAbsenceBody': 'El seguimiento constante es el primer paso',
-          'diaryReminderTitle': 'Registra tu comida',
-          'diaryReminderBody': 'Haz seguimiento de tus hábitos alimenticios',
-          'reportReminderTitle': 'Crea un informe de salud',
-          'reportReminderBody': 'Genera tu informe de glucosa',
+          'glucoseReminderBody': 'Se recomienda la medición regular de glucosa\nObserva los cambios de glucosa antes y después de las comidas',
+          'diaryReminderBody': 'Escribe tu diario de glucosa de hoy',
+          'reportReminderBody': 'Revisa tu informe de salud',
         };
       case 'fr':
         return {
-          'glucoseReminderTitle': 'Vérifiez votre glycémie',
-          'glucoseReminderBody': 'Enregistrez votre taux de glucose sanguin',
-          'glucoseAbsenceTitle': 'N\'oubliez pas de mesurer',
-          'glucoseAbsenceBody': 'Le suivi régulier est la première étape',
-          'diaryReminderTitle': 'Enregistrez votre repas',
-          'diaryReminderBody': 'Suivez vos habitudes alimentaires',
-          'reportReminderTitle': 'Créez un rapport de santé',
-          'reportReminderBody': 'Générez votre rapport de glucose',
+          'glucoseReminderBody': 'Une surveillance régulière de la glycémie est recommandée\nObservez les changements de glycémie avant et après les repas',
+          'diaryReminderBody': 'Écrivez votre journal de glycémie d\'aujourd\'hui',
+          'reportReminderBody': 'Consultez votre rapport de santé',
         };
       case 'it':
         return {
-          'glucoseReminderTitle': 'Controlla il tuo glucosio',
-          'glucoseReminderBody': 'Registra il tuo livello di glucosio nel sangue',
-          'glucoseAbsenceTitle': 'Non dimenticare di misurare',
-          'glucoseAbsenceBody': 'Il monitoraggio costante è il primo passo',
-          'diaryReminderTitle': 'Registra il tuo pasto',
-          'diaryReminderBody': 'Monitora le tue abitudini alimentari',
-          'reportReminderTitle': 'Crea un report sulla salute',
-          'reportReminderBody': 'Genera il tuo report sul glucosio',
+          'glucoseReminderBody': 'Si consiglia un monitoraggio regolare del glucosio\nOsserva i cambiamenti del glucosio prima e dopo i pasti',
+          'diaryReminderBody': 'Scrivi il tuo diario del glucosio di oggi',
+          'reportReminderBody': 'Controlla il tuo report sulla salute',
         };
       default: // ko
         return {
-          'glucoseReminderTitle': '혈당을 확인하고 기록을 남겨보세요',
-          'glucoseReminderBody': '식전 혈당을 측정해보세요',
-          'glucoseAbsenceTitle': '혈당 측정을 잊지 마세요',
-          'glucoseAbsenceBody': '꾸준한 기록이 혈당 관리의 첫걸음입니다',
-          'diaryReminderTitle': '식사 내용을 기록해 보세요',
-          'diaryReminderBody': '자신의 식생활 패턴을 파악할 수 있습니다',
-          'reportReminderTitle': '혈당 리포트를 생성해 보세요',
+          'glucoseReminderBody': '꾸준한 혈당 측정을 권장합니다\n식전 식후의 혈당 변화를 관찰해 보세요',
+          'diaryReminderBody': '오늘의 혈당 일기를 작성해 보세요',
           'reportReminderBody': '건강 리포트를 확인하세요',
         };
     }
@@ -117,9 +77,9 @@ void notificationBackgroundCallback() {
     try {
       debugPrint('[NotificationService] Background task started: $task');
 
-      // 타임존 초기화 (백그라운드에서도 필요)
+      // 타임존 초기화 (백그라운드에서도 필요) - 기기의 현재 타임존 사용
       tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+      tz.setLocalLocation(tz.local);
 
       // 데이터베이스 서비스 초기화
       final databaseService = DatabaseService();
@@ -139,37 +99,7 @@ void notificationBackgroundCallback() {
       final prefs = await SharedPreferences.getInstance();
 
       switch (task) {
-        case 'checkMealGlucoseMorning':
-          await _checkAndSendMealGlucoseReminder(
-            notifications,
-            prefs,
-            databaseService,
-            9,
-            NotificationType.glucoseReminderMorning,
-          );
-          break;
-
-        case 'checkMealGlucoseLunch':
-          await _checkAndSendMealGlucoseReminder(
-            notifications,
-            prefs,
-            databaseService,
-            12,
-            NotificationType.glucoseReminderLunch,
-          );
-          break;
-
-        case 'checkMealGlucoseDinner':
-          await _checkAndSendMealGlucoseReminder(
-            notifications,
-            prefs,
-            databaseService,
-            19,
-            NotificationType.glucoseReminderDinner,
-          );
-          break;
-
-        case 'checkLongTermGlucoseAbsence':
+        case 'checkGlucoseReminder':
           await _checkAndSendLongTermAbsenceReminder(
             notifications,
             prefs,
@@ -202,64 +132,6 @@ void notificationBackgroundCallback() {
   });
 }
 
-/// 식전 혈당 데이터 체크 및 조건부 알림 발송
-Future<void> _checkAndSendMealGlucoseReminder(
-  FlutterLocalNotificationsPlugin notifications,
-  SharedPreferences prefs,
-  DatabaseService databaseService,
-  int mealHour,
-  NotificationType type,
-) async {
-  // 설정 체크
-  final isEnabled = prefs.getBool(type.prefsKey) ?? true;
-  if (!isEnabled) {
-    debugPrint('[NotificationService] ${type.name} is disabled');
-    return;
-  }
-
-  // 해당 시간대의 혈당 데이터가 있는지 체크
-  final now = DateTime.now();
-  final startOfDay = DateTime(now.year, now.month, now.day);
-  final mealTime = DateTime(now.year, now.month, now.day, mealHour);
-
-  final records = await databaseService.getGlucoseRecords(
-    startDate: startOfDay,
-    endDate: mealTime,
-  );
-
-  // 해당 시간 전에 이미 기록이 있으면 알림 보내지 않음
-  final hasRecordBeforeMeal = records.any((record) {
-    return record.timestamp.hour < mealHour;
-  });
-
-  if (hasRecordBeforeMeal) {
-    debugPrint('[NotificationService] Glucose record exists before meal time, skipping notification');
-    return;
-  }
-
-  // 국제화 메시지 가져오기
-  final messages = await _NotificationMessages.getMessages();
-
-  // 알림 발송
-  await notifications.show(
-    type.id,
-    messages['glucoseReminderTitle'],
-    messages['glucoseReminderBody'],
-    const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'meal_glucose_reminders',
-        '식전 혈당 측정 알림',
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    ),
-    payload: 'feed_glucose',
-  );
-
-  debugPrint('[NotificationService] Sent meal glucose reminder for ${type.name}');
-}
-
 /// 장기간 혈당 기록 부재 체크 및 조건부 알림 발송
 Future<void> _checkAndSendLongTermAbsenceReminder(
   FlutterLocalNotificationsPlugin notifications,
@@ -286,8 +158,8 @@ Future<void> _checkAndSendLongTermAbsenceReminder(
   // 알림 발송
   await notifications.show(
     NotificationType.glucoseRecordReminder.id,
-    messages['glucoseAbsenceTitle'],
-    messages['glucoseAbsenceBody'],
+    null,
+    messages['glucoseReminderBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'glucose_absence_reminder',
@@ -432,13 +304,30 @@ class NotificationService {
 
   bool _isInitialized = false;
 
+  // 앱 시작 시 알림으로 실행된 경우의 페이로드 저장
+  static String? _pendingLaunchPayload;
+
+  /// MainScreen이 준비되었을 때 pending payload를 처리하는 static 메서드
+  static void handlePendingPayloadIfReady() {
+    if (_pendingLaunchPayload != null && MainScreen.globalKey.currentState != null) {
+      final payload = _pendingLaunchPayload!;
+      _pendingLaunchPayload = null;
+      NotificationService()._handleNotificationPayload(payload);
+    }
+  }
+
   /// 알림 서비스 초기화
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    // 타임존 초기화
+    // 타임존 초기화 - 기기의 현재 타임존 사용
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+    final String currentTimeZone = DateTime.now().timeZoneName;
+    final String timeZoneOffset = DateTime.now().timeZoneOffset.toString();
+    debugPrint('[NotificationService] Device timezone: $currentTimeZone, offset: $timeZoneOffset');
+
+    // 기기의 로컬 타임존으로 설정
+    tz.setLocalLocation(tz.local);
 
     // Android 설정
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -459,6 +348,15 @@ class NotificationService {
       initSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
+
+    // 앱이 종료된 상태에서 알림을 클릭해서 실행된 경우 처리
+    final launchDetails = await _notifications.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp ?? false) {
+      final payload = launchDetails?.notificationResponse?.payload;
+      if (payload != null) {
+        _pendingLaunchPayload = payload;
+      }
+    }
 
     // Android만 Workmanager 초기화
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -507,38 +405,31 @@ class NotificationService {
     final payload = response.payload;
     if (payload == null) return;
 
-    debugPrint('[NotificationService] Notification tapped: $payload');
+    _handleNotificationPayload(payload);
+  }
 
-    // 페이로드에 따라 화면 라우팅
-    final context = AppRouter.router.routerDelegate.navigatorKey.currentContext;
-    if (context == null) {
-      debugPrint('[NotificationService] No context available for navigation');
-      return;
-    }
+  /// 알림 페이로드 처리 (앱 실행 중 또는 종료 상태에서 공통 처리)
+  void _handleNotificationPayload(String payload) {
+    if (MainScreen.globalKey.currentState == null) return;
 
-    // 먼저 메인 화면으로 이동
-    AppRouter.router.go('/home');
+    final context = MainScreen.globalKey.currentContext;
+    if (context == null) return;
+
+    // 현재 push된 모든 화면 닫기 (MainScreen으로 돌아가기)
+    Navigator.of(context).popUntil((route) => route.isFirst);
 
     // 딜레이 후 탭 전환 및 모달 열기
     Future.delayed(const Duration(milliseconds: 300), () {
       switch (payload) {
         case 'feed_glucose':
-          // 피드 탭으로 이동 후 혈당 기록 팝업
-          MainScreen.switchToTabAndOpenModal(0, 'open_glucose_input');
+          MainScreen.switchToTabAndOpenModal(1, 'open_glucose_input');
           break;
-
         case 'diary':
-          // 일기 탭으로 이동 후 일기 입력 팝업
           MainScreen.switchToTabAndOpenModal(2, 'open_diary_input');
           break;
-
         case 'report':
-          // 리포트 탭으로 이동 후 리포트 생성 트리거
           MainScreen.switchToTabAndOpenModal(3, 'trigger_report_generation');
           break;
-
-        default:
-          debugPrint('[NotificationService] Unknown payload: $payload');
       }
     });
   }
@@ -549,6 +440,12 @@ class NotificationService {
     final prefs = await SharedPreferences.getInstance();
 
     for (final type in NotificationType.values) {
+      // 리포트 알림은 조건부 스케줄링이므로 제외
+      if (type == NotificationType.reportReminder ||
+          type == NotificationType.firstReportReminder) {
+        continue;
+      }
+
       final isEnabled = prefs.getBool(type.prefsKey) ?? true;
 
       if (isEnabled) {
@@ -567,22 +464,15 @@ class NotificationService {
   /// 특정 알림 타입 스케줄링
   Future<void> _scheduleNotification(NotificationType type) async {
     switch (type) {
-      case NotificationType.glucoseReminderMorning:
-        await _scheduleWorkmanagerTask('checkMealGlucoseMorning', 8, 0);
-        break;
-      case NotificationType.glucoseReminderLunch:
-        await _scheduleWorkmanagerTask('checkMealGlucoseLunch', 11, 0);
-        break;
-      case NotificationType.glucoseReminderDinner:
-        await _scheduleWorkmanagerTask('checkMealGlucoseDinner', 18, 0);
-        break;
       case NotificationType.glucoseRecordReminder:
-        await _scheduleWorkmanagerTask('checkLongTermGlucoseAbsence', 10, 0);
+        await _scheduleWorkmanagerTask('checkGlucoseReminder', 18, 0);
         break;
       case NotificationType.diaryReminder:
-        await _scheduleWorkmanagerTask('checkDiaryAbsence', 20, 0);
+        await _scheduleWorkmanagerTask('checkDiaryReminder', 22, 0);
         break;
       case NotificationType.firstReportReminder:
+        // firstReportReminder는 reportReminder와 동일한 조건부 체크를 사용하므로 별도 스케줄 불필요
+        break;
       case NotificationType.reportReminder:
         await _scheduleWorkmanagerTask('checkReportReminder', 10, 0);
         break;
@@ -595,57 +485,32 @@ class NotificationService {
     final messages = await _NotificationMessages.getMessages();
 
     switch (type) {
-      case NotificationType.glucoseReminderMorning:
-        await _scheduleDailyNotificationIOS(
-          type.id,
-          8, 0,
-          messages['glucoseReminderTitle']!,
-          messages['glucoseReminderBody'],
-          'feed_glucose',
-        );
-        break;
-      case NotificationType.glucoseReminderLunch:
-        await _scheduleDailyNotificationIOS(
-          type.id,
-          11, 0,
-          messages['glucoseReminderTitle']!,
-          messages['glucoseReminderBody'],
-          'feed_glucose',
-        );
-        break;
-      case NotificationType.glucoseReminderDinner:
-        await _scheduleDailyNotificationIOS(
-          type.id,
-          18, 0,
-          messages['glucoseReminderTitle']!,
-          messages['glucoseReminderBody'],
-          'feed_glucose',
-        );
-        break;
       case NotificationType.glucoseRecordReminder:
         await _scheduleDailyNotificationIOS(
           type.id,
-          10, 0,
-          messages['glucoseAbsenceTitle']!,
-          messages['glucoseAbsenceBody'],
+          18, 0,
+          null,
+          messages['glucoseReminderBody'],
           'feed_glucose',
         );
         break;
       case NotificationType.diaryReminder:
         await _scheduleDailyNotificationIOS(
           type.id,
-          20, 0,
-          messages['diaryReminderTitle']!,
+          22, 0,
+          null,
           messages['diaryReminderBody'],
           'diary',
         );
         break;
       case NotificationType.firstReportReminder:
+        // firstReportReminder는 reportReminder와 동일한 조건부 체크를 사용하므로 별도 스케줄 불필요
+        break;
       case NotificationType.reportReminder:
         await _scheduleDailyNotificationIOS(
           type.id,
           10, 0,
-          messages['reportReminderTitle']!,
+          null,
           messages['reportReminderBody'],
           'report',
         );
@@ -658,7 +523,7 @@ class NotificationService {
     int id,
     int hour,
     int minute,
-    String title,
+    String? title,
     String? body,
     String payload,
   ) async {
@@ -736,20 +601,11 @@ class NotificationService {
     if (defaultTargetPlatform == TargetPlatform.android) {
       String taskName;
       switch (type) {
-        case NotificationType.glucoseReminderMorning:
-          taskName = 'checkMealGlucoseMorning';
-          break;
-        case NotificationType.glucoseReminderLunch:
-          taskName = 'checkMealGlucoseLunch';
-          break;
-        case NotificationType.glucoseReminderDinner:
-          taskName = 'checkMealGlucoseDinner';
-          break;
         case NotificationType.glucoseRecordReminder:
-          taskName = 'checkLongTermGlucoseAbsence';
+          taskName = 'checkGlucoseReminder';
           break;
         case NotificationType.diaryReminder:
-          taskName = 'checkDiaryAbsence';
+          taskName = 'checkDiaryReminder';
           break;
         case NotificationType.firstReportReminder:
         case NotificationType.reportReminder:
@@ -808,5 +664,241 @@ class NotificationService {
 
     final threeDaysAgo = DateTime.now().subtract(const Duration(days: 3));
     return latestReport.createdAt.isBefore(threeDaysAgo);
+  }
+
+  /// 개발용: 10초 후 테스트 알림 발송
+  Future<void> scheduleTestNotification(NotificationType type) async {
+    await initialize();
+
+    final now = tz.TZDateTime.now(tz.local);
+    final scheduledTime = now.add(const Duration(seconds: 10));
+
+    // 국제화 메시지 가져오기
+    final messages = await _NotificationMessages.getMessages();
+
+    String? body;
+    String payload;
+
+    switch (type) {
+      case NotificationType.glucoseRecordReminder:
+        body = messages['glucoseReminderBody'];
+        payload = 'feed_glucose';
+        break;
+      case NotificationType.diaryReminder:
+        body = messages['diaryReminderBody'];
+        payload = 'diary';
+        break;
+      case NotificationType.firstReportReminder:
+      case NotificationType.reportReminder:
+        body = messages['reportReminderBody'];
+        payload = 'report';
+        break;
+    }
+
+    await _notifications.zonedSchedule(
+      999 + type.id, // 테스트 알림은 999 + id로 구분
+      null,
+      body,
+      scheduledTime,
+      NotificationDetails(
+        iOS: DarwinNotificationDetails(
+          sound: 'default',
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+        android: AndroidNotificationDetails(
+          'test_notifications',
+          '테스트 알림',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: payload,
+    );
+
+    debugPrint('[NotificationService] Test notification scheduled for ${type.name} at $scheduledTime');
+  }
+
+  /// 개발용: 모든 테스트 알림 스케줄 취소
+  Future<void> cancelAllTestNotifications() async {
+    for (final type in NotificationType.values) {
+      await _notifications.cancel(999 + type.id);
+    }
+    debugPrint('[NotificationService] All test notifications cancelled');
+  }
+
+  /// 개발용: 알림 처리 로직을 직접 테스트
+  void testNotificationHandler(String payload) {
+    _handleNotificationPayload(payload);
+  }
+
+  /// 리포트 알림 조건부 스케줄링 (앱 시작 시 호출)
+  Future<void> scheduleReportReminderIfNeeded() async {
+    await initialize();
+
+    final prefs = await SharedPreferences.getInstance();
+    final isEnabled = prefs.getBool(NotificationType.reportReminder.prefsKey) ?? true;
+
+    if (!isEnabled) return;
+
+    // 1. 리포트 조건 체크
+    final latestReport = await _databaseService.getLatestReport();
+    final shouldSchedule = latestReport == null ||
+        latestReport.endDate.isBefore(DateTime.now().subtract(const Duration(days: 3)));
+
+    if (!shouldSchedule) {
+      // 조건 미충족 시 기존 알림 취소
+      await cancelNotification(NotificationType.reportReminder);
+      await prefs.remove('report_reminder_scheduled_date');
+      return;
+    }
+
+    // 2. 오늘 이미 스케줄했는지 확인 (날짜로 체크)
+    final scheduledDateStr = prefs.getString('report_reminder_scheduled_date');
+    final today = DateTime.now();
+    final todayStr = '${today.year}-${today.month}-${today.day}';
+
+    if (scheduledDateStr == todayStr) {
+      // 오늘 이미 스케줄했으면 패스
+      return;
+    }
+
+    // 3. 이미 예정된 알림이 있는지 확인
+    final pendingNotifications = await _notifications.pendingNotificationRequests();
+    final isAlreadyScheduled = pendingNotifications.any(
+      (notification) => notification.id == NotificationType.reportReminder.id,
+    );
+
+    if (isAlreadyScheduled) {
+      // 예정된 알림은 있지만 날짜 기록이 없으면 오늘 날짜로 저장
+      await prefs.setString('report_reminder_scheduled_date', todayStr);
+      return;
+    }
+
+    // 4. 조건 충족 + 미등록 → 알림 스케줄
+    // 참고: 스케줄 시간(10:00)이 이미 지났으면 flutter_local_notifications가
+    // 자동으로 다음날로 스케줄링하므로 별도 날짜 체크 불필요
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await _scheduleNotification(NotificationType.reportReminder);
+    } else {
+      await _scheduleNotificationIOS(NotificationType.reportReminder);
+    }
+
+    // 5. 스케줄 등록 완료 - 오늘 날짜 저장
+    await prefs.setString('report_reminder_scheduled_date', todayStr);
+  }
+
+  /// 리포트 생성 시 알림 취소
+  Future<void> cancelReportReminder() async {
+    await cancelNotification(NotificationType.reportReminder);
+
+    // 스케줄 날짜 기록도 삭제
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('report_reminder_scheduled_date');
+  }
+
+  /// 혈당 알림 조건부 취소 (앱 시작 시 호출)
+  ///
+  /// 오늘 혈당 측정 횟수가 3회 이상이면 오늘 18시 혈당 알림 취소
+  Future<void> cancelGlucoseReminderIfNeeded() async {
+    await initialize();
+
+    final prefs = await SharedPreferences.getInstance();
+    final isEnabled = prefs.getBool(NotificationType.glucoseRecordReminder.prefsKey) ?? true;
+
+    if (!isEnabled) return;
+
+    // 오늘 혈당 측정 횟수 체크
+    final today = DateTime.now();
+    final todayStart = DateTime(today.year, today.month, today.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+
+    final glucoseRecords = await _databaseService.getGlucoseRecords(
+      startDate: todayStart,
+      endDate: todayEnd,
+    );
+
+    // 오늘 혈당 측정 3회 이상이면 알림 취소
+    if (glucoseRecords.length >= 3) {
+      await cancelNotification(NotificationType.glucoseRecordReminder);
+      debugPrint('[NotificationService] Glucose reminder cancelled - today: ${glucoseRecords.length} measurements');
+    }
+  }
+
+  /// 일기 알림 조건부 취소 (앱 시작 시 호출)
+  ///
+  /// 오늘 일기가 존재하면 오늘 22시 일기 알림 취소
+  Future<void> cancelDiaryReminderIfNeeded() async {
+    await initialize();
+
+    final prefs = await SharedPreferences.getInstance();
+    final isEnabled = prefs.getBool(NotificationType.diaryReminder.prefsKey) ?? true;
+
+    if (!isEnabled) return;
+
+    // 오늘 일기 존재 여부 체크
+    final today = DateTime.now();
+    final todayStart = DateTime(today.year, today.month, today.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+
+    final diaryEntries = await _databaseService.getDiaryEntries(
+      startDate: todayStart,
+      endDate: todayEnd,
+    );
+
+    // 오늘 일기가 있으면 알림 취소
+    if (diaryEntries.isNotEmpty) {
+      await cancelNotification(NotificationType.diaryReminder);
+      debugPrint('[NotificationService] Diary reminder cancelled - today has ${diaryEntries.length} entries');
+    }
+  }
+
+  /// 만료된 알림 정리 (앱 시작 시 호출)
+  Future<void> cleanupExpiredNotifications() async {
+    await initialize();
+
+    final pendingNotifications = await _notifications.pendingNotificationRequests();
+    final now = DateTime.now();
+
+    // 모든 pending 알림을 확인하고 이미 지난 시간의 알림은 취소
+    for (final notification in pendingNotifications) {
+      // 테스트 알림(ID 999+)은 제외
+      if (notification.id >= 999) continue;
+
+      // flutter_local_notifications의 반복 알림은 자동으로 다음 날짜로 갱신되므로
+      // pending 목록에 있는 알림은 모두 미래 시간이어야 함
+      // 하지만 혹시 모를 버그나 시스템 시간 변경으로 과거 알림이 남아있을 수 있으므로 체크
+      // (실제로는 거의 발생하지 않음)
+    }
+
+    // SharedPreferences에 저장된 스케줄 날짜가 오늘보다 이전이면 삭제
+    final prefs = await SharedPreferences.getInstance();
+    final scheduledDateStr = prefs.getString('report_reminder_scheduled_date');
+
+    if (scheduledDateStr != null) {
+      try {
+        final parts = scheduledDateStr.split('-');
+        final scheduledDate = DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+
+        final today = DateTime(now.year, now.month, now.day);
+        final savedDate = DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day);
+
+        // 오늘보다 이전 날짜면 삭제 (어제 이전 날짜)
+        if (savedDate.isBefore(today)) {
+          await prefs.remove('report_reminder_scheduled_date');
+        }
+      } catch (e) {
+        // 파싱 실패 시 삭제
+        await prefs.remove('report_reminder_scheduled_date');
+      }
+    }
   }
 }
