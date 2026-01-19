@@ -165,6 +165,27 @@ class InitializationService {
   ///
   /// 온보딩을 완료한 사용자만 설정에 따라 알림을 스케줄링합니다.
   /// 권한 요청은 온보딩에서 이미 처리되었으므로 여기서는 스케줄링만 수행합니다.
+  ///
+  /// ## 알림 종류 (iOS 플랫폼 제약으로 인한 설계)
+  ///
+  /// ### 1. 혈당 측정 알림
+  /// - 시간: 18:00
+  /// - 메시지: "꾸준한 혈당 측정을 권장합니다\n식전 식후의 혈당 변화를 관찰해 보세요"
+  /// - 로직: 스플래시에서 오늘 혈당 측정 3회 이상이면 → 알림 취소
+  ///
+  /// ### 2. 일기 작성 알림
+  /// - 시간: 22:00
+  /// - 메시지: "오늘의 혈당 일기를 작성해 보세요"
+  /// - 로직: 스플래시에서 오늘 일기 있으면 → 알림 취소
+  ///
+  /// ### 3. 리포트 생성 권장 알림 (조건부 등록)
+  /// - 시간: 10:00
+  /// - 메시지: "건강 리포트를 확인하세요"
+  /// - 로직: 리포트가 없거나 마지막 리포트 후 3일 경과 시에만 등록
+  ///
+  /// ## 제약 사항
+  /// iOS는 백그라운드에서 Flutter 코드 실행 불가
+  /// → 앱을 열지 않으면 조건 체크 불가능 (예: 오전에 혈당 3회 측정했지만 앱을 안 열면 18시에 알림 발송됨)
   Future<void> _scheduleNotifications() async {
     // 최소 표시 시간 보장
     const minDisplayTime = Duration(milliseconds: 400);
@@ -177,11 +198,19 @@ class InitializationService {
         // 만료된 알림 정리
         await notificationService.cleanupExpiredNotifications();
 
-        // 모든 알림 스케줄링 (조건부 알림 제외)
+        // 1. Fixed 알림 등록 (매일 고정 시간에 발송)
+        //    - 혈당 측정 알림: 18:00
+        //    - 일기 작성 알림: 22:00
+        //    - 설정에서 ON인 경우에만 등록
         await notificationService.scheduleAllNotifications();
 
-        // 조건부 알림 스케줄링/취소
+        // 2. 조건부 알림 처리
+        //    - 리포트 알림: 조건 충족 시에만 등록 (마지막 리포트 후 3일 경과)
         await notificationService.scheduleReportReminderIfNeeded();
+
+        // 3. 조건부 알림 취소 (오늘 조건 충족 시 오늘 알림 취소)
+        //    - 혈당 알림: 오늘 3회 이상 측정했으면 오늘 18시 알림 취소
+        //    - 일기 알림: 오늘 일기 작성했으면 오늘 22시 알림 취소
         await notificationService.cancelGlucoseReminderIfNeeded();
         await notificationService.cancelDiaryReminderIfNeeded();
 
