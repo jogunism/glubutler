@@ -1880,6 +1880,18 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete the {period} report?\nDeleted reports cannot be regenerated.'**
   String reportWillBeDeleted(String period);
 
+  /// No description provided for @deleteReportConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You are deleting the {period} report.\nDeleted reports cannot be recreated.\n\nPlease type \'delete\' below to confirm.'**
+  String deleteReportConfirmMessage(String period);
+
+  /// No description provided for @deleteKeyword.
+  ///
+  /// In en, this message translates to:
+  /// **'delete'**
+  String get deleteKeyword;
+
   /// No description provided for @generatingReport.
   ///
   /// In en, this message translates to:

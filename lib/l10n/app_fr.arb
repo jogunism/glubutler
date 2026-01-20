@@ -350,6 +350,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "Vous supprimez le rapport {period}.\nLes rapports supprimés ne peuvent pas être recréés.\n\nVeuillez taper 'supprimer' ci-dessous pour confirmer.",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "supprimer",
   "generatingReport": "Création du rapport IA...",
   "reportCreationFailed": "Échec de la création du rapport",
   "reportCreationSuccess": "Rapport créé",

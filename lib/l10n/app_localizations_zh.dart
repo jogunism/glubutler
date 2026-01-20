@@ -913,6 +913,14 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return '您正在删除$period报告。\n已删除的报告无法重新创建。\n\n请在下方输入\'删除\'以确认。';
+  }
+
+  @override
+  String get deleteKeyword => '删除';
+
+  @override
   String get generatingReport => '创建AI报告中...';
 
   @override

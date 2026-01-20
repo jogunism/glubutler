@@ -368,6 +368,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "You are deleting the {period} report.\nDeleted reports cannot be recreated.\n\nPlease type 'delete' below to confirm.",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "delete",
   "generatingReport": "Creating AI Report...",
   "reportCreationFailed": "Report Creation Failed",
   "reportCreationSuccess": "Report has been created",

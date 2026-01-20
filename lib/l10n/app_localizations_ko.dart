@@ -915,6 +915,14 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return '$period 리포트를 삭제합니다.\n삭제된 리포트는 다시 생성할 수 없습니다.\n\n삭제하시려면 아래에 \'삭제\'라고 입력해주세요.';
+  }
+
+  @override
+  String get deleteKeyword => '삭제';
+
+  @override
   String get generatingReport => 'AI 리포트 생성 중...';
 
   @override

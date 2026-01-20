@@ -351,6 +351,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "{period}のレポートを削除します。\n削除されたレポートは再生成できません。\n\n削除するには、下に「削除」と入力してください。",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "削除",
   "generatingReport": "AIレポート作成中...",
   "reportCreationFailed": "レポート作成失敗",
   "reportCreationSuccess": "レポートが作成されました",

@@ -939,6 +939,14 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return 'Está eliminando el informe $period.\nLos informes eliminados no se pueden volver a crear.\n\nPor favor, escriba \'eliminar\' a continuación para confirmar.';
+  }
+
+  @override
+  String get deleteKeyword => 'eliminar';
+
+  @override
   String get generatingReport => 'Creando Informe IA...';
 
   @override

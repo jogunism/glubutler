@@ -939,6 +939,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return 'Sie löschen den Bericht $period.\nGelöschte Berichte können nicht wiederhergestellt werden.\n\nBitte geben Sie unten \'löschen\' ein, um zu bestätigen.';
+  }
+
+  @override
+  String get deleteKeyword => 'löschen';
+
+  @override
   String get generatingReport => 'KI-Bericht wird erstellt...';
 
   @override

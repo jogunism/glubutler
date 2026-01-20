@@ -350,6 +350,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "Stai eliminando il rapporto {period}.\nI rapporti eliminati non possono essere ricreati.\n\nDigita 'elimina' qui sotto per confermare.",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "elimina",
   "generatingReport": "Creazione Rapporto IA...",
   "reportCreationFailed": "Creazione del rapporto fallita",
   "reportCreationSuccess": "Rapporto creato",

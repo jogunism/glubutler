@@ -350,6 +350,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "Sie löschen den Bericht {period}.\nGelöschte Berichte können nicht wiederhergestellt werden.\n\nBitte geben Sie unten 'löschen' ein, um zu bestätigen.",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "löschen",
   "generatingReport": "KI-Bericht wird erstellt...",
   "reportCreationFailed": "Berichterstellung fehlgeschlagen",
   "reportCreationSuccess": "Bericht wurde erstellt",

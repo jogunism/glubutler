@@ -937,6 +937,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return 'You are deleting the $period report.\nDeleted reports cannot be recreated.\n\nPlease type \'delete\' below to confirm.';
+  }
+
+  @override
+  String get deleteKeyword => 'delete';
+
+  @override
   String get generatingReport => 'Creating AI Report...';
 
   @override

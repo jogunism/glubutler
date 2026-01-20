@@ -914,6 +914,14 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return '$periodのレポートを削除します。\n削除されたレポートは再生成できません。\n\n削除するには、下に「削除」と入力してください。';
+  }
+
+  @override
+  String get deleteKeyword => '削除';
+
+  @override
   String get generatingReport => 'AIレポート作成中...';
 
   @override

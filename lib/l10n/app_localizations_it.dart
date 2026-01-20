@@ -939,6 +939,14 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return 'Stai eliminando il rapporto $period.\nI rapporti eliminati non possono essere ricreati.\n\nDigita \'elimina\' qui sotto per confermare.';
+  }
+
+  @override
+  String get deleteKeyword => 'elimina';
+
+  @override
   String get generatingReport => 'Creazione Rapporto IA...';
 
   @override

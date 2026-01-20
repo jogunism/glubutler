@@ -350,6 +350,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "Está eliminando el informe {period}.\nLos informes eliminados no se pueden volver a crear.\n\nPor favor, escriba 'eliminar' a continuación para confirmar.",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "eliminar",
   "generatingReport": "Creando Informe IA...",
   "reportCreationFailed": "Creación de informe fallida",
   "reportCreationSuccess": "Informe creado",

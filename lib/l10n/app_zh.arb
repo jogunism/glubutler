@@ -350,6 +350,15 @@
       }
     }
   },
+  "deleteReportConfirmMessage": "您正在删除{period}报告。\n已删除的报告无法重新创建。\n\n请在下方输入'删除'以确认。",
+  "@deleteReportConfirmMessage": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyword": "删除",
   "generatingReport": "创建AI报告中...",
   "reportCreationFailed": "报告创建失败",
   "reportCreationSuccess": "报告已创建",

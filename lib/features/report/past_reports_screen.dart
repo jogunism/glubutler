@@ -9,6 +9,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/providers/report_provider.dart';
+import 'package:glu_butler/widgets/common/input_dialog.dart';
 
 /// 지난 리포트 목록 화면
 ///
@@ -44,32 +45,46 @@ class _PastReportsScreenState extends State<PastReportsScreen> {
     if (!mounted || report.id == null) return;
 
     final l10n = AppLocalizations.of(context)!;
+    bool isButtonEnabled = false;
 
-    // 삭제 확인 다이얼로그
-    final confirmed = await showCupertinoDialog<bool>(
+    // 삭제 확인 InputDialog
+    final result = await showDialog<String>(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.deleteReport),
-        content: Text(l10n.reportWillBeDeleted(
-          report.getPeriodString(monthLabel: l10n.monthSuffix, dayLabel: l10n.daySuffix),
-        )),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.delete),
-          ),
-        ],
+      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierDismissible: true,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) {
+          return InputDialog(
+            title: l10n.deleteReport,
+            message: l10n.deleteReportConfirmMessage(
+              report.getPeriodString(monthLabel: l10n.monthSuffix, dayLabel: l10n.daySuffix),
+            ),
+            placeholder: l10n.deleteKeyword,
+            buttonTitle: l10n.delete,
+            isButtonEnabled: isButtonEnabled,
+            onChanged: (value) {
+              final trimmedValue = value.trim();
+              final isValid = trimmedValue == l10n.deleteKeyword;
+
+              if (isValid != isButtonEnabled) {
+                setState(() {
+                  isButtonEnabled = isValid;
+                });
+              }
+            },
+            validator: (input) {
+              if (input != l10n.deleteKeyword) {
+                return null; // 에러 메시지 없이 그냥 비활성화 유지
+              }
+              return null;
+            },
+          );
+        },
       ),
     );
 
     // 취소를 누른 경우 열려있는 스와이프 카드 닫기
-    if (confirmed != true) {
+    if (result != l10n.deleteKeyword) {
       SwipeableCardState.closeAnyOpenCard();
       return;
     }

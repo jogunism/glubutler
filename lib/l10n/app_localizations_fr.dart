@@ -947,6 +947,14 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String deleteReportConfirmMessage(String period) {
+    return 'Vous supprimez le rapport $period.\nLes rapports supprimés ne peuvent pas être recréés.\n\nVeuillez taper \'supprimer\' ci-dessous pour confirmer.';
+  }
+
+  @override
+  String get deleteKeyword => 'supprimer';
+
+  @override
   String get generatingReport => 'Création du rapport IA...';
 
   @override
