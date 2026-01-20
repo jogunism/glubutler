@@ -15,7 +15,9 @@ class InputDialog extends StatefulWidget {
   final String buttonTitle;
   final String? Function(String)? validator;
   final ValueChanged<String>? onChanged;
+  final Future<String?> Function(String)? onSubmit;
   final bool isButtonEnabled;
+  final bool isLoading;
 
   const InputDialog({
     super.key,
@@ -25,7 +27,9 @@ class InputDialog extends StatefulWidget {
     required this.buttonTitle,
     this.validator,
     this.onChanged,
+    this.onSubmit,
     this.isButtonEnabled = true,
+    this.isLoading = false,
   });
 
   @override
@@ -36,6 +40,7 @@ class _InputDialogState extends State<InputDialog> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   String? _errorMessage;
+  bool _isLoading = false;
   OverlayEntry? _keyboardToolbarOverlay;
 
   @override
@@ -74,8 +79,8 @@ class _InputDialogState extends State<InputDialog> {
     _keyboardToolbarOverlay = null;
   }
 
-  void _validateAndSubmit() {
-    if (!widget.isButtonEnabled) return;
+  Future<void> _validateAndSubmit() async {
+    if (!widget.isButtonEnabled || widget.isLoading || _isLoading) return;
 
     final input = _controller.text.trim();
 
@@ -90,6 +95,29 @@ class _InputDialogState extends State<InputDialog> {
       }
     }
 
+    // onSubmit 콜백이 있으면 실행 (비동기)
+    if (widget.onSubmit != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final error = await widget.onSubmit!(input);
+
+      if (!mounted) return;
+
+      if (error != null) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = error;
+        });
+        return;
+      }
+
+      // onSubmit이 성공하면 dialog는 onSubmit 내부에서 닫음
+      return;
+    }
+
+    // onSubmit이 없으면 바로 닫기
     Navigator.pop(context, input);
   }
 
@@ -168,6 +196,7 @@ class _InputDialogState extends State<InputDialog> {
                       keyboardType: TextInputType.emailAddress,
                       autofocus: true,
                       autocorrect: false,
+                      enabled: !widget.isLoading && !_isLoading,
                       onChanged: widget.onChanged,
                       onSubmitted: (_) => _validateAndSubmit(),
                       style: context.textStyles.bodyText,
@@ -201,22 +230,32 @@ class _InputDialogState extends State<InputDialog> {
                     width: double.infinity,
                     height: 48,
                     child: CupertinoButton(
-                      color: widget.isButtonEnabled
+                      color: (widget.isButtonEnabled && !widget.isLoading && !_isLoading)
                           ? AppTheme.primaryColor
                           : Colors.grey[300],
                       borderRadius: BorderRadius.circular(12),
                       padding: EdgeInsets.zero,
-                      onPressed: widget.isButtonEnabled ? _validateAndSubmit : null,
-                      child: Text(
-                        widget.buttonTitle,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: widget.isButtonEnabled
-                              ? Colors.white
-                              : Colors.grey[700],
-                        ),
-                      ),
+                      onPressed: (widget.isButtonEnabled && !widget.isLoading && !_isLoading) ? _validateAndSubmit : null,
+                      child: (widget.isLoading || _isLoading)
+                          ? SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CupertinoActivityIndicator(
+                                color: (widget.isButtonEnabled && !widget.isLoading && !_isLoading)
+                                    ? Colors.white
+                                    : Colors.grey[700],
+                              ),
+                            )
+                          : Text(
+                              widget.buttonTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: widget.isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey[700],
+                              ),
+                            ),
                     ),
                   ),
                 ],

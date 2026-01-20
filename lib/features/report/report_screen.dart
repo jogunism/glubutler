@@ -577,10 +577,11 @@ class _ReportScreenState extends State<ReportScreen> {
     bool isButtonEnabled = false;
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-    final email = await showDialog<String>(
+    await showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.85),
-      builder: (context) => StatefulBuilder(
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
         builder: (context, setState) {
           return InputDialog(
             title: l10n.exportReportTitle,
@@ -609,74 +610,109 @@ class _ReportScreenState extends State<ReportScreen> {
 
               return null; // 검증 성공
             },
+            onSubmit: (email) async {
+              final scaffoldContext = this.context;
+              final reportProvider = scaffoldContext.read<ReportProvider>();
+              final settingsService = scaffoldContext.read<SettingsService>();
+
+              // 현재 리포트 내용 가져오기
+              final reportContent = reportProvider.currentReport?.content;
+              if (reportContent == null || reportContent.isEmpty) {
+                if (!mounted) return null;
+                if (dialogContext.mounted) {
+                  Navigator.pop(dialogContext);
+                }
+                if (scaffoldContext.mounted) {
+                  TopBanner.show(
+                    scaffoldContext,
+                    message: '전송할 리포트가 없습니다',
+                    isSuccess: false,
+                  );
+                }
+                return null;
+              }
+
+              // 현재 언어 가져오기
+              final lang = settingsService.language;
+
+              // 사용자 식별 정보 가져오기
+              final userIdentity = settingsService.userIdentity;
+
+              // /export API 호출
+              try {
+                debugPrint('[ReportScreen] Exporting report to email: $email, lang: $lang');
+
+                final apiService = ReportApiService();
+                final success = await apiService.exportReport(
+                  userIdentity: userIdentity,
+                  email: email,
+                  lang: lang,
+                  report: reportContent,
+                );
+
+                if (!mounted) return null;
+
+                // Dialog 닫기
+                if (dialogContext.mounted) {
+                  Navigator.pop(dialogContext);
+                }
+
+                // TopBanner 표시
+                if (scaffoldContext.mounted) {
+                  TopBanner.show(
+                    scaffoldContext,
+                    message: success ? l10n.exportSuccess : '리포트 전송에 실패했습니다',
+                    isSuccess: success,
+                  );
+                }
+
+                return null; // 성공
+              } on ReportApiException catch (e) {
+                debugPrint('[ReportScreen] Export failed: ${e.errorCode}');
+
+                if (!mounted) return null;
+
+                // Dialog 닫기
+                if (dialogContext.mounted) {
+                  Navigator.pop(dialogContext);
+                }
+
+                // TopBanner 표시
+                if (scaffoldContext.mounted) {
+                  TopBanner.show(
+                    scaffoldContext,
+                    message: _getErrorMessage(reportProvider, l10n),
+                    isSuccess: false,
+                  );
+                }
+
+                return null;
+              } catch (e) {
+                debugPrint('[ReportScreen] Unexpected error during export: $e');
+
+                if (!mounted) return null;
+
+                // Dialog 닫기
+                if (dialogContext.mounted) {
+                  Navigator.pop(dialogContext);
+                }
+
+                // TopBanner 표시
+                if (scaffoldContext.mounted) {
+                  TopBanner.show(
+                    scaffoldContext,
+                    message: '리포트 전송 중 오류가 발생했습니다',
+                    isSuccess: false,
+                  );
+                }
+
+                return null;
+              }
+            },
           );
         },
       ),
     );
-
-    if (email == null || email.isEmpty || !mounted) return;
-
-    final reportProvider = context.read<ReportProvider>();
-    final settingsService = context.read<SettingsService>();
-
-    // 현재 리포트 내용 가져오기
-    final reportContent = reportProvider.currentReport?.content;
-    if (reportContent == null || reportContent.isEmpty) {
-      if (!mounted) return;
-      TopBanner.show(
-        context,
-        message: '전송할 리포트가 없습니다',
-        isSuccess: false,
-      );
-      return;
-    }
-
-    // 현재 언어 가져오기
-    final lang = settingsService.language;
-
-    // 사용자 식별 정보 가져오기
-    final userIdentity = settingsService.userIdentity;
-
-    // /export API 호출
-    try {
-      debugPrint('[ReportScreen] Exporting report to email: $email, lang: $lang');
-
-      final apiService = ReportApiService();
-      final success = await apiService.exportReport(
-        userIdentity: userIdentity,
-        email: email,
-        lang: lang,
-        report: reportContent,
-      );
-
-      if (!mounted) return;
-
-      TopBanner.show(
-        context,
-        message: success ? l10n.exportSuccess : '리포트 전송에 실패했습니다',
-        isSuccess: success,
-      );
-    } on ReportApiException catch (e) {
-      debugPrint('[ReportScreen] Export failed: ${e.errorCode}');
-
-      if (!mounted) return;
-
-      TopBanner.show(
-        context,
-        message: _getErrorMessage(reportProvider, l10n),
-        isSuccess: false,
-      );
-    } catch (e) {
-      debugPrint('[ReportScreen] Unexpected error during export: $e');
-
-      if (!mounted) return;
-
-      TopBanner.show(
-        context,
-        message: '리포트 전송 중 오류가 발생했습니다',
-        isSuccess: false,
-      );
-    }
   }
 }
 
