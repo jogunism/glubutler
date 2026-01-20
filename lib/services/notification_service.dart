@@ -748,7 +748,7 @@ class NotificationService {
     // 1. 리포트 조건 체크
     final latestReport = await _databaseService.getLatestReport();
     final shouldSchedule = latestReport == null ||
-        latestReport.endDate.isBefore(DateTime.now().subtract(const Duration(days: 3)));
+        latestReport.endDate.isBefore(DateTime.now().subtract(const Duration(days: 4)));
 
     if (!shouldSchedule) {
       // 조건 미충족 시 기존 알림 취소

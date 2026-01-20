@@ -266,6 +266,64 @@ class ReportApiService {
     }
   }
 
+  /// 리포트를 이메일로 전송
+  ///
+  /// [userIdentity]: 사용자 식별 정보 (JWT 생성용)
+  /// [email]: 수신자 이메일 주소
+  /// [lang]: 앱에서 현재 선택된 언어 (예: "ko", "en", "ja")
+  /// [report]: 리포트 내용 (Markdown 형식)
+  ///
+  /// Returns: 성공 시 true
+  Future<bool> exportReport({
+    required UserIdentity userIdentity,
+    required String email,
+    required String lang,
+    required String report,
+  }) async {
+    try {
+      debugPrint('[ReportApiService] Exporting report to email: $email');
+
+      // JWT 토큰 생성
+      final token = _generateJwtToken(userIdentity);
+
+      final response = await _dio.post(
+        '/export',
+        data: {
+          'email': email,
+          'lang': lang,
+          'report': report,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+          validateStatus: (status) {
+            debugPrint('[ReportApiService] Response status: $status');
+            return status != null && status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('[ReportApiService] Report exported successfully');
+        return true;
+      } else {
+        throw ReportApiException(
+          errorCode: ApiErrorCode.server,
+          statusCode: response.statusCode,
+          serverMessage: 'Failed to export report: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      debugPrint('[ReportApiService] Export failed: ${e.message}');
+      throw _handleDioError(e);
+    } catch (e) {
+      debugPrint('[ReportApiService] Unexpected error during export: $e');
+      throw ReportApiException(
+        errorCode: ApiErrorCode.unknown,
+        serverMessage: 'Unexpected error: $e',
+      );
+    }
+  }
+
   /// JSON 인코딩 (Dio FormData에 추가하기 위함)
   String _encodeJson(Map<String, dynamic> data) {
     return jsonEncode(data);

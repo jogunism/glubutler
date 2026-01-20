@@ -318,6 +318,16 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                 // 날짜 활성화 조건
                 enabledDayPredicate: (day) {
                   final normalizedDay = DateTime(day.year, day.month, day.day);
+                  final normalizedToday = DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                  );
+
+                  // 오늘은 항상 활성화 (todayBuilder로 렌더링되도록)
+                  if (normalizedDay.isAtSameMomentAs(normalizedToday)) {
+                    return true;
+                  }
 
                   if (_existingReports.isNotEmpty) {
                     // 리포트가 있을 때: 마지막 리포트 종료일 이후 날짜만 활성화
@@ -348,6 +358,21 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                 onDaySelected: (selectedDay, focusedDay) {
                   // 첫 리포트는 날짜 선택 불가 (7일 고정)
                   if (_existingReports.isEmpty) {
+                    return;
+                  }
+
+                  // 오늘은 선택 불가
+                  final normalizedSelectedDay = DateTime(
+                    selectedDay.year,
+                    selectedDay.month,
+                    selectedDay.day,
+                  );
+                  final normalizedToday = DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                  );
+                  if (normalizedSelectedDay.isAtSameMomentAs(normalizedToday)) {
                     return;
                   }
 

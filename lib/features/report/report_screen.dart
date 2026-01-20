@@ -616,16 +616,67 @@ class _ReportScreenState extends State<ReportScreen> {
 
     if (email == null || email.isEmpty || !mounted) return;
 
-    // TODO: /export API 호출
-    debugPrint('[ReportScreen] Export report to email: $email');
+    final reportProvider = context.read<ReportProvider>();
+    final settingsService = context.read<SettingsService>();
 
-    // TopBanner로 성공/실패 알림 표시
-    if (!mounted) return;
-    TopBanner.show(
-      context,
-      message: l10n.exportSuccess,
-      isSuccess: true,
-    );
+    // 현재 리포트 내용 가져오기
+    final reportContent = reportProvider.currentReport?.content;
+    if (reportContent == null || reportContent.isEmpty) {
+      if (!mounted) return;
+      TopBanner.show(
+        context,
+        message: '전송할 리포트가 없습니다',
+        isSuccess: false,
+      );
+      return;
+    }
+
+    // 현재 언어 가져오기
+    final lang = settingsService.language;
+
+    // 사용자 식별 정보 가져오기
+    final userIdentity = settingsService.userIdentity;
+
+    // /export API 호출
+    try {
+      debugPrint('[ReportScreen] Exporting report to email: $email, lang: $lang');
+
+      final apiService = ReportApiService();
+      final success = await apiService.exportReport(
+        userIdentity: userIdentity,
+        email: email,
+        lang: lang,
+        report: reportContent,
+      );
+
+      if (!mounted) return;
+
+      TopBanner.show(
+        context,
+        message: success ? l10n.exportSuccess : '리포트 전송에 실패했습니다',
+        isSuccess: success,
+      );
+    } on ReportApiException catch (e) {
+      debugPrint('[ReportScreen] Export failed: ${e.errorCode}');
+
+      if (!mounted) return;
+
+      TopBanner.show(
+        context,
+        message: _getErrorMessage(reportProvider, l10n),
+        isSuccess: false,
+      );
+    } catch (e) {
+      debugPrint('[ReportScreen] Unexpected error during export: $e');
+
+      if (!mounted) return;
+
+      TopBanner.show(
+        context,
+        message: '리포트 전송 중 오류가 발생했습니다',
+        isSuccess: false,
+      );
+    }
   }
 }
 
