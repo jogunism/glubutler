@@ -202,7 +202,6 @@ class _CgmGroupCardState extends State<CgmGroupCard>
 
   Widget _buildRecordRow(GlucoseRecord record, ThemeData theme, bool isLast, String unit) {
     final time = Jiffy.parseFromDateTime(record.timestamp).format(pattern: 'HH:mm');
-    final color = _getGlucoseColor(record.status);
 
     // 단위 변환
     final isMmol = unit == AppConstants.unitMmolL;
@@ -233,7 +232,7 @@ class _CgmGroupCardState extends State<CgmGroupCard>
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.3),
+                    color: AppTheme.iconRed,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -253,16 +252,6 @@ class _CgmGroupCardState extends State<CgmGroupCard>
             unit,
             style: theme.textTheme.labelSmall?.copyWith(
               color: context.colors.textSecondary,
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Status indicator
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
             ),
           ),
           const Spacer(),
@@ -346,17 +335,14 @@ class _CgmGroupCardState extends State<CgmGroupCard>
   }
 
   Color _getStatusColor() {
-    final group = widget.group;
-    // groupType 기준으로 색상 결정 (fluctuation: 주황색, baseline: 녹색)
-    return group.groupType == CgmGroupType.fluctuation
-        ? AppTheme.iconOrange
-        : AppTheme.primaryColor;
+    // 메인 빨강색으로 고정
+    return AppTheme.iconRed;
   }
 
   Widget _buildGroupTypeChip(ThemeData theme, AppLocalizations l10n) {
     final group = widget.group;
     final isFluctuation = group.groupType == CgmGroupType.fluctuation;
-    final color = isFluctuation ? AppTheme.iconOrange : AppTheme.primaryColor;
+    final color = isFluctuation ? AppTheme.iconOrange : AppTheme.glucoseNormal;
     final label = isFluctuation ? l10n.cgmFluctuation : l10n.cgmBaseline;
 
     return Container(

@@ -41,11 +41,12 @@ class FeedItemCard extends StatelessWidget {
     final isSwipeable =
         item.type == FeedItemType.glucose || item.type == FeedItemType.insulin;
 
-    // Use bounceTimestamp as key to force rebuild on refresh
+    // Use item.id as stable key
     return SwipeableCard(
-      key: isSwipeable ? ValueKey('${item.id}_${feedProvider.bounceTimestamp}') : null,
+      key: isSwipeable ? ValueKey(item.id) : null,
       swipeable: isSwipeable,
       bounceable: isSwipeable,
+      bounceToken: feedProvider.bounceTimestamp,
       onDelete: () => _deleteItem(context),
       child: _buildCardContent(
         context,

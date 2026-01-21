@@ -30,6 +30,9 @@ class SwipeableCard extends StatefulWidget {
   /// 바운스 애니메이션 여부 (렌더링 후 자동 실행)
   final bool bounceable;
 
+  /// 바운스 토큰 (이 값이 변경되면 바운스 실행)
+  final int bounceToken;
+
   const SwipeableCard({
     super.key,
     required this.child,
@@ -41,6 +44,7 @@ class SwipeableCard extends StatefulWidget {
     this.onSwipeStart,
     this.height,
     this.bounceable = false,
+    this.bounceToken = 0,
   });
 
   @override
@@ -63,6 +67,9 @@ class _SwipeableCardState extends State<SwipeableCard>
 
   // 전역적으로 열린 카드 추적
   static _SwipeableCardState? _currentlyOpenCard;
+
+  // 각 카드별 마지막 바운스 토큰을 전역으로 관리 (스크롤 후에도 유지)
+  static final Map<Key, int> _bouncedTokens = {};
 
   static void _closeAnyOpenCard() {
     _currentlyOpenCard?._closeCard();
@@ -97,18 +104,28 @@ class _SwipeableCardState extends State<SwipeableCard>
           ),
         );
 
-    // bounceable이 true이면 렌더링 후 바운스 실행
-    if (widget.bounceable) {
-      _scheduleBounce();
+    // bounceable이 true이고 아직 바운스하지 않은 경우에만 바운스 실행
+    if (widget.bounceable && widget.key != null) {
+      final lastToken = _bouncedTokens[widget.key];
+      if (lastToken == null || lastToken != widget.bounceToken) {
+        _bouncedTokens[widget.key!] = widget.bounceToken;
+        _scheduleBounce();
+      }
     }
   }
 
   @override
   void didUpdateWidget(SwipeableCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // bounceable이 false에서 true로 변경되면 바운스 실행
-    if (!oldWidget.bounceable && widget.bounceable) {
-      _scheduleBounce();
+    // bounceToken이 변경되고 bounceable이 true인 경우에만 바운스 실행
+    if (widget.bounceable &&
+        widget.key != null &&
+        widget.bounceToken != oldWidget.bounceToken) {
+      final lastToken = _bouncedTokens[widget.key];
+      if (lastToken == null || lastToken != widget.bounceToken) {
+        _bouncedTokens[widget.key!] = widget.bounceToken;
+        _scheduleBounce();
+      }
     }
   }
 

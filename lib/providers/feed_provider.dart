@@ -748,17 +748,25 @@ class FeedProvider extends ChangeNotifier {
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     // 먼저 캐시된 데이터에서 찾기
-    final cachedRecords = _items
-        .where((item) {
-          return item.type == FeedItemType.glucose &&
-              item.glucoseRecord != null &&
-              item.timestamp.isAfter(
-                startOfDay.subtract(const Duration(seconds: 1)),
-              ) &&
-              item.timestamp.isBefore(endOfDay);
-        })
-        .map((item) => item.glucoseRecord!)
-        .toList();
+    final cachedRecords = <GlucoseRecord>[];
+
+    for (final item in _items) {
+      // 날짜 범위 체크
+      if (!item.timestamp.isAfter(startOfDay.subtract(const Duration(seconds: 1))) ||
+          !item.timestamp.isBefore(endOfDay)) {
+        continue;
+      }
+
+      // 일반 glucose 레코드
+      if (item.type == FeedItemType.glucose && item.glucoseRecord != null) {
+        cachedRecords.add(item.glucoseRecord!);
+      }
+
+      // CGM 그룹의 레코드들도 포함
+      if (item.type == FeedItemType.cgmGroup && item.cgmGroup != null) {
+        cachedRecords.addAll(item.cgmGroup!.records);
+      }
+    }
 
     // 오늘 또는 syncPeriod 이내 날짜면 캐시 데이터 반환
     final now = DateTime.now();
