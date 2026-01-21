@@ -1251,4 +1251,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get exportFailed => 'Fehler beim Senden des Berichts';
+
+  @override
+  String get onboardingTermsPrefix =>
+      'Durch die Nutzung von Glu Butler\nstimmen Sie unseren';
+
+  @override
+  String get onboardingTermsAnd => 'und';
+
+  @override
+  String get onboardingTermsSuffix => 'zu.';
+
+  @override
+  String get onboardingTermsOfService => 'Nutzungsbedingungen';
+
+  @override
+  String get onboardingPrivacyPolicy => 'Datenschutzrichtlinie';
 }

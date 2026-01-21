@@ -478,5 +478,11 @@
   "exportReportMessage": "Inserisci l'indirizzo email per ricevere il report",
   "send": "Invia",
   "exportSuccess": "Il report è stato inviato via email",
-  "exportFailed": "Invio del report non riuscito"
+  "exportFailed": "Invio del report non riuscito",
+
+  "onboardingTermsPrefix": "Utilizzando Glu Butler,\naccetti i nostri",
+  "onboardingTermsAnd": "e",
+  "onboardingTermsSuffix": ".",
+  "onboardingTermsOfService": "Termini di servizio",
+  "onboardingPrivacyPolicy": "Informativa sulla privacy"
 }

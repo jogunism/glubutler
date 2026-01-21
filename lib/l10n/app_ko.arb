@@ -486,5 +486,11 @@
   "exportReportMessage": "리포트를 전달받을 이메일을 입력해 주세요",
   "send": "전송",
   "exportSuccess": "리포트가 이메일로 전송되었습니다",
-  "exportFailed": "리포트 전송에 실패했습니다"
+  "exportFailed": "리포트 전송에 실패했습니다",
+
+  "onboardingTermsPrefix": "Glu Butler를 사용하시는 것은\n",
+  "onboardingTermsAnd": "및",
+  "onboardingTermsSuffix": "에 동의하는 것으로 간주됩니다.",
+  "onboardingTermsOfService": "이용약관",
+  "onboardingPrivacyPolicy": "개인정보처리방침"
 }

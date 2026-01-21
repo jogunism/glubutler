@@ -480,5 +480,11 @@
   "exportReportMessage": "レポートを受け取るメールアドレスを入力してください",
   "send": "送信",
   "exportSuccess": "レポートがメールで送信されました",
-  "exportFailed": "レポートの送信に失敗しました"
+  "exportFailed": "レポートの送信に失敗しました",
+
+  "onboardingTermsPrefix": "Glu Butlerを使用することで、",
+  "onboardingTermsAnd": "と",
+  "onboardingTermsSuffix": "に同意したものとみなされます。",
+  "onboardingTermsOfService": "利用規約",
+  "onboardingPrivacyPolicy": "プライバシーポリシー"
 }

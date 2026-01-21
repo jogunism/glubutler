@@ -1196,4 +1196,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get exportFailed => 'レポートの送信に失敗しました';
+
+  @override
+  String get onboardingTermsPrefix => 'Glu Butlerを使用することで、';
+
+  @override
+  String get onboardingTermsAnd => 'と';
+
+  @override
+  String get onboardingTermsSuffix => 'に同意したものとみなされます。';
+
+  @override
+  String get onboardingTermsOfService => '利用規約';
+
+  @override
+  String get onboardingPrivacyPolicy => 'プライバシーポリシー';
 }

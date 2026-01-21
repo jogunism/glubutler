@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
@@ -95,6 +97,125 @@ class _CompletionPageState extends State<CompletionPage> {
     }
   }
 
+  /// 약관 동의 안내 텍스트
+  Widget _buildTermsNotice(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+
+    // 텍스트 조합: "앱을 사용하시는 것은 이용약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다."
+    final prefix = l10n.onboardingTermsPrefix;
+    final termsText = l10n.onboardingTermsOfService;
+    final andText = l10n.onboardingTermsAnd;
+    final privacyText = l10n.onboardingPrivacyPolicy;
+    final suffix = l10n.onboardingTermsSuffix;
+
+    final fullText = '$prefix $termsText $andText $privacyText$suffix';
+
+    // 이용약관과 개인정보처리방침의 시작 인덱스 찾기
+    final termsIndex = fullText.indexOf(termsText);
+    final privacyIndex = fullText.indexOf(privacyText);
+
+    return GestureDetector(
+      onTapDown: (details) {
+        // 터치 위치 확인
+        final textPainter = TextPainter(
+          text: TextSpan(
+            text: fullText,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: AppTheme.textSecondary(context),
+              height: 1.5,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.center,
+        );
+
+        textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 48);
+
+        final position = textPainter.getPositionForOffset(details.localPosition);
+        final offset = position.offset;
+
+        // 이용약관 링크 클릭
+        if (offset >= termsIndex && offset < termsIndex + termsText.length) {
+          _launchURL('$baseUrl/terms');
+        }
+        // 개인정보처리방침 링크 클릭
+        else if (offset >= privacyIndex && offset < privacyIndex + privacyText.length) {
+          _launchURL('$baseUrl/privacy');
+        }
+      },
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: AppTheme.textSecondary(context),
+            height: 1.5,
+          ),
+          children: _buildTermsTextSpans(fullText, termsIndex, privacyIndex, termsText, privacyText, context),
+        ),
+      ),
+    );
+  }
+
+  /// 약관 텍스트 스타일링
+  List<TextSpan> _buildTermsTextSpans(
+    String fullText,
+    int termsIndex,
+    int privacyIndex,
+    String termsText,
+    String privacyText,
+    BuildContext context,
+  ) {
+    final spans = <TextSpan>[];
+    int lastIndex = 0;
+
+    final linkStyle = TextStyle(
+      color: AppTheme.primaryColor,
+      fontWeight: FontWeight.w500,
+      decoration: TextDecoration.underline,
+    );
+
+    // 순서대로 처리
+    final indices = <MapEntry<int, String>>[
+      MapEntry(termsIndex, termsText),
+      MapEntry(privacyIndex, privacyText),
+    ]..sort((a, b) => a.key.compareTo(b.key));
+
+    for (final entry in indices) {
+      final index = entry.key;
+      final text = entry.value;
+
+      // 앞부분 일반 텍스트
+      if (index > lastIndex) {
+        spans.add(TextSpan(text: fullText.substring(lastIndex, index)));
+      }
+
+      // 링크 텍스트
+      spans.add(TextSpan(text: text, style: linkStyle));
+
+      lastIndex = index + text.length;
+    }
+
+    // 마지막 남은 텍스트
+    if (lastIndex < fullText.length) {
+      spans.add(TextSpan(text: fullText.substring(lastIndex)));
+    }
+
+    return spans;
+  }
+
+  /// URL 열기
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -149,15 +270,26 @@ class _CompletionPageState extends State<CompletionPage> {
         ),
         ),
 
-        // Button positioned at bottom
+        // Terms notice and button at bottom
         Positioned(
           left: 24,
           right: 24,
           bottom: 24,
-          child: OnboardingPrimaryButton(
-            text: l10n.onboardingGetStarted,
-            onPressed: _completeOnboarding,
-            isLoading: _isCompleting,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Terms notice
+              _buildTermsNotice(context),
+
+              const SizedBox(height: 16),
+
+              // Get started button
+              OnboardingPrimaryButton(
+                text: l10n.onboardingGetStarted,
+                onPressed: _completeOnboarding,
+                isLoading: _isCompleting,
+              ),
+            ],
           ),
         ),
       ],

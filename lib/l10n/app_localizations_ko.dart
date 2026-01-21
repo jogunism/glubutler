@@ -1197,4 +1197,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get exportFailed => '리포트 전송에 실패했습니다';
+
+  @override
+  String get onboardingTermsPrefix => 'Glu Butler를 사용하시는 것은\n';
+
+  @override
+  String get onboardingTermsAnd => '및';
+
+  @override
+  String get onboardingTermsSuffix => '에 동의하는 것으로 간주됩니다.';
+
+  @override
+  String get onboardingTermsOfService => '이용약관';
+
+  @override
+  String get onboardingPrivacyPolicy => '개인정보처리방침';
 }

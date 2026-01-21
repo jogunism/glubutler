@@ -2425,6 +2425,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to send report'**
   String get exportFailed;
+
+  /// No description provided for @onboardingTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By using Glu Butler,\nyou agree to our'**
+  String get onboardingTermsPrefix;
+
+  /// No description provided for @onboardingTermsAnd.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get onboardingTermsAnd;
+
+  /// No description provided for @onboardingTermsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get onboardingTermsSuffix;
+
+  /// No description provided for @onboardingTermsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get onboardingTermsOfService;
+
+  /// No description provided for @onboardingPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get onboardingPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate

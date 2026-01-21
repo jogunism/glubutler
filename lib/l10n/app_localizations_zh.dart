@@ -1193,4 +1193,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get exportFailed => '发送报告失败';
+
+  @override
+  String get onboardingTermsPrefix => '使用Glu Butler即表示您同意我们的';
+
+  @override
+  String get onboardingTermsAnd => '和';
+
+  @override
+  String get onboardingTermsSuffix => '。';
+
+  @override
+  String get onboardingTermsOfService => '服务条款';
+
+  @override
+  String get onboardingPrivacyPolicy => '隐私政策';
 }

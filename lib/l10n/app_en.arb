@@ -497,5 +497,11 @@
   "exportReportMessage": "Please enter the email address to receive the report",
   "send": "Send",
   "exportSuccess": "Report has been sent to your email",
-  "exportFailed": "Failed to send report"
+  "exportFailed": "Failed to send report",
+
+  "onboardingTermsPrefix": "By using Glu Butler,\nyou agree to our",
+  "onboardingTermsAnd": "and",
+  "onboardingTermsSuffix": ".",
+  "onboardingTermsOfService": "Terms of Service",
+  "onboardingPrivacyPolicy": "Privacy Policy"
 }

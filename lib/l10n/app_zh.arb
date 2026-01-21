@@ -478,5 +478,11 @@
   "exportReportMessage": "请输入接收报告的电子邮件地址",
   "send": "发送",
   "exportSuccess": "报告已通过电子邮件发送",
-  "exportFailed": "发送报告失败"
+  "exportFailed": "发送报告失败",
+
+  "onboardingTermsPrefix": "使用Glu Butler即表示您同意我们的",
+  "onboardingTermsAnd": "和",
+  "onboardingTermsSuffix": "。",
+  "onboardingTermsOfService": "服务条款",
+  "onboardingPrivacyPolicy": "隐私政策"
 }
