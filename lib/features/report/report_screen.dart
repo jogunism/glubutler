@@ -20,6 +20,7 @@ import 'package:glu_butler/features/report/past_reports_screen.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/widgets/common/input_dialog.dart';
 
 /// 리포트 화면
@@ -738,6 +739,9 @@ class _ReportScreenState extends State<ReportScreen> {
                 );
 
                 if (!mounted) return null;
+
+                // Log report export
+                await AnalyticsService.logReportExported(success: success);
 
                 // Dialog 닫기
                 if (dialogContext.mounted) {

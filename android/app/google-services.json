@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "759962797676",
+    "project_id": "glubutler",
+    "storage_bucket": "glubutler.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759962797676:android:6c2cde59cd7e98db147a49",
+        "android_client_info": {
+          "package_name": "com.jogunism.gluButler"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5EYKOwohgDBNEUdjp2aS3WSi6CYnA8x8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

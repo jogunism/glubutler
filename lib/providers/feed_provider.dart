@@ -13,6 +13,7 @@ import 'package:glu_butler/services/cgm_grouping_service.dart';
 import 'package:glu_butler/services/sleep_grouping_service.dart';
 import 'package:glu_butler/services/water_grouping_service.dart';
 import 'package:glu_butler/repositories/glucose_repository.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/repositories/insulin_repository.dart';
 
 /// Enum for health data categories shown in UI
@@ -616,6 +617,8 @@ class FeedProvider extends ChangeNotifier {
     final success = await _glucoseRepository.save(record);
     if (success) {
       await refreshData();
+      // Log glucose recorded (sampled - once per day)
+      await AnalyticsService.logGlucoseRecorded();
     }
     return success;
   }

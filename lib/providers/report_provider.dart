@@ -8,6 +8,7 @@ import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/notification_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 
 /// Provider for report generation and management
 ///
@@ -141,6 +142,9 @@ class ReportProvider extends ChangeNotifier {
       // 리포트 생성 완료 시 알림 취소
       await NotificationService().cancelReportReminder();
 
+      // Log report generation success
+      await AnalyticsService.logReportGenerated(success: true);
+
       return true;
     } on ReportApiException catch (e) {
       _errorCode = e.errorCode;
@@ -158,6 +162,9 @@ class ReportProvider extends ChangeNotifier {
       _uploadProgress = 0.0;
       notifyListeners();
 
+      // Log report generation failure
+      await AnalyticsService.logReportGenerated(success: false);
+
       return false;
     } catch (e) {
       _error = 'Unexpected error: $e';
@@ -173,6 +180,9 @@ class ReportProvider extends ChangeNotifier {
       _isLoading = false;
       _uploadProgress = 0.0;
       notifyListeners();
+
+      // Log report generation failure
+      await AnalyticsService.logReportGenerated(success: false);
 
       return false;
     }

@@ -3,6 +3,7 @@ import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 
 /// 일기 데이터 관리 Provider
 ///
@@ -76,6 +77,9 @@ class DiaryProvider extends ChangeNotifier {
 
       // iCloud 자동 업로드 (백그라운드)
       _syncToICloudIfEnabled(entry);
+
+      // Log diary created (sampled - once per day)
+      await AnalyticsService.logDiaryCreated();
 
       return true;
     } catch (e) {

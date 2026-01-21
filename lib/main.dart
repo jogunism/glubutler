@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -12,6 +14,7 @@ import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/notification_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
@@ -21,6 +24,16 @@ void main() async {
 
   // Load .env file (for API keys)
   await dotenv.load(fileName: ".env");
+
+  // Initialize Firebase (production only)
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await AnalyticsService.initialize();
+  } catch (e) {
+    debugPrint('[Firebase] Initialization failed: $e');
+  }
 
   // Lock orientation to portrait mode
   await SystemChrome.setPreferredOrientations([

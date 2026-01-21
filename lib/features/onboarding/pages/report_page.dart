@@ -5,6 +5,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
 /// Report and iCloud sync page
@@ -84,6 +85,9 @@ class _ReportPageState extends State<ReportPage> {
         await settings.updateCloudKitId(cloudKitId);
         await settings.setICloudSync(true);
 
+        // Log iCloud enabled
+        await AnalyticsService.logICloudEnabled(success: true);
+
         setState(() {
           _isEnabling = false;
         });
@@ -91,6 +95,9 @@ class _ReportPageState extends State<ReportPage> {
         widget.onNext();
       }
     } catch (e) {
+      // Log iCloud failed
+      await AnalyticsService.logICloudEnabled(success: false);
+
       if (mounted) {
         setState(() {
           _isEnabling = false;

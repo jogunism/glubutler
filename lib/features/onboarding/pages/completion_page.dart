@@ -6,6 +6,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
@@ -83,6 +84,9 @@ class _CompletionPageState extends State<CompletionPage> {
     try {
       final settings = context.read<SettingsService>();
       await settings.setOnboardingComplete();
+
+      // Log onboarding completion
+      await AnalyticsService.logOnboardingCompleted();
 
       if (mounted) {
         // Navigate to main screen

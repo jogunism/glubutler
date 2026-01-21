@@ -7,6 +7,7 @@ import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
 /// Apple Health permission page
@@ -43,6 +44,9 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
       if (mounted) {
         final settings = context.read<SettingsService>();
         await settings.setHealthConnected(granted);
+
+        // Log health connection
+        await AnalyticsService.logHealthConnected(success: granted);
 
         // DatabaseService에도 health connection 저장
         if (granted) {
