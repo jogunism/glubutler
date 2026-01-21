@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
@@ -79,6 +80,15 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
 
     final now = DateTime.now();
     final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final isDevMode = dotenv.env['APP_ENV'] == 'development';
+
+    // 개발 모드: 날짜 범위 제한 없음
+    if (isDevMode) {
+      _rangeStart = null;
+      _rangeEnd = null;
+      _focusedDay = yesterday;
+      return;
+    }
 
     if (_existingReports.isNotEmpty) {
       // 가장 최근 리포트의 종료일 다음 날을 시작일로 고정
@@ -153,6 +163,9 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
   /// 선택된 날짜 범위가 최소 기간을 충족하는지 확인
   bool _isValidDateRange() {
     if (_rangeStart == null || _rangeEnd == null) return false;
+
+    final isDevMode = dotenv.env['APP_ENV'] == 'development';
+    if (isDevMode) return true; // 개발 모드: 최소 기간 제한 없음
 
     final days = _rangeEnd!.difference(_rangeStart!).inDays + 1;
     return days >= DateRangePickerModal.minReportDays;
@@ -317,6 +330,19 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   rowHeight: 48,
                 // 날짜 활성화 조건
                 enabledDayPredicate: (day) {
+                  final isDevMode = dotenv.env['APP_ENV'] == 'development';
+
+                  // 개발 모드: 모든 과거 날짜 활성화
+                  if (isDevMode) {
+                    final normalizedDay = DateTime(day.year, day.month, day.day);
+                    final normalizedToday = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    );
+                    return normalizedDay.isBefore(normalizedToday) || normalizedDay.isAtSameMomentAs(normalizedToday);
+                  }
+
                   final normalizedDay = DateTime(day.year, day.month, day.day);
                   final normalizedToday = DateTime(
                     DateTime.now().year,
@@ -356,6 +382,46 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   }
                 },
                 onDaySelected: (selectedDay, focusedDay) {
+                  final isDevMode = dotenv.env['APP_ENV'] == 'development';
+
+                  // 개발 모드: 자유롭게 시작일/종료일 선택
+                  if (isDevMode) {
+                    final normalizedSelectedDay = DateTime(
+                      selectedDay.year,
+                      selectedDay.month,
+                      selectedDay.day,
+                    );
+                    final normalizedToday = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    );
+
+                    // 오늘은 선택 불가
+                    if (normalizedSelectedDay.isAtSameMomentAs(normalizedToday)) {
+                      return;
+                    }
+
+                    setState(() {
+                      _focusedDay = focusedDay;
+                      if (_rangeStart == null || _rangeEnd != null) {
+                        // 첫 번째 선택 또는 범위가 이미 설정된 경우 -> 시작일로 설정
+                        _rangeStart = selectedDay;
+                        _rangeEnd = null;
+                      } else {
+                        // 두 번째 선택 -> 종료일로 설정
+                        if (selectedDay.isBefore(_rangeStart!)) {
+                          // 종료일이 시작일보다 이전이면 둘을 바꿈
+                          _rangeEnd = _rangeStart;
+                          _rangeStart = selectedDay;
+                        } else {
+                          _rangeEnd = selectedDay;
+                        }
+                      }
+                    });
+                    return;
+                  }
+
                   // 첫 리포트는 날짜 선택 불가 (7일 고정)
                   if (_existingReports.isEmpty) {
                     return;

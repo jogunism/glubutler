@@ -982,6 +982,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Se superó el límite de solicitudes. Por favor, inténtalo de nuevo más tarde.';
 
   @override
+  String get apiErrorDateOverlap =>
+      'Ya existe un informe para este período. Por favor, selecciona un rango de fechas diferente.';
+
+  @override
   String get apiErrorServer =>
       'Se produjo un error del servidor. Por favor, inténtalo de nuevo más tarde.';
 

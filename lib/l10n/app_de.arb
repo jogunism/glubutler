@@ -376,6 +376,7 @@
   "apiErrorConnectionTimeout": "Zeitüberschreitung bei der Verbindung. Bitte überprüfen Sie Ihre Netzwerkverbindung.",
   "apiErrorReceiveTimeout": "Zeitüberschreitung bei der AI-Berichterstellung. Bitte versuchen Sie es später erneut.",
   "apiErrorRateLimit": "Anforderungslimit überschritten. Bitte versuchen Sie es später erneut.",
+  "apiErrorDateOverlap": "Ein Bericht für diesen Zeitraum existiert bereits. Bitte wählen Sie einen anderen Datumsbereich.",
   "apiErrorServer": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
   "apiErrorNetworkConnection": "Bitte überprüfen Sie Ihre Netzwerkverbindung.",
   "apiErrorUnknown": "Ein unbekannter Fehler ist aufgetreten.",

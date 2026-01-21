@@ -376,6 +376,7 @@
   "apiErrorConnectionTimeout": "连接超时。请检查您的网络连接。",
   "apiErrorReceiveTimeout": "AI报告生成超时。请稍后重试。",
   "apiErrorRateLimit": "超出请求限制。请稍后重试。",
+  "apiErrorDateOverlap": "该时间段的报告已存在。请选择其他日期范围。",
   "apiErrorServer": "发生服务器错误。请稍后重试。",
   "apiErrorNetworkConnection": "请检查您的网络连接。",
   "apiErrorUnknown": "发生未知错误。",

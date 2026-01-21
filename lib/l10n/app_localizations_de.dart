@@ -982,6 +982,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Anforderungslimit überschritten. Bitte versuchen Sie es später erneut.';
 
   @override
+  String get apiErrorDateOverlap =>
+      'Ein Bericht für diesen Zeitraum existiert bereits. Bitte wählen Sie einen anderen Datumsbereich.';
+
+  @override
   String get apiErrorServer =>
       'Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
 

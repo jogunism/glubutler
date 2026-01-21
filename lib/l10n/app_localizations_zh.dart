@@ -953,6 +953,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get apiErrorRateLimit => '超出请求限制。请稍后重试。';
 
   @override
+  String get apiErrorDateOverlap => '该时间段的报告已存在。请选择其他日期范围。';
+
+  @override
   String get apiErrorServer => '发生服务器错误。请稍后重试。';
 
   @override

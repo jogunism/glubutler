@@ -955,6 +955,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get apiErrorRateLimit => '요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.';
 
   @override
+  String get apiErrorDateOverlap => '해당 기간의 리포트가 이미 존재합니다. 다른 날짜를 선택해주세요.';
+
+  @override
   String get apiErrorServer => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 
   @override

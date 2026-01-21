@@ -1952,6 +1952,12 @@ abstract class AppLocalizations {
   /// **'Request limit exceeded. Please try again later.'**
   String get apiErrorRateLimit;
 
+  /// No description provided for @apiErrorDateOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'A report for this period already exists. Please select a different date range.'**
+  String get apiErrorDateOverlap;
+
   /// No description provided for @apiErrorServer.
   ///
   /// In en, this message translates to:

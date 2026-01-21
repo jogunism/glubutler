@@ -4,8 +4,10 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
@@ -87,6 +89,72 @@ class _ReportScreenState extends State<ReportScreen> {
     await ReportGuideModal.show(context, infoMode: true);
   }
 
+  Future<void> _deleteCurrentReport() async {
+    if (!mounted) return;
+
+    final reportProvider = context.read<ReportProvider>();
+    final currentReport = reportProvider.currentReport;
+
+    if (currentReport == null || currentReport.id == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    bool isButtonEnabled = false;
+
+    // Get report period string
+    final periodString = currentReport.getPeriodString(
+      monthLabel: l10n.monthSuffix,
+      dayLabel: l10n.daySuffix,
+    );
+
+    // Show InputDialog requiring user to type delete keyword
+    final result = await showDialog<String>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierDismissible: true,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) {
+          return InputDialog(
+            title: l10n.deleteReport,
+            message: l10n.deleteReportConfirmMessage(periodString),
+            placeholder: l10n.deleteKeyword,
+            buttonTitle: l10n.delete,
+            isButtonEnabled: isButtonEnabled,
+            onChanged: (value) {
+              final trimmedValue = value.trim();
+              final isValid = trimmedValue == l10n.deleteKeyword;
+
+              if (isValid != isButtonEnabled) {
+                setState(() {
+                  isButtonEnabled = isValid;
+                });
+              }
+            },
+            validator: (input) {
+              if (input != l10n.deleteKeyword) {
+                return null; // No error message, just keep disabled
+              }
+              return null;
+            },
+          );
+        },
+      ),
+    );
+
+    // User cancelled
+    if (result != l10n.deleteKeyword || !mounted) return;
+
+    // Delete the report
+    debugPrint('[ReportScreen] Deleting current report (id: ${currentReport.id})');
+
+    final success = await reportProvider.deleteReport(currentReport.id!);
+
+    if (success) {
+      debugPrint('[ReportScreen] Successfully deleted current report');
+    } else {
+      debugPrint('[ReportScreen] Failed to delete current report');
+    }
+  }
+
   Future<void> _deleteAllReports() async {
     if (!mounted) return;
 
@@ -112,43 +180,44 @@ class _ReportScreenState extends State<ReportScreen> {
 
     if (confirmed != true || !mounted) return;
 
-    debugPrint('[ReportScreen] Hard deleting all reports from DB and iCloud...');
+    debugPrint(
+      '[ReportScreen] Hard deleting all reports from DB and iCloud...',
+    );
 
     final reportProvider = context.read<ReportProvider>();
 
     // DB와 iCloud에서 완전히 삭제 (hard delete)
     final deletedCount = await reportProvider.deleteAllReports();
 
-    debugPrint('[ReportScreen] Successfully hard deleted $deletedCount reports from DB and iCloud');
+    debugPrint(
+      '[ReportScreen] Successfully hard deleted $deletedCount reports from DB and iCloud',
+    );
   }
 
   Widget _buildTitleTrailingButtons() {
-    final isDevMode = dotenv.env['APP_ENV'] == 'development';
+    final reportProvider = context.watch<ReportProvider>();
+    final hasCurrentReport = reportProvider.currentReport != null;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Development mode: 삭제 버튼
-        if (isDevMode)
+        // 현재 리포트 삭제 버튼
+        if (hasCurrentReport)
           CupertinoButton(
-            padding: const EdgeInsets.only(
-              bottom: 10,
-              left: 0,
-              right: 8,
-            ),
+            padding: const EdgeInsets.only(bottom: 10, left: 0, right: 8),
             minimumSize: Size.zero,
-            onPressed: _deleteAllReports,
+            onPressed: _deleteCurrentReport,
             child: const Icon(
               CupertinoIcons.trash,
               size: 22,
-              color: Colors.red,
+              color: CupertinoColors.destructiveRed,
             ),
           ),
         // 정보 버튼
         CupertinoButton(
           padding: EdgeInsets.only(
             bottom: 10,
-            left: isDevMode ? 0 : 44,
+            left: hasCurrentReport ? 0 : 44,
             right: 0,
           ),
           minimumSize: Size.zero,
@@ -167,9 +236,10 @@ class _ReportScreenState extends State<ReportScreen> {
     final reportProvider = context.read<ReportProvider>();
     final settingsService = context.read<SettingsService>();
     final l10n = AppLocalizations.of(context)!;
+    final isDevMode = dotenv.env['APP_ENV'] == 'development';
 
-    // iCloud 연동 확인
-    if (!settingsService.iCloudSyncEnabled) {
+    // iCloud 연동 확인 (개발 모드에서는 건너뜀)
+    if (!settingsService.iCloudSyncEnabled && !isDevMode) {
       if (!mounted) return;
       await showCupertinoDialog(
         context: context,
@@ -203,8 +273,31 @@ class _ReportScreenState extends State<ReportScreen> {
     final startDate = dateRange[0];
     final endDate = dateRange[1];
 
-    // SettingsService에서 UserIdentity 가져오기 (async gap 전에 미리 가져옴)
-    final userIdentity = settingsService.userIdentity;
+    // UserIdentity 가져오기
+    UserIdentity userIdentity;
+
+    // 개발 모드 + iCloud 미연동: UUID 사용
+    if (isDevMode && !settingsService.iCloudSyncEnabled) {
+      final prefs = await SharedPreferences.getInstance();
+      String? devUuid = prefs.getString('dev_cloudkit_uuid');
+
+      // UUID가 없으면 생성하고 저장
+      if (devUuid == null) {
+        devUuid = const Uuid().v4();
+        await prefs.setString('dev_cloudkit_uuid', devUuid);
+        debugPrint('[ReportScreen] Generated dev UUID: $devUuid');
+      }
+
+      // UUID를 cloudKitId로 사용하는 UserIdentity 생성
+      userIdentity = UserIdentity(
+        cloudKitId: devUuid,
+        idfv: settingsService.userIdentity.idfv,
+      );
+      debugPrint('[ReportScreen] Using dev mode with UUID as cloudKitId');
+    } else {
+      // 프로덕션 모드 또는 iCloud 연동됨: 기존 로직
+      userIdentity = settingsService.userIdentity;
+    }
 
     // Provider를 통해 리포트 생성
     // FeedProvider와 DiaryProvider는 ReportRepository에서 자동으로 가져옴
@@ -244,6 +337,8 @@ class _ReportScreenState extends State<ReportScreen> {
         return l10n.apiErrorReceiveTimeout;
       case ApiErrorCode.rateLimit:
         return l10n.apiErrorRateLimit;
+      case ApiErrorCode.dateOverlap:
+        return l10n.apiErrorDateOverlap;
       case ApiErrorCode.server:
         return l10n.apiErrorServer;
       case ApiErrorCode.networkConnection:
@@ -591,7 +686,8 @@ class _ReportScreenState extends State<ReportScreen> {
             isButtonEnabled: isButtonEnabled,
             onChanged: (value) {
               final trimmedValue = value.trim();
-              final isValid = trimmedValue.isNotEmpty && emailRegex.hasMatch(trimmedValue);
+              final isValid =
+                  trimmedValue.isNotEmpty && emailRegex.hasMatch(trimmedValue);
 
               if (isValid != isButtonEnabled) {
                 setState(() {
@@ -640,7 +736,9 @@ class _ReportScreenState extends State<ReportScreen> {
 
               // /export API 호출
               try {
-                debugPrint('[ReportScreen] Exporting report to email: $email, lang: $lang');
+                debugPrint(
+                  '[ReportScreen] Exporting report to email: $email, lang: $lang',
+                );
 
                 final apiService = ReportApiService();
                 final success = await apiService.exportReport(

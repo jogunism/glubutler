@@ -954,6 +954,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get apiErrorRateLimit => 'リクエスト制限を超えました。しばらくしてから再度お試しください。';
 
   @override
+  String get apiErrorDateOverlap => 'この期間のレポートは既に存在します。別の日付範囲を選択してください。';
+
+  @override
   String get apiErrorServer => 'サーバーエラーが発生しました。しばらくしてから再度お試しください。';
 
   @override

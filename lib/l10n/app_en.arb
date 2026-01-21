@@ -395,6 +395,7 @@
   "apiErrorConnectionTimeout": "Connection timed out. Please check your network connection.",
   "apiErrorReceiveTimeout": "AI report generation timed out. Please try again later.",
   "apiErrorRateLimit": "Request limit exceeded. Please try again later.",
+  "apiErrorDateOverlap": "A report for this period already exists. Please select a different date range.",
   "apiErrorServer": "A server error occurred. Please try again later.",
   "apiErrorNetworkConnection": "Please check your network connection.",
   "apiErrorUnknown": "An unknown error occurred.",

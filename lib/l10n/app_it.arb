@@ -376,6 +376,7 @@
   "apiErrorConnectionTimeout": "Timeout di connessione. Verifica la tua connessione di rete.",
   "apiErrorReceiveTimeout": "Timeout della generazione del rapporto IA. Riprova più tardi.",
   "apiErrorRateLimit": "Limite di richieste superato. Riprova più tardi.",
+  "apiErrorDateOverlap": "Esiste già un rapporto per questo periodo. Seleziona un intervallo di date diverso.",
   "apiErrorServer": "Si è verificato un errore del server. Riprova più tardi.",
   "apiErrorNetworkConnection": "Verifica la tua connessione di rete.",
   "apiErrorUnknown": "Si è verificato un errore sconosciuto.",

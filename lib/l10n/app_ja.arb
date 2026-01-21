@@ -378,6 +378,7 @@
   "apiErrorConnectionTimeout": "接続がタイムアウトしました。ネットワーク接続を確認してください。",
   "apiErrorReceiveTimeout": "AIレポート生成がタイムアウトしました。しばらくしてから再度お試しください。",
   "apiErrorRateLimit": "リクエスト制限を超えました。しばらくしてから再度お試しください。",
+  "apiErrorDateOverlap": "この期間のレポートは既に存在します。別の日付範囲を選択してください。",
   "apiErrorServer": "サーバーエラーが発生しました。しばらくしてから再度お試しください。",
   "apiErrorNetworkConnection": "ネットワーク接続を確認してください。",
   "apiErrorUnknown": "不明なエラーが発生しました。",

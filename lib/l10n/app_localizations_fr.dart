@@ -990,6 +990,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Limite de requêtes dépassée. Veuillez réessayer plus tard.';
 
   @override
+  String get apiErrorDateOverlap =>
+      'Un rapport existe déjà pour cette période. Veuillez sélectionner une autre plage de dates.';
+
+  @override
   String get apiErrorServer =>
       'Une erreur serveur s\'est produite. Veuillez réessayer plus tard.';
 

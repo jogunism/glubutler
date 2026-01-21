@@ -376,6 +376,7 @@
   "apiErrorConnectionTimeout": "Délai de connexion dépassé. Veuillez vérifier votre connexion réseau.",
   "apiErrorReceiveTimeout": "Délai de génération du rapport IA dépassé. Veuillez réessayer plus tard.",
   "apiErrorRateLimit": "Limite de requêtes dépassée. Veuillez réessayer plus tard.",
+  "apiErrorDateOverlap": "Un rapport existe déjà pour cette période. Veuillez sélectionner une autre plage de dates.",
   "apiErrorServer": "Une erreur serveur s'est produite. Veuillez réessayer plus tard.",
   "apiErrorNetworkConnection": "Veuillez vérifier votre connexion réseau.",
   "apiErrorUnknown": "Une erreur inconnue s'est produite.",

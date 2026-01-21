@@ -376,6 +376,7 @@
   "apiErrorConnectionTimeout": "Se agotó el tiempo de conexión. Por favor, verifica tu conexión de red.",
   "apiErrorReceiveTimeout": "Se agotó el tiempo de generación del informe AI. Por favor, inténtalo de nuevo más tarde.",
   "apiErrorRateLimit": "Se superó el límite de solicitudes. Por favor, inténtalo de nuevo más tarde.",
+  "apiErrorDateOverlap": "Ya existe un informe para este período. Por favor, selecciona un rango de fechas diferente.",
   "apiErrorServer": "Se produjo un error del servidor. Por favor, inténtalo de nuevo más tarde.",
   "apiErrorNetworkConnection": "Por favor, verifica tu conexión de red.",
   "apiErrorUnknown": "Se produjo un error desconocido.",

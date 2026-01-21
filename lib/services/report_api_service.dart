@@ -167,10 +167,6 @@ class ReportApiService {
         data: formData,
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
-          validateStatus: (status) {
-            debugPrint('[ReportApiService] Response status: $status');
-            return status != null && status < 500;
-          },
         ),
         onSendProgress: (sent, total) {
           // 진행률 콜백만 호출 (로그 출력 안 함)
@@ -180,30 +176,22 @@ class ReportApiService {
         },
       );
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+      final data = response.data;
 
-        if (data is Map<String, dynamic>) {
-          if (data.containsKey('reportContent')) {
-            debugPrint('[ReportApiService] Report generated successfully');
-            return data['reportContent'] as String;
-          } else {
-            throw ReportApiException(
-              errorCode: ApiErrorCode.unknown,
-              serverMessage: 'Response missing reportContent field',
-            );
-          }
+      if (data is Map<String, dynamic>) {
+        if (data.containsKey('reportContent')) {
+          debugPrint('[ReportApiService] Report generated successfully');
+          return data['reportContent'] as String;
         } else {
           throw ReportApiException(
             errorCode: ApiErrorCode.unknown,
-            serverMessage: 'Unexpected response type: ${data.runtimeType}',
+            serverMessage: 'Response missing reportContent field',
           );
         }
       } else {
         throw ReportApiException(
-          errorCode: ApiErrorCode.server,
-          statusCode: response.statusCode,
-          serverMessage: 'Failed to generate report: ${response.statusCode}',
+          errorCode: ApiErrorCode.unknown,
+          serverMessage: 'Unexpected response type: ${data.runtimeType}',
         );
       }
     } on DioException catch (e) {
@@ -286,7 +274,7 @@ class ReportApiService {
       // JWT 토큰 생성
       final token = _generateJwtToken(userIdentity);
 
-      final response = await _dio.post(
+      await _dio.post(
         '/export',
         data: {
           'email': email,
@@ -295,23 +283,11 @@ class ReportApiService {
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
-          validateStatus: (status) {
-            debugPrint('[ReportApiService] Response status: $status');
-            return status != null && status < 500;
-          },
         ),
       );
 
-      if (response.statusCode == 200) {
-        debugPrint('[ReportApiService] Report exported successfully');
-        return true;
-      } else {
-        throw ReportApiException(
-          errorCode: ApiErrorCode.server,
-          statusCode: response.statusCode,
-          serverMessage: 'Failed to export report: ${response.statusCode}',
-        );
-      }
+      debugPrint('[ReportApiService] Report exported successfully');
+      return true;
     } on DioException catch (e) {
       debugPrint('[ReportApiService] Export failed: ${e.message}');
       throw _handleDioError(e);
@@ -347,7 +323,14 @@ class ReportApiService {
         final statusCode = e.response?.statusCode;
         final serverMessage = e.response?.data?['message'] as String?;
 
-        if (statusCode == 429) {
+        if (statusCode == 409) {
+          return ReportApiException(
+            errorCode: ApiErrorCode.dateOverlap,
+            statusCode: statusCode,
+            serverMessage: serverMessage,
+            originalError: e,
+          );
+        } else if (statusCode == 429) {
           return ReportApiException(
             errorCode: ApiErrorCode.rateLimit,
             statusCode: statusCode,
@@ -403,6 +386,7 @@ enum ApiErrorCode {
   connectionTimeout,
   receiveTimeout,
   rateLimit,
+  dateOverlap,
   server,
   networkConnection,
   unknown,
