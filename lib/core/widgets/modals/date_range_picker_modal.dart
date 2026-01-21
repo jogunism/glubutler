@@ -27,9 +27,12 @@ class DateRangePickerModal extends StatefulWidget {
 
   /// 모달 표시 및 선택된 날짜 범위 반환
   ///
-  /// Returns: [startDate, endDate] 또는 null (취소 시)
-  static Future<List<DateTime>?> show(BuildContext context) async {
-    return await showModalBottomSheet<List<DateTime>>(
+  /// Returns:
+  /// - [startDate, endDate] (성공 시)
+  /// - {'error': true, 'message': String} (날짜 겹침 시)
+  /// - null (취소 시)
+  static Future<dynamic> show(BuildContext context) async {
+    return await showModalBottomSheet<dynamic>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -731,21 +734,11 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                           // 겹침 검증
                           if (_hasOverlapWithExistingReports()) {
                             final overlappingRange = _getOverlappingReportRange();
-                            showCupertinoDialog(
-                              context: context,
-                              builder: (context) => CupertinoAlertDialog(
-                                title: const Text('오류'),
-                                content: Text(
-                                  '이미 해당 기간의 리포트가 존재합니다.\n\n$overlappingRange',
-                                ),
-                                actions: [
-                                  CupertinoDialogAction(
-                                    child: const Text('확인'),
-                                    onPressed: () => Navigator.of(context).pop(),
-                                  ),
-                                ],
-                              ),
-                            );
+                            // 에러를 나타내는 특별한 값을 반환
+                            Navigator.of(context).pop({
+                              'error': true,
+                              'message': '이미 해당 기간의 리포트가 존재합니다.\n\n$overlappingRange',
+                            });
                             return;
                           }
 

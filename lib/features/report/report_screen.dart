@@ -97,51 +97,27 @@ class _ReportScreenState extends State<ReportScreen> {
 
     if (currentReport == null || currentReport.id == null) return;
 
-    final l10n = AppLocalizations.of(context)!;
-    bool isButtonEnabled = false;
-
-    // Get report period string
-    final periodString = currentReport.getPeriodString(
-      monthLabel: l10n.monthSuffix,
-      dayLabel: l10n.daySuffix,
-    );
-
-    // Show InputDialog requiring user to type delete keyword
-    final result = await showDialog<String>(
+    // 삭제 확인 다이얼로그
+    final confirmed = await showCupertinoDialog<bool>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
-      barrierDismissible: true,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setState) {
-          return InputDialog(
-            title: l10n.deleteReport,
-            message: l10n.deleteReportConfirmMessage(periodString),
-            placeholder: l10n.deleteKeyword,
-            buttonTitle: l10n.delete,
-            isButtonEnabled: isButtonEnabled,
-            onChanged: (value) {
-              final trimmedValue = value.trim();
-              final isValid = trimmedValue == l10n.deleteKeyword;
-
-              if (isValid != isButtonEnabled) {
-                setState(() {
-                  isButtonEnabled = isValid;
-                });
-              }
-            },
-            validator: (input) {
-              if (input != l10n.deleteKeyword) {
-                return null; // No error message, just keep disabled
-              }
-              return null;
-            },
-          );
-        },
+      builder: (context) => CupertinoAlertDialog(
+        content: const Text('현재 리포트만 삭제.\nhard delete'),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('취소'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('삭제'),
+          ),
+        ],
       ),
     );
 
-    // User cancelled
-    if (result != l10n.deleteKeyword || !mounted) return;
+    if (confirmed != true || !mounted) return;
 
     // Delete the report
     debugPrint('[ReportScreen] Deleting current report (id: ${currentReport.id})');
@@ -195,14 +171,15 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildTitleTrailingButtons() {
+    final isDevMode = dotenv.env['APP_ENV'] == 'development';
     final reportProvider = context.watch<ReportProvider>();
     final hasCurrentReport = reportProvider.currentReport != null;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 현재 리포트 삭제 버튼
-        if (hasCurrentReport)
+        // 현재 리포트 삭제 버튼 (개발 모드에서만)
+        if (isDevMode && hasCurrentReport)
           CupertinoButton(
             padding: const EdgeInsets.only(bottom: 10, left: 0, right: 8),
             minimumSize: Size.zero,
@@ -217,7 +194,7 @@ class _ReportScreenState extends State<ReportScreen> {
         CupertinoButton(
           padding: EdgeInsets.only(
             bottom: 10,
-            left: hasCurrentReport ? 0 : 44,
+            left: (isDevMode && hasCurrentReport) ? 0 : 44,
             right: 0,
           ),
           minimumSize: Size.zero,
@@ -267,9 +244,21 @@ class _ReportScreenState extends State<ReportScreen> {
 
     // 날짜 범위 선택 모달 표시
     if (!mounted) return;
-    final dateRange = await DateRangePickerModal.show(context);
-    if (dateRange == null) return;
+    final dateRangeResult = await DateRangePickerModal.show(context);
+    if (dateRangeResult == null) return;
 
+    // 에러 응답 체크 (Map으로 에러가 반환된 경우)
+    if (dateRangeResult is Map && dateRangeResult['error'] == true) {
+      if (!mounted) return;
+      TopBanner.show(
+        context,
+        message: dateRangeResult['message'] as String,
+        isSuccess: false,
+      );
+      return;
+    }
+
+    final dateRange = dateRangeResult as List<DateTime>;
     final startDate = dateRange[0];
     final endDate = dateRange[1];
 
