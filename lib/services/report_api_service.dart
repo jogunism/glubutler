@@ -20,13 +20,11 @@ class ReportApiService {
   final String? apiKey;
   final String? jwtSecret;
 
-  ReportApiService({String? baseUrl, this.apiKey})
-    : baseUrl =
-          baseUrl ?? dotenv.env['API_BASE_URL'] ?? 'https://api.example.com',
-      jwtSecret = dotenv.env['JWT_SECRET'] {
+  ReportApiService({required this.baseUrl, this.apiKey})
+      : jwtSecret = dotenv.env['JWT_SECRET'] {
     _dio = Dio(
       BaseOptions(
-        baseUrl: this.baseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 60), // AI 처리 시간 고려
         headers: {'Content-Type': 'application/json'},
@@ -119,9 +117,13 @@ class ReportApiService {
         ]);
 
         // 이전 가이드 요약 추가 (있는 경우에만)
-        if (previousGuideSummaries != null && previousGuideSummaries.isNotEmpty) {
+        if (previousGuideSummaries != null &&
+            previousGuideSummaries.isNotEmpty) {
           formData.fields.add(
-            MapEntry('previousGuideSummaries', jsonEncode(previousGuideSummaries)),
+            MapEntry(
+              'previousGuideSummaries',
+              jsonEncode(previousGuideSummaries),
+            ),
           );
         }
 
@@ -163,11 +165,9 @@ class ReportApiService {
       final token = _generateJwtToken(userIdentity);
 
       final response = await _dio.post(
-        '/report',
+        '/API/report',
         data: formData,
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
         onSendProgress: (sent, total) {
           // 진행률 콜백만 호출 (로그 출력 안 함)
           if (onProgress != null) {
@@ -275,15 +275,9 @@ class ReportApiService {
       final token = _generateJwtToken(userIdentity);
 
       await _dio.post(
-        '/export',
-        data: {
-          'email': email,
-          'lang': lang,
-          'report': report,
-        },
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
+        '/API/export',
+        data: {'email': email, 'lang': lang, 'report': report},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       debugPrint('[ReportApiService] Report exported successfully');

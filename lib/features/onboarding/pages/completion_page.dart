@@ -53,15 +53,22 @@ class _CompletionPageState extends State<CompletionPage> {
           final isAvailable = await CloudKitService.isAvailable();
           final isSignedIn = await CloudKitService.isUserSignedIn();
 
-          debugPrint('[CompletionPage] iCloud available: $isAvailable, signed in: $isSignedIn');
+          debugPrint(
+            '[CompletionPage] iCloud available: $isAvailable, signed in: $isSignedIn',
+          );
 
           if (isAvailable && isSignedIn) {
             final reportCount = await CloudKitService.downloadReports();
-            final summaryCount = await CloudKitService.downloadReportGuideSummaries();
-            debugPrint('[CompletionPage] Downloaded $reportCount reports, $summaryCount summaries from iCloud');
+            final summaryCount =
+                await CloudKitService.downloadReportGuideSummaries();
+            debugPrint(
+              '[CompletionPage] Downloaded $reportCount reports, $summaryCount summaries from iCloud',
+            );
           }
         } catch (e) {
-          debugPrint('[CompletionPage] Failed to download reports from iCloud: $e');
+          debugPrint(
+            '[CompletionPage] Failed to download reports from iCloud: $e',
+          );
           // iCloud 동기화 실패해도 계속 진행
         }
       }
@@ -138,7 +145,9 @@ class _CompletionPageState extends State<CompletionPage> {
 
         textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 48);
 
-        final position = textPainter.getPositionForOffset(details.localPosition);
+        final position = textPainter.getPositionForOffset(
+          details.localPosition,
+        );
         final offset = position.offset;
 
         // 이용약관 링크 클릭
@@ -146,7 +155,8 @@ class _CompletionPageState extends State<CompletionPage> {
           _launchURL('$baseUrl/terms');
         }
         // 개인정보처리방침 링크 클릭
-        else if (offset >= privacyIndex && offset < privacyIndex + privacyText.length) {
+        else if (offset >= privacyIndex &&
+            offset < privacyIndex + privacyText.length) {
           _launchURL('$baseUrl/privacy');
         }
       },
@@ -159,7 +169,14 @@ class _CompletionPageState extends State<CompletionPage> {
             color: AppTheme.textSecondary(context),
             height: 1.5,
           ),
-          children: _buildTermsTextSpans(fullText, termsIndex, privacyIndex, termsText, privacyText, context),
+          children: _buildTermsTextSpans(
+            fullText,
+            termsIndex,
+            privacyIndex,
+            termsText,
+            privacyText,
+            context,
+          ),
         ),
       ),
     );
@@ -233,45 +250,45 @@ class _CompletionPageState extends State<CompletionPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              // App icon
-              Image.asset(
-                'assets/images/main_icon.png',
-                width: 160,
-                height: 160,
-              ),
-
-              const SizedBox(height: 40),
-
-              // Title
-              Text(
-                l10n.onboardingCompletionTitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textPrimary(context),
-                  height: 1.2,
-                  letterSpacing: -0.5,
+                // App icon
+                Image.asset(
+                  'assets/images/main_icon.png',
+                  width: 160,
+                  height: 160,
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 40),
 
-              // Description
-              Text(
-                l10n.onboardingCompletionSubtitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: AppTheme.textSecondary(context),
-                  height: 1.4,
-                  letterSpacing: -0.3,
+                // Title
+                Text(
+                  l10n.onboardingCompletionTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textPrimary(context),
+                    height: 1.2,
+                    letterSpacing: -0.5,
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 16),
+
+                // Description
+                Text(
+                  l10n.onboardingCompletionSubtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: AppTheme.textSecondary(context),
+                    height: 1.4,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
         ),
 
         // Terms notice and button at bottom

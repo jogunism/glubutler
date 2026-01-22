@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/models/user_identity.dart';
@@ -28,7 +29,9 @@ class ReportRepository {
     FeedProvider? feedProvider,
     DiaryProvider? diaryProvider,
     SettingsService? settingsService,
-  }) : _reportApi = reportApi ?? ReportApiService(),
+  }) : _reportApi = reportApi ?? ReportApiService(
+         baseUrl: dotenv.env['BASE_URL'] ?? 'https://glubulter.app',
+       ),
        _databaseService = databaseService ?? DatabaseService(),
        _feedProvider = feedProvider ?? FeedProvider(),
        _diaryProvider = diaryProvider ?? DiaryProvider(),
