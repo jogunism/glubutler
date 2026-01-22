@@ -30,7 +30,7 @@ class ReportRepository {
     DiaryProvider? diaryProvider,
     SettingsService? settingsService,
   }) : _reportApi = reportApi ?? ReportApiService(
-         baseUrl: dotenv.env['BASE_URL'] ?? 'https://glubulter.app',
+         baseUrl: dotenv.env['BASE_URL'] ?? 'https://glubutler.app',
        ),
        _databaseService = databaseService ?? DatabaseService(),
        _feedProvider = feedProvider ?? FeedProvider(),

@@ -730,7 +730,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   '[ReportScreen] Exporting report to email: $email, lang: $lang',
                 );
 
-                final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubulter.app';
+                final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.app';
                 final apiService = ReportApiService(baseUrl: baseUrl);
                 final success = await apiService.exportReport(
                   userIdentity: userIdentity,
