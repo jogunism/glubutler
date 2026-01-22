@@ -231,8 +231,6 @@ class FeedItemCard extends StatelessWidget {
         return l10n.bloodGlucose;
       case FeedItemType.exercise:
         return l10n.exercise; // 모든 운동을 "운동"으로 통합
-      case FeedItemType.sleep:
-        return l10n.sleep;
       case FeedItemType.meal:
         return l10n.meal;
       case FeedItemType.water:
@@ -263,8 +261,6 @@ class FeedItemCard extends StatelessWidget {
         return _buildGlucoseValue(context, theme);
       case FeedItemType.exercise:
         return _buildExerciseValue(theme);
-      case FeedItemType.sleep:
-        return _buildSleepValue(theme);
       case FeedItemType.meal:
         return _buildMealValue(context, theme);
       case FeedItemType.water:
@@ -354,17 +350,6 @@ class FeedItemCard extends StatelessWidget {
           ),
         ],
       ],
-    );
-  }
-
-  Widget _buildSleepValue(ThemeData theme) {
-    final sleep = item.sleepRecord!;
-    return Text(
-      sleep.formattedDuration,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
     );
   }
 
@@ -576,10 +561,6 @@ class FeedItemCard extends StatelessWidget {
       case FeedItemType.exercise:
         icon = Icons.local_fire_department; // 모든 운동을 불꽃 아이콘으로 통합
         color = AppTheme.iconOrange;
-        backgroundColor = color;
-      case FeedItemType.sleep:
-        icon = Icons.bedtime;
-        color = AppTheme.iconIndigo;
         backgroundColor = color;
       case FeedItemType.meal:
         icon = Icons.restaurant;

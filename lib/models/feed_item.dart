@@ -1,6 +1,5 @@
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
-import 'package:glu_butler/models/sleep_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/water_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
@@ -13,7 +12,6 @@ import 'package:glu_butler/models/cgm_glucose_group.dart';
 /// - glucose: 혈당 (Apple Health + 사용자)
 /// - meal: 식사 (사용자)
 /// - exercise: 운동 (Apple Health)
-/// - sleep: 수면 (Apple Health)
 /// - water: 수분섭취 (Apple Health)
 /// - insulin: 인슐린 (Apple Health? + 사용자)
 /// - steps: 일일 걸음수 그룹
@@ -24,7 +22,6 @@ enum FeedItemType {
   glucose,
   meal,
   exercise,
-  sleep,
   water,
   insulin,
   mindfulness,
@@ -69,16 +66,6 @@ class FeedItem implements Comparable<FeedItem> {
     );
   }
 
-  factory FeedItem.fromSleep(SleepRecord record) {
-    return FeedItem(
-      id: record.id,
-      type: FeedItemType.sleep,
-      timestamp: record.endTime,
-      isFromHealthKit: record.isFromHealthKit,
-      data: record,
-    );
-  }
-
   factory FeedItem.fromMeal(MealRecord record) {
     return FeedItem(
       id: record.id,
@@ -94,9 +81,6 @@ class FeedItem implements Comparable<FeedItem> {
 
   ExerciseRecord? get exerciseRecord =>
       type == FeedItemType.exercise ? data as ExerciseRecord : null;
-
-  SleepRecord? get sleepRecord =>
-      type == FeedItemType.sleep ? data as SleepRecord : null;
 
   MealRecord? get mealRecord =>
       type == FeedItemType.meal ? data as MealRecord : null;
@@ -116,8 +100,6 @@ class FeedItem implements Comparable<FeedItem> {
         return glucoseRecord?.sourceName;
       case FeedItemType.exercise:
         return exerciseRecord?.sourceName;
-      case FeedItemType.sleep:
-        return sleepRecord?.sourceName;
       case FeedItemType.water:
         return waterRecord?.sourceName;
       case FeedItemType.insulin:
@@ -186,10 +168,13 @@ class FeedItem implements Comparable<FeedItem> {
   }
 
   factory FeedItem.fromSleepGroup(SleepGroup group) {
+    // Use start of day timestamp to ensure sleep appears last in the day's feed (bottom of list)
+    // Since sorting is descending, smallest timestamp appears at bottom
+    final date = group.endTime;
     return FeedItem(
       id: group.id,
       type: FeedItemType.sleepGroup,
-      timestamp: group.endTime,
+      timestamp: DateTime(date.year, date.month, date.day, 0, 0, 0),
       isFromHealthKit: true,
       data: group,
     );
