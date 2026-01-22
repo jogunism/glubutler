@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
@@ -121,7 +123,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
 
       if (value) {
-
         // Enable iCloud sync: Get CloudKit ID and save it
         final cloudKitId = await CloudKitService.getUserRecordID();
         await settings.updateCloudKitId(cloudKitId);
@@ -129,12 +130,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // 동기화 실행: 로컬 → iCloud 업로드, iCloud → 로컬 다운로드
         debugPrint('[SettingsScreen] Starting initial iCloud sync...');
         final (uploaded, downloaded) = await CloudKitService.syncDiaryEntries();
-        debugPrint('[SettingsScreen] Diary sync complete: $uploaded uploaded, $downloaded downloaded');
+        debugPrint(
+          '[SettingsScreen] Diary sync complete: $uploaded uploaded, $downloaded downloaded',
+        );
 
         // 리포트 및 가이드 요약 다운로드
         final reportCount = await CloudKitService.downloadReports();
-        final summaryCount = await CloudKitService.downloadReportGuideSummaries();
-        debugPrint('[SettingsScreen] Report sync complete: $reportCount reports, $summaryCount summaries downloaded');
+        final summaryCount =
+            await CloudKitService.downloadReportGuideSummaries();
+        debugPrint(
+          '[SettingsScreen] Report sync complete: $reportCount reports, $summaryCount summaries downloaded',
+        );
 
         // 모든 Provider 리프레시
         if (mounted) {
@@ -172,12 +178,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _showToast(BuildContext context, String message, {required bool isSuccess}) {
-    TopBanner.show(
-      context,
-      message: message,
-      isSuccess: isSuccess,
-    );
+  void _showToast(
+    BuildContext context,
+    String message, {
+    required bool isSuccess,
+  }) {
+    TopBanner.show(context, message: message, isSuccess: isSuccess);
   }
 
   @override
@@ -336,14 +342,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
 
                   // iCloud Sync (토글 스위치)
-                  _buildICloudSyncTile(
-                    context: context,
-                    settings: settings,
-                  ),
+                  _buildICloudSyncTile(context: context, settings: settings),
                 ],
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+
+              // Copyright Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/main_icon.png',
+                      width: 64,
+                      height: 64,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Glu Butler',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: context.colors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '© 2026 Glu Butler\nAll rights reserved',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: context.colors.textSecondary,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTermsAndPrivacyLinks(context, l10n),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
 
               // Disclaimer
               Padding(
@@ -351,7 +390,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Text(
                   l10n.disclaimer,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: context.colors.textSecondary,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppTheme.accentRedColorDarkMode
+                        : AppTheme.primaryColor,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -368,10 +409,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      child: Text(
-        title.toUpperCase(),
-        style: context.textStyles.sectionTitle,
-      ),
+      child: Text(title.toUpperCase(), style: context.textStyles.sectionTitle),
     );
   }
 
@@ -420,16 +458,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: context.textStyles.tileTitle,
-                    ),
+                    Text(title, style: context.textStyles.tileTitle),
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: context.textStyles.tileSubtitle,
-                      ),
+                      Text(subtitle, style: context.textStyles.tileSubtitle),
                     ],
                   ],
                 ),
@@ -483,10 +515,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildDivider(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 62),
-      child: Divider(
-        height: 1,
-        color: context.colors.divider,
-      ),
+      child: Divider(height: 1, color: context.colors.divider),
     );
   }
 
@@ -497,7 +526,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String title,
     required String displayValue,
     required List<AdaptivePopupMenuEntry> items,
-    required void Function(int index, AdaptivePopupMenuItem<String> entry) onSelected,
+    required void Function(int index, AdaptivePopupMenuItem<String> entry)
+    onSelected,
     String? currentValue,
     required SettingsService settings,
   }) {
@@ -520,26 +550,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           GlassIcon(icon: icon, color: iconColor, size: 32),
           const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              title,
-              style: context.textStyles.tileTitle,
-            ),
-          ),
+          Expanded(child: Text(title, style: context.textStyles.tileTitle)),
           MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              platformBrightness: Theme.of(context).brightness,
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(platformBrightness: Theme.of(context).brightness),
             child: AdaptivePopupMenuButton.widget<String>(
               items: itemsWithCheckmarks,
               onSelected: onSelected,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    displayValue,
-                    style: context.textStyles.tileSubtitle,
-                  ),
+                  Text(displayValue, style: context.textStyles.tileSubtitle),
                   const SizedBox(width: 4),
                   Icon(
                     CupertinoIcons.chevron_down,
@@ -590,7 +612,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          GlassIcon(icon: CupertinoIcons.hand_draw_fill, color: AppTheme.iconPurple, size: 32),
+          GlassIcon(
+            icon: CupertinoIcons.hand_draw_fill,
+            color: AppTheme.iconPurple,
+            size: 32,
+          ),
           const SizedBox(width: 14),
           Expanded(
             child: Text(
@@ -626,10 +652,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.iCloudSync,
-                  style: context.textStyles.tileTitle,
-                ),
+                Text(l10n.iCloudSync, style: context.textStyles.tileTitle),
                 Text(
                   l10n.iCloudSyncDescription,
                   style: context.textStyles.tileSubtitle,
@@ -647,5 +670,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  /// Terms and Privacy Policy links
+  Widget _buildTermsAndPrivacyLinks(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+    final theme = Theme.of(context);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () => _launchURL('$baseUrl/terms'),
+          child: Text(
+            l10n.onboardingTermsOfService,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppTheme.accentRedColorDarkMode
+                  : AppTheme.primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Text(
+          ' | ',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: context.colors.textSecondary,
+          ),
+        ),
+        GestureDetector(
+          onTap: () => _launchURL('$baseUrl/privacy'),
+          child: Text(
+            l10n.onboardingPrivacyPolicy,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppTheme.accentRedColorDarkMode
+                  : AppTheme.primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// URL 열기
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }
