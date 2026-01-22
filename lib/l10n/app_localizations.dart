@@ -788,6 +788,48 @@ abstract class AppLocalizations {
   /// **'Manage Subscription'**
   String get manageSubscription;
 
+  /// No description provided for @subscriptionSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription successful!'**
+  String get subscriptionSuccessful;
+
+  /// No description provided for @subscriptionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription failed. Please try again.'**
+  String get subscriptionFailed;
+
+  /// No description provided for @restoreSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases restored successfully!'**
+  String get restoreSuccessful;
+
+  /// No description provided for @restoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to restore purchases. Please try again.'**
+  String get restoreFailed;
+
+  /// No description provided for @noSubscriptionFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No active subscription found.'**
+  String get noSubscriptionFound;
+
+  /// No description provided for @unableToOpenAppStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open App Store.'**
+  String get unableToOpenAppStore;
+
+  /// No description provided for @restoringPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring...'**
+  String get restoringPurchases;
+
   /// No description provided for @disclaimer.
   ///
   /// In en, this message translates to:

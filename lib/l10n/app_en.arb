@@ -121,6 +121,13 @@
   "yearlyPlan": "Yearly",
   "monthlyPlan": "Monthly",
   "manageSubscription": "Manage Subscription",
+  "subscriptionSuccessful": "Subscription successful!",
+  "subscriptionFailed": "Subscription failed. Please try again.",
+  "restoreSuccessful": "Purchases restored successfully!",
+  "restoreFailed": "Failed to restore purchases. Please try again.",
+  "noSubscriptionFound": "No active subscription found.",
+  "unableToOpenAppStore": "Unable to open App Store.",
+  "restoringPurchases": "Restoring...",
 
   "disclaimer": "This app is for reference only. Please consult with your doctor directly for medical advice.",
 

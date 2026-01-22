@@ -349,6 +349,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get manageSubscription => '구독 관리';
 
   @override
+  String get subscriptionSuccessful => '구독이 완료되었습니다!';
+
+  @override
+  String get subscriptionFailed => '구독에 실패했습니다. 다시 시도해주세요.';
+
+  @override
+  String get restoreSuccessful => '구매 복원이 완료되었습니다!';
+
+  @override
+  String get restoreFailed => '구매 복원에 실패했습니다. 다시 시도해주세요.';
+
+  @override
+  String get noSubscriptionFound => '활성화된 구독을 찾을 수 없습니다.';
+
+  @override
+  String get unableToOpenAppStore => 'App Store를 열 수 없습니다.';
+
+  @override
+  String get restoringPurchases => '복원 중...';
+
+  @override
   String get disclaimer => '이 앱은 참고용이며, 의료적인 조언은 반드시 의사와 직접 상의하시기 바랍니다.';
 
   @override

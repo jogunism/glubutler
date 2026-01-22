@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -10,7 +12,9 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
+import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/subscription_service.dart';
 
 /// 구독 관리 화면
 ///
@@ -513,57 +517,140 @@ class SubscriptionScreen extends StatelessWidget {
   // Dialogs
   // ==========================================================================
 
-  void _showSubscriptionAlert(BuildContext context) {
+  Future<void> _showSubscriptionAlert(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.subscription),
-        content: const Text('Payment functionality is not yet implemented.'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+    try {
+      // Show RevenueCat Paywall
+      final result = await RevenueCatUI.presentPaywall();
+
+      if (result == PaywallResult.purchased || result == PaywallResult.restored) {
+        // Check subscription status and update settings
+        final isPremium = await SubscriptionService.isPremiumActive();
+        if (isPremium && context.mounted) {
+          final settings = context.read<SettingsService>();
+          await settings.setProStatus(true);
+
+          if (context.mounted) {
+            TopBanner.show(
+              context,
+              message: l10n.subscriptionSuccessful,
+              isSuccess: true,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[Subscription] Error showing paywall: $e');
+      if (context.mounted) {
+        TopBanner.show(
+          context,
+          message: l10n.subscriptionFailed,
+          isSuccess: false,
+        );
+      }
+    }
   }
 
-  void _showRestoreAlert(BuildContext context) {
+  Future<void> _showRestoreAlert(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
+
+    // Show loading dialog
     showCupertinoDialog(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.restorePurchases),
-        content: const Text('Restore functionality is not yet implemented.'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CupertinoActivityIndicator(radius: 16),
+              const SizedBox(height: 16),
+              Text(l10n.restoringPurchases),
+            ],
+          ),
+        ),
       ),
     );
+
+    try {
+      // Restore purchases
+      await SubscriptionService.restorePurchases();
+
+      // Check if premium is now active
+      final isPremium = await SubscriptionService.isPremiumActive();
+
+      if (context.mounted) {
+        // Close loading dialog
+        Navigator.pop(context);
+
+        if (isPremium) {
+          // Update settings
+          final settings = context.read<SettingsService>();
+          await settings.setProStatus(true);
+
+          if (context.mounted) {
+            TopBanner.show(
+              context,
+              message: l10n.restoreSuccessful,
+              isSuccess: true,
+            );
+          }
+        } else {
+          TopBanner.show(
+            context,
+            message: l10n.noSubscriptionFound,
+            isSuccess: false,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('[Subscription] Error restoring purchases: $e');
+      if (context.mounted) {
+        // Close loading dialog
+        Navigator.pop(context);
+
+        TopBanner.show(
+          context,
+          message: l10n.restoreFailed,
+          isSuccess: false,
+        );
+      }
+    }
   }
 
-  void _showManageSubscriptionAlert(BuildContext context) {
+  Future<void> _showManageSubscriptionAlert(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(l10n.manageSubscription),
-        content: const Text('Subscription management will open in the App Store.'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+
+    // iOS App Store subscription management URL
+    final url = Uri.parse('https://apps.apple.com/account/subscriptions');
+
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          TopBanner.show(
+            context,
+            message: l10n.unableToOpenAppStore,
+            isSuccess: false,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('[Subscription] Error opening App Store: $e');
+      if (context.mounted) {
+        TopBanner.show(
+          context,
+          message: l10n.unableToOpenAppStore,
+          isSuccess: false,
+        );
+      }
+    }
   }
 }

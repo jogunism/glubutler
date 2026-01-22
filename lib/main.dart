@@ -15,6 +15,7 @@ import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/notification_service.dart';
 import 'package:glu_butler/services/analytics_service.dart';
+import 'package:glu_butler/services/subscription_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
@@ -34,6 +35,9 @@ void main() async {
   } catch (e) {
     debugPrint('[Firebase] Initialization failed: $e');
   }
+
+  // Initialize RevenueCat (subscription service)
+  await SubscriptionService.initialize();
 
   // Lock orientation to portrait mode
   await SystemChrome.setPreferredOrientations([

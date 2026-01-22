@@ -353,6 +353,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get manageSubscription => 'Manage Subscription';
 
   @override
+  String get subscriptionSuccessful => 'Subscription successful!';
+
+  @override
+  String get subscriptionFailed => 'Subscription failed. Please try again.';
+
+  @override
+  String get restoreSuccessful => 'Purchases restored successfully!';
+
+  @override
+  String get restoreFailed => 'Failed to restore purchases. Please try again.';
+
+  @override
+  String get noSubscriptionFound => 'No active subscription found.';
+
+  @override
+  String get unableToOpenAppStore => 'Unable to open App Store.';
+
+  @override
+  String get restoringPurchases => 'Restoring...';
+
+  @override
   String get disclaimer =>
       'Diese App dient nur als Referenz. Bitte konsultieren Sie Ihren Arzt direkt für medizinische Beratung.';
 
