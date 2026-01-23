@@ -132,6 +132,19 @@ class _SplashScreenState extends State<SplashScreen>
 
     try {
       await initService.initialize();
+
+      // Update trial status after initialization
+      settingsService.updateTrialStatus();
+
+      // Log app initialization info
+      final serviceStartDate = settingsService.serviceStartDate;
+      final isTrialUser = settingsService.isTrialUser;
+      final isPro = settingsService.isPro;
+
+      debugPrint('[SplashScreen] App Initialization Complete');
+      debugPrint('[SplashScreen] Service Start Date: ${serviceStartDate?.toString() ?? "Not set"}');
+      debugPrint('[SplashScreen] Is Trial User: $isTrialUser');
+      debugPrint('[SplashScreen] Is Pro User: $isPro');
     } catch (e) {
       debugPrint('[SplashScreen] Initialization error: $e');
     }

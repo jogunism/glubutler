@@ -21,7 +21,9 @@ import 'package:glu_butler/providers/report_provider.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
 import 'package:glu_butler/services/analytics_service.dart';
+import 'package:glu_butler/services/subscription_service.dart';
 import 'package:glu_butler/widgets/common/input_dialog.dart';
+import 'package:glu_butler/features/subscription/paywall_screen.dart';
 
 /// 리포트 화면
 ///
@@ -215,6 +217,35 @@ class _ReportScreenState extends State<ReportScreen> {
     final settingsService = context.read<SettingsService>();
     final l10n = AppLocalizations.of(context)!;
     final isDevMode = dotenv.env['APP_ENV'] == 'development';
+
+    // Check premium access (subscription or trial period)
+    final isPro = settingsService.isPro;
+    final isTrialUser = settingsService.isTrialUser;
+
+    if (!isPro && !isTrialUser) {
+      // Show paywall
+      if (!mounted) return;
+      final result = await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        useRootNavigator: true,
+        builder: (context) => const PaywallScreen(),
+      );
+
+      if (result == true && mounted) {
+        // Check subscription status and update settings
+        final isPremium = await SubscriptionService.isPremiumActive();
+        if (isPremium) {
+          await settingsService.setProStatus(true);
+          // Retry generate report after successful subscription
+          if (mounted) {
+            generateReport();
+          }
+        }
+      }
+      return;
+    }
 
     // iCloud 연동 확인 (개발 모드에서는 건너뜀)
     if (!settingsService.iCloudSyncEnabled && !isDevMode) {
@@ -658,7 +689,38 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Future<void> _showEmailInputDialog() async {
+    final settingsService = context.read<SettingsService>();
     final l10n = AppLocalizations.of(context)!;
+
+    // Check premium access (subscription or trial period)
+    final isPro = settingsService.isPro;
+    final isTrialUser = settingsService.isTrialUser;
+
+    if (!isPro && !isTrialUser) {
+      // Show paywall
+      if (!mounted) return;
+      final result = await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        useRootNavigator: true,
+        builder: (context) => const PaywallScreen(),
+      );
+
+      if (result == true && mounted) {
+        // Check subscription status and update settings
+        final isPremium = await SubscriptionService.isPremiumActive();
+        if (isPremium) {
+          await settingsService.setProStatus(true);
+          // Retry export after successful subscription
+          if (mounted) {
+            _showEmailInputDialog();
+          }
+        }
+      }
+      return;
+    }
+
     bool isButtonEnabled = false;
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 

@@ -34,6 +34,7 @@ class SettingsService extends ChangeNotifier {
   String? _diabetesType;
   double? _fastingGlucoseTarget;
   double _textScale = AppConstants.defaultTextScale;
+  bool _isTrialUser = false;
 
   String get language => _language;
   String get unit => _unit;
@@ -53,6 +54,7 @@ class SettingsService extends ChangeNotifier {
   String? get diabetesType => _diabetesType;
   double? get fastingGlucoseTarget => _fastingGlucoseTarget;
   double get textScale => _textScale;
+  bool get isTrialUser => _isTrialUser;
 
   ThemeMode get flutterThemeMode {
     switch (_themeMode) {
@@ -181,17 +183,80 @@ class SettingsService extends ChangeNotifier {
     );
 
     // Load or initialize service start date
+    // iCloud에서 먼저 확인 (무료 체험 기간 우회 방지)
+    DateTime? iCloudServiceStartDate;
+    try {
+      iCloudServiceStartDate = await CloudKitService.fetchServiceStartDate();
+      if (iCloudServiceStartDate != null) {
+        debugPrint('[SettingsService] Service start date fetched from iCloud: $iCloudServiceStartDate');
+      }
+    } catch (e) {
+      debugPrint('[SettingsService] Failed to fetch service start date from iCloud: $e');
+    }
+
     final serviceStartDateString = _prefs.getString(AppConstants.keyServiceStartDate);
+    DateTime? localServiceStartDate;
     if (serviceStartDateString != null) {
-      _serviceStartDate = DateTime.tryParse(serviceStartDateString);
+      localServiceStartDate = DateTime.tryParse(serviceStartDateString);
+    }
+
+    // 우선순위: 더 오래된 날짜 사용 (먼저 설치한 날짜)
+    if (localServiceStartDate != null && iCloudServiceStartDate != null) {
+      // 둘 다 있으면 더 오래된 날짜 사용
+      _serviceStartDate = localServiceStartDate.isBefore(iCloudServiceStartDate)
+          ? localServiceStartDate
+          : iCloudServiceStartDate;
+
+      // 로컬이 더 오래되었으면 iCloud 업데이트
+      if (localServiceStartDate.isBefore(iCloudServiceStartDate)) {
+        try {
+          await CloudKitService.saveServiceStartDate(localServiceStartDate);
+          debugPrint('[SettingsService] Updated iCloud with older local service start date: $localServiceStartDate');
+        } catch (e) {
+          debugPrint('[SettingsService] Failed to update iCloud service start date: $e');
+        }
+      }
+      // iCloud가 더 오래되었으면 로컬 업데이트
+      else if (iCloudServiceStartDate.isBefore(localServiceStartDate)) {
+        await _prefs.setString(
+          AppConstants.keyServiceStartDate,
+          iCloudServiceStartDate.toIso8601String(),
+        );
+        debugPrint('[SettingsService] Updated local with older iCloud service start date: $iCloudServiceStartDate');
+      }
+    } else if (localServiceStartDate != null) {
+      // 로컬에만 있으면 iCloud에 업로드
+      _serviceStartDate = localServiceStartDate;
+      try {
+        await CloudKitService.saveServiceStartDate(localServiceStartDate);
+        debugPrint('[SettingsService] Service start date uploaded to iCloud: $localServiceStartDate');
+      } catch (e) {
+        debugPrint('[SettingsService] Failed to upload service start date to iCloud: $e');
+      }
+    } else if (iCloudServiceStartDate != null) {
+      // iCloud에만 있으면 로컬에 저장
+      _serviceStartDate = iCloudServiceStartDate;
+      await _prefs.setString(
+        AppConstants.keyServiceStartDate,
+        iCloudServiceStartDate.toIso8601String(),
+      );
+      debugPrint('[SettingsService] Service start date restored from iCloud: $iCloudServiceStartDate');
     } else {
-      // 첫 실행: 현재 날짜를 서비스 시작일로 저장
+      // 둘 다 없으면 첫 실행: 현재 날짜를 서비스 시작일로 저장
       final now = DateTime.now();
       _serviceStartDate = DateTime(now.year, now.month, now.day);
       await _prefs.setString(
         AppConstants.keyServiceStartDate,
         _serviceStartDate!.toIso8601String(),
       );
+
+      // iCloud에도 저장
+      try {
+        await CloudKitService.saveServiceStartDate(_serviceStartDate!);
+        debugPrint('[SettingsService] Initial service start date saved to iCloud: $_serviceStartDate');
+      } catch (e) {
+        debugPrint('[SettingsService] Failed to save initial service start date to iCloud: $e');
+      }
     }
 
     _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
@@ -388,36 +453,6 @@ class SettingsService extends ChangeNotifier {
   Future<void> setICloudSync(bool enabled) async {
     _iCloudSyncEnabled = enabled;
     await _prefs.setBool(AppConstants.keyICloudSyncEnabled, enabled);
-
-    // iCloud 동기화를 켤 때, serviceStartDate를 iCloud에 저장
-    if (enabled && _serviceStartDate != null) {
-      try {
-        // CloudKit 사용 가능 여부 확인
-        final isAvailable = await CloudKitService.isAvailable();
-
-        if (isAvailable) {
-          // iCloud에 이미 저장된 serviceStartDate가 있는지 확인
-          final cloudServiceStartDate = await CloudKitService.fetchServiceStartDate();
-
-          if (cloudServiceStartDate == null) {
-            // iCloud에 없으면 로컬 날짜를 업로드
-            await CloudKitService.saveServiceStartDate(_serviceStartDate!);
-            debugPrint('[SettingsService] Service start date uploaded to iCloud: $_serviceStartDate');
-          } else {
-            // iCloud에 이미 있으면 iCloud 날짜로 로컬 업데이트
-            _serviceStartDate = cloudServiceStartDate;
-            await _prefs.setString(
-              AppConstants.keyServiceStartDate,
-              cloudServiceStartDate.toIso8601String(),
-            );
-            debugPrint('[SettingsService] Service start date synced from iCloud: $cloudServiceStartDate');
-          }
-        }
-      } catch (e) {
-        debugPrint('[SettingsService] Failed to sync service start date: $e');
-      }
-    }
-
     notifyListeners();
   }
 
@@ -476,6 +511,21 @@ class SettingsService extends ChangeNotifier {
     _textScale = scale;
     await _prefs.setDouble(AppConstants.keyTextScale, scale);
     notifyListeners();
+  }
+
+  /// Update trial user status based on service start date
+  /// Called from splash screen on app start
+  void updateTrialStatus() {
+    if (_serviceStartDate == null) {
+      _isTrialUser = false;
+      return;
+    }
+
+    final now = DateTime.now();
+    final daysSinceStart = now.difference(_serviceStartDate!).inDays;
+    _isTrialUser = daysSinceStart < 7;
+
+    debugPrint('[SettingsService] Trial status updated: $_isTrialUser (days since start: $daysSinceStart)');
   }
 
 }
