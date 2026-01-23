@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appName => '글루 버틀러';
+  String get appName => 'Glu Butler';
 
   @override
   String get feed => '피드';
@@ -283,13 +283,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get subscription => '구독';
 
   @override
-  String get gluButlerPro => '글루 버틀러 Pro';
+  String get gluButlerPro => 'Glu Butler Pro';
 
   @override
   String get upgradeToPro => 'Pro로 업그레이드';
 
   @override
   String get proDescription => '모든 프리미엄 기능을 잠금 해제하세요';
+
+  @override
+  String get proActiveDescription => '이제 모든 기능을 제한없이 사용하실 수 있습니다!';
 
   @override
   String get proFeature1 => '무제한 AI 인사이트';
@@ -331,7 +334,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get youArePro => 'Pro 구독 중!';
 
   @override
-  String get proThankYou => '글루 버틀러를 지원해 주셔서 감사합니다. 모든 프리미엄 기능을 즐기세요!';
+  String get proThankYou => 'Glu Butler를 지원해 주셔서 감사합니다. 모든 프리미엄 기능을 즐기세요!';
 
   @override
   String get subscriptionStartDate => '구독 시작일';

@@ -9,7 +9,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appName => 'グル バトラー';
+  String get appName => 'Glu Butler';
 
   @override
   String get feed => 'フィード';
@@ -283,13 +283,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get subscription => 'サブスクリプション';
 
   @override
-  String get gluButlerPro => 'グル バトラー Pro';
+  String get gluButlerPro => 'Glu Butler Pro';
 
   @override
   String get upgradeToPro => 'Proにアップグレード';
 
   @override
   String get proDescription => 'すべてのプレミアム機能をアンロック';
+
+  @override
+  String get proActiveDescription => 'すべての機能を制限なくご利用いただけます！';
 
   @override
   String get proFeature1 => '無制限のAIインサイト';

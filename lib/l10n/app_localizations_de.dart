@@ -295,6 +295,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get proDescription => 'Alle Premium-Funktionen freischalten';
 
   @override
+  String get proActiveDescription =>
+      'Sie können jetzt alle Funktionen ohne Einschränkungen nutzen!';
+
+  @override
   String get proFeature1 => 'Unbegrenzte KI-Einblicke';
 
   @override

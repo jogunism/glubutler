@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appName": "血糖管家",
+  "appName": "Glu Butler",
   "feed": "动态",
   "diary": "日记",
   "report": "报告",
@@ -133,9 +133,10 @@
   "butlerGreeting": "您的管家随时准备为您服务。",
 
   "subscription": "订阅",
-  "gluButlerPro": "血糖管家 Pro",
+  "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "升级到 Pro",
   "proDescription": "解锁所有高级功能",
+  "proActiveDescription": "您现在可以无限制地使用所有功能！",
   "proFeature1": "无限 AI 洞察",
   "proFeature2": "高级分析和报告",
   "proFeature3": "数据导出",

@@ -674,6 +674,12 @@ abstract class AppLocalizations {
   /// **'Unlock all premium features'**
   String get proDescription;
 
+  /// No description provided for @proActiveDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now use all features without any restrictions!'**
+  String get proActiveDescription;
+
   /// No description provided for @proFeature1.
   ///
   /// In en, this message translates to:

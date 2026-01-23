@@ -342,24 +342,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: isActive
-                ? [
-                    AppTheme.iconGreen.withValues(alpha: 0.1),
-                    AppTheme.iconGreen.withValues(alpha: 0.05),
-                  ]
-                : [
-                    AppTheme.iconOrange.withValues(alpha: 0.1),
-                    AppTheme.iconOrange.withValues(alpha: 0.05),
-                  ],
+            colors: [
+              AppTheme.proGradient[0].withValues(alpha: 0.3),
+              AppTheme.proGradient[1].withValues(alpha: 0.2),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
+          border: isActive
+              ? Border.all(
+                  color: AppTheme.iconAmber,
+                  width: 5,
+                )
+              : null,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Icon
+        child: Padding(
+          padding: EdgeInsets.zero,
+          child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Icon
             Container(
               width: 60,
               height: 60,
@@ -367,12 +370,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: isActive ? AppTheme.proActiveGradient : AppTheme.proGradient,
+                  colors: AppTheme.proGradient,
                 ),
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: isActive ? AppTheme.shadowGreen : AppTheme.shadowOrange,
+                    color: AppTheme.shadowOrange,
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -380,7 +383,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
               child: Center(
                 child: Icon(
-                  isActive ? CupertinoIcons.checkmark_seal_fill : CupertinoIcons.star_fill,
+                  CupertinoIcons.star_fill,
                   color: Colors.white,
                   size: 24,
                 ),
@@ -389,23 +392,68 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             const SizedBox(height: 20),
             // Title
             Text(
-              isActive ? l10n.youArePro : 'Glu Butler Pro',
+              'Glu Butler Pro',
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
               ),
             ),
             const SizedBox(height: 12),
-            // Description
-            Text(
-              isActive ? l10n.proThankYou : l10n.proDescription,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
-                height: 1.5,
+            // Description with stars for active users
+            if (isActive)
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Text(
+                    l10n.proActiveDescription,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: context.colors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                  // Star 1 - bottom right area
+                  Positioned(
+                    bottom: 8,
+                    right: -75,
+                    child: Icon(
+                      CupertinoIcons.star_fill,
+                      color: AppTheme.iconAmber,
+                      size: 24,
+                    ),
+                  ),
+                  // Star 2 - bottom middle
+                  Positioned(
+                    bottom: 25,
+                    right: -45,
+                    child: Icon(
+                      CupertinoIcons.star_fill,
+                      color: AppTheme.iconAmber,
+                      size: 18,
+                    ),
+                  ),
+                  // Star 3 - bottom far right
+                  Positioned(
+                    bottom: -5,
+                    right: -40,
+                    child: Icon(
+                      CupertinoIcons.star_fill,
+                      color: AppTheme.iconAmber,
+                      size: 21,
+                    ),
+                  ),
+                ],
+              )
+            else
+              Text(
+                l10n.proDescription,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: context.colors.textSecondary,
+                  height: 1.5,
+                ),
               ),
-            ),
           ],
         ),
+      ),
       ),
     );
   }

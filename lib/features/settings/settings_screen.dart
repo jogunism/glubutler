@@ -202,21 +202,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              // Subscription Section
-              _buildSectionTitle(context, l10n.subscription),
+              // Subscription Section (no title, yellow background for Pro users)
               _buildGroupedSection(
                 context: context,
+                backgroundColor: settings.isPro ? AppTheme.iconAmber.withValues(alpha: 0.3) : null,
+                border: settings.isPro ? Border.all(color: AppTheme.iconAmber, width: 2) : null,
                 children: [
                   _buildSettingsTile(
                     context: context,
-                    icon: settings.isPro
-                        ? CupertinoIcons.checkmark_seal_fill
-                        : CupertinoIcons.star_fill,
+                    icon: CupertinoIcons.star_fill,
                     iconColor: settings.isPro
-                        ? AppTheme.iconGreen
+                        ? AppTheme.iconAmber
                         : AppTheme.iconOrange,
                     title: l10n.gluButlerPro,
                     subtitle: settings.isPro ? l10n.proPlan : l10n.upgradeToPro,
+                    trailingColor: settings.isPro
+                        ? AppTheme.iconAmber
+                        : AppTheme.iconOrange,
                     onTap: () => AppRoutes.goToSubscription(context),
                   ),
                 ],
@@ -416,11 +418,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildGroupedSection({
     required BuildContext context,
     required List<Widget> children,
+    Color? backgroundColor,
+    BoxBorder? border,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.card,
+        color: backgroundColor ?? context.colors.card,
         borderRadius: BorderRadius.circular(16),
+        border: border,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -441,6 +446,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String? subtitle,
     Widget? trailing,
     Widget? customIcon,
+    Color? trailingColor,
     required VoidCallback onTap,
   }) {
     return Material(
@@ -470,7 +476,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Icon(
                     CupertinoIcons.chevron_right,
                     size: 16,
-                    color: context.colors.iconGrey,
+                    color: trailingColor ?? context.colors.iconGrey,
                   ),
             ],
           ),

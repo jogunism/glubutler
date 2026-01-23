@@ -1,6 +1,6 @@
 {
   "@@locale": "ko",
-  "appName": "글루 버틀러",
+  "appName": "Glu Butler",
   "feed": "피드",
   "diary": "일기",
   "report": "리포트",
@@ -99,9 +99,10 @@
   "disconnect": "연결 해제",
 
   "subscription": "구독",
-  "gluButlerPro": "글루 버틀러 Pro",
+  "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "Pro로 업그레이드",
   "proDescription": "모든 프리미엄 기능을 잠금 해제하세요",
+  "proActiveDescription": "이제 모든 기능을 제한없이 사용하실 수 있습니다!",
   "proFeature1": "무제한 AI 인사이트",
   "proFeature2": "고급 분석 및 리포트",
   "proFeature3": "데이터 내보내기",
@@ -115,7 +116,7 @@
   "freePlan": "무료",
   "proPlan": "Pro",
   "youArePro": "Pro 구독 중!",
-  "proThankYou": "글루 버틀러를 지원해 주셔서 감사합니다. 모든 프리미엄 기능을 즐기세요!",
+  "proThankYou": "Glu Butler를 지원해 주셔서 감사합니다. 모든 프리미엄 기능을 즐기세요!",
   "subscriptionStartDate": "구독 시작일",
   "subscriptionPlan": "구독 플랜",
   "yearlyPlan": "연간",

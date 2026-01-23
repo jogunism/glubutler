@@ -1,6 +1,6 @@
 {
   "@@locale": "ja",
-  "appName": "グル バトラー",
+  "appName": "Glu Butler",
   "feed": "フィード",
   "diary": "日記",
   "report": "レポート",
@@ -99,9 +99,10 @@
   "disconnect": "接続解除",
 
   "subscription": "サブスクリプション",
-  "gluButlerPro": "グル バトラー Pro",
+  "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "Proにアップグレード",
   "proDescription": "すべてのプレミアム機能をアンロック",
+  "proActiveDescription": "すべての機能を制限なくご利用いただけます！",
   "proFeature1": "無制限のAIインサイト",
   "proFeature2": "高度な分析とレポート",
   "proFeature3": "データエクスポート",

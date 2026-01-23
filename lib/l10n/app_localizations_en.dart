@@ -294,6 +294,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proDescription => 'Unlock all premium features';
 
   @override
+  String get proActiveDescription =>
+      'You can now use all features without any restrictions!';
+
+  @override
   String get proFeature1 => 'Unlimited AI insights';
 
   @override

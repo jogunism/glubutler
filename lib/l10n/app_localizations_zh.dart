@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appName => '血糖管家';
+  String get appName => 'Glu Butler';
 
   @override
   String get feed => '动态';
@@ -283,13 +283,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get subscription => '订阅';
 
   @override
-  String get gluButlerPro => '血糖管家 Pro';
+  String get gluButlerPro => 'Glu Butler Pro';
 
   @override
   String get upgradeToPro => '升级到 Pro';
 
   @override
   String get proDescription => '解锁所有高级功能';
+
+  @override
+  String get proActiveDescription => '您现在可以无限制地使用所有功能！';
 
   @override
   String get proFeature1 => '无限 AI 洞察';
