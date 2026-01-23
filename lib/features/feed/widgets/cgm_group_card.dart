@@ -348,9 +348,12 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
                   ]),
                 ]
               : [],
+          rangeAnnotations: RangeAnnotations(
+            verticalRangeAnnotations: _buildEventRanges(blockStart, blockEnd),
+          ),
           extraLinesData: ExtraLinesData(
             verticalLines: [
-              ..._buildEventLines(blockStart, blockEnd),
+              ..._buildEventLabels(blockStart, blockEnd),
               if (_touchedXValue != null) _buildTouchLine(),
             ],
           ),
@@ -416,9 +419,12 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
     }
   }
 
-  /// 이벤트들을 반투명 세로 라인으로 변환
-  List<VerticalLine> _buildEventLines(DateTime blockStart, DateTime blockEnd) {
-    final eventLines = <VerticalLine>[];
+  /// 이벤트들을 배경 영역으로 변환
+  List<VerticalRangeAnnotation> _buildEventRanges(
+    DateTime blockStart,
+    DateTime blockEnd,
+  ) {
+    final eventRanges = <VerticalRangeAnnotation>[];
     final blockStartHour = blockStart.hour;
 
     for (final event in widget.eventsInRange) {
@@ -432,37 +438,96 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
         final minuteOffset = event.timestamp.minute / 60.0;
         final xPosition = hourIndex + minuteOffset;
 
-        eventLines.add(
+        // 이벤트 지속 시간 계산
+        final duration = _getEventDuration(event);
+        final halfWidth = (duration / 2) * 0.5; // 양옆으로 퍼지는 범위
+
+        eventRanges.add(
+          VerticalRangeAnnotation(
+            x1: (xPosition - halfWidth).clamp(0.0, 6.0),
+            x2: (xPosition + halfWidth).clamp(0.0, 6.0),
+            color: _getEventColor(event.type).withValues(alpha: 0.2),
+          ),
+        );
+      }
+    }
+
+    return eventRanges;
+  }
+
+  /// 이벤트 레이블만 표시하는 투명한 수직선
+  List<VerticalLine> _buildEventLabels(DateTime blockStart, DateTime blockEnd) {
+    final eventLabels = <VerticalLine>[];
+    final blockStartHour = blockStart.hour;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDarkMode ? context.colors.textPrimary : Colors.black;
+
+    for (final event in widget.eventsInRange) {
+      if (event.timestamp.isAfter(blockStart) &&
+          event.timestamp.isBefore(blockEnd)) {
+        // 이벤트의 시간(hour)을 블록 내 인덱스로 변환
+        final eventHour = event.timestamp.hour;
+        final hourIndex = eventHour - blockStartHour;
+
+        // 분 단위 오프셋 추가 (0.0-1.0 범위)
+        final minuteOffset = event.timestamp.minute / 60.0;
+        final xPosition = hourIndex + minuteOffset;
+
+        eventLabels.add(
           VerticalLine(
             x: xPosition,
-            color: _getEventColor(event.type).withValues(alpha: 0.3),
-            strokeWidth: 2,
-            dashArray: [4, 4],
+            color: Colors.transparent, // 투명한 선
+            strokeWidth: 0,
             label: VerticalLineLabel(
               show: true,
               alignment: Alignment.topCenter,
-              labelResolver: (line) => _getEventIcon(event.type),
-              style: TextStyle(color: _getEventColor(event.type), fontSize: 16),
+              padding: const EdgeInsets.only(bottom: 4),
+              labelResolver: (line) => ' ${_getEventIcon(event.type)} ',
+              style: TextStyle(
+                color: labelColor,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                backgroundColor: context.colors.card.withValues(alpha: 0.8),
+              ),
             ),
           ),
         );
       }
     }
 
-    return eventLines;
+    return eventLabels;
   }
 
-  /// 이벤트 타입에 따른 아이콘 반환
+  /// 이벤트 지속 시간 계산 (시간 단위)
+  double _getEventDuration(dynamic event) {
+    switch (event.type) {
+      case FeedItemType.meal:
+        return 0.5; // 식사: 30분
+      case FeedItemType.exercise:
+        final exerciseData = event.exerciseRecord;
+        if (exerciseData != null) {
+          return exerciseData.durationMinutes / 60.0;
+        }
+        return 0.5; // 기본값: 30분
+      case FeedItemType.insulin:
+      case FeedItemType.glucose:
+        return 0.05; // 순간 이벤트: 3분
+      default:
+        return 0.17; // 기본값: 10분
+    }
+  }
+
+  /// 이벤트 타입에 따른 텍스트 반환
   String _getEventIcon(FeedItemType type) {
     switch (type) {
       case FeedItemType.meal:
-        return '🍽️';
+        return '식사';
       case FeedItemType.exercise:
-        return '🏃';
+        return '운동';
       case FeedItemType.insulin:
-        return '💉';
+        return '인슐린';
       case FeedItemType.glucose:
-        return '🩸';
+        return '혈당';
       default:
         return '•';
     }
@@ -481,11 +546,11 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
   Color _getEventColor(FeedItemType type) {
     switch (type) {
       case FeedItemType.meal:
-        return AppTheme.iconOrange;
+        return Colors.deepPurple[400]!;
       case FeedItemType.exercise:
-        return AppTheme.glucoseNormal;
+        return AppTheme.iconOrange;
       case FeedItemType.insulin:
-        return AppTheme.iconBlue;
+        return AppTheme.iconPurple;
       case FeedItemType.glucose:
         return AppTheme.iconRed;
       default:

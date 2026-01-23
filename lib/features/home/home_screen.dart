@@ -482,7 +482,7 @@ class _HomeScreenState extends State<HomeScreen>
             HorizontalRangeAnnotation(
               y1: glucoseRange.targetLow,
               y2: glucoseRange.targetHigh,
-              color: Colors.green.withValues(alpha: 0.08),
+              color: Colors.green.withValues(alpha: 0.2),
             ),
           ],
         ),
