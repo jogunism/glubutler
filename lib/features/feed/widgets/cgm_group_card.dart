@@ -112,8 +112,8 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
                   ),
                 ),
                 Positioned(
-                  top: 14,
-                  right: 14,
+                  bottom: 8,
+                  right: 12,
                   child: AnimatedRotation(
                     turns: _isExpanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
@@ -266,7 +266,10 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
             touchTooltipData: LineTouchTooltipData(
               getTooltipColor: (touchedSpot) => Colors.black87,
               tooltipRoundedRadius: 8,
-              tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              tooltipPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
               getTooltipItems: (List<LineBarSpot> touchedSpots) {
                 if (touchedSpots.isEmpty) return [];
 
@@ -306,31 +309,35 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
               });
             },
             getTouchLineEnd: (barData, spotIndex) => double.infinity,
-            getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
-              if (spotIndexes.isEmpty) return [];
+            getTouchedSpotIndicator:
+                (LineChartBarData barData, List<int> spotIndexes) {
+                  if (spotIndexes.isEmpty) return [];
 
-              return [
-                TouchedSpotIndicatorData(
-                  FlLine(
-                    color: context.colors.textPrimary.withValues(alpha: 0.8),
-                    strokeWidth: 2,
-                  ),
-                  FlDotData(
-                    show: true,
-                    getDotPainter: (spot, percent, barData, index) {
-                      return FlDotCirclePainter(
-                        radius: 6,
-                        color: context.colors.textPrimary,
+                  return [
+                    TouchedSpotIndicatorData(
+                      FlLine(
+                        color: context.colors.textPrimary.withValues(
+                          alpha: 0.8,
+                        ),
                         strokeWidth: 2,
-                        strokeColor: barData.color ?? Colors.blue,
-                      );
-                    },
-                  ),
-                ),
-              ];
-            },
+                      ),
+                      FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) {
+                          return FlDotCirclePainter(
+                            radius: 6,
+                            color: context.colors.textPrimary,
+                            strokeWidth: 2,
+                            strokeColor: barData.color ?? Colors.blue,
+                          );
+                        },
+                      ),
+                    ),
+                  ];
+                },
           ),
-          showingTooltipIndicators: _touchedBarIndex != null && _touchedSpotIndex != null
+          showingTooltipIndicators:
+              _touchedBarIndex != null && _touchedSpotIndex != null
               ? [
                   ShowingTooltipIndicators([
                     LineBarSpot(
@@ -362,12 +369,14 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
 
     for (int i = 0; i < sortedRecords.length; i++) {
       final record = sortedRecords[i];
-      final hoursSinceStart = record.timestamp.difference(blockStart).inMinutes / 60.0;
+      final hoursSinceStart =
+          record.timestamp.difference(blockStart).inMinutes / 60.0;
 
       // 현재 포인트와 다음 포인트로 세그먼트 생성
       if (i < sortedRecords.length - 1) {
         final nextRecord = sortedRecords[i + 1];
-        final nextHoursSinceStart = nextRecord.timestamp.difference(blockStart).inMinutes / 60.0;
+        final nextHoursSinceStart =
+            nextRecord.timestamp.difference(blockStart).inMinutes / 60.0;
 
         // 현재 혈당 값에 따른 색상 결정
         final color = _getLineColor(record.value, glucoseRange);
@@ -383,9 +392,7 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
             color: color,
             barWidth: 3,
             dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(
-              show: false,
-            ),
+            belowBarData: BarAreaData(show: false),
           ),
         );
       }
@@ -435,10 +442,7 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
               show: true,
               alignment: Alignment.topCenter,
               labelResolver: (line) => _getEventIcon(event.type),
-              style: TextStyle(
-                color: _getEventColor(event.type),
-                fontSize: 16,
-              ),
+              style: TextStyle(color: _getEventColor(event.type), fontSize: 16),
             ),
           ),
         );
@@ -494,8 +498,10 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
   }
 
   String _formatTimeRange(CgmGlucoseGroup group) {
-    final startTime = '${group.startTime.hour.toString().padLeft(2, '0')}:${group.startTime.minute.toString().padLeft(2, '0')}';
-    final endTime = '${group.endTime.hour.toString().padLeft(2, '0')}:${group.endTime.minute.toString().padLeft(2, '0')}';
+    final startTime =
+        '${group.startTime.hour.toString().padLeft(2, '0')}:${group.startTime.minute.toString().padLeft(2, '0')}';
+    final endTime =
+        '${group.endTime.hour.toString().padLeft(2, '0')}:${group.endTime.minute.toString().padLeft(2, '0')}';
     return '$startTime~$endTime';
   }
 

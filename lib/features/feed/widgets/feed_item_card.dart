@@ -544,18 +544,9 @@ class FeedItemCard extends StatelessWidget {
     switch (item.type) {
       case FeedItemType.glucose:
         icon = Icons.water_drop;
-        // Always use red for glucose drop icon
+        // Always use red for glucose drop icon and background
         color = AppTheme.iconRed;
-        final glucose = item.glucoseRecord;
-        if (glucose != null) {
-          // Calculate 5-level status for background color
-          final glucoseRange = settings.glucoseRange;
-          final mgDlValue = glucose.valueIn('mg/dL');
-          final status = _getGlucoseStatus(mgDlValue, glucoseRange);
-          backgroundColor = _getGlucoseColor(status);
-        } else {
-          backgroundColor = AppTheme.primaryColor;
-        }
+        backgroundColor = AppTheme.iconRed;
       case FeedItemType.exercise:
         icon = Icons.local_fire_department; // 모든 운동을 불꽃 아이콘으로 통합
         color = AppTheme.iconOrange;
@@ -615,23 +606,6 @@ class FeedItemCard extends StatelessWidget {
             )
           : Icon(icon, color: color, size: iconInnerSize),
     );
-  }
-
-  Color _getGlucoseColor(String status) {
-    switch (status) {
-      case 'veryLow':
-        return AppTheme.glucoseVeryLow;
-      case 'low':
-        return AppTheme.glucoseLow;
-      case 'warning':
-        return AppTheme.glucoseHigh; // 주의 - 주황색
-      case 'high':
-        return AppTheme.glucoseHigh; // 높음 - 주황색
-      case 'veryHigh':
-        return AppTheme.glucoseVeryHigh;
-      default:
-        return AppTheme.glucoseNormal;
-    }
   }
 
   /// Calculate 5-level glucose status based on target ± 20 range
