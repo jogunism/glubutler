@@ -148,7 +148,7 @@ class FeedItemCard extends StatelessWidget {
     // Large items (glucose & insulin): full size, others: 70% size
     final verticalMargin = 5.0;
     final cardPadding = isLargeItem ? 16.0 : 11.0;
-    final iconSpacing = isLargeItem ? 16.0 : 11.0;
+    final iconSpacing = isLargeItem ? 14.0 : 11.0;
     final titleValueSpacing = isLargeItem ? 0.0 : 4.0;
 
     return Container(
@@ -161,9 +161,7 @@ class FeedItemCard extends StatelessWidget {
       ),
       child: IntrinsicHeight(
         child: Row(
-          crossAxisAlignment: isLargeItem
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildIcon(context, theme, settings),
             SizedBox(width: iconSpacing),
@@ -314,7 +312,7 @@ class FeedItemCard extends StatelessWidget {
             color: context.colors.textSecondary,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         // Show meal context chip (always show, default to fasting if null or empty)
         _buildMealContextChip(
           context,
@@ -597,10 +595,10 @@ class FeedItemCard extends StatelessWidget {
             AppTheme.primaryColor; // CGM groups handled separately
     }
 
-    // Large items (glucose & insulin): full size, others: 70% size
-    final iconSize = isLargeItem ? 44.0 : 31.0;
-    final iconInnerSize = isLargeItem ? 24.0 : 17.0;
-    final borderRadius = isLargeItem ? 12.0 : 8.0;
+    // Large items (glucose & insulin): 87.5% size, others: 70% size
+    final iconSize = isLargeItem ? 38.5 : 31.0;
+    final iconInnerSize = isLargeItem ? 21.0 : 17.0;
+    final borderRadius = isLargeItem ? 10.5 : 8.0;
 
     return Container(
       width: iconSize,

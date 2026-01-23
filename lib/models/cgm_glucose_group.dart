@@ -55,11 +55,10 @@ class CgmGlucoseGroup {
     return 'normal';
   }
 
-  /// 시간 범위 문자열 (예: "08:30~11:55")
+  /// 시간 범위 문자열 (예: "~23:59")
   String get timeRangeString {
-    final startStr = '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}';
     final endStr = '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}';
-    return '$startStr~$endStr';
+    return '~$endStr';
   }
 
   /// 그룹 지속 시간 (분)

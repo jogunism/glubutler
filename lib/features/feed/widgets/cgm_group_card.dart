@@ -71,98 +71,77 @@ class _CgmGroupCardState extends State<CgmGroupCard>
         child: Column(
           children: [
             // Main card content
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Stack(
-                children: [
-                  // Main content
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildIcon(theme),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 80),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildIcon(theme),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title row
+                            Row(
                               children: [
-                                // Title row
-                                Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  spacing: 0,
-                                  runSpacing: 2,
-                                  children: [
-                                    Text(
-                                      _getTitle(l10n),
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: context.colors.textSecondary,
-                                      ),
-                                    ),
-                                    if (group.sourceName != null) ...[
-                                      Text(
-                                        ' · ${group.sourceName} (${group.recordCount}${l10n.times})',
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: context.colors.textSecondary
-                                              .withValues(alpha: 0.7),
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      Text(
-                                        ' (${group.recordCount}${l10n.times})',
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: context.colors.textSecondary
-                                              .withValues(alpha: 0.7),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
+                                Text(
+                                  _getTitle(l10n),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: context.colors.textSecondary,
+                                  ),
                                 ),
-                                // Value row
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: _buildValue(theme),
+                                if (group.sourceName != null) ...[
+                                  Text(
+                                    ' · ${group.sourceName}',
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: context.colors.textSecondary
+                                          .withValues(alpha: 0.7),
+                                    ),
+                                  ),
+                                ],
+                                Text(
+                                  ' (${group.recordCount}${l10n.times})',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: context.colors.textSecondary
+                                        .withValues(alpha: 0.7),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
+                            // Value row
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: _buildValue(theme),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  // Floating time range (vertically centered on right)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AnimatedRotation(
-                            turns: _isExpanded ? 0.5 : 0,
-                            duration: const Duration(milliseconds: 200),
-                            child: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 20,
-                              color: context.colors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            group.timeRangeString,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: context.colors.textSecondary,
-                            ),
-                          ),
-                        ],
                       ),
+                      Text(
+                        group.timeRangeString,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 14,
+                  right: 14,
+                  child: AnimatedRotation(
+                    turns: _isExpanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: context.colors.textSecondary,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             // Expanded content
             SizeTransition(
@@ -194,20 +173,48 @@ class _CgmGroupCardState extends State<CgmGroupCard>
       child: Column(
         children: [
           for (int i = 0; i < sortedRecords.length; i++)
-            _buildRecordRow(sortedRecords[i], theme, i == sortedRecords.length - 1, unit),
+            _buildRecordRow(
+              sortedRecords[i],
+              theme,
+              i == sortedRecords.length - 1,
+              unit,
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildRecordRow(GlucoseRecord record, ThemeData theme, bool isLast, String unit) {
-    final time = Jiffy.parseFromDateTime(record.timestamp).format(pattern: 'HH:mm');
+  Widget _buildRecordRow(
+    GlucoseRecord record,
+    ThemeData theme,
+    bool isLast,
+    String unit,
+  ) {
+    final time = Jiffy.parseFromDateTime(
+      record.timestamp,
+    ).format(pattern: 'HH:mm');
+    final settings = context.watch<SettingsService>();
+    final glucoseRange = settings.glucoseRange;
 
     // 단위 변환
     final isMmol = unit == AppConstants.unitMmolL;
     final displayValue = isMmol
         ? (record.value / AppConstants.mgDlToMmolL).toStringAsFixed(1)
         : record.value.toStringAsFixed(0);
+
+    // 혈당 수치에 따른 색상 결정 (mg/dL 기준)
+    Color indicatorColor;
+    if (record.value < glucoseRange.veryLow) {
+      indicatorColor = AppTheme.iconRed; // 매우 낮음
+    } else if (record.value < glucoseRange.low) {
+      indicatorColor = AppTheme.iconOrange; // 낮음
+    } else if (record.value <= glucoseRange.high) {
+      indicatorColor = AppTheme.glucoseNormal; // 정상
+    } else if (record.value <= glucoseRange.veryHigh) {
+      indicatorColor = AppTheme.iconOrange; // 높음
+    } else {
+      indicatorColor = AppTheme.iconRed; // 매우 높음
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -232,7 +239,7 @@ class _CgmGroupCardState extends State<CgmGroupCard>
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: AppTheme.iconRed,
+                    color: indicatorColor,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -267,17 +274,6 @@ class _CgmGroupCardState extends State<CgmGroupCard>
     );
   }
 
-  Color _getGlucoseColor(String status) {
-    switch (status) {
-      case 'low':
-        return AppTheme.iconOrange;
-      case 'high':
-        return AppTheme.iconRed;
-      default:
-        return AppTheme.primaryColor;
-    }
-  }
-
   String _getTitle(AppLocalizations l10n) {
     return l10n.bloodGlucose;
   }
@@ -288,10 +284,8 @@ class _CgmGroupCardState extends State<CgmGroupCard>
     final settings = context.watch<SettingsService>();
     final unit = settings.unit;
 
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 4,
-      runSpacing: 4,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           group.getRangeString(unit),
@@ -299,6 +293,7 @@ class _CgmGroupCardState extends State<CgmGroupCard>
             fontWeight: FontWeight.bold,
           ),
         ),
+        const SizedBox(width: 4),
         Text(
           unit,
           style: theme.textTheme.bodySmall?.copyWith(
@@ -324,13 +319,13 @@ class _CgmGroupCardState extends State<CgmGroupCard>
     }
 
     return Container(
-      width: 44,
-      height: 44,
+      width: 38.5,
+      height: 38.5,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10.5),
       ),
-      child: Icon(icon, color: color, size: 24),
+      child: Icon(icon, color: color, size: 21),
     );
   }
 
@@ -346,7 +341,7 @@ class _CgmGroupCardState extends State<CgmGroupCard>
     final label = isFluctuation ? l10n.cgmFluctuation : l10n.cgmBaseline;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
