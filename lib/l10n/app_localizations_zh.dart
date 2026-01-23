@@ -368,7 +368,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get unableToOpenAppStore => 'Unable to open App Store.';
 
   @override
-  String get restoringPurchases => 'Restoring...';
+  String get restoringPurchases => '恢复中...';
 
   @override
   String get disclaimer => '本应用仅供参考，医疗建议请务必直接咨询医生。';

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -36,8 +37,57 @@ import 'package:glu_butler/features/subscription/paywall_screen.dart';
 /// ## 관련 파일
 /// - [SettingsService] - 구독 상태 관리
 /// - [AppTheme] - 디자인 상수 (proGradient, proActiveGradient 등)
-class SubscriptionScreen extends StatelessWidget {
+class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
+
+  @override
+  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
+}
+
+class _SubscriptionScreenState extends State<SubscriptionScreen> {
+  Offering? _currentOffering;
+  Package? _selectedPackage;
+  bool _isLoadingOfferings = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOfferings();
+  }
+
+  Future<void> _loadOfferings() async {
+    setState(() {
+      _isLoadingOfferings = true;
+    });
+
+    try {
+      final offerings = await Purchases.getOfferings();
+      final current = offerings.current;
+
+      if (current != null && current.availablePackages.isNotEmpty) {
+        setState(() {
+          _currentOffering = current;
+          // Default to yearly package
+          _selectedPackage = current.availablePackages.firstWhere(
+            (pkg) =>
+                pkg.packageType == PackageType.annual ||
+                pkg.identifier.contains('yearly'),
+            orElse: () => current.availablePackages.first,
+          );
+          _isLoadingOfferings = false;
+        });
+      } else {
+        setState(() {
+          _isLoadingOfferings = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('[Subscription] Error loading offerings: $e');
+      setState(() {
+        _isLoadingOfferings = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +112,7 @@ class SubscriptionScreen extends StatelessWidget {
                 padding: EdgeInsets.only(
                   left: 16,
                   right: 16,
-                  bottom: isPro ? 16 : 100,
+                  bottom: isPro ? 16 : 80,
                 ),
                 sliver: SliverToBoxAdapter(
                   child: isPro
@@ -85,38 +135,20 @@ class SubscriptionScreen extends StatelessWidget {
                   top: false,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Restore purchases button
-                        CupertinoButton(
-                          onPressed: () => _showRestoreAlert(context),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            l10n.restorePurchases,
-                            style: const TextStyle(
-                              color: AppTheme.primaryColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: CupertinoButton(
+                        color: AppTheme.primaryColor,
+                        borderRadius: BorderRadius.circular(14),
+                        onPressed: _selectedPackage != null
+                            ? () => _showSubscriptionAlert(context)
+                            : null,
+                        child: Text(
+                          l10n.upgradeToPro,
+                          style: context.textStyles.buttonText,
                         ),
-                        const SizedBox(height: 4),
-                        // Upgrade button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: CupertinoButton(
-                            color: AppTheme.primaryColor,
-                            borderRadius: BorderRadius.circular(14),
-                            onPressed: () => _showSubscriptionAlert(context),
-                            child: Text(
-                              l10n.upgradeToPro,
-                              style: context.textStyles.buttonText,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -192,13 +224,6 @@ class SubscriptionScreen extends StatelessWidget {
               iconColor: AppTheme.iconGreen,
               title: l10n.proFeature3,
             ),
-            _buildDivider(context),
-            _buildFeatureItem(
-              context: context,
-              icon: CupertinoIcons.chat_bubble_2_fill,
-              iconColor: AppTheme.iconOrange,
-              title: l10n.proFeature4,
-            ),
           ],
         ),
         const SizedBox(height: 24),
@@ -255,33 +280,47 @@ class SubscriptionScreen extends StatelessWidget {
               iconColor: AppTheme.iconGreen,
               title: l10n.proFeature3,
             ),
-            _buildDivider(context),
-            _buildFeatureItem(
-              context: context,
-              icon: CupertinoIcons.chat_bubble_2_fill,
-              iconColor: AppTheme.iconOrange,
-              title: l10n.proFeature4,
-            ),
           ],
         ),
         const SizedBox(height: 24),
 
-        // Pricing options
-        _buildPricingOption(
-          context: context,
-          title: l10n.subscribeMonthly,
-          price: l10n.monthlyPrice,
-          isSelected: false,
-          onTap: () => _showSubscriptionAlert(context),
-        ),
+        // Pricing options - dynamic from offerings
+        if (_isLoadingOfferings)
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: CupertinoActivityIndicator(),
+            ),
+          )
+        else if (_currentOffering != null)
+          for (final package in _currentOffering!.availablePackages)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildPricingOptionFromPackage(
+                context: context,
+                package: package,
+                isSelected: _selectedPackage?.identifier == package.identifier,
+                onTap: () {
+                  setState(() {
+                    _selectedPackage = package;
+                  });
+                },
+              ),
+            ),
+
+        // Restore purchases button
         const SizedBox(height: 12),
-        _buildPricingOption(
-          context: context,
-          title: l10n.subscribeYearly,
-          price: l10n.yearlyPrice,
-          isSelected: true,
-          isBestValue: true,
-          onTap: () => _showSubscriptionAlert(context),
+        CupertinoButton(
+          onPressed: () => _showRestoreAlert(context),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(
+            l10n.restorePurchases,
+            style: const TextStyle(
+              color: AppTheme.primaryColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );
@@ -447,15 +486,25 @@ class SubscriptionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPricingOption({
+  Widget _buildPricingOptionFromPackage({
     required BuildContext context,
-    required String title,
-    required String price,
+    required Package package,
     required bool isSelected,
-    bool isBestValue = false,
     required VoidCallback onTap,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isYearly = package.packageType == PackageType.annual ||
+        package.identifier.contains('yearly');
+
+    String title = isYearly
+        ? l10n.yearly
+        : package.packageType == PackageType.monthly ||
+                package.identifier.contains('monthly')
+            ? l10n.monthly
+            : package.storeProduct.title;
+
+    final price = package.storeProduct.priceString;
 
     return GestureDetector(
       onTap: onTap,
@@ -472,36 +521,11 @@ class SubscriptionScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        title,
-                        style: context.textStyles.tileTitle.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (isBestValue) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.iconGreen,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Text(
-                            'Best Value',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
+                  Text(
+                    title,
+                    style: context.textStyles.tileTitle.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -527,13 +551,15 @@ class SubscriptionScreen extends StatelessWidget {
   Future<void> _showSubscriptionAlert(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     try {
-      // Show Custom Paywall as Modal
+      // Show Custom Paywall as Modal with selected package
       final result = await showModalBottomSheet<bool>(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         useRootNavigator: true,
-        builder: (context) => const PaywallScreen(),
+        builder: (context) => PaywallScreen(
+          initialSelectedPackage: _selectedPackage,
+        ),
       );
 
       if (result == true && context.mounted) {
@@ -573,19 +599,29 @@ class SubscriptionScreen extends StatelessWidget {
       barrierDismissible: false,
       builder: (context) => Center(
         child: Container(
-          width: 120,
-          height: 120,
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: CupertinoColors.systemBackground.resolveFrom(context),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(14),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CupertinoActivityIndicator(radius: 16),
-              const SizedBox(height: 16),
-              Text(l10n.restoringPurchases),
-            ],
+          child: IntrinsicWidth(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CupertinoActivityIndicator(radius: 16),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.restoringPurchases,
+                  style: TextStyle(
+                    color: CupertinoColors.label.resolveFrom(context),
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
+              ],
+            ),
           ),
         ),
       ),

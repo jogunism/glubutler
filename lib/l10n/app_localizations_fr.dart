@@ -371,7 +371,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unableToOpenAppStore => 'Unable to open App Store.';
 
   @override
-  String get restoringPurchases => 'Restoring...';
+  String get restoringPurchases => 'Restauration...';
 
   @override
   String get disclaimer =>

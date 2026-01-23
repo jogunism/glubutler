@@ -145,6 +145,7 @@
   "monthlyPrice": "4,99 €/mois",
   "yearlyPrice": "39,99 €/an",
   "restorePurchases": "Restaurer les achats",
+  "restoringPurchases": "Restauration...",
   "currentPlan": "Plan actuel",
   "freePlan": "Gratuit",
   "proPlan": "Pro",

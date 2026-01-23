@@ -368,7 +368,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get unableToOpenAppStore => 'Unable to open App Store.';
 
   @override
-  String get restoringPurchases => 'Restoring...';
+  String get restoringPurchases => '復元中...';
 
   @override
   String get disclaimer => 'このアプリは参考用です。医療アドバイスについては必ず医師に直接ご相談ください。';

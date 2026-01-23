@@ -111,6 +111,7 @@
   "monthlyPrice": "¥700/月",
   "yearlyPrice": "¥5,800/年",
   "restorePurchases": "購入を復元",
+  "restoringPurchases": "復元中...",
   "currentPlan": "現在のプラン",
   "freePlan": "無料",
   "proPlan": "Pro",

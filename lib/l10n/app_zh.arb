@@ -145,6 +145,7 @@
   "monthlyPrice": "¥35/月",
   "yearlyPrice": "¥298/年",
   "restorePurchases": "恢复购买",
+  "restoringPurchases": "恢复中...",
   "currentPlan": "当前方案",
   "freePlan": "免费版",
   "proPlan": "Pro",

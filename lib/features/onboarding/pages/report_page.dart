@@ -216,7 +216,7 @@ class _ReportPageState extends State<ReportPage> {
                   child: Text(
                     l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,

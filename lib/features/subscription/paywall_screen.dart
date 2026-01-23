@@ -10,7 +10,12 @@ import 'package:glu_butler/services/subscription_service.dart';
 
 /// Paywall 화면 - 모달 팝업 스타일
 class PaywallScreen extends StatefulWidget {
-  const PaywallScreen({super.key});
+  final Package? initialSelectedPackage;
+
+  const PaywallScreen({
+    super.key,
+    this.initialSelectedPackage,
+  });
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -26,6 +31,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedPackage = widget.initialSelectedPackage;
     _loadOfferings();
   }
 
@@ -42,7 +48,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (current != null && current.availablePackages.isNotEmpty) {
         setState(() {
           _currentOffering = current;
-          _selectedPackage = current.availablePackages.firstWhere(
+          // Use initial selected package if provided, otherwise default to yearly
+          _selectedPackage ??= current.availablePackages.firstWhere(
             (pkg) =>
                 pkg.packageType == PackageType.annual ||
                 pkg.identifier.contains('yearly'),
@@ -377,27 +384,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           color: AppTheme.textPrimary(context),
                         ),
                       ),
-                      if (isYearly) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.iconGreen,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            l10n.bestValue,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                   if (package.storeProduct.description.isNotEmpty &&

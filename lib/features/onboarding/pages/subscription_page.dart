@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/subscription_service.dart';
 
 /// Subscription offer page
 class SubscriptionPage extends StatefulWidget {
@@ -16,42 +20,186 @@ class SubscriptionPage extends StatefulWidget {
 }
 
 class _SubscriptionPageState extends State<SubscriptionPage> {
-  String _selectedPlan = 'yearly'; // monthly, yearly, lifetime
+  Offering? _currentOffering;
+  Package? _selectedPackage;
+  bool _isLoadingOfferings = true;
   bool _isProcessing = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadOfferings();
+  }
+
+  Future<void> _loadOfferings() async {
+    setState(() {
+      _isLoadingOfferings = true;
+    });
+
+    try {
+      final offerings = await Purchases.getOfferings();
+      final current = offerings.current;
+
+      if (current != null && current.availablePackages.isNotEmpty) {
+        setState(() {
+          _currentOffering = current;
+          // Default to yearly package
+          _selectedPackage = current.availablePackages.firstWhere(
+            (pkg) =>
+                pkg.packageType == PackageType.annual ||
+                pkg.identifier.contains('yearly'),
+            orElse: () => current.availablePackages.first,
+          );
+          _isLoadingOfferings = false;
+        });
+      } else {
+        setState(() {
+          _isLoadingOfferings = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('[Onboarding Subscription] Error loading offerings: $e');
+      setState(() {
+        _isLoadingOfferings = false;
+      });
+    }
+  }
+
   Future<void> _handlePurchase() async {
+    if (_selectedPackage == null) return;
+
     setState(() {
       _isProcessing = true;
     });
 
     try {
-      // TODO: Implement actual purchase logic
-      await Future.delayed(const Duration(milliseconds: 500));
+      final result = await Purchases.purchasePackage(_selectedPackage!);
+
+      // Check if user has active entitlement
+      final isPremium = result.customerInfo.entitlements.active.isNotEmpty;
+
+      if (isPremium && mounted) {
+        final settings = context.read<SettingsService>();
+        await settings.setProStatus(true);
+
+        if (mounted) {
+          // Wait a bit before moving to next page
+          await Future.delayed(const Duration(milliseconds: 500));
+          widget.onNext();
+        }
+      }
 
       if (mounted) {
         setState(() {
           _isProcessing = false;
         });
-        widget.onNext();
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _isProcessing = false;
         });
+
+        final errorMessage = e.toString();
+        // Don't show error if user cancelled
+        if (!errorMessage.contains('cancel') &&
+            !errorMessage.contains('abort')) {
+          final l10n = AppLocalizations.of(context)!;
+          _showErrorAlert(l10n.purchaseErrorMessage);
+        }
       }
     }
   }
 
   Future<void> _handleRestore() async {
-    // TODO: Implement restore purchases
-    await Future.delayed(const Duration(milliseconds: 500));
+    final l10n = AppLocalizations.of(context)!;
+
+    // Show loading dialog
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: IntrinsicWidth(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CupertinoActivityIndicator(radius: 16),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.restoringPurchases,
+                  style: TextStyle(
+                    color: CupertinoColors.label.resolveFrom(context),
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    try {
+      // Restore purchases
+      await SubscriptionService.restorePurchases();
+
+      // Check if premium is active
+      final isPremium = await SubscriptionService.isPremiumActive();
+
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+
+        if (isPremium) {
+          final settings = context.read<SettingsService>();
+          await settings.setProStatus(true);
+
+          // Wait a bit before moving to next page
+          await Future.delayed(const Duration(milliseconds: 500));
+          widget.onNext();
+        } else {
+          _showErrorAlert(l10n.restoreNotFoundMessage);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        _showErrorAlert(l10n.restoreErrorMessage);
+      }
+    }
   }
 
-  Future<void> _handleRedeem() async {
-    // TODO: Implement redeem code
-    await Future.delayed(const Duration(milliseconds: 500));
+  void _showErrorAlert(String message) {
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(l10n.notice),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
+
+  // Future<void> _handleRedeem() async {
+  //   // TODO: Implement redeem code
+  //   await Future.delayed(const Duration(milliseconds: 500));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -133,52 +281,68 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
                 const SizedBox(height: 32),
 
-                // Plan options
-                _buildPlanOption(
-                  'monthly',
-                  l10n.onboardingSubscriptionMonthly,
-                  l10n.onboardingSubscriptionMonthlyPrice,
-                ),
-                const SizedBox(height: 12),
-                _buildPlanOption(
-                  'yearly',
-                  l10n.onboardingSubscriptionYearly,
-                  l10n.onboardingSubscriptionYearlyPrice,
-                ),
+                // Plan options - dynamic from offerings
+                if (_isLoadingOfferings)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CupertinoActivityIndicator(),
+                    ),
+                  )
+                else if (_currentOffering != null)
+                  for (final package in _currentOffering!.availablePackages)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildPlanOptionFromPackage(package),
+                    ),
 
                 const SizedBox(height: 0),
 
-                // Redeem and Restore buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: _handleRedeem,
-                      child: Text(
-                        l10n.onboardingSubscriptionRedeem,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: AppTheme.primaryColor,
-                          letterSpacing: -0.3,
-                        ),
+                // Restore button (Redeem commented out)
+                Center(
+                  child: TextButton(
+                    onPressed: _handleRestore,
+                    child: Text(
+                      l10n.restorePurchases,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.primaryColor,
+                        letterSpacing: -0.3,
                       ),
                     ),
-                    const SizedBox(width: 24),
-                    TextButton(
-                      onPressed: _handleRestore,
-                      child: Text(
-                        l10n.onboardingSubscriptionRestore,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: AppTheme.primaryColor,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     TextButton(
+                //       onPressed: _handleRedeem,
+                //       child: Text(
+                //         l10n.onboardingSubscriptionRedeem,
+                //         style: const TextStyle(
+                //           fontSize: 15,
+                //           fontWeight: FontWeight.w500,
+                //           color: AppTheme.primaryColor,
+                //           letterSpacing: -0.3,
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 24),
+                //     TextButton(
+                //       onPressed: _handleRestore,
+                //       child: Text(
+                //         l10n.onboardingSubscriptionRestore,
+                //         style: const TextStyle(
+                //           fontSize: 15,
+                //           fontWeight: FontWeight.w500,
+                //           color: AppTheme.primaryColor,
+                //           letterSpacing: -0.3,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -206,7 +370,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   child: Text(
                     l10n.onboardingSkip,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.textSecondary(context),
                       letterSpacing: -0.3,
@@ -219,7 +383,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
               // Purchase button
               OnboardingPrimaryButton(
-                text: l10n.onboardingSubscriptionPurchase,
+                text: l10n.upgradeToPro,
                 onPressed: _handlePurchase,
                 isLoading: _isProcessing,
               ),
@@ -263,14 +427,27 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     );
   }
 
-  Widget _buildPlanOption(String planId, String title, String price) {
-    final isSelected = _selectedPlan == planId;
+  Widget _buildPlanOptionFromPackage(Package package) {
+    final l10n = AppLocalizations.of(context)!;
+    final isSelected = _selectedPackage?.identifier == package.identifier;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    final isYearly = package.packageType == PackageType.annual ||
+        package.identifier.contains('yearly');
+
+    String title = isYearly
+        ? l10n.yearly
+        : package.packageType == PackageType.monthly ||
+                package.identifier.contains('monthly')
+            ? l10n.monthly
+            : package.storeProduct.title;
+
+    final price = package.storeProduct.priceString;
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedPlan = planId;
+          _selectedPackage = package;
         });
       },
       child: AnimatedContainer(

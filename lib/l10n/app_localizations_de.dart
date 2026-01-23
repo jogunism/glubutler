@@ -371,7 +371,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get unableToOpenAppStore => 'Unable to open App Store.';
 
   @override
-  String get restoringPurchases => 'Restoring...';
+  String get restoringPurchases => 'Wiederherstellung...';
 
   @override
   String get disclaimer =>
