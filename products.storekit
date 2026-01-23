@@ -1,0 +1,104 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "9715C584",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "95F3D236",
+      "localizations" : [
+
+      ],
+      "name" : "glubutler_pro_group",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "556DC9BD",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Glu Butler Pro monthly subscription with all premium features",
+              "displayName" : "Glu Butler Pro (Monthly)",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "glubutler_pro_group",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Glu Butler Pro - Monthly",
+          "subscriptionGroupID" : "95F3D236",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "49.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "8A7B3C4D",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Glu Butler Pro yearly subscription with all premium features",
+              "displayName" : "Glu Butler Pro (Yearly)",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "glubutler_pro_group_yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Glu Butler Pro - Yearly",
+          "subscriptionGroupID" : "95F3D236",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
