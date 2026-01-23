@@ -608,7 +608,7 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
 
   Widget _buildIcon(ThemeData theme) {
     final color = _getStatusColor();
-    const icon = Icons.speed; // CGM 미터기 아이콘
+    const icon = Icons.show_chart; // 차트 아이콘
 
     return Container(
       width: 38.5,
