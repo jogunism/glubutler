@@ -297,7 +297,33 @@ class _FeedScreenState extends State<FeedScreen> {
               }
               // Check if this is a CGM group type
               if (item.type == FeedItemType.cgmGroup) {
-                return CgmGroupCard(group: item.cgmGroup!);
+                final cgmGroup = item.cgmGroup!;
+                // 6시간 블록 계산
+                final blockStartHour = (cgmGroup.startTime.hour ~/ 6) * 6;
+                final blockStart = DateTime(
+                  cgmGroup.startTime.year,
+                  cgmGroup.startTime.month,
+                  cgmGroup.startTime.day,
+                  blockStartHour,
+                );
+                final blockEnd = blockStart.add(const Duration(hours: 6));
+
+                // 같은 6시간 블록 내의 이벤트들 찾기
+                final eventsInRange = items.where((feedItem) {
+                  if (feedItem.type == FeedItemType.cgmGroup ||
+                      feedItem.type == FeedItemType.steps ||
+                      feedItem.type == FeedItemType.waterGroup ||
+                      feedItem.type == FeedItemType.sleepGroup) {
+                    return false;
+                  }
+                  return feedItem.timestamp.isAfter(blockStart) &&
+                      feedItem.timestamp.isBefore(blockEnd);
+                }).toList();
+
+                return CgmGroupCard(
+                  group: cgmGroup,
+                  eventsInRange: eventsInRange,
+                );
               } else {
                 return FeedItemCard(item: item);
               }

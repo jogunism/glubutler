@@ -607,7 +607,13 @@ class FeedItemCard extends StatelessWidget {
         color: backgroundColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Icon(icon, color: color, size: iconInnerSize),
+      alignment: Alignment.center,
+      child: item.type == FeedItemType.exercise
+          ? Transform.translate(
+              offset: const Offset(0, 2),
+              child: Icon(icon, color: color, size: iconInnerSize),
+            )
+          : Icon(icon, color: color, size: iconInnerSize),
     );
   }
 
