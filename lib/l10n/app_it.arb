@@ -484,5 +484,19 @@
   "onboardingTermsAnd": "e",
   "onboardingTermsSuffix": ".",
   "onboardingTermsOfService": "Termini di servizio",
-  "onboardingPrivacyPolicy": "Informativa sulla privacy"
+  "onboardingPrivacyPolicy": "Informativa sulla privacy",
+
+  "unlockGluButlerPro": "Sblocca Glu Butler Pro",
+  "continuePurchase": "Continua",
+  "yearly": "Annuale",
+  "monthly": "Mensile",
+  "bestValue": "Miglior valore",
+  "notice": "Avviso",
+  "purchaseErrorMessage": "Impossibile completare l'acquisto. Riprova.",
+  "restoreErrorMessage": "Impossibile ripristinare gli acquisti. Riprova.",
+  "restoreNotFoundMessage": "Nessun acquisto da ripristinare trovato.",
+  "noSubscriptionPackages": "Nessun pacchetto di abbonamento disponibile",
+  "loadSubscriptionsFailed": "Caricamento delle informazioni sull'abbonamento non riuscito",
+  "retry": "Riprova",
+  "anErrorOccurred": "Si è verificato un errore"
 }

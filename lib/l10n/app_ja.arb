@@ -486,5 +486,19 @@
   "onboardingTermsAnd": "と",
   "onboardingTermsSuffix": "に同意したものとみなされます。",
   "onboardingTermsOfService": "利用規約",
-  "onboardingPrivacyPolicy": "プライバシーポリシー"
+  "onboardingPrivacyPolicy": "プライバシーポリシー",
+
+  "unlockGluButlerPro": "Glu Butlerプロをアンロック",
+  "continuePurchase": "続ける",
+  "yearly": "年間",
+  "monthly": "月間",
+  "bestValue": "最もお得",
+  "notice": "お知らせ",
+  "purchaseErrorMessage": "購入を完了できませんでした。もう一度お試しください。",
+  "restoreErrorMessage": "購入の復元ができませんでした。もう一度お試しください。",
+  "restoreNotFoundMessage": "復元する購入履歴が見つかりませんでした。",
+  "noSubscriptionPackages": "利用可能なサブスクリプションパッケージがありません",
+  "loadSubscriptionsFailed": "サブスクリプション情報の読み込みに失敗しました",
+  "retry": "再試行",
+  "anErrorOccurred": "エラーが発生しました"
 }

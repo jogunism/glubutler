@@ -84,19 +84,39 @@ class SubscriptionScreen extends StatelessWidget {
                 child: SafeArea(
                   top: false,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: CupertinoButton(
-                        color: AppTheme.primaryColor,
-                        borderRadius: BorderRadius.circular(14),
-                        onPressed: () => _showSubscriptionAlert(context),
-                        child: Text(
-                          l10n.upgradeToPro,
-                          style: context.textStyles.buttonText,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Restore purchases button
+                        CupertinoButton(
+                          onPressed: () => _showRestoreAlert(context),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            l10n.restorePurchases,
+                            style: const TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 4),
+                        // Upgrade button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: CupertinoButton(
+                            color: AppTheme.primaryColor,
+                            borderRadius: BorderRadius.circular(14),
+                            onPressed: () => _showSubscriptionAlert(context),
+                            child: Text(
+                              l10n.upgradeToPro,
+                              style: context.textStyles.buttonText,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -263,19 +283,6 @@ class SubscriptionScreen extends StatelessWidget {
           isBestValue: true,
           onTap: () => _showSubscriptionAlert(context),
         ),
-        const SizedBox(height: 24),
-
-        // Restore purchases
-        CupertinoButton(
-          onPressed: () => _showRestoreAlert(context),
-          child: Text(
-            l10n.restorePurchases,
-            style: TextStyle(
-              color: theme.colorScheme.primary,
-              fontSize: 16,
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -343,7 +350,7 @@ class SubscriptionScreen extends StatelessWidget {
             const SizedBox(height: 20),
             // Title
             Text(
-              isActive ? l10n.youArePro : l10n.subscription,
+              isActive ? l10n.youArePro : 'Glu Butler Pro',
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 22,

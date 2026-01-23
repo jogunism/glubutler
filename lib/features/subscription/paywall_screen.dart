@@ -6,7 +6,6 @@ import 'dart:ui';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/theme/app_text_styles.dart';
-import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/services/subscription_service.dart';
 
 /// Paywall 화면 - 모달 팝업 스타일
@@ -52,14 +51,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
           _isLoading = false;
         });
       } else {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
         setState(() {
-          _errorMessage = 'No subscription packages available';
+          _errorMessage = l10n.noSubscriptionPackages;
           _isLoading = false;
         });
       }
     } catch (e) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
-        _errorMessage = 'Failed to load subscriptions: $e';
+        _errorMessage = '${l10n.loadSubscriptionsFailed}: $e';
         _isLoading = false;
       });
     }
@@ -94,56 +97,25 @@ class _PaywallScreenState extends State<PaywallScreen> {
         if (!errorMessage.contains('cancel') &&
             !errorMessage.contains('user') &&
             !errorMessage.contains('abort')) {
-          _showErrorAlert('Unable to complete purchase. Please try again.');
+          final l10n = AppLocalizations.of(context)!;
+          _showErrorAlert(l10n.purchaseErrorMessage);
         }
       }
-    }
-  }
-
-  Future<void> _restorePurchases() async {
-    if (_isPurchasing) return;
-
-    setState(() {
-      _isPurchasing = true;
-    });
-
-    try {
-      await SubscriptionService.restorePurchases();
-
-      if (!mounted) return;
-
-      final isPremium = await SubscriptionService.isPremiumActive();
-
-      if (!mounted) return;
-
-      if (isPremium) {
-        Navigator.of(context).pop(true);
-      } else {
-        setState(() {
-          _isPurchasing = false;
-        });
-        _showErrorAlert('No purchases found to restore.');
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isPurchasing = false;
-      });
-      _showErrorAlert('Unable to restore purchases. Please try again.');
     }
   }
 
   void _showErrorAlert(String message) {
     if (!mounted) return;
 
+    final l10n = AppLocalizations.of(context)!;
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Notice'),
+        title: Text(l10n.notice),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('OK'),
+            child: Text(l10n.ok),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -242,40 +214,21 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     top: 12,
                     bottom: bottomPadding + 12,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Restore button (text button, centered)
-                      CupertinoButton(
-                        onPressed: _isPurchasing ? null : _restorePurchases,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          l10n.restorePurchases,
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      // Continue button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: CupertinoButton(
-                          color: AppTheme.primaryColor,
-                          borderRadius: BorderRadius.circular(14),
-                          onPressed: _isPurchasing ? null : _purchase,
-                          child: _isPurchasing
-                              ? const CupertinoActivityIndicator(
-                                  color: Colors.white)
-                              : Text(
-                                  'Continue',
-                                  style: context.textStyles.buttonText,
-                                ),
-                        ),
-                      ),
-                    ],
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: CupertinoButton(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(14),
+                      onPressed: _isPurchasing ? null : _purchase,
+                      child: _isPurchasing
+                          ? const CupertinoActivityIndicator(
+                              color: Colors.white)
+                          : Text(
+                              l10n.continuePurchase,
+                              style: context.textStyles.buttonText,
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -289,6 +242,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildHeroSection() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Main icon image
@@ -300,9 +254,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
         const SizedBox(height: 20),
         // Title
-        const Text(
-          'Unlock Glu Butler Pro',
-          style: TextStyle(
+        Text(
+          l10n.unlockGluButlerPro,
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
@@ -326,7 +280,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              _errorMessage ?? 'An error occurred',
+              _errorMessage ?? l10n.anErrorOccurred,
               style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -334,7 +288,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             CupertinoButton(
               color: AppTheme.primaryColor,
               onPressed: _loadOfferings,
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -348,15 +302,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isYearly = package.packageType == PackageType.annual ||
         package.identifier.contains('yearly');
 
     String title = isYearly
-        ? 'Yearly'
+        ? l10n.yearly
         : package.packageType == PackageType.monthly ||
                 package.identifier.contains('monthly')
-            ? 'Monthly'
+            ? l10n.monthly
             : package.storeProduct.title;
 
     final price = package.storeProduct.priceString;
@@ -433,9 +388,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                             color: AppTheme.iconGreen,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text(
-                            'Best Value',
-                            style: TextStyle(
+                          child: Text(
+                            l10n.bestValue,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,

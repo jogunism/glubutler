@@ -1232,4 +1232,43 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get onboardingPrivacyPolicy => 'プライバシーポリシー';
+
+  @override
+  String get unlockGluButlerPro => 'Glu Butlerプロをアンロック';
+
+  @override
+  String get continuePurchase => '続ける';
+
+  @override
+  String get yearly => '年間';
+
+  @override
+  String get monthly => '月間';
+
+  @override
+  String get bestValue => '最もお得';
+
+  @override
+  String get notice => 'お知らせ';
+
+  @override
+  String get purchaseErrorMessage => '購入を完了できませんでした。もう一度お試しください。';
+
+  @override
+  String get restoreErrorMessage => '購入の復元ができませんでした。もう一度お試しください。';
+
+  @override
+  String get restoreNotFoundMessage => '復元する購入履歴が見つかりませんでした。';
+
+  @override
+  String get noSubscriptionPackages => '利用可能なサブスクリプションパッケージがありません';
+
+  @override
+  String get loadSubscriptionsFailed => 'サブスクリプション情報の読み込みに失敗しました';
+
+  @override
+  String get retry => '再試行';
+
+  @override
+  String get anErrorOccurred => 'エラーが発生しました';
 }

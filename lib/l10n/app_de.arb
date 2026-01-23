@@ -484,5 +484,19 @@
   "onboardingTermsAnd": "und",
   "onboardingTermsSuffix": "zu.",
   "onboardingTermsOfService": "Nutzungsbedingungen",
-  "onboardingPrivacyPolicy": "Datenschutzrichtlinie"
+  "onboardingPrivacyPolicy": "Datenschutzrichtlinie",
+
+  "unlockGluButlerPro": "Glu Butler Pro freischalten",
+  "continuePurchase": "Fortfahren",
+  "yearly": "Jährlich",
+  "monthly": "Monatlich",
+  "bestValue": "Bester Wert",
+  "notice": "Hinweis",
+  "purchaseErrorMessage": "Kauf konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+  "restoreErrorMessage": "Käufe konnten nicht wiederhergestellt werden. Bitte versuchen Sie es erneut.",
+  "restoreNotFoundMessage": "Keine Käufe zum Wiederherstellen gefunden.",
+  "noSubscriptionPackages": "Keine Abonnementpakete verfügbar",
+  "loadSubscriptionsFailed": "Abonnementinformationen konnten nicht geladen werden",
+  "retry": "Erneut versuchen",
+  "anErrorOccurred": "Ein Fehler ist aufgetreten"
 }

@@ -1233,4 +1233,43 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get onboardingPrivacyPolicy => '개인정보처리방침';
+
+  @override
+  String get unlockGluButlerPro => 'Glu Butler Pro 잠금 해제';
+
+  @override
+  String get continuePurchase => '계속';
+
+  @override
+  String get yearly => '연간';
+
+  @override
+  String get monthly => '월간';
+
+  @override
+  String get bestValue => '최고 가치';
+
+  @override
+  String get notice => '알림';
+
+  @override
+  String get purchaseErrorMessage => '구매를 완료할 수 없습니다. 다시 시도해주세요.';
+
+  @override
+  String get restoreErrorMessage => '구매 복원을 할 수 없습니다. 다시 시도해주세요.';
+
+  @override
+  String get restoreNotFoundMessage => '복원할 구매 내역을 찾을 수 없습니다.';
+
+  @override
+  String get noSubscriptionPackages => '이용 가능한 구독 패키지가 없습니다';
+
+  @override
+  String get loadSubscriptionsFailed => '구독 정보를 불러오는데 실패했습니다';
+
+  @override
+  String get retry => '재시도';
+
+  @override
+  String get anErrorOccurred => '오류가 발생했습니다';
 }

@@ -1229,4 +1229,43 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingPrivacyPolicy => '隐私政策';
+
+  @override
+  String get unlockGluButlerPro => '解锁Glu Butler Pro';
+
+  @override
+  String get continuePurchase => '继续';
+
+  @override
+  String get yearly => '年度';
+
+  @override
+  String get monthly => '月度';
+
+  @override
+  String get bestValue => '最超值';
+
+  @override
+  String get notice => '提示';
+
+  @override
+  String get purchaseErrorMessage => '无法完成购买。请重试。';
+
+  @override
+  String get restoreErrorMessage => '无法恢复购买。请重试。';
+
+  @override
+  String get restoreNotFoundMessage => '未找到可恢复的购买记录。';
+
+  @override
+  String get noSubscriptionPackages => '没有可用的订阅套餐';
+
+  @override
+  String get loadSubscriptionsFailed => '加载订阅信息失败';
+
+  @override
+  String get retry => '重试';
+
+  @override
+  String get anErrorOccurred => '发生错误';
 }

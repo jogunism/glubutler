@@ -484,5 +484,19 @@
   "onboardingTermsAnd": "和",
   "onboardingTermsSuffix": "。",
   "onboardingTermsOfService": "服务条款",
-  "onboardingPrivacyPolicy": "隐私政策"
+  "onboardingPrivacyPolicy": "隐私政策",
+
+  "unlockGluButlerPro": "解锁Glu Butler Pro",
+  "continuePurchase": "继续",
+  "yearly": "年度",
+  "monthly": "月度",
+  "bestValue": "最超值",
+  "notice": "提示",
+  "purchaseErrorMessage": "无法完成购买。请重试。",
+  "restoreErrorMessage": "无法恢复购买。请重试。",
+  "restoreNotFoundMessage": "未找到可恢复的购买记录。",
+  "noSubscriptionPackages": "没有可用的订阅套餐",
+  "loadSubscriptionsFailed": "加载订阅信息失败",
+  "retry": "重试",
+  "anErrorOccurred": "发生错误"
 }

@@ -1288,4 +1288,47 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get onboardingPrivacyPolicy => 'Datenschutzrichtlinie';
+
+  @override
+  String get unlockGluButlerPro => 'Glu Butler Pro freischalten';
+
+  @override
+  String get continuePurchase => 'Fortfahren';
+
+  @override
+  String get yearly => 'Jährlich';
+
+  @override
+  String get monthly => 'Monatlich';
+
+  @override
+  String get bestValue => 'Bester Wert';
+
+  @override
+  String get notice => 'Hinweis';
+
+  @override
+  String get purchaseErrorMessage =>
+      'Kauf konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.';
+
+  @override
+  String get restoreErrorMessage =>
+      'Käufe konnten nicht wiederhergestellt werden. Bitte versuchen Sie es erneut.';
+
+  @override
+  String get restoreNotFoundMessage =>
+      'Keine Käufe zum Wiederherstellen gefunden.';
+
+  @override
+  String get noSubscriptionPackages => 'Keine Abonnementpakete verfügbar';
+
+  @override
+  String get loadSubscriptionsFailed =>
+      'Abonnementinformationen konnten nicht geladen werden';
+
+  @override
+  String get retry => 'Erneut versuchen';
+
+  @override
+  String get anErrorOccurred => 'Ein Fehler ist aufgetreten';
 }

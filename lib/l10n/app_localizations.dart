@@ -2497,6 +2497,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get onboardingPrivacyPolicy;
+
+  /// No description provided for @unlockGluButlerPro.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Glu Butler Pro'**
+  String get unlockGluButlerPro;
+
+  /// No description provided for @continuePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continuePurchase;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get yearly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @bestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Value'**
+  String get bestValue;
+
+  /// No description provided for @notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get notice;
+
+  /// No description provided for @purchaseErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to complete purchase. Please try again.'**
+  String get purchaseErrorMessage;
+
+  /// No description provided for @restoreErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to restore purchases. Please try again.'**
+  String get restoreErrorMessage;
+
+  /// No description provided for @restoreNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchases found to restore.'**
+  String get restoreNotFoundMessage;
+
+  /// No description provided for @noSubscriptionPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription packages available'**
+  String get noSubscriptionPackages;
+
+  /// No description provided for @loadSubscriptionsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load subscriptions'**
+  String get loadSubscriptionsFailed;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @anErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get anErrorOccurred;
 }
 
 class _AppLocalizationsDelegate
