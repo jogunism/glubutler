@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -15,6 +14,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/subscription_service.dart';
+import 'package:glu_butler/features/subscription/paywall_screen.dart';
 
 /// 구독 관리 화면
 ///
@@ -520,10 +520,16 @@ class SubscriptionScreen extends StatelessWidget {
   Future<void> _showSubscriptionAlert(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     try {
-      // Show RevenueCat Paywall
-      final result = await RevenueCatUI.presentPaywall();
+      // Show Custom Paywall as Modal
+      final result = await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        useRootNavigator: true,
+        builder: (context) => const PaywallScreen(),
+      );
 
-      if (result == PaywallResult.purchased || result == PaywallResult.restored) {
+      if (result == true && context.mounted) {
         // Check subscription status and update settings
         final isPremium = await SubscriptionService.isPremiumActive();
         if (isPremium && context.mounted) {
