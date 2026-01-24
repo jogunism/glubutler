@@ -1,6 +1,6 @@
 /* Health Kit Permissions */
-"NSHealthShareUsageDescription" = "GluButler needs access to your health data to display your glucose levels.";
-"NSHealthUpdateUsageDescription" = "GluButler needs permission to save your glucose data to Health app.";
+"NSHealthShareUsageDescription" = "GluButler reads your blood glucose, insulin, steps, weight, sleep, and workout data to provide personalized health insights and AI-powered reports.";
+"NSHealthUpdateUsageDescription" = "GluButler saves your manually entered blood glucose and insulin records to Apple Health for centralized health data management.";
 
 /* Photo Library Permission */
 "NSPhotoLibraryUsageDescription" = "GluButler needs access to your photos to attach images to your diary entries.";

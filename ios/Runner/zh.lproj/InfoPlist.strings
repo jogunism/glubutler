@@ -1,6 +1,6 @@
 /* Health Kit Permissions */
-"NSHealthShareUsageDescription" = "GluButler需要访问您的健康数据以显示血糖水平。";
-"NSHealthUpdateUsageDescription" = "GluButler需要权限将血糖数据保存到健康应用。";
+"NSHealthShareUsageDescription" = "Glu Butler讀取您的血糖、胰島素、步數、體重、睡眠和運動數據，以提供個人化健康洞察和AI報告。";
+"NSHealthUpdateUsageDescription" = "Glu Butler將您手動輸入的血糖和胰島素記錄保存到Apple Health，以集中管理健康數據。";
 
 /* Photo Library Permission */
 "NSPhotoLibraryUsageDescription" = "GluButler需要访问您的照片以将图片添加到日记条目中。";

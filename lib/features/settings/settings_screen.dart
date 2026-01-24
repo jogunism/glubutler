@@ -698,12 +698,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ) {
     final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
     final theme = Theme.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final langPrefix = lang == 'en' ? '' : '/$lang';
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: () => _launchURL('$baseUrl/terms'),
+          onTap: () => _launchURL('$baseUrl$langPrefix/terms'),
           child: Text(
             l10n.onboardingTermsOfService,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -721,7 +723,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         GestureDetector(
-          onTap: () => _launchURL('$baseUrl/privacy'),
+          onTap: () => _launchURL('$baseUrl$langPrefix/privacy'),
           child: Text(
             l10n.onboardingPrivacyPolicy,
             style: theme.textTheme.bodySmall?.copyWith(

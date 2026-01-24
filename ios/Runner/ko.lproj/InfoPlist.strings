@@ -1,6 +1,6 @@
 /* Health Kit Permissions */
-"NSHealthShareUsageDescription" = "혈당 데이터를 읽기 위해 HealthKit 접근 권한이 필요합니다.";
-"NSHealthUpdateUsageDescription" = "혈당 데이터를 저장하기 위해 HealthKit 접근 권한이 필요합니다.";
+"NSHealthShareUsageDescription" = "Glu Butler는 맞춤형 건강 인사이트와 AI 리포트를 제공하기 위해 혈당, 인슐린, 걸음 수, 체중, 수면, 운동 데이터를 읽습니다.";
+"NSHealthUpdateUsageDescription" = "Glu Butler는 수동으로 입력한 혈당 및 인슐린 기록을 Apple Health에 저장하여 건강 데이터를 통합 관리합니다.";
 
 /* Photo Library Permission */
 "NSPhotoLibraryUsageDescription" = "일기에 사진을 첨부하기 위해 사진 라이브러리 접근 권한이 필요합니다.";

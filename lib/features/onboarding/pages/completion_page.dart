@@ -124,6 +124,8 @@ class _CompletionPageState extends State<CompletionPage> {
   Widget _buildTermsNotice(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+    final lang = Localizations.localeOf(context).languageCode;
+    final langPrefix = lang == 'en' ? '' : '/$lang';
 
     // 텍스트 조합: "앱을 사용하시는 것은 이용약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다."
     final prefix = l10n.onboardingTermsPrefix;
@@ -164,12 +166,12 @@ class _CompletionPageState extends State<CompletionPage> {
 
         // 이용약관 링크 클릭
         if (offset >= termsIndex && offset < termsIndex + termsText.length) {
-          _launchURL('$baseUrl/terms');
+          _launchURL('$baseUrl$langPrefix/terms');
         }
         // 개인정보처리방침 링크 클릭
         else if (offset >= privacyIndex &&
             offset < privacyIndex + privacyText.length) {
-          _launchURL('$baseUrl/privacy');
+          _launchURL('$baseUrl$langPrefix/privacy');
         }
       },
       child: RichText(

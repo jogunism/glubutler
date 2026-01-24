@@ -1,6 +1,6 @@
 /* Health Kit Permissions */
-"NSHealthShareUsageDescription" = "GluButler necessita dell'accesso ai tuoi dati sanitari per visualizzare i tuoi livelli di glucosio.";
-"NSHealthUpdateUsageDescription" = "GluButler necessita dell'autorizzazione per salvare i tuoi dati sul glucosio nell'app Salute.";
+"NSHealthShareUsageDescription" = "Glu Butler legge i tuoi dati su glicemia, insulina, passi, peso, sonno e allenamento per fornire informazioni sulla salute personalizzate e report basati sull'IA.";
+"NSHealthUpdateUsageDescription" = "Glu Butler salva i tuoi record di glicemia e insulina inseriti manualmente in Apple Health per una gestione centralizzata dei dati sanitari.";
 
 /* Photo Library Permission */
 "NSPhotoLibraryUsageDescription" = "GluButler necessita dell'accesso alle tue foto per allegare immagini alle tue voci del diario.";

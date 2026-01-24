@@ -42,9 +42,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSHealthShareUsageDescription</key>
-	<string>GluButler needs access to your health data to display your glucose levels.</string>
+	<string>GluButler reads your blood glucose, insulin, steps, weight, sleep, and workout data to provide personalized health insights and AI-powered reports.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>GluButler needs permission to save your glucose data to Health app.</string>
+	<string>GluButler saves your manually entered blood glucose and insulin records to Apple Health for centralized health data management.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>GluButler needs access to your photos to attach images to your diary entries.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

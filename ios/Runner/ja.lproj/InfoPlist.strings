@@ -1,6 +1,6 @@
 /* Health Kit Permissions */
-"NSHealthShareUsageDescription" = "血糖データを読み取るためにHealthKitへのアクセス許可が必要です。";
-"NSHealthUpdateUsageDescription" = "血糖データを保存するためにHealthKitへのアクセス許可が必要です。";
+"NSHealthShareUsageDescription" = "Glu Butlerは、パーソナライズされた健康インサイトとAIレポートを提供するために、血糖、インスリン、歩数、体重、睡眠、運動データを読み取ります。";
+"NSHealthUpdateUsageDescription" = "Glu Butlerは、手動で入力した血糖とインスリンの記録をApple Healthに保存し、健康データを一元管理します。";
 
 /* Photo Library Permission */
 "NSPhotoLibraryUsageDescription" = "日記に写真を添付するためにフォトライブラリへのアクセス許可が必要です。";
