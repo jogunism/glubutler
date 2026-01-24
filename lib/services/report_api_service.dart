@@ -2,11 +2,10 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/models/user_profile.dart';
 import 'package:glu_butler/models/glucose_range_settings.dart';
+import 'package:glu_butler/services/auth_service.dart';
 
 /// AI 리포트 생성 API 서비스
 ///
@@ -18,10 +17,9 @@ class ReportApiService {
   late final Dio _dio;
   final String baseUrl;
   final String? apiKey;
-  final String? jwtSecret;
+  final AuthService _authService = AuthService.instance;
 
-  ReportApiService({required this.baseUrl, this.apiKey})
-      : jwtSecret = dotenv.env['JWT_SECRET'] {
+  ReportApiService({required this.baseUrl, this.apiKey}) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -30,37 +28,6 @@ class ReportApiService {
         headers: {'Content-Type': 'application/json'},
       ),
     );
-
-    // 로깅 인터셉터 추가 (개발 환경에서만)
-    // TODO: 프로덕션에서는 제거하거나 로깅 프레임워크 사용
-    // _dio.interceptors.add(LogInterceptor(
-    //   requestBody: true,
-    //   responseBody: true,
-    //   error: true,
-    // ));
-  }
-
-  /// JWT 토큰 생성
-  ///
-  /// [userIdentity]: 사용자 식별 정보 (deviceId, cloudKitId, receiptId)
-  /// Returns: JWT 토큰 문자열
-  String _generateJwtToken(UserIdentity userIdentity) {
-    if (jwtSecret == null || jwtSecret!.isEmpty) {
-      throw ReportApiException(
-        errorCode: ApiErrorCode.unknown,
-        serverMessage: 'JWT secret key is not configured',
-      );
-    }
-
-    final jwt = JWT({
-      'cloudKitId': userIdentity.cloudKitId ?? '',
-      'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      'exp':
-          DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/
-          1000,
-    });
-
-    return jwt.sign(SecretKey(jwtSecret!));
   }
 
   /// AI 리포트 생성 요청
@@ -161,8 +128,8 @@ class ReportApiService {
         }
       }
 
-      // JWT 토큰 생성
-      final token = _generateJwtToken(userIdentity);
+      // JWT 토큰 가져오기 (서버에서 발급)
+      final token = await _authService.getToken(userIdentity);
 
       final response = await _dio.post(
         '/API/report',
@@ -271,8 +238,8 @@ class ReportApiService {
     try {
       debugPrint('[ReportApiService] Exporting report to email: $email');
 
-      // JWT 토큰 생성
-      final token = _generateJwtToken(userIdentity);
+      // JWT 토큰 가져오기 (서버에서 발급)
+      final token = await _authService.getToken(userIdentity);
 
       await _dio.post(
         '/API/export',
