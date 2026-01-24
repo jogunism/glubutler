@@ -627,16 +627,17 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
         ),
         const SizedBox(width: 4),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
             color: tagColor.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             tagText,
-            style: theme.textTheme.labelSmall?.copyWith(
+            style: TextStyle(
               color: tagColor,
-              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

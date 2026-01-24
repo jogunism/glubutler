@@ -7,7 +7,7 @@ import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/services/analytics_service.dart';
-// import 'package:glu_butler/services/meal_migration_service.dart'; // TODO: 추후 삭제
+// import 'package:glu_butler/services/meal_migration_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/providers/report_provider.dart';
@@ -67,7 +67,7 @@ class _CompletionPageState extends State<CompletionPage> {
               '[CompletionPage] Downloaded $mealCount meals, $reportCount reports, $summaryCount summaries from iCloud',
             );
 
-            // TODO: 추후 삭제 - 기존 diary에서 meal_records 마이그레이션 (완료됨)
+            // 기존 diary에서 meal_records 마이그레이션 (사진 촬영 시간 기준)
             // debugPrint('[CompletionPage] Starting meal_records migration...');
             // final migratedCount =
             //     await MealMigrationService.migrateMealRecordsFromDiaries(

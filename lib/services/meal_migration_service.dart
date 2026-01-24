@@ -143,14 +143,30 @@ class MealMigrationService {
         '[MealMigration] Detected ${uniqueFoods.length} foods in diary ${diary.id}: $uniqueFoods',
       );
 
-      // 3. 모든 음식을 하나의 meal_record로 생성 (diary_input_modal과 동일)
+      // 3. 사진 촬영 시간 중 가장 빠른 시간 찾기 (capturedAt 사용)
+      DateTime? earliestCapturedAt;
+      for (final file in files) {
+        if (file.capturedAt != null) {
+          if (earliestCapturedAt == null || file.capturedAt!.isBefore(earliestCapturedAt)) {
+            earliestCapturedAt = file.capturedAt;
+          }
+        }
+      }
+      // capturedAt이 없으면 diary.timestamp를 fallback으로 사용
+      final mealTime = earliestCapturedAt ?? diary.timestamp;
+
+      debugPrint(
+        '[MealMigration] Using mealTime: $mealTime (capturedAt: $earliestCapturedAt, diary.timestamp: ${diary.timestamp})',
+      );
+
+      // 4. 모든 음식을 하나의 meal_record로 생성 (diary_input_modal과 동일)
       final foodNames = uniqueFoods.join(', ');
 
       final meal = MealRecord(
         id: _uuid.v4(),
         diaryId: diary.id,
         foodName: foodNames.isNotEmpty ? foodNames : null,
-        mealTime: diary.timestamp,
+        mealTime: mealTime,
         createdAt: DateTime.now(),
       );
 
