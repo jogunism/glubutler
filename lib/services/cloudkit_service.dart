@@ -242,6 +242,35 @@ class CloudKitService {
     }
   }
 
+  /// 로컬 리포트를 iCloud로 업로드
+  ///
+  /// Returns: 업로드된 리포트 개수
+  static Future<int> uploadReports() async {
+    try {
+      // 로컬 DB에서 모든 reports 가져오기
+      final reports = await _databaseService.getAllReports();
+
+      if (reports.isEmpty) {
+        return 0;
+      }
+
+      int uploadedCount = 0;
+
+      for (final report in reports) {
+        try {
+          await uploadReport(report);
+          uploadedCount++;
+        } catch (e) {
+          // 하나 실패해도 계속 진행
+        }
+      }
+
+      return uploadedCount;
+    } catch (e) {
+      throw Exception('Failed to upload reports: $e');
+    }
+  }
+
   /// iCloud에서 리포트 다운로드하여 로컬 DB에 저장
   ///
   /// Returns: 다운로드된 리포트 개수
@@ -304,6 +333,23 @@ class CloudKitService {
     }
   }
 
+  /// 양방향 동기화: 업로드 후 다운로드
+  ///
+  /// Returns: (업로드 개수, 다운로드 개수)
+  static Future<(int, int)> syncReports() async {
+    try {
+      // 1. 로컬 → iCloud 업로드
+      final uploadedCount = await uploadReports();
+
+      // 2. iCloud → 로컬 다운로드
+      final downloadedCount = await downloadReports();
+
+      return (uploadedCount, downloadedCount);
+    } catch (e) {
+      throw Exception('Failed to sync reports: $e');
+    }
+  }
+
   /// 리포트 삭제 (iCloud에서)
   ///
   /// [reportId]: 삭제할 리포트 ID
@@ -345,6 +391,35 @@ class CloudKitService {
       await _channel.invokeMethod('saveReportGuideSummary', {'summary': summaryData});
     } catch (e) {
       throw Exception('Failed to upload report guide summary: $e');
+    }
+  }
+
+  /// 로컬 리포트 가이드 요약을 iCloud로 업로드
+  ///
+  /// Returns: 업로드된 가이드 요약 개수
+  static Future<int> uploadReportGuideSummaries() async {
+    try {
+      // 로컬 DB에서 모든 guide summaries 가져오기 (limit 없이 전체)
+      final summaries = await _databaseService.getAllGuideSummaries(limit: 1000);
+
+      if (summaries.isEmpty) {
+        return 0;
+      }
+
+      int uploadedCount = 0;
+
+      for (final summary in summaries) {
+        try {
+          await uploadReportGuideSummary(summary);
+          uploadedCount++;
+        } catch (e) {
+          // 하나 실패해도 계속 진행
+        }
+      }
+
+      return uploadedCount;
+    } catch (e) {
+      throw Exception('Failed to upload report guide summaries: $e');
     }
   }
 
@@ -397,6 +472,23 @@ class CloudKitService {
       return savedCount;
     } catch (e) {
       throw Exception('Failed to download report guide summaries: $e');
+    }
+  }
+
+  /// 양방향 동기화: 업로드 후 다운로드
+  ///
+  /// Returns: (업로드 개수, 다운로드 개수)
+  static Future<(int, int)> syncReportGuideSummaries() async {
+    try {
+      // 1. 로컬 → iCloud 업로드
+      final uploadedCount = await uploadReportGuideSummaries();
+
+      // 2. iCloud → 로컬 다운로드
+      final downloadedCount = await downloadReportGuideSummaries();
+
+      return (uploadedCount, downloadedCount);
+    } catch (e) {
+      throw Exception('Failed to sync report guide summaries: $e');
     }
   }
 
@@ -488,6 +580,35 @@ class CloudKitService {
     }
   }
 
+  /// 로컬 식사 기록을 iCloud로 업로드
+  ///
+  /// Returns: 업로드된 식사 기록 개수
+  static Future<int> uploadMealRecords() async {
+    try {
+      // 로컬 DB에서 모든 meal records 가져오기
+      final mealRecords = await _databaseService.getMealRecords();
+
+      if (mealRecords.isEmpty) {
+        return 0;
+      }
+
+      int uploadedCount = 0;
+
+      for (final meal in mealRecords) {
+        try {
+          await uploadMealRecord(meal);
+          uploadedCount++;
+        } catch (e) {
+          // 하나 실패해도 계속 진행
+        }
+      }
+
+      return uploadedCount;
+    } catch (e) {
+      throw Exception('Failed to upload meal records: $e');
+    }
+  }
+
   /// iCloud에서 식사 기록 다운로드하여 로컬 DB에 저장
   ///
   /// Returns: 다운로드된 식사 기록 개수
@@ -530,6 +651,23 @@ class CloudKitService {
       return savedCount;
     } catch (e) {
       throw Exception('Failed to download meal records: $e');
+    }
+  }
+
+  /// 양방향 동기화: 업로드 후 다운로드
+  ///
+  /// Returns: (업로드 개수, 다운로드 개수)
+  static Future<(int, int)> syncMealRecords() async {
+    try {
+      // 1. 로컬 → iCloud 업로드
+      final uploadedCount = await uploadMealRecords();
+
+      // 2. iCloud → 로컬 다운로드
+      final downloadedCount = await downloadMealRecords();
+
+      return (uploadedCount, downloadedCount);
+    } catch (e) {
+      throw Exception('Failed to sync meal records: $e');
     }
   }
 

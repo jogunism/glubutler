@@ -1183,9 +1183,18 @@ class CloudKitBridge {
     }
 
     // ISO8601 형식의 문자열을 Date로 변환
+    // Dart의 toIso8601String()은 Z 접미사가 없으므로 추가
     let formatter = ISO8601DateFormatter()
-    guard let date = formatter.date(from: dateString) else {
-      result(FlutterError(code: "INVALID_DATE", message: "Invalid date format", details: nil))
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+    // Dart 날짜 형식을 Swift가 파싱할 수 있도록 변환
+    var normalizedDateString = dateString
+    if !dateString.hasSuffix("Z") {
+      normalizedDateString = dateString + "Z"
+    }
+
+    guard let date = formatter.date(from: normalizedDateString) else {
+      result(FlutterError(code: "INVALID_DATE", message: "Invalid date format: \(dateString)", details: nil))
       return
     }
 

@@ -137,18 +137,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
           '[SettingsScreen] Diary sync complete: $uploaded uploaded, $downloaded downloaded',
         );
 
-        // 식사 기록 다운로드
-        final mealCount = await CloudKitService.downloadMealRecords();
+        // 식사 기록 양방향 동기화
+        final (mealUploaded, mealDownloaded) = await CloudKitService.syncMealRecords();
         debugPrint(
-          '[SettingsScreen] Meal sync complete: $mealCount meal records downloaded',
+          '[SettingsScreen] Meal sync complete: $mealUploaded uploaded, $mealDownloaded downloaded',
         );
 
-        // 리포트 및 가이드 요약 다운로드
-        final reportCount = await CloudKitService.downloadReports();
-        final summaryCount =
-            await CloudKitService.downloadReportGuideSummaries();
+        // 리포트 양방향 동기화
+        final (reportUploaded, reportDownloaded) = await CloudKitService.syncReports();
         debugPrint(
-          '[SettingsScreen] Report sync complete: $reportCount reports, $summaryCount summaries downloaded',
+          '[SettingsScreen] Report sync complete: $reportUploaded uploaded, $reportDownloaded downloaded',
+        );
+
+        // 가이드 요약 양방향 동기화
+        final (summaryUploaded, summaryDownloaded) = await CloudKitService.syncReportGuideSummaries();
+        debugPrint(
+          '[SettingsScreen] Guide summary sync complete: $summaryUploaded uploaded, $summaryDownloaded downloaded',
         );
 
         // 모든 Provider 리프레시
