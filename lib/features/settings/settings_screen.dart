@@ -127,6 +127,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final cloudKitId = await CloudKitService.getUserRecordID();
         await settings.updateCloudKitId(cloudKitId);
 
+        // Sync service start date to iCloud
+        await settings.syncServiceStartDateToICloud();
+
         // 동기화 실행: 로컬 → iCloud 업로드, iCloud → 로컬 다운로드
         debugPrint('[SettingsScreen] Starting initial iCloud sync...');
         final (uploaded, downloaded) = await CloudKitService.syncDiaryEntries();

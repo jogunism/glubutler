@@ -85,6 +85,9 @@ class _ReportPageState extends State<ReportPage> {
         await settings.updateCloudKitId(cloudKitId);
         await settings.setICloudSync(true);
 
+        // Sync service start date to iCloud
+        await settings.syncServiceStartDateToICloud();
+
         // Download diary entries, meals, and reports from iCloud
         debugPrint('[ReportPage] Starting iCloud download...');
         final downloadedDiaries = await CloudKitService.downloadDiaryEntries();

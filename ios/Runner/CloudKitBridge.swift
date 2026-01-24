@@ -1175,7 +1175,7 @@ class CloudKitBridge {
 
   // MARK: - App Settings (Service Start Date)
 
-  /// 서비스 시작일을 iCloud에 저장 (한 번만 저장, 업데이트하지 않음)
+  /// 서비스 시작일을 iCloud에 저장 (더 오래된 날짜로만 업데이트)
   func saveServiceStartDate(arguments: [String: Any], result: @escaping FlutterResult) {
     guard let dateString = arguments["serviceStartDate"] as? String else {
       result(FlutterError(code: "INVALID_ARGS", message: "Missing serviceStartDate", details: nil))
@@ -1189,34 +1189,42 @@ class CloudKitBridge {
       return
     }
 
-    // 먼저 iCloud에 이미 저장된 날짜가 있는지 확인
-    let query = CKQuery(recordType: CloudKitBridge.AppSettingsRecordType, predicate: NSPredicate(value: true))
+    let recordID = CKRecord.ID(recordName: "appSettings")
 
-    privateDatabase.perform(query, inZoneWith: nil) { [weak self] records, error in
+    // 먼저 기존 레코드를 fetch
+    privateDatabase.fetch(withRecordID: recordID) { [weak self] existingRecord, error in
       guard let self = self else { return }
 
       DispatchQueue.main.async {
-        if let error = error {
-          result(FlutterError(
-            code: "QUERY_FAILED",
-            message: "Failed to check existing service start date",
-            details: error.localizedDescription
-          ))
-          return
+        let record: CKRecord
+
+        if let existingRecord = existingRecord {
+          // 레코드가 이미 있는 경우
+          if let existingDate = existingRecord["serviceStartDate"] as? Date {
+            // serviceStartDate가 이미 있으면, 더 오래된 날짜만 업데이트
+            if date < existingDate {
+              print("[CloudKit] Updating service start date to older date: \(date)")
+              record = existingRecord
+              record["serviceStartDate"] = date as CKRecordValue
+            } else {
+              print("[CloudKit] Service start date already exists with older or same date: \(existingDate)")
+              result(true)
+              return
+            }
+          } else {
+            // serviceStartDate가 없으면 추가
+            print("[CloudKit] Adding service start date to existing record: \(date)")
+            record = existingRecord
+            record["serviceStartDate"] = date as CKRecordValue
+          }
+        } else {
+          // 레코드가 없으면 새로 생성
+          print("[CloudKit] Creating new AppSettings record with service start date: \(date)")
+          record = CKRecord(recordType: CloudKitBridge.AppSettingsRecordType, recordID: recordID)
+          record["serviceStartDate"] = date as CKRecordValue
         }
 
-        // 이미 레코드가 있으면 저장하지 않음 (한 번만 저장)
-        if let existingRecord = records?.first {
-          print("[CloudKit] Service start date already exists: \(existingRecord)")
-          result(true)
-          return
-        }
-
-        // 레코드가 없으면 새로 생성
-        let recordID = CKRecord.ID(recordName: "appSettings")
-        let record = CKRecord(recordType: CloudKitBridge.AppSettingsRecordType, recordID: recordID)
-        record["serviceStartDate"] = date as CKRecordValue
-
+        // 레코드 저장
         self.privateDatabase.save(record) { savedRecord, error in
           DispatchQueue.main.async {
             if let error = error {
@@ -1228,7 +1236,7 @@ class CloudKitBridge {
               return
             }
 
-            print("[CloudKit] Service start date saved: \(date)")
+            print("[CloudKit] Service start date saved successfully: \(date)")
             result(true)
           }
         }

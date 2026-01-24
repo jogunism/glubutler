@@ -130,6 +130,22 @@ class InitializationService {
         final isSignedIn = await CloudKitService.isUserSignedIn();
 
         if (isAvailable && isSignedIn) {
+          // Service start date 체크 (무료 체험 우회 방지)
+          try {
+            final iCloudDate = await CloudKitService.fetchServiceStartDate();
+            if (iCloudDate != null) {
+              final localDate = settingsService.serviceStartDate;
+              // iCloud 날짜가 더 오래되면 로컬 업데이트
+              if (localDate == null || iCloudDate.isBefore(localDate)) {
+                debugPrint('[InitializationService] Updating service start date from iCloud: $iCloudDate');
+                // SettingsService에 직접 업데이트 메서드 호출
+                await settingsService.updateServiceStartDateFromICloud(iCloudDate);
+              }
+            }
+          } catch (e) {
+            debugPrint('[InitializationService] Failed to sync service start date: $e');
+          }
+
           // iCloud에서 최신 데이터 다운로드
           await CloudKitService.downloadDiaryEntries();
 
