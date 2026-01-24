@@ -215,7 +215,53 @@ class FeedItem implements Comparable<FeedItem> {
 
   @override
   int compareTo(FeedItem other) {
-    // Sort by timestamp descending (newest first)
+    // CGM 그룹과 다른 아이템 비교 시 중간시간 기준 정렬
+    // 최신 시간이 위, 이전 시간이 아래 (내림차순)
+    // CGM 중간시간을 기준으로 이벤트가 앞이면 이벤트가 아래, 뒤면 이벤트가 위
+
+    // this가 CGM이고 other가 CGM이 아닌 경우
+    if (type == FeedItemType.cgmGroup && other.type != FeedItemType.cgmGroup) {
+      final cgm = cgmGroup!;
+      final otherTime = other.timestamp;
+
+      // other가 CGM 시간 범위 내에 있는지 확인
+      if (!otherTime.isBefore(cgm.startTime) && !otherTime.isAfter(cgm.endTime)) {
+        // 중간 시간 계산
+        final middleTime = cgm.startTime.add(
+          Duration(milliseconds: cgm.endTime.difference(cgm.startTime).inMilliseconds ~/ 2),
+        );
+
+        // other가 중간시간보다 앞이면 CGM이 위 (other가 아래)
+        if (otherTime.isBefore(middleTime)) {
+          return -1; // this(CGM)가 위
+        } else {
+          return 1; // other가 위
+        }
+      }
+    }
+
+    // other가 CGM이고 this가 CGM이 아닌 경우
+    if (other.type == FeedItemType.cgmGroup && type != FeedItemType.cgmGroup) {
+      final cgm = other.cgmGroup!;
+      final thisTime = timestamp;
+
+      // this가 CGM 시간 범위 내에 있는지 확인
+      if (!thisTime.isBefore(cgm.startTime) && !thisTime.isAfter(cgm.endTime)) {
+        // 중간 시간 계산
+        final middleTime = cgm.startTime.add(
+          Duration(milliseconds: cgm.endTime.difference(cgm.startTime).inMilliseconds ~/ 2),
+        );
+
+        // this가 중간시간보다 앞이면 CGM이 위 (this가 아래)
+        if (thisTime.isBefore(middleTime)) {
+          return 1; // other(CGM)가 위
+        } else {
+          return -1; // this가 위
+        }
+      }
+    }
+
+    // 기본: timestamp 내림차순 (최신이 위)
     return other.timestamp.compareTo(timestamp);
   }
 }

@@ -86,8 +86,8 @@ class _DatePickerModalState extends State<DatePickerModal> {
 
       final datesSet = <DateTime>{};
       for (final item in feedItems) {
-        // 혈당 데이터만 체크
-        if (item.glucoseRecord != null) {
+        // 혈당 데이터 체크 (수동 입력 또는 CGM)
+        if (item.glucoseRecord != null || item.cgmGroup != null) {
           final date = DateTime(
             item.timestamp.year,
             item.timestamp.month,
