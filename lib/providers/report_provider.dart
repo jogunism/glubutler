@@ -244,7 +244,7 @@ class ReportProvider extends ChangeNotifier {
     }
   }
 
-  /// Delete a report
+  /// Delete a report (soft delete)
   Future<bool> deleteReport(int id) async {
     try {
       await _reportRepository.deleteReport(id);
@@ -263,6 +263,34 @@ class ReportProvider extends ChangeNotifier {
     } catch (e) {
       _error = 'Failed to delete report: $e';
       debugPrint('[ReportProvider] Error deleting report: $e');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Hard delete a report (개발용)
+  ///
+  /// DB에서 레코드를 완전히 삭제합니다.
+  /// ⚠️ 개발/테스트 용도로만 사용
+  Future<bool> hardDeleteReport(int id) async {
+    try {
+      await _reportRepository.hardDeleteReport(id);
+
+      // If deleted report was the selected one, reset to latest
+      if (_selectedReport?.id == id) {
+        _selectedReport = null;
+      }
+
+      // If deleted report was the latest, reload
+      if (_latestReport?.id == id) {
+        await loadLatestReport();
+      }
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = 'Failed to hard delete report: $e';
+      debugPrint('[ReportProvider] Error hard deleting report: $e');
       notifyListeners();
       return false;
     }

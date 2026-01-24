@@ -180,7 +180,7 @@ class ReportRepository {
     return await _databaseService.getReportById(id);
   }
 
-  /// Delete a report from database
+  /// Delete a report from database (soft delete)
   Future<void> deleteReport(int id) async {
     await _databaseService.deleteReport(id);
     debugPrint('[ReportRepository] Report deleted: $id');
@@ -195,6 +195,15 @@ class ReportRepository {
         // iCloud 삭제 실패해도 로컬 삭제는 성공했으므로 무시
       }
     }
+  }
+
+  /// Hard delete a report from database (개발용)
+  ///
+  /// 로컬 DB에서만 레코드를 완전히 삭제합니다.
+  /// ⚠️ 개발/테스트 용도로만 사용 (iCloud, DynamoDB는 수동 관리)
+  Future<void> hardDeleteReport(int id) async {
+    await _databaseService.hardDeleteReport(id);
+    debugPrint('[ReportRepository] Report hard deleted from local DB: $id');
   }
 
   /// Delete all reports from database (개발용)

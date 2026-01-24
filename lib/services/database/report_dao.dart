@@ -123,6 +123,20 @@ class ReportDao {
     );
   }
 
+  /// 리포트 완전 삭제 (개발용 hard delete)
+  ///
+  /// DB에서 레코드를 완전히 삭제합니다.
+  /// ⚠️ 개발/테스트 용도로만 사용
+  ///
+  /// Returns: 삭제된 행의 수
+  Future<int> hardDeleteReport(int id) async {
+    return await db.delete(
+      DatabaseSchema.tableReports,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   /// 날짜 범위로 리포트 조회 (삭제된 리포트 제외)
   ///
   /// [startDate]: 검색 시작일

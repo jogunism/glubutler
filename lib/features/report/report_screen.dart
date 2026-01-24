@@ -104,7 +104,7 @@ class _ReportScreenState extends State<ReportScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        content: const Text('현재 리포트만 삭제.\nhard delete'),
+        content: const Text('현재 리포트 완전삭제\n(로컬 DB만)'),
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -122,15 +122,15 @@ class _ReportScreenState extends State<ReportScreen> {
 
     if (confirmed != true || !mounted) return;
 
-    // Delete the report
-    debugPrint('[ReportScreen] Deleting current report (id: ${currentReport.id})');
+    // Hard delete the report
+    debugPrint('[ReportScreen] Hard deleting current report (id: ${currentReport.id})');
 
-    final success = await reportProvider.deleteReport(currentReport.id!);
+    final success = await reportProvider.hardDeleteReport(currentReport.id!);
 
     if (success) {
-      debugPrint('[ReportScreen] Successfully deleted current report');
+      debugPrint('[ReportScreen] Successfully hard deleted current report');
     } else {
-      debugPrint('[ReportScreen] Failed to delete current report');
+      debugPrint('[ReportScreen] Failed to hard delete current report');
     }
   }
 
@@ -395,7 +395,8 @@ class _ReportScreenState extends State<ReportScreen> {
           children: [
             LargeTitleScrollView(
               title: l10n.report,
-              titleTrailing: _showInfoIcon
+              titleTrailing: (_showInfoIcon ||
+                      dotenv.env['APP_ENV'] == 'development')
                   ? _buildTitleTrailingButtons()
                   : null,
               trailing: const SettingsIconButton(),
