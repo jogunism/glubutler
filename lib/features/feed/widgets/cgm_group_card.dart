@@ -353,7 +353,7 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
           ),
           extraLinesData: ExtraLinesData(
             verticalLines: [
-              ..._buildEventLabels(blockStart, blockEnd),
+              ..._buildEventLabels(blockStart, blockEnd, l10n),
               if (_touchedXValue != null) _buildTouchLine(),
             ],
           ),
@@ -456,7 +456,11 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
   }
 
   /// 이벤트 레이블만 표시하는 투명한 수직선
-  List<VerticalLine> _buildEventLabels(DateTime blockStart, DateTime blockEnd) {
+  List<VerticalLine> _buildEventLabels(
+    DateTime blockStart,
+    DateTime blockEnd,
+    AppLocalizations l10n,
+  ) {
     final eventLabels = <VerticalLine>[];
     final blockStartHour = blockStart.hour;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -482,7 +486,7 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
               show: true,
               alignment: Alignment.topCenter,
               padding: const EdgeInsets.only(bottom: 4),
-              labelResolver: (line) => ' ${_getEventIcon(event.type)} ',
+              labelResolver: (line) => ' ${_getEventLabel(event.type, l10n)} ',
               style: TextStyle(
                 color: labelColor,
                 fontSize: 10,
@@ -517,17 +521,17 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
     }
   }
 
-  /// 이벤트 타입에 따른 텍스트 반환
-  String _getEventIcon(FeedItemType type) {
+  /// 이벤트 타입에 따른 텍스트 반환 (국제화)
+  String _getEventLabel(FeedItemType type, AppLocalizations l10n) {
     switch (type) {
       case FeedItemType.meal:
-        return '식사';
+        return l10n.meal;
       case FeedItemType.exercise:
-        return '운동';
+        return l10n.exercise;
       case FeedItemType.insulin:
-        return '인슐린';
+        return l10n.insulin;
       case FeedItemType.glucose:
-        return '혈당';
+        return l10n.bloodGlucose;
       default:
         return '•';
     }
