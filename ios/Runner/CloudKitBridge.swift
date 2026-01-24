@@ -11,6 +11,7 @@ class CloudKitBridge {
   private static let DiaryFileRecordType = "DiaryFile"
   private static let ReportRecordType = "Report"
   private static let ReportGuideSummaryRecordType = "ReportGuideSummary"
+  private static let MealRecordType = "MealRecord"
   private static let AppSettingsRecordType = "AppSettings"
 
   init() {
@@ -1346,6 +1347,215 @@ class CloudKitBridge {
 
         result(language)
       }
+    }
+  }
+
+  // MARK: - Meal Record Sync
+
+  /// 식사 기록을 iCloud로 저장
+  func saveMealRecord(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard let mealData = arguments["meal"] as? [String: Any] else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing meal data", details: nil))
+      return
+    }
+
+    guard let id = mealData["id"] as? String,
+          let mealTimeStr = mealData["mealTime"] as? String,
+          let createdAtStr = mealData["createdAt"] as? String else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing required fields", details: nil))
+      return
+    }
+
+    let recordID = CKRecord.ID(recordName: id)
+
+    // Fetch existing record first, or create new one
+    privateDatabase.fetch(withRecordID: recordID) { existingRecord, error in
+      let record: CKRecord
+
+      if let existingRecord = existingRecord {
+        // Update existing record
+        record = existingRecord
+      } else {
+        // Create new record
+        record = CKRecord(recordType: CloudKitBridge.MealRecordType, recordID: recordID)
+      }
+
+      // Set fields
+      record["id"] = id as CKRecordValue
+
+      // Optional fields
+      if let diaryId = mealData["diaryId"] as? String {
+        record["diaryId"] = diaryId as CKRecordValue
+      }
+      if let foodName = mealData["foodName"] as? String {
+        record["foodName"] = foodName as CKRecordValue
+      }
+
+      // Parse dates
+      let dateFormatter = ISO8601DateFormatter()
+      dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+      func truncateToMilliseconds(_ dateString: String) -> String {
+        if let dotIndex = dateString.lastIndex(of: "."),
+           let nextIndex = dateString.index(dotIndex, offsetBy: 4, limitedBy: dateString.endIndex) {
+          return String(dateString[..<nextIndex]) + "Z"
+        }
+        return dateString + "Z"
+      }
+
+      if let mealTime = dateFormatter.date(from: truncateToMilliseconds(mealTimeStr)) {
+        record["mealTime"] = mealTime as CKRecordValue
+      }
+      if let createdAt = dateFormatter.date(from: truncateToMilliseconds(createdAtStr)) {
+        record["createdAt"] = createdAt as CKRecordValue
+      }
+
+      // Save the record
+      self.privateDatabase.save(record) { savedRecord, error in
+        DispatchQueue.main.async {
+          if let error = error {
+            result(FlutterError(
+              code: "SAVE_FAILED",
+              message: "Failed to save meal record",
+              details: error.localizedDescription
+            ))
+          } else {
+            result(true)
+          }
+        }
+      }
+    }
+  }
+
+  /// iCloud에서 식사 기록 가져오기
+  func fetchMealRecords(result: @escaping FlutterResult) {
+    let predicate = NSPredicate(format: "id != %@", "")
+    let query = CKQuery(recordType: CloudKitBridge.MealRecordType, predicate: predicate)
+
+    privateDatabase.perform(query, inZoneWith: nil) { records, error in
+      if let error = error {
+        DispatchQueue.main.async {
+          result(FlutterError(
+            code: "FETCH_FAILED",
+            message: "Failed to fetch meal records",
+            details: error.localizedDescription
+          ))
+        }
+        return
+      }
+
+      guard let records = records else {
+        DispatchQueue.main.async {
+          result([])
+        }
+        return
+      }
+
+      // Convert records to JSON
+      let dateFormatter = ISO8601DateFormatter()
+      let meals = records.compactMap { record -> [String: Any]? in
+        guard let id = record["id"] as? String,
+              let mealTime = record["mealTime"] as? Date,
+              let createdAt = record["createdAt"] as? Date else {
+          return nil
+        }
+
+        var mealData: [String: Any] = [
+          "id": id,
+          "mealTime": dateFormatter.string(from: mealTime),
+          "createdAt": dateFormatter.string(from: createdAt)
+        ]
+
+        // Optional fields
+        if let diaryId = record["diaryId"] as? String {
+          mealData["diaryId"] = diaryId
+        }
+        if let foodName = record["foodName"] as? String {
+          mealData["foodName"] = foodName
+        }
+
+        return mealData
+      }
+
+      DispatchQueue.main.async {
+        result(meals)
+      }
+    }
+  }
+
+  /// 식사 기록 삭제 (iCloud에서)
+  func deleteMealRecord(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard let mealId = arguments["mealId"] as? String else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing mealId", details: nil))
+      return
+    }
+
+    let recordID = CKRecord.ID(recordName: mealId)
+
+    privateDatabase.delete(withRecordID: recordID) { _, error in
+      DispatchQueue.main.async {
+        if let error = error {
+          result(FlutterError(
+            code: "DELETE_FAILED",
+            message: "Failed to delete meal record",
+            details: error.localizedDescription
+          ))
+        } else {
+          result(true)
+        }
+      }
+    }
+  }
+
+  /// 특정 다이어리 ID와 연결된 식사 기록 삭제 (iCloud에서)
+  func deleteMealRecordsByDiaryId(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard let diaryId = arguments["diaryId"] as? String else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing diaryId", details: nil))
+      return
+    }
+
+    let predicate = NSPredicate(format: "diaryId == %@", diaryId)
+    let query = CKQuery(recordType: CloudKitBridge.MealRecordType, predicate: predicate)
+
+    privateDatabase.perform(query, inZoneWith: nil) { records, error in
+      if let error = error {
+        DispatchQueue.main.async {
+          result(FlutterError(
+            code: "QUERY_FAILED",
+            message: "Failed to query meal records by diary ID",
+            details: error.localizedDescription
+          ))
+        }
+        return
+      }
+
+      guard let records = records, !records.isEmpty else {
+        DispatchQueue.main.async {
+          result(true) // No records to delete
+        }
+        return
+      }
+
+      // Delete all found records
+      let recordIDs = records.map { $0.recordID }
+      let deleteOperation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: recordIDs)
+
+      deleteOperation.modifyRecordsResultBlock = { deleteResult in
+        DispatchQueue.main.async {
+          switch deleteResult {
+          case .success:
+            result(true)
+          case .failure(let error):
+            result(FlutterError(
+              code: "DELETE_FAILED",
+              message: "Failed to delete meal records by diary ID",
+              details: error.localizedDescription
+            ))
+          }
+        }
+      }
+
+      self.privateDatabase.add(deleteOperation)
     }
   }
 }

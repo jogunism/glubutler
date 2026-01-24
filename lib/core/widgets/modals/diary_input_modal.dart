@@ -20,6 +20,8 @@ import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/services/image_service.dart';
 import 'package:glu_butler/services/vision_service.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/core/widgets/keyboard_dismiss_button.dart';
 import 'package:provider/provider.dart';
@@ -226,12 +228,18 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
             // 수정 모드: 기존 meal 삭제 후 재생성
             final deletedCount = await _databaseService.deleteMealsByDiaryId(entry.id);
             debugPrint('[DiaryInputModal] Deleted $deletedCount existing meal records for diary ${entry.id}');
+
+            // iCloud에서도 삭제
+            _deleteMealsFromICloudIfEnabled(entry.id);
           }
           await _createMealRecordIfNeeded(entry);
         } else if (isEditMode) {
           // 수정 모드에서 음식 사진이 없어진 경우: 기존 meal 삭제
           final deletedCount = await _databaseService.deleteMealsByDiaryId(entry.id);
           debugPrint('[DiaryInputModal] Deleted $deletedCount meal records (no food detected) for diary ${entry.id}');
+
+          // iCloud에서도 삭제
+          _deleteMealsFromICloudIfEnabled(entry.id);
         }
 
         if (mounted) {
@@ -500,6 +508,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         if (success) {
           createdCount++;
           debugPrint('[DiaryInputModal] Meal record created: $foodNames at $mealTime');
+
+          // iCloud 자동 업로드 (백그라운드)
+          _syncMealToICloudIfEnabled(mealRecord);
         }
       }
 
@@ -508,6 +519,40 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
       debugPrint('[DiaryInputModal] Error creating meal records: $e');
       // 에러가 나도 일기 저장은 성공했으므로 무시
     }
+  }
+
+  /// iCloud에 식사 기록 업로드 (백그라운드, 에러 무시)
+  void _syncMealToICloudIfEnabled(MealRecord meal) {
+    // iCloud Sync가 활성화되어 있는지 확인
+    final settings = context.read<SettingsService>();
+    if (settings.iCloudSyncEnabled != true) {
+      return;
+    }
+
+    // 백그라운드에서 식사 기록 업로드
+    CloudKitService.uploadMealRecord(meal).then((_) {
+      debugPrint('[DiaryInputModal] Meal record uploaded to iCloud: ${meal.id}');
+    }).catchError((error) {
+      debugPrint('[DiaryInputModal] Failed to upload meal to iCloud: $error');
+      // 에러 무시 (로컬 저장은 이미 성공했으므로)
+    });
+  }
+
+  /// iCloud에서 다이어리 관련 식사 기록 삭제 (백그라운드, 에러 무시)
+  void _deleteMealsFromICloudIfEnabled(String diaryId) {
+    // iCloud Sync가 활성화되어 있는지 확인
+    final settings = context.read<SettingsService>();
+    if (settings.iCloudSyncEnabled != true) {
+      return;
+    }
+
+    // 백그라운드에서 식사 기록 삭제
+    CloudKitService.deleteMealRecordsByDiaryId(diaryId).then((_) {
+      debugPrint('[DiaryInputModal] Meal records deleted from iCloud for diary: $diaryId');
+    }).catchError((error) {
+      debugPrint('[DiaryInputModal] Failed to delete meals from iCloud: $error');
+      // 에러 무시 (로컬 삭제는 이미 성공했으므로)
+    });
   }
 
   void _removeImage(int index) {

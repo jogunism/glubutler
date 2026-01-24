@@ -129,9 +129,16 @@ class DiaryProvider extends ChangeNotifier {
       return;
     }
 
+    // 다이어리 삭제
     CloudKitService.deleteDiaryEntry(entryId).then((_) {
     }).catchError((error) {
       // 에러 무시 (로컬 삭제는 이미 성공했으므로)
+    });
+
+    // 관련 식사 기록도 삭제
+    CloudKitService.deleteMealRecordsByDiaryId(entryId).then((_) {
+    }).catchError((error) {
+      // 에러 무시
     });
   }
 

@@ -136,6 +136,30 @@ import CloudKit
       case "fetchLanguage":
         self.cloudKitBridge.fetchLanguage(result: result)
 
+      case "saveMealRecord":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.saveMealRecord(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "fetchMealRecords":
+        self.cloudKitBridge.fetchMealRecords(result: result)
+
+      case "deleteMealRecord":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.deleteMealRecord(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
+      case "deleteMealRecordsByDiaryId":
+        if let args = call.arguments as? [String: Any] {
+          self.cloudKitBridge.deleteMealRecordsByDiaryId(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
+        }
+
       default:
         result(FlutterMethodNotImplemented)
       }

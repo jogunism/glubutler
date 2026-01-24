@@ -134,6 +134,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           '[SettingsScreen] Diary sync complete: $uploaded uploaded, $downloaded downloaded',
         );
 
+        // 식사 기록 다운로드
+        final mealCount = await CloudKitService.downloadMealRecords();
+        debugPrint(
+          '[SettingsScreen] Meal sync complete: $mealCount meal records downloaded',
+        );
+
         // 리포트 및 가이드 요약 다운로드
         final reportCount = await CloudKitService.downloadReports();
         final summaryCount =

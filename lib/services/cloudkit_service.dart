@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:glu_butler/models/diary_item.dart';
+import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/models/report_guide_summary.dart';
 import 'package:glu_butler/services/database_service.dart';
@@ -462,6 +463,95 @@ class CloudKitService {
       return language;
     } on PlatformException catch (e) {
       throw Exception('Failed to fetch language from CloudKit: ${e.message}');
+    }
+  }
+
+  // MARK: - Meal Record Sync
+
+  /// 단일 식사 기록을 iCloud로 업로드
+  ///
+  /// [meal]: 업로드할 식사 기록
+  static Future<void> uploadMealRecord(MealRecord meal) async {
+    try {
+      // MealRecord를 Map으로 변환
+      final mealData = {
+        'id': meal.id,
+        'diaryId': meal.diaryId,
+        'foodName': meal.foodName,
+        'mealTime': meal.mealTime.toIso8601String(),
+        'createdAt': meal.createdAt.toIso8601String(),
+      };
+
+      await _channel.invokeMethod('saveMealRecord', {'meal': mealData});
+    } catch (e) {
+      throw Exception('Failed to upload meal record: $e');
+    }
+  }
+
+  /// iCloud에서 식사 기록 다운로드하여 로컬 DB에 저장
+  ///
+  /// Returns: 다운로드된 식사 기록 개수
+  static Future<int> downloadMealRecords() async {
+    try {
+      final List<dynamic> meals = await _channel.invokeMethod('fetchMealRecords');
+
+      if (meals.isEmpty) {
+        return 0;
+      }
+
+      int savedCount = 0;
+
+      for (final mealData in meals) {
+        try {
+          final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(mealData as Map);
+
+          // Parse dates
+          final mealTime = DateTime.parse(jsonMap['mealTime'] as String);
+          final createdAt = DateTime.parse(jsonMap['createdAt'] as String);
+
+          final meal = MealRecord(
+            id: jsonMap['id'] as String,
+            diaryId: jsonMap['diaryId'] as String?,
+            foodName: jsonMap['foodName'] as String?,
+            mealTime: mealTime,
+            createdAt: createdAt,
+          );
+
+          // 로컬 DB에 저장 (중복 확인 후 insert)
+          // meal_records 테이블에는 기본적으로 upsert 로직이 없으므로 먼저 확인
+          await _databaseService.recordDao.insertMeal(meal);
+
+          savedCount++;
+        } catch (e) {
+          // 하나 실패해도 계속 진행 (중복 등)
+        }
+      }
+
+      return savedCount;
+    } catch (e) {
+      throw Exception('Failed to download meal records: $e');
+    }
+  }
+
+  /// 식사 기록 삭제 (iCloud에서)
+  ///
+  /// [mealId]: 삭제할 식사 기록 ID
+  static Future<void> deleteMealRecord(String mealId) async {
+    try {
+      await _channel.invokeMethod('deleteMealRecord', {'mealId': mealId});
+    } on PlatformException catch (e) {
+      throw Exception('Failed to delete meal record from CloudKit: ${e.message}');
+    }
+  }
+
+  /// 특정 다이어리 ID와 연결된 식사 기록 삭제 (iCloud에서)
+  ///
+  /// [diaryId]: 삭제할 다이어리 ID
+  static Future<void> deleteMealRecordsByDiaryId(String diaryId) async {
+    try {
+      await _channel.invokeMethod('deleteMealRecordsByDiaryId', {'diaryId': diaryId});
+    } on PlatformException catch (e) {
+      throw Exception('Failed to delete meal records by diary ID from CloudKit: ${e.message}');
     }
   }
 }

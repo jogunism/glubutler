@@ -85,6 +85,18 @@ class _ReportPageState extends State<ReportPage> {
         await settings.updateCloudKitId(cloudKitId);
         await settings.setICloudSync(true);
 
+        // Download diary entries, meals, and reports from iCloud
+        debugPrint('[ReportPage] Starting iCloud download...');
+        final downloadedDiaries = await CloudKitService.downloadDiaryEntries();
+        debugPrint('[ReportPage] Downloaded $downloadedDiaries diary entries');
+
+        final mealCount = await CloudKitService.downloadMealRecords();
+        debugPrint('[ReportPage] Downloaded $mealCount meal records');
+
+        final reportCount = await CloudKitService.downloadReports();
+        final summaryCount = await CloudKitService.downloadReportGuideSummaries();
+        debugPrint('[ReportPage] Downloaded $reportCount reports, $summaryCount summaries');
+
         // Log iCloud enabled
         await AnalyticsService.logICloudEnabled(success: true);
 
