@@ -929,6 +929,20 @@ class FeedProvider extends ChangeNotifier {
           });
           break;
 
+        case FeedItemType.cgmGroup:
+          final cgmGroup = item.cgmGroup;
+          if (cgmGroup == null) continue;
+          // CGM 그룹의 모든 레코드를 개별적으로 추가
+          for (final record in cgmGroup.records) {
+            final recordTimeStr = _formatTimeForApi(record.timestamp);
+            result.add({
+              'type': 'glucose cgm',
+              'time': recordTimeStr,
+              'value': '${record.value.toStringAsFixed(0)}${record.unit}',
+            });
+          }
+          break;
+
         // 다른 타입들은 무시
         default:
           break;

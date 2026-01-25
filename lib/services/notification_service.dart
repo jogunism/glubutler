@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:glu_butler/models/notification_type.dart';
 import 'package:glu_butler/services/database_service.dart';
+import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/core/navigation/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -804,6 +805,7 @@ class NotificationService {
   /// 혈당 알림 조건부 취소 (앱 시작 시 호출)
   ///
   /// 오늘 혈당 측정 횟수가 3회 이상이면 오늘 18시 혈당 알림 취소
+  /// (수동 입력 + HealthKit/CGM 데이터 모두 포함)
   Future<void> cancelGlucoseReminderIfNeeded() async {
     await initialize();
 
@@ -817,15 +819,31 @@ class NotificationService {
     final todayStart = DateTime(today.year, today.month, today.day);
     final todayEnd = todayStart.add(const Duration(days: 1));
 
-    final glucoseRecords = await _databaseService.getGlucoseRecords(
+    // 1. DB에서 수동 입력 혈당 가져오기
+    final dbRecords = await _databaseService.getGlucoseRecords(
       startDate: todayStart,
       endDate: todayEnd,
     );
 
+    // 2. HealthKit에서 혈당 가져오기 (CGM 포함)
+    final healthService = HealthService();
+    final healthKitRecords = await healthService.fetchGlucoseData(
+      startDate: todayStart,
+      endDate: todayEnd,
+    );
+
+    // 3. 중복 제거를 위해 ID 기반으로 합치기
+    //    (DB 레코드는 id, HealthKit 레코드는 hk_ prefix)
+    final allRecordIds = <String>{};
+    allRecordIds.addAll(dbRecords.map((r) => r.id));
+    allRecordIds.addAll(healthKitRecords.map((r) => r.id));
+
+    final totalCount = allRecordIds.length;
+
     // 오늘 혈당 측정 3회 이상이면 알림 취소
-    if (glucoseRecords.length >= 3) {
+    if (totalCount >= 3) {
       await cancelNotification(NotificationType.glucoseRecordReminder);
-      debugPrint('[NotificationService] Glucose reminder cancelled - today: ${glucoseRecords.length} measurements');
+      debugPrint('[NotificationService] Glucose reminder cancelled - today: $totalCount measurements (DB: ${dbRecords.length}, HealthKit: ${healthKitRecords.length})');
     }
   }
 
