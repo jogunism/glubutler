@@ -179,6 +179,23 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
       glucoseRange,
     );
 
+    // 수동 입력 혈당 이벤트를 점으로 표시하기 위한 데이터
+    final manualGlucoseSpots = <FlSpot>[];
+    for (final event in widget.eventsInRange) {
+      if (event.type == FeedItemType.glucose &&
+          event.timestamp.isAfter(blockStart) &&
+          event.timestamp.isBefore(blockEnd)) {
+        final glucoseRecord = event.glucoseRecord;
+        if (glucoseRecord != null) {
+          final eventHour = event.timestamp.hour;
+          final hourIndex = eventHour - blockStartHour;
+          final minuteOffset = event.timestamp.minute / 60.0;
+          final xPosition = hourIndex + minuteOffset;
+          manualGlucoseSpots.add(FlSpot(xPosition, glucoseRecord.value));
+        }
+      }
+    }
+
     // 최소/최대 혈당 값 계산 (차트 범위 설정)
     // 기본값은 70, 데이터 최소값이 더 낮으면 10 단위로 내림
     double minGlucose = 70.0;
@@ -189,13 +206,48 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
 
     return SizedBox(
       height: 200,
-      child: LineChart(
-        LineChartData(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              // 수동 혈당 레이블을 먼저 배치 (아래에)
+              ..._buildManualGlucoseLabelsPositioned(
+                blockStart,
+                blockEnd,
+                unit,
+                minGlucose,
+                maxGlucose,
+                constraints,
+              ),
+              // LineChart를 나중에 배치 (위에, tooltip이 레이블 위에 표시됨)
+              LineChart(
+                LineChartData(
           minX: 0,
           maxX: 6,
           minY: minGlucose,
           maxY: maxGlucose,
-          lineBarsData: lineSegments,
+          lineBarsData: [
+            ...lineSegments,
+            // 수동 입력 혈당을 점으로 표시
+            if (manualGlucoseSpots.isNotEmpty)
+              LineChartBarData(
+                spots: manualGlucoseSpots,
+                isCurved: false,
+                color: Colors.transparent,
+                barWidth: 0,
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter: (spot, percent, barData, index) {
+                    return FlDotCirclePainter(
+                      radius: 3, // 기본보다 50% 작게
+                      color: AppTheme.iconRed, // 메인 빨강색
+                      strokeWidth: 0,
+                    );
+                  },
+                ),
+                belowBarData: BarAreaData(show: false),
+              ),
+          ],
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
@@ -264,11 +316,20 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
             enabled: true,
             handleBuiltInTouches: false, // 여러 개 동시 선택 방지
             touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (touchedSpot) => Colors.black87,
-              tooltipRoundedRadius: 8,
-              tooltipPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+              getTooltipColor: (touchedSpot) {
+                final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+                if (isDarkMode) {
+                  return context.colors.card.withValues(alpha: 1.0);
+                }
+                return context.colors.card.withValues(alpha: 0.9);
+              },
+              tooltipRoundedRadius: 4,
+              tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+              tooltipBorder: BorderSide(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.withValues(alpha: 0.5)
+                    : context.colors.divider,
+                width: Theme.of(context).brightness == Brightness.dark ? 1.5 : 1.0,
               ),
               getTooltipItems: (List<LineBarSpot> touchedSpots) {
                 if (touchedSpots.isEmpty) return [];
@@ -280,14 +341,35 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
                     ? (spot.y / AppConstants.mgDlToMmolL).toStringAsFixed(1)
                     : spot.y.toStringAsFixed(0);
 
+                // X 좌표에서 시간 계산
+                final hoursSinceStart = spot.x;
+                final totalMinutes = (hoursSinceStart * 60).round();
+                final hours = blockStartHour + (totalMinutes ~/ 60);
+                final minutes = totalMinutes % 60;
+                final timeString = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+
+                // 혈당 값에 따른 색상 결정
+                final glucoseColor = _getLineColor(spot.y, glucoseRange);
+
                 return [
                   LineTooltipItem(
-                    '$displayValue $unit',
-                    const TextStyle(
-                      color: Colors.white,
+                    '$timeString\n',
+                    TextStyle(
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
+                    textAlign: TextAlign.center,
+                    children: [
+                      TextSpan(
+                        text: '$displayValue $unit',
+                        style: TextStyle(
+                          color: glucoseColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ];
               },
@@ -296,10 +378,25 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
               setState(() {
                 if (response?.lineBarSpots?.isNotEmpty ?? false) {
                   final spot = response!.lineBarSpots!.first;
-                  _touchedBarIndex = spot.barIndex;
-                  _touchedSpotIndex = spot.spotIndex;
-                  _touchedXValue = spot.x;
-                  _touchedYValue = spot.y;
+
+                  // 수동 혈당 점(마지막 barIndex)은 터치 무시
+                  // lineSegments 다음에 수동 혈당 LineChartBarData가 추가되므로
+                  final totalBars = lineSegments.length + (manualGlucoseSpots.isNotEmpty ? 1 : 0);
+                  final isManualGlucoseBar = manualGlucoseSpots.isNotEmpty &&
+                                              spot.barIndex == totalBars - 1;
+
+                  if (isManualGlucoseBar) {
+                    // 수동 혈당 점은 터치 무시
+                    _touchedBarIndex = null;
+                    _touchedSpotIndex = null;
+                    _touchedXValue = null;
+                    _touchedYValue = null;
+                  } else {
+                    _touchedBarIndex = spot.barIndex;
+                    _touchedSpotIndex = spot.spotIndex;
+                    _touchedXValue = spot.x;
+                    _touchedYValue = spot.y;
+                  }
                 } else {
                   _touchedBarIndex = null;
                   _touchedSpotIndex = null;
@@ -337,7 +434,9 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
                 },
           ),
           showingTooltipIndicators:
-              _touchedBarIndex != null && _touchedSpotIndex != null
+              _touchedBarIndex != null &&
+              _touchedSpotIndex != null &&
+              _touchedBarIndex! < lineSegments.length  // 범위 체크 추가
               ? [
                   ShowingTooltipIndicators([
                     LineBarSpot(
@@ -357,7 +456,11 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
               if (_touchedXValue != null) _buildTouchLine(),
             ],
           ),
-        ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -428,6 +531,9 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
     final blockStartHour = blockStart.hour;
 
     for (final event in widget.eventsInRange) {
+      // 수동 혈당은 점으로 표시하므로 배경에서 제외
+      if (event.type == FeedItemType.glucose) continue;
+
       if (event.timestamp.isAfter(blockStart) &&
           event.timestamp.isBefore(blockEnd)) {
         // 이벤트의 시간(hour)을 블록 내 인덱스로 변환
@@ -467,6 +573,9 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
     final labelColor = isDarkMode ? context.colors.textPrimary : Colors.black;
 
     for (final event in widget.eventsInRange) {
+      // 수동 혈당은 점으로 표시하므로 레이블에서 제외
+      if (event.type == FeedItemType.glucose) continue;
+
       if (event.timestamp.isAfter(blockStart) &&
           event.timestamp.isBefore(blockEnd)) {
         // 이벤트의 시간(hour)을 블록 내 인덱스로 변환
@@ -500,6 +609,90 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
     }
 
     return eventLabels;
+  }
+
+  /// 수동 혈당 측정값 레이블을 Positioned로 표시
+  List<Widget> _buildManualGlucoseLabelsPositioned(
+    DateTime blockStart,
+    DateTime blockEnd,
+    String unit,
+    double minY,
+    double maxY,
+    BoxConstraints constraints,
+  ) {
+    final labels = <Widget>[];
+    final blockStartHour = blockStart.hour;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDarkMode ? context.colors.textPrimary : Colors.black;
+
+    // 차트 크기
+    final chartHeight = constraints.maxHeight;
+    final chartWidth = constraints.maxWidth;
+
+    // 차트 영역 패딩
+    const leftPadding = 40.0; // leftTitles reservedSize
+    const rightPadding = 10.0;
+    const topPadding = 10.0; // 상단 여백
+    const bottomPadding = 24.0; // bottomTitles reservedSize
+
+    for (final event in widget.eventsInRange) {
+      if (event.type == FeedItemType.glucose &&
+          event.timestamp.isAfter(blockStart) &&
+          event.timestamp.isBefore(blockEnd)) {
+        final glucoseRecord = event.glucoseRecord;
+        if (glucoseRecord != null) {
+          // 이벤트의 시간(hour)을 블록 내 인덱스로 변환
+          final eventHour = event.timestamp.hour;
+          final hourIndex = eventHour - blockStartHour;
+          final minuteOffset = event.timestamp.minute / 60.0;
+          final xPosition = hourIndex + minuteOffset; // 0~6 범위
+
+          // 혈당 값 표시
+          final isMmol = unit == AppConstants.unitMmolL;
+          final displayValue = isMmol
+              ? (glucoseRecord.value / AppConstants.mgDlToMmolL).toStringAsFixed(1)
+              : glucoseRecord.value.toStringAsFixed(0);
+
+          // X 좌표 계산: 0~6 범위를 차트 너비로 변환
+          final xRatio = xPosition / 6.0;
+          final chartAreaWidth = chartWidth - leftPadding - rightPadding;
+          final pointX = leftPadding + (xRatio * chartAreaWidth);
+
+          // Y 좌표 계산: minY~maxY 범위를 차트 높이로 변환 (상하 반전)
+          final chartAreaHeight = chartHeight - topPadding - bottomPadding;
+          final yRatio = (maxY - glucoseRecord.value) / (maxY - minY);
+          final pointY = topPadding + (yRatio * chartAreaHeight);
+
+          // 차트 중간을 기준으로 왼쪽/오른쪽 선택
+          final isLeftSide = xPosition < 3.0;
+
+          labels.add(
+            Positioned(
+              top: pointY - 8, // 텍스트 높이의 절반만큼 위로 (중앙 정렬)
+              left: isLeftSide ? pointX + 2 : null, // 점 오른쪽에 바로 붙여서 표시
+              right: isLeftSide ? null : chartWidth - pointX + 2, // 점 왼쪽에 바로 붙여서 표시
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: context.colors.card.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '$displayValue$unit',
+                  style: TextStyle(
+                    color: labelColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      }
+    }
+
+    return labels;
   }
 
   /// 이벤트 지속 시간 계산 (시간 단위)
