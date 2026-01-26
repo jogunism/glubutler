@@ -668,9 +668,9 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
 
           labels.add(
             Positioned(
-              top: pointY - 8, // 텍스트 높이의 절반만큼 위로 (중앙 정렬)
-              left: isLeftSide ? pointX + 2 : null, // 점 오른쪽에 바로 붙여서 표시
-              right: isLeftSide ? null : chartWidth - pointX + 2, // 점 왼쪽에 바로 붙여서 표시
+              top: pointY - 12, // 현재 높이에서 1만큼 아래로
+              left: isLeftSide ? pointX - 3 : null, // 점에서 3px 왼쪽으로
+              right: isLeftSide ? null : chartWidth - pointX - 3, // 점에서 3px 왼쪽으로
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
@@ -681,7 +681,7 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
                   '$displayValue$unit',
                   style: TextStyle(
                     color: labelColor,
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
