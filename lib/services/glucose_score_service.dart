@@ -125,8 +125,7 @@ class GlucoseScoreService {
 
   /// 생활습관 점수 계산 (건강 앱 연동시)
   ///
-  /// - 오후 10시 이전: 수면만으로 maxScore 만점
-  /// - 오후 10시 이후: 수면 + 운동 각각 maxScore의 50%씩
+  /// - 수면 + 운동 각각 maxScore의 50%씩
   static int _calculateLifestyleScore({
     double? sleepHours,
     int? exerciseMinutes,
@@ -134,9 +133,8 @@ class GlucoseScoreService {
     required DateTime currentTime,
   }) {
     int score = 0;
-    final isAfter10PM = currentTime.hour >= 22;
 
-    // 수면 점수
+    // 수면 점수 (50%)
     if (sleepHours != null) {
       double sleepScore;
       if (sleepHours >= 7 && sleepHours <= 8) {
@@ -149,23 +147,23 @@ class GlucoseScoreService {
         sleepScore = 0.2; // 20%
       }
 
-      // 10시 이전: 수면만으로 전체 점수, 10시 이후: 절반만
-      final sleepMaxScore = isAfter10PM ? maxScore / 2 : maxScore.toDouble();
-      final sleepPoints = (sleepScore * sleepMaxScore).round();
+      final sleepPoints = (sleepScore * maxScore / 2).round();
       score += sleepPoints;
     }
 
-    // 운동 점수 - 오후 10시 이후에만 계산
-    if (exerciseMinutes != null && isAfter10PM) {
+    // 운동 점수 (50%)
+    if (exerciseMinutes != null) {
       double exerciseScore;
-      if (exerciseMinutes >= 30) {
+      if (exerciseMinutes == 0) {
+        exerciseScore = 0.0; // 운동 안 함: 0점
+      } else if (exerciseMinutes >= 30) {
         exerciseScore = 1.0; // 만점
       } else if (exerciseMinutes >= 20) {
         exerciseScore = 0.7; // 70%
       } else if (exerciseMinutes >= 10) {
         exerciseScore = 0.4; // 40%
       } else {
-        exerciseScore = 0.1; // 10%
+        exerciseScore = 0.1; // 1-9분: 10%
       }
       final exercisePoints = (exerciseScore * maxScore / 2).round();
       score += exercisePoints;

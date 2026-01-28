@@ -271,19 +271,22 @@ class _HomeScreenState extends State<HomeScreen>
     return _todayRecords.map((e) => e.valueIn('mg/dL')).reduce(math.max);
   }
 
-  // 범위별 비율 계산 (5단계)
+  // 범위별 비율 계산 (5단계) - 사용자 설정 기반
   Map<String, int> get _rangeDistribution {
+    final settings = context.watch<SettingsService>();
+    final glucoseRange = settings.glucoseRange;
+
     int veryLow = 0, low = 0, normal = 0, high = 0, veryHigh = 0;
     for (final record in _todayRecords) {
       final value = record.valueIn('mg/dL');
-      if (value < 60) {
+      if (value < glucoseRange.veryLow) {
         veryLow++;
-      } else if (value < 80) {
+      } else if (value < glucoseRange.low) {
         low++;
-      } else if (value <= 120) {
+      } else if (value <= glucoseRange.high) {
         normal++;
-      } else if (value < 180) {
-        high++;
+      } else if (value <= glucoseRange.veryHigh) {
+        veryHigh++;
       } else {
         veryHigh++;
       }
