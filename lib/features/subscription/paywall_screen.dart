@@ -42,6 +42,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
 
     try {
+      // Ensure RevenueCat is initialized before loading offerings
+      await SubscriptionService.initialize();
+
       final offerings = await Purchases.getOfferings();
       final current = offerings.current;
 

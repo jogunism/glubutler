@@ -121,46 +121,14 @@ class _NameInputPageState extends State<NameInputPage> {
           ),
         ),
 
-        // Buttons positioned at bottom
+        // Next button positioned at bottom
         Positioned(
           left: 24,
           right: 24,
-          bottom: 0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Skip button - always visible, just moves to next page without saving
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    widget.onNext();
-                  },
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  child: Text(
-                    l10n.onboardingSkip,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.textSecondary(context),
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 0),
-              // Next button
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: OnboardingPrimaryButton(
-                  text: l10n.onboardingNext,
-                  onPressed: _hasName ? () => _handleNext() : null,
-                ),
-              ),
-            ],
+          bottom: 24,
+          child: OnboardingPrimaryButton(
+            text: l10n.onboardingNext,
+            onPressed: _hasName ? () => _handleNext() : null,
           ),
         ),
       ],

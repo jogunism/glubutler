@@ -61,6 +61,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     });
 
     try {
+      // Ensure RevenueCat is initialized before loading offerings
+      await SubscriptionService.initialize();
+
       final offerings = await Purchases.getOfferings();
       final current = offerings.current;
 
@@ -664,6 +667,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   style: TextStyle(
                     color: CupertinoColors.label.resolveFrom(context),
                     fontSize: 16,
+                    decoration: TextDecoration.none,
                   ),
                   textAlign: TextAlign.center,
                   softWrap: true,

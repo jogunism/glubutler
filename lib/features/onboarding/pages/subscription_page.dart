@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
+import 'package:glu_butler/features/subscription/paywall_screen.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/subscription_service.dart';
@@ -23,7 +26,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   Offering? _currentOffering;
   Package? _selectedPackage;
   bool _isLoadingOfferings = true;
-  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -37,6 +39,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     });
 
     try {
+      // Ensure RevenueCat is initialized before loading offerings
+      await SubscriptionService.initialize();
+
       final offerings = await Purchases.getOfferings();
       final current = offerings.current;
 
@@ -65,49 +70,21 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     }
   }
 
-  Future<void> _handlePurchase() async {
+  Future<void> _openPaywall() async {
     if (_selectedPackage == null) return;
 
-    setState(() {
-      _isProcessing = true;
-    });
+    // Navigate to PaywallScreen with selected package
+    final result = await Navigator.of(context).push<bool>(
+      CupertinoPageRoute(
+        builder: (context) => PaywallScreen(
+          initialSelectedPackage: _selectedPackage,
+        ),
+      ),
+    );
 
-    try {
-      final result = await Purchases.purchasePackage(_selectedPackage!);
-
-      // Check if user has active entitlement
-      final isPremium = result.customerInfo.entitlements.active.isNotEmpty;
-
-      if (isPremium && mounted) {
-        final settings = context.read<SettingsService>();
-        await settings.setProStatus(true);
-
-        if (mounted) {
-          // Wait a bit before moving to next page
-          await Future.delayed(const Duration(milliseconds: 500));
-          widget.onNext();
-        }
-      }
-
-      if (mounted) {
-        setState(() {
-          _isProcessing = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isProcessing = false;
-        });
-
-        final errorMessage = e.toString();
-        // Don't show error if user cancelled
-        if (!errorMessage.contains('cancel') &&
-            !errorMessage.contains('abort')) {
-          final l10n = AppLocalizations.of(context)!;
-          _showErrorAlert(l10n.purchaseErrorMessage);
-        }
-      }
+    // If purchase was successful, proceed to next page
+    if (result == true && mounted) {
+      widget.onNext();
     }
   }
 
@@ -137,6 +114,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   style: TextStyle(
                     color: CupertinoColors.label.resolveFrom(context),
                     fontSize: 16,
+                    decoration: TextDecoration.none,
                   ),
                   textAlign: TextAlign.center,
                   softWrap: true,
@@ -200,6 +178,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   //   // TODO: Implement redeem code
   //   await Future.delayed(const Duration(milliseconds: 500));
   // }
+
+  /// URL 열기
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -313,6 +299,68 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 8),
+
+                // Terms and Privacy links
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+                          final lang = Localizations.localeOf(context).languageCode;
+                          final langPrefix = lang == 'en' ? '' : '/$lang';
+                          _launchURL('$baseUrl$langPrefix/terms');
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          l10n.onboardingTermsOfService,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: AppTheme.textSecondary(context),
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        ' • ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary(context),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+                          final lang = Localizations.localeOf(context).languageCode;
+                          final langPrefix = lang == 'en' ? '' : '/$lang';
+                          _launchURL('$baseUrl$langPrefix/privacy');
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          l10n.onboardingPrivacyPolicy,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: AppTheme.textSecondary(context),
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.center,
                 //   children: [
@@ -384,8 +432,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               // Purchase button
               OnboardingPrimaryButton(
                 text: l10n.upgradeToPro,
-                onPressed: _handlePurchase,
-                isLoading: _isProcessing,
+                onPressed: _openPaywall,
               ),
             ],
           ),
