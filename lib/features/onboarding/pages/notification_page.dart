@@ -173,38 +173,10 @@ class _NotificationPageState extends State<NotificationPage> {
           left: 24,
           right: 24,
           bottom: 24,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Skip button
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _handleSkip,
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  child: Text(
-                    l10n.onboardingSkip,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.textSecondary(context),
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 0),
-
-              // Enable button
-              OnboardingPrimaryButton(
-                text: l10n.onboardingNotificationEnable,
-                onPressed: _requestNotificationPermission,
-                isLoading: _isRequesting,
-              ),
-            ],
+          child: OnboardingPrimaryButton(
+            text: l10n.onboardingNext,
+            onPressed: _requestNotificationPermission,
+            isLoading: _isRequesting,
           ),
         ),
       ],
