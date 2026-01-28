@@ -492,6 +492,8 @@
   "continuePurchase": "继续",
   "yearly": "年度",
   "monthly": "月度",
+  "yearlyDescription": "1年内使用所有高级功能",
+  "monthlyDescription": "1个月内使用所有高级功能",
   "bestValue": "最超值",
   "notice": "提示",
   "purchaseErrorMessage": "无法完成购买。请重试。",

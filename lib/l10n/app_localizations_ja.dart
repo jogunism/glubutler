@@ -1249,6 +1249,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get monthly => '月間';
 
   @override
+  String get yearlyDescription => '1年間すべてのプレミアム機能をご利用いただけます';
+
+  @override
+  String get monthlyDescription => '1ヶ月間すべてのプレミアム機能をご利用いただけます';
+
+  @override
   String get bestValue => '最もお得';
 
   @override

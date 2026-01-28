@@ -1250,6 +1250,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get monthly => '월간';
 
   @override
+  String get yearlyDescription => '1년간 모든 프리미엄 기능 이용';
+
+  @override
+  String get monthlyDescription => '1개월간 모든 프리미엄 기능 이용';
+
+  @override
   String get bestValue => '최고 가치';
 
   @override

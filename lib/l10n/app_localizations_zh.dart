@@ -1246,6 +1246,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get monthly => '月度';
 
   @override
+  String get yearlyDescription => '1年内使用所有高级功能';
+
+  @override
+  String get monthlyDescription => '1个月内使用所有高级功能';
+
+  @override
   String get bestValue => '最超值';
 
   @override

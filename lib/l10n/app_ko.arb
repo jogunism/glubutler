@@ -506,6 +506,8 @@
   "continuePurchase": "계속",
   "yearly": "연간",
   "monthly": "월간",
+  "yearlyDescription": "1년간 모든 프리미엄 기능 이용",
+  "monthlyDescription": "1개월간 모든 프리미엄 기능 이용",
   "bestValue": "최고 가치",
   "notice": "알림",
   "purchaseErrorMessage": "구매를 완료할 수 없습니다. 다시 시도해주세요.",

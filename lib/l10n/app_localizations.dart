@@ -2528,6 +2528,18 @@ abstract class AppLocalizations {
   /// **'Monthly'**
   String get monthly;
 
+  /// No description provided for @yearlyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'All premium features for 1 year'**
+  String get yearlyDescription;
+
+  /// No description provided for @monthlyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'All premium features for 1 month'**
+  String get monthlyDescription;
+
   /// No description provided for @bestValue.
   ///
   /// In en, this message translates to:

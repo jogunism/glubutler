@@ -492,6 +492,8 @@
   "continuePurchase": "Continuar",
   "yearly": "Anual",
   "monthly": "Mensual",
+  "yearlyDescription": "Todas las funciones premium por 1 año",
+  "monthlyDescription": "Todas las funciones premium por 1 mes",
   "bestValue": "Mejor valor",
   "notice": "Aviso",
   "purchaseErrorMessage": "No se pudo completar la compra. Por favor, inténtelo de nuevo.",

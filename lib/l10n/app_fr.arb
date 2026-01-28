@@ -492,6 +492,8 @@
   "continuePurchase": "Continuer",
   "yearly": "Annuel",
   "monthly": "Mensuel",
+  "yearlyDescription": "Toutes les fonctionnalités premium pour 1 an",
+  "monthlyDescription": "Toutes les fonctionnalités premium pour 1 mois",
   "bestValue": "Meilleur rapport qualité-prix",
   "notice": "Avis",
   "purchaseErrorMessage": "Impossible de finaliser l'achat. Veuillez réessayer.",

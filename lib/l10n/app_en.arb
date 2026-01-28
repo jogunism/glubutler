@@ -517,6 +517,8 @@
   "continuePurchase": "Continue",
   "yearly": "Yearly",
   "monthly": "Monthly",
+  "yearlyDescription": "All premium features for 1 year",
+  "monthlyDescription": "All premium features for 1 month",
   "bestValue": "Best Value",
   "notice": "Notice",
   "purchaseErrorMessage": "Unable to complete purchase. Please try again.",

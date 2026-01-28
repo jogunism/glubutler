@@ -1306,6 +1306,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get monthly => 'Monatlich';
 
   @override
+  String get yearlyDescription => 'Alle Premium-Funktionen für 1 Jahr';
+
+  @override
+  String get monthlyDescription => 'Alle Premium-Funktionen für 1 Monat';
+
+  @override
   String get bestValue => 'Bester Wert';
 
   @override

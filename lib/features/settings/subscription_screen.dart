@@ -555,6 +555,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ? l10n.monthly
             : package.storeProduct.title;
 
+    String description = isYearly
+        ? l10n.yearlyDescription
+        : package.packageType == PackageType.monthly ||
+                package.identifier.contains('monthly')
+            ? l10n.monthlyDescription
+            : package.storeProduct.description;
+
     final price = package.storeProduct.priceString;
 
     return GestureDetector(
@@ -576,6 +583,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     title,
                     style: context.textStyles.tileTitle.copyWith(
                       fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      color: context.colors.textSecondary,
+                      letterSpacing: -0.2,
                     ),
                   ),
                 ],
@@ -667,6 +684,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   style: TextStyle(
                     color: CupertinoColors.label.resolveFrom(context),
                     fontSize: 16,
+                    fontWeight: FontWeight.normal,
                     decoration: TextDecoration.none,
                   ),
                   textAlign: TextAlign.center,
