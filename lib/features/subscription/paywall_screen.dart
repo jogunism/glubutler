@@ -236,7 +236,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                               color: Colors.white)
                           : Text(
                               l10n.continuePurchase,
-                              style: context.textStyles.buttonText,
+                              style: context.textStyles.buttonText.copyWith(
+                                decoration: TextDecoration.none,
+                              ),
                             ),
                     ),
                   ),
@@ -269,6 +271,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
+            decoration: TextDecoration.none,
           ),
           textAlign: TextAlign.center,
         ),
@@ -291,7 +294,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
             const SizedBox(height: 16),
             Text(
               _errorMessage ?? l10n.anErrorOccurred,
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(
+                fontSize: 16,
+                decoration: TextDecoration.none,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -385,6 +391,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.textPrimary(context),
+                          decoration: TextDecoration.none,
                         ),
                       ),
                     ],
@@ -398,6 +405,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         color: AppTheme.textSecondary(context),
+                        decoration: TextDecoration.none,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -412,6 +420,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.primary,
+                decoration: TextDecoration.none,
               ),
             ),
           ],

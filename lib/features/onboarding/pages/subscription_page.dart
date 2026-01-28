@@ -73,12 +73,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   Future<void> _openPaywall() async {
     if (_selectedPackage == null) return;
 
-    // Navigate to PaywallScreen with selected package
-    final result = await Navigator.of(context).push<bool>(
-      CupertinoPageRoute(
-        builder: (context) => PaywallScreen(
-          initialSelectedPackage: _selectedPackage,
-        ),
+    // Show PaywallScreen as modal bottom sheet (swipeable from bottom)
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      useRootNavigator: true,
+      builder: (context) => PaywallScreen(
+        initialSelectedPackage: _selectedPackage,
       ),
     );
 
