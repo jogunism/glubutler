@@ -502,6 +502,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     final price = package.storeProduct.priceString;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         setState(() {
           _selectedPackage = package;

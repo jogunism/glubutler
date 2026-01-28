@@ -643,8 +643,9 @@ class _ReportScreenState extends State<ReportScreen> {
     const backgroundColor = Colors.white;
     const borderColor = Color(0xFFCCCCCC);
 
-    return GestureDetector(
-      onTap: _showEmailInputDialog,
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: _showEmailInputDialog,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(

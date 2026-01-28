@@ -565,6 +565,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final price = package.storeProduct.priceString;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
