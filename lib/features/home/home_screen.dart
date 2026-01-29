@@ -286,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen>
       } else if (value <= glucoseRange.high) {
         normal++;
       } else if (value <= glucoseRange.veryHigh) {
-        veryHigh++;
+        high++;
       } else {
         veryHigh++;
       }

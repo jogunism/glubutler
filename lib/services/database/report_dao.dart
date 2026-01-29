@@ -51,7 +51,7 @@ class ReportDao {
       DatabaseSchema.tableReports,
       where: 'content IS NOT NULL AND content != ?',
       whereArgs: [''],
-      orderBy: 'created_at DESC',
+      orderBy: 'end_date DESC, created_at DESC',
       limit: 1,
     );
 
@@ -64,13 +64,13 @@ class ReportDao {
 
   /// 모든 리포트 조회 (최신순, 삭제된 리포트 제외)
   ///
-  /// Returns: 생성일 기준 내림차순으로 정렬된 리포트 리스트
+  /// Returns: 종료일 기준 내림차순으로 정렬된 리포트 리스트
   Future<List<Report>> getAllReports() async {
     final List<Map<String, dynamic>> maps = await db.query(
       DatabaseSchema.tableReports,
       where: 'content IS NOT NULL AND content != ?',
       whereArgs: [''],
-      orderBy: 'created_at DESC',
+      orderBy: 'end_date DESC, created_at DESC',
     );
 
     return List.generate(maps.length, (i) {
@@ -80,11 +80,11 @@ class ReportDao {
 
   /// 모든 리포트 조회 (삭제된 리포트 포함, 날짜 범위 검증용)
   ///
-  /// Returns: 생성일 기준 내림차순으로 정렬된 모든 리포트 리스트
+  /// Returns: 종료일 기준 내림차순으로 정렬된 모든 리포트 리스트
   Future<List<Report>> getAllReportsIncludingDeleted() async {
     final List<Map<String, dynamic>> maps = await db.query(
       DatabaseSchema.tableReports,
-      orderBy: 'created_at DESC',
+      orderBy: 'end_date DESC, created_at DESC',
     );
 
     return List.generate(maps.length, (i) {
@@ -153,7 +153,7 @@ class ReportDao {
         endDate.toIso8601String(),
         '',
       ],
-      orderBy: 'created_at DESC',
+      orderBy: 'end_date DESC, created_at DESC',
     );
 
     return List.generate(maps.length, (i) {
