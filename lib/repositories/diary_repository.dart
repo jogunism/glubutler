@@ -49,6 +49,14 @@ class DiaryRepository {
     final entriesWithFiles = <DiaryItem>[];
     for (final entry in entries) {
       final files = await _databaseService.getDiaryFiles(entry.id);
+
+      // 사진을 촬영 시간 순서로 정렬 (먼저 찍힌 사진이 앞에)
+      files.sort((a, b) {
+        final aTime = a.capturedAt ?? a.createdAt;
+        final bTime = b.capturedAt ?? b.createdAt;
+        return aTime.compareTo(bTime);
+      });
+
       entriesWithFiles.add(entry.copyWith(files: files));
     }
 
@@ -61,6 +69,14 @@ class DiaryRepository {
     if (entry == null) return null;
 
     final files = await _databaseService.getDiaryFiles(id);
+
+    // 사진을 촬영 시간 순서로 정렬 (먼저 찍힌 사진이 앞에)
+    files.sort((a, b) {
+      final aTime = a.capturedAt ?? a.createdAt;
+      final bTime = b.capturedAt ?? b.createdAt;
+      return aTime.compareTo(bTime);
+    });
+
     return entry.copyWith(files: files);
   }
 

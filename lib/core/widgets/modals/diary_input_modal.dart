@@ -198,6 +198,13 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         }
       }
 
+      // 사진을 촬영 시간 순서로 정렬 (먼저 찍힌 사진이 앞에)
+      diaryFiles.sort((a, b) {
+        final aTime = a.capturedAt ?? a.createdAt;
+        final bTime = b.capturedAt ?? b.createdAt;
+        return aTime.compareTo(bTime);
+      });
+
       // 음식 사진 감지 여부 확인
       bool hasMealDetected = false;
       if (diaryFiles.isNotEmpty) {
