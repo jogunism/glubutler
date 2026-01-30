@@ -282,7 +282,7 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
           ),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -315,12 +315,10 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                     color: Colors.grey[600],
                   ),
                 ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
               // 달력
-              SizedBox(
-                height: 400,
-                child: TableCalendar(
+              TableCalendar(
                   firstDay: DateTime.now().subtract(const Duration(days: 365)),
                   lastDay: DateTime.now(),
                   focusedDay: _focusedDay,
@@ -703,29 +701,51 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
                   ),
                 ),
               ),
-            ),
-              const SizedBox(height: 16),
+            ],
+          ),
+        ),
 
-              // 안내 메시지 (첫 리포트 여부에 따라 다른 메시지 표시)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    _existingReports.isEmpty
-                      ? l10n.firstReportInfo
-                      : l10n.subsequentReportInfo,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      height: 1.4,
-                    ),
+        const SizedBox(height: 16),
+
+        // 안내 메시지 (첫 리포트 여부에 따라 다른 메시지 표시)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '* ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  height: 1.4,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  (_existingReports.isEmpty
+                          ? l10n.firstReportInfo
+                          : l10n.subsequentReportInfo)
+                      .replaceFirst('* ', ''),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    height: 1.4,
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+            ],
+          ),
+        ),
 
-              // 리포트 생성 버튼
+        const SizedBox(height: 20),
+
+        // 리포트 생성 버튼
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               SizedBox(
                 width: double.infinity,
                 child: CupertinoButton(
@@ -766,10 +786,10 @@ class _DateRangePickerModalState extends State<DateRangePickerModal> {
             ],
           ),
         ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   String _getDateRangeString() {
     if (_rangeStart == null || _rangeEnd == null) return '';
