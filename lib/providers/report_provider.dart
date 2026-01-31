@@ -98,7 +98,7 @@ class ReportProvider extends ChangeNotifier {
     _isGenerating = true;
     notifyListeners();
 
-    // 60% → 95%: 3-5초, 95% → 99%: 5-10초 (더 느리게)
+    // 50% → 95%: 6-10초, 95% → 99%: 5-10초 (더 느리게)
     _startProgressTimer();
 
     try {
@@ -109,8 +109,8 @@ class ReportProvider extends ChangeNotifier {
         userIdentity: userIdentity,
         onProgress: (sent, total) {
           if (!_isGenerating) return;
-          // 업로드 진행률은 60%까지만 표시
-          _uploadProgress = (sent / total) * 0.6;
+          // 업로드 진행률은 50%까지만 표시
+          _uploadProgress = (sent / total) * 0.5;
           notifyListeners();
         },
       );
@@ -188,13 +188,13 @@ class ReportProvider extends ChangeNotifier {
     }
   }
 
-  /// 60% 이후 진행률을 천천히 99%까지 증가시키는 타이머
-  /// 60% → 95%: 3-5초 (빠르게)
+  /// 50% 이후 진행률을 천천히 99%까지 증가시키는 타이머
+  /// 50% → 95%: 6-10초 (빠르게)
   /// 95% → 99%: 5-10초 (느리게)
   void _startProgressTimer() {
-    // 첫 번째 단계: 60% → 95% (3-5초)
-    final phase1Duration = 3000 + (DateTime.now().millisecondsSinceEpoch % 2000); // 3-5초
-    final phase1Start = 0.6;
+    // 첫 번째 단계: 50% → 95% (6-10초)
+    final phase1Duration = 6000 + (DateTime.now().millisecondsSinceEpoch % 4000); // 6-10초
+    final phase1Start = 0.5;
     final phase1Target = 0.95;
     final phase1Increment = (phase1Target - phase1Start) / (phase1Duration / 100);
 
