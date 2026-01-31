@@ -1,13 +1,11 @@
-import 'dart:convert';
-
 /// 리포트 가이드 요약 모델
 ///
 /// 서버에 연속성 있는 리포트 생성을 위해 전달하는 이전 리포트 가이드 요약
 class ReportGuideSummary {
   final int? id;
   final String reportDate; // yyyy-MM-dd 형식
-  final List<String> improvements; // 잘하고 계신점
-  final List<String> needsImprovement; // 개선이 필요한 부분
+  final String improvements; // 잘하고 계신점 (쉼표로 구분된 문자열)
+  final String needsImprovement; // 개선이 필요한 부분 (쉼표로 구분된 문자열)
   final DateTime createdAt;
 
   ReportGuideSummary({
@@ -23,11 +21,8 @@ class ReportGuideSummary {
     return ReportGuideSummary(
       id: map['id'] as int?,
       reportDate: map['report_date'] as String,
-      improvements: (jsonDecode(map['improvements'] as String) as List<dynamic>)
-          .cast<String>(),
-      needsImprovement:
-          (jsonDecode(map['needs_improvement'] as String) as List<dynamic>)
-              .cast<String>(),
+      improvements: map['improvements'] as String? ?? '',
+      needsImprovement: map['needs_improvement'] as String? ?? '',
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
@@ -37,8 +32,8 @@ class ReportGuideSummary {
     return {
       'id': id,
       'report_date': reportDate,
-      'improvements': jsonEncode(improvements),
-      'needs_improvement': jsonEncode(needsImprovement),
+      'improvements': improvements, // 쉼표로 구분된 문자열
+      'needs_improvement': needsImprovement, // 쉼표로 구분된 문자열
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -47,8 +42,8 @@ class ReportGuideSummary {
   Map<String, dynamic> toJson() {
     return {
       'reportDate': reportDate,
-      'improvements': improvements,
-      'needsImprovement': needsImprovement,
+      'improvements': improvements, // 쉼표로 구분된 문자열
+      'needsImprovement': needsImprovement, // 쉼표로 구분된 문자열
     };
   }
 
@@ -56,8 +51,8 @@ class ReportGuideSummary {
   ReportGuideSummary copyWith({
     int? id,
     String? reportDate,
-    List<String>? improvements,
-    List<String>? needsImprovement,
+    String? improvements,
+    String? needsImprovement,
     DateTime? createdAt,
   }) {
     return ReportGuideSummary(

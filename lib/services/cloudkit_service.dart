@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/meal_record.dart';
@@ -383,8 +384,8 @@ class CloudKitService {
       final summaryData = {
         'id': summary.id.toString(),
         'reportDate': summary.reportDate,
-        'improvements': summary.toMap()['improvements'], // JSON 문자열
-        'needsImprovement': summary.toMap()['needs_improvement'], // JSON 문자열
+        'improvements': summary.improvements, // 쉼표로 구분된 문자열
+        'needsImprovement': summary.needsImprovement, // 쉼표로 구분된 문자열
         'createdAt': summary.createdAt.toIso8601String(),
       };
 
@@ -449,8 +450,8 @@ class CloudKitService {
           final summary = ReportGuideSummary.fromMap({
             'id': localId,
             'report_date': jsonMap['reportDate'],
-            'improvements': jsonMap['improvements'], // JSON 문자열
-            'needs_improvement': jsonMap['needsImprovement'], // JSON 문자열
+            'improvements': jsonMap['improvements'], // 쉼표로 구분된 문자열
+            'needs_improvement': jsonMap['needsImprovement'], // 쉼표로 구분된 문자열
             'created_at': createdAt.toIso8601String(),
           });
 
@@ -465,6 +466,7 @@ class CloudKitService {
 
           savedCount++;
         } catch (e) {
+          debugPrint('[CloudKitService] Failed to save guide summary: $e');
           // 하나 실패해도 계속 진행
         }
       }

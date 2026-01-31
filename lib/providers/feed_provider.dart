@@ -792,17 +792,19 @@ class FeedProvider extends ChangeNotifier {
 
   /// API 리포트용 간소화된 데이터 생성
   ///
-  /// 모든 FeedItem을 간단한 포맷으로 변환:
+  /// 날짜별로 그룹핑된 포맷:
   /// {
-  ///   "type": "glucose manual|cgm|steps|water|exercise|sleep",
-  ///   "time": "2024-12-30T18:30",
-  ///   "value": "before_meal 145 mg/dL" // 또는 "avg": "95 mg/dL", "max": "102", "min": "88" (CGM인 경우)
+  ///   "2026-01-30": {
+  ///     "05:35": "glucose cgm - 107mg/dL",
+  ///     "05:40": "glucose cgm - 99mg/dL"
+  ///   },
+  ///   "2026-01-29": {}
   /// }
-  List<Map<String, dynamic>> getSimplifiedReportData({
+  Map<String, dynamic> getSimplifiedReportData({
     required DateTime startDate,
     required DateTime endDate,
   }) {
-    final result = <Map<String, dynamic>>[];
+    final tempData = <Map<String, dynamic>>[];
 
     // startDate ~ endDate 범위의 FeedItem 필터링
     final filteredItems = _items.where((item) {
@@ -823,24 +825,19 @@ class FeedProvider extends ChangeNotifier {
           final record = item.glucoseRecord;
           if (record == null) continue;
 
-          // CGM 여부 판단: isFromHealthKit이고 연속적인 데이터면 CGM
-          // 현재는 단순하게 수동 입력만 manual로 처리
           final isCgm = record.isFromHealthKit;
 
           if (isCgm) {
-            // CGM 데이터는 시간별로 그룹화해야 하므로 일단 개별 데이터로 추가
-            // (나중에 시간별 그룹화 로직 추가 가능)
-            result.add({
+            tempData.add({
               'type': 'glucose cgm',
               'time': timeStr,
               'value': '${record.value.toStringAsFixed(0)}${record.unit}',
             });
           } else {
-            // Manual 데이터
             final mealContext = record.mealContext != null
                 ? '${record.mealContext}, '
                 : '';
-            result.add({
+            tempData.add({
               'type': 'glucose manual',
               'time': timeStr,
               'value':
@@ -854,7 +851,7 @@ class FeedProvider extends ChangeNotifier {
           if (stepsMap == null) continue;
           final steps = stepsMap['steps'] as int? ?? 0;
           final distanceKm = stepsMap['distanceKm'] as double? ?? 0;
-          result.add({
+          tempData.add({
             'type': 'steps',
             'time': timeStr,
             'value': '${steps}steps, ${distanceKm.toStringAsFixed(2)}km',
@@ -865,7 +862,7 @@ class FeedProvider extends ChangeNotifier {
           final waterGroup = item.waterGroup;
           if (waterGroup == null) continue;
           final totalMl = waterGroup.totalAmountMl;
-          result.add({
+          tempData.add({
             'type': 'water',
             'time': timeStr,
             'value': '${totalMl.toStringAsFixed(2)}ml',
@@ -878,7 +875,7 @@ class FeedProvider extends ChangeNotifier {
           final calories = exercise.calories ?? 0;
           final duration = exercise.durationMinutes;
           final exerciseType = exercise.exerciseType;
-          result.add({
+          tempData.add({
             'type': 'exercise',
             'time': timeStr,
             'value': '${calories}kcal, ${duration}min ($exerciseType)',
@@ -891,7 +888,7 @@ class FeedProvider extends ChangeNotifier {
           final startTime = _formatTimeForApi(sleep.startTime);
           final endTime = _formatTimeForApi(sleep.endTime);
           final duration = sleep.totalDurationMinutes;
-          result.add({
+          tempData.add({
             'type': 'sleep',
             'time': timeStr,
             'value': '$startTime~$endTime, ${duration}min',
@@ -901,9 +898,8 @@ class FeedProvider extends ChangeNotifier {
         case FeedItemType.meal:
           final meal = item.mealRecord;
           if (meal == null) continue;
-          final mealType = meal
-              .getMealTypeKey(); // breakfast, lunch, dinner, snack
-          result.add({'type': 'meal', 'time': timeStr, 'value': mealType});
+          final mealType = meal.getMealTypeKey();
+          tempData.add({'type': 'meal', 'time': timeStr, 'value': mealType});
           break;
 
         case FeedItemType.insulin:
@@ -911,7 +907,7 @@ class FeedProvider extends ChangeNotifier {
           if (insulin == null) continue;
           final insulinType = insulin.insulinType.displayName;
           final units = insulin.units.toStringAsFixed(1);
-          result.add({
+          tempData.add({
             'type': 'insulin',
             'time': timeStr,
             'value': '$insulinType ${units}U',
@@ -922,7 +918,7 @@ class FeedProvider extends ChangeNotifier {
           final mindfulness = item.mindfulnessRecord;
           if (mindfulness == null) continue;
           final duration = mindfulness.durationMinutes;
-          result.add({
+          tempData.add({
             'type': 'mindfulness',
             'time': timeStr,
             'value': '${duration}min',
@@ -932,10 +928,9 @@ class FeedProvider extends ChangeNotifier {
         case FeedItemType.cgmGroup:
           final cgmGroup = item.cgmGroup;
           if (cgmGroup == null) continue;
-          // CGM 그룹의 모든 레코드를 개별적으로 추가
           for (final record in cgmGroup.records) {
             final recordTimeStr = _formatTimeForApi(record.timestamp);
-            result.add({
+            tempData.add({
               'type': 'glucose cgm',
               'time': recordTimeStr,
               'value': '${record.value.toStringAsFixed(0)}${record.unit}',
@@ -943,13 +938,12 @@ class FeedProvider extends ChangeNotifier {
           }
           break;
 
-        // 다른 타입들은 무시
         default:
           break;
       }
     }
 
-    // Add menstruation data for dates in range
+    // Add menstruation data
     final datesInRange = <DateTime>[];
     var currentDate = DateTime(startDate.year, startDate.month, startDate.day);
     final endDateNormalized = DateTime(endDate.year, endDate.month, endDate.day);
@@ -962,9 +956,8 @@ class FeedProvider extends ChangeNotifier {
 
     for (final date in datesInRange) {
       if (_menstruationDates.contains(date)) {
-        // Add menstruation entry for this date (using noon as representative time)
         final noonTime = DateTime(date.year, date.month, date.day, 12, 0);
-        result.add({
+        tempData.add({
           'type': 'menstruation',
           'time': _formatTimeForApi(noonTime),
           'value': 'menstrual cycle',
@@ -972,12 +965,26 @@ class FeedProvider extends ChangeNotifier {
       }
     }
 
-    // Sort result by time
-    result.sort((a, b) =>
-      (a['time'] as String).compareTo(b['time'] as String)
-    );
+    // 날짜별로 그룹핑
+    final groupedByDate = <String, Map<String, String>>{};
 
-    return result;
+    for (final item in tempData) {
+      final fullTime = item['time'] as String; // "2026-01-30T05:35"
+      final date = fullTime.substring(0, 10); // "2026-01-30"
+      final time = fullTime.substring(11); // "05:35"
+      final type = item['type'] as String;
+      final value = item['value'] as String;
+
+      // 날짜별 Map이 없으면 생성
+      if (!groupedByDate.containsKey(date)) {
+        groupedByDate[date] = <String, String>{};
+      }
+
+      // "type - value" 형식으로 저장
+      groupedByDate[date]![time] = '$type - $value';
+    }
+
+    return groupedByDate;
   }
 
   /// API용 시간 포맷 (초 단위 제거)

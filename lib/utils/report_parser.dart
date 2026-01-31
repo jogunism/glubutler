@@ -4,6 +4,11 @@ import 'package:glu_butler/models/report_guide_summary.dart';
 class ReportParser {
   /// 리포트 마크다운에서 가이드 요약 추출
   ///
+  /// 마크다운 구조 기반 파싱 (언어 독립적):
+  /// - 3번째 ## 섹션 (index 2) = 가이드 섹션
+  /// - 첫 번째 ### = improvements
+  /// - 두 번째 ### = needs_improvement
+  ///
   /// [markdownContent]: 전체 리포트 마크다운 내용
   /// [reportDate]: 리포트 날짜 (yyyy-MM-dd 형식)
   ///
@@ -13,26 +18,28 @@ class ReportParser {
     String reportDate,
   ) {
     try {
-      // "## 📝 가이드" 섹션 찾기
-      final guideSection = _extractSection(markdownContent, '## 📝 가이드');
+      // 3번째 ## 섹션 찾기 (index 2 = 가이드 섹션)
+      final guideSection = _extractSectionByIndex(markdownContent, 2, 2);
       if (guideSection == null) {
         return null;
       }
 
-      // "### 잘하고 계신점" 섹션 추출
-      final improvementsText =
-          _extractSubsection(guideSection, '### 잘하고 계신점');
-      final improvements = _parseListItems(improvementsText);
+      // 첫 번째 ### 섹션 (improvements)
+      final improvementsText = _extractSubsectionByIndex(guideSection, 0);
+      final improvementsList = _parseListItems(improvementsText);
 
-      // "### 개선이 필요한 부분" 섹션 추출
-      final needsImprovementText =
-          _extractSubsection(guideSection, '### 개선이 필요한 부분');
-      final needsImprovement = _parseListItems(needsImprovementText);
+      // 두 번째 ### 섹션 (needs_improvement)
+      final needsImprovementText = _extractSubsectionByIndex(guideSection, 1);
+      final needsImprovementList = _parseListItems(needsImprovementText);
 
       // 둘 다 비어있으면 null 반환
-      if (improvements.isEmpty && needsImprovement.isEmpty) {
+      if (improvementsList.isEmpty && needsImprovementList.isEmpty) {
         return null;
       }
+
+      // List<String>을 쉼표로 구분된 문자열로 변환
+      final improvements = improvementsList.join(', ');
+      final needsImprovement = needsImprovementList.join(', ');
 
       return ReportGuideSummary(
         reportDate: reportDate,
@@ -44,49 +51,63 @@ class ReportParser {
     }
   }
 
-  /// 특정 헤더로 시작하는 섹션 추출
+  /// N번째 레벨2 헤더(##) 섹션 추출
   ///
-  /// 해당 헤더부터 다음 같은 레벨 헤더 전까지의 내용을 반환
-  static String? _extractSection(String content, String header) {
-    final headerIndex = content.indexOf(header);
-    if (headerIndex == -1) {
+  /// [content]: 마크다운 전체 내용
+  /// [headerLevel]: 헤더 레벨 (2 for ##)
+  /// [index]: 0부터 시작하는 인덱스
+  ///
+  /// Returns: 섹션 내용, 없으면 null
+  static String? _extractSectionByIndex(
+    String content,
+    int headerLevel,
+    int index,
+  ) {
+    // 모든 레벨2 헤더 찾기 (예: ## 제목)
+    final regex = RegExp('^#{$headerLevel} .+\$', multiLine: true);
+    final matches = regex.allMatches(content).toList();
+
+    if (index >= matches.length) {
       return null;
     }
 
-    // 헤더의 레벨 확인 (예: "## " = level 2)
-    final headerLevel = header.split(' ').first.length;
+    final targetMatch = matches[index];
+    final headerEnd = targetMatch.end;
 
     // 다음 같은 레벨 헤더 찾기
-    final regex = RegExp('^#{$headerLevel} ', multiLine: true);
-    final matches = regex.allMatches(content, headerIndex + header.length);
-
-    final endIndex = matches.isEmpty
+    final nextMatches = regex.allMatches(content, headerEnd);
+    final endIndex = nextMatches.isEmpty
         ? content.length
-        : matches.first.start;
+        : nextMatches.first.start;
 
-    return content.substring(headerIndex + header.length, endIndex).trim();
+    // 헤더 다음 줄부터 다음 헤더 전까지
+    return content.substring(headerEnd, endIndex).trim();
   }
 
-  /// 서브섹션 추출
+  /// N번째 레벨3 헤더(###) 서브섹션 추출
   ///
-  /// 특정 서브헤더부터 다음 서브헤더 전까지의 내용을 반환
-  static String _extractSubsection(String sectionContent, String subheader) {
-    final subheaderIndex = sectionContent.indexOf(subheader);
-    if (subheaderIndex == -1) {
+  /// [sectionContent]: 섹션 내용
+  /// [index]: 0부터 시작하는 인덱스
+  ///
+  /// Returns: 서브섹션 내용, 없으면 빈 문자열
+  static String _extractSubsectionByIndex(String sectionContent, int index) {
+    // 모든 레벨3 헤더 찾기 (예: ### 소제목)
+    final regex = RegExp('^### .+\$', multiLine: true);
+    final matches = regex.allMatches(sectionContent).toList();
+
+    if (index >= matches.length) {
       return '';
     }
 
+    final targetMatch = matches[index];
+    final headerEnd = targetMatch.end;
+
     // 다음 ### 헤더 찾기
-    final nextSubheaderIndex =
-        sectionContent.indexOf('###', subheaderIndex + subheader.length);
+    final endIndex = index + 1 < matches.length
+        ? matches[index + 1].start
+        : sectionContent.length;
 
-    final endIndex = nextSubheaderIndex == -1
-        ? sectionContent.length
-        : nextSubheaderIndex;
-
-    return sectionContent
-        .substring(subheaderIndex + subheader.length, endIndex)
-        .trim();
+    return sectionContent.substring(headerEnd, endIndex).trim();
   }
 
   /// 마크다운 리스트 아이템 파싱

@@ -52,7 +52,7 @@ class ReportApiService {
     required GlucoseRangeSettings glucoseRange,
     required DateTime startDate,
     required DateTime endDate,
-    required List<Map<String, dynamic>> simplifiedFeedData,
+    required Map<String, dynamic> simplifiedFeedData,
     required List<Map<String, dynamic>> simplifiedDiaryData,
     List<String>? imagePaths,
     List<Map<String, dynamic>>? previousGuideSummaries,
