@@ -8,6 +8,7 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/models/notification_type.dart';
 import 'package:glu_butler/services/notification_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_settings/app_settings.dart';
 
@@ -112,6 +113,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     }
 
     setState(() {});
+
+    // Log notification settings changed
+    AnalyticsService.logNotificationSettingsChanged(value);
 
     // 알림 스케줄링 업데이트
     final notificationService = NotificationService();

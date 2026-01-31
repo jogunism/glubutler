@@ -18,6 +18,7 @@ import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/glucose_score_service.dart';
 import 'package:glu_butler/services/health_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 
 /// 홈 대시보드 화면
@@ -229,6 +230,9 @@ class _HomeScreenState extends State<HomeScreen>
       padding: const EdgeInsets.only(bottom: 10, left: 44, right: 0),
       minimumSize: Size.zero,
       onPressed: () async {
+        // Log date picker opened
+        AnalyticsService.logDatePickerOpened();
+
         // 모달을 열기 전에 탭바 숨김
         MainScreen.globalKey.currentState?.setTabBarVisibility(false);
 
@@ -241,6 +245,11 @@ class _HomeScreenState extends State<HomeScreen>
         MainScreen.globalKey.currentState?.setTabBarVisibility(true);
 
         if (pickedDate != null && pickedDate != _selectedDate) {
+          // Log date selected
+          AnalyticsService.logDateSelected(
+            DateFormat('yyyy-MM-dd').format(pickedDate),
+          );
+
           setState(() {
             _selectedDate = pickedDate;
           });

@@ -15,6 +15,7 @@ import 'package:glu_butler/features/diary/diary_screen.dart';
 import 'package:glu_butler/features/report/report_screen.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/notification_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 
 /// 메인 화면 - iOS 상태바 탭 scroll-to-top 지원
 ///
@@ -62,6 +63,10 @@ class MainScreenState extends State<MainScreen> {
       setState(() {
         _currentIndex = index;
       });
+
+      // Log tab navigation
+      final tabNames = ['Home', 'Feed', 'Diary', 'Report'];
+      AnalyticsService.logTabNavigation(tabNames[index]);
     }
   }
 

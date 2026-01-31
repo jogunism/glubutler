@@ -89,6 +89,8 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Future<void> _showInfoModal() async {
+    // Log report info popup opened
+    AnalyticsService.logReportInfoPopupOpened();
     await ReportGuideModal.show(context, infoMode: true);
   }
 
@@ -213,6 +215,9 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Future<void> generateReport() async {
+    // Log report generation button tapped
+    AnalyticsService.logReportGenerationButtonTapped();
+
     final reportProvider = context.read<ReportProvider>();
     final settingsService = context.read<SettingsService>();
     final l10n = AppLocalizations.of(context)!;

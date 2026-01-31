@@ -14,6 +14,7 @@ import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/app_settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
@@ -232,7 +233,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     trailingColor: settings.isPro
                         ? AppTheme.iconAmber
                         : AppTheme.iconOrange,
-                    onTap: () => AppRoutes.goToSubscription(context),
+                    onTap: () {
+                      AnalyticsService.logSettingsMenuTapped('subscription');
+                      AppRoutes.goToSubscription(context);
+                    },
                   ),
                 ],
               ),
@@ -250,7 +254,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconColor: AppTheme.iconBlue,
                     title: l10n.name,
                     subtitle: settings.userProfile.name ?? '-',
-                    onTap: () => AppRoutes.goToProfileSettings(context),
+                    onTap: () {
+                      AnalyticsService.logSettingsMenuTapped('profile');
+                      AppRoutes.goToProfileSettings(context);
+                    },
                   ),
                 ],
               ),
@@ -273,7 +280,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       size: 16,
                       color: context.colors.iconGrey,
                     ),
-                    onTap: () => AppSettingsService.openAppSettings(),
+                    onTap: () {
+                      AnalyticsService.logSettingsMenuTapped('language');
+                      AppSettingsService.openAppSettings();
+                    },
                   ),
                   _buildDivider(context),
                   _buildAdaptivePopupTile(
@@ -295,6 +305,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                     onSelected: (index, item) {
                       if (item.value != null) {
+                        AnalyticsService.logGlucoseUnitChanged(item.value!);
                         settings.setUnit(item.value!);
                       }
                     },
@@ -307,7 +318,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconColor: AppTheme.iconGreen,
                     title: l10n.targetGlucoseRange,
                     subtitle: _getTargetRangeSubtitle(settings),
-                    onTap: () => AppRoutes.goToGlucoseRange(context),
+                    onTap: () {
+                      AnalyticsService.logSettingsMenuTapped('glucose_range');
+                      AppRoutes.goToGlucoseRange(context);
+                    },
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(
@@ -316,7 +330,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconColor: AppTheme.iconOrange,
                     title: l10n.notifications,
                     subtitle: l10n.manageNotifications,
-                    onTap: () => AppRoutes.goToNotificationSettings(context),
+                    onTap: () {
+                      AnalyticsService.logSettingsMenuTapped('notifications');
+                      AppRoutes.goToNotificationSettings(context);
+                    },
                   ),
                   _buildDivider(context),
                   _buildSettingsTile(
@@ -325,7 +342,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconColor: AppTheme.iconIndigo,
                     title: l10n.displaySettings,
                     subtitle: _getThemeModeLabel(settings.themeMode, l10n),
-                    onTap: () => AppRoutes.goToDisplaySettings(context),
+                    onTap: () {
+                      AnalyticsService.logSettingsMenuTapped('display');
+                      AppRoutes.goToDisplaySettings(context);
+                    },
                   ),
                   _buildDivider(context),
                   _buildHapticToggleTile(context: context, settings: settings),
@@ -351,7 +371,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ? l10n.connected
                             : l10n.notConnected,
                         customIcon: _buildAppleHealthIcon(),
-                        onTap: () => AppRoutes.goToHealthConnect(context),
+                        onTap: () {
+                          AnalyticsService.logSettingsMenuTapped('apple_health');
+                          AppRoutes.goToHealthConnect(context);
+                        },
                       );
                     },
                   ),
@@ -645,7 +668,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           CupertinoSwitch(
             value: settings.hapticEnabled,
-            onChanged: (value) => settings.setHapticEnabled(value),
+            onChanged: (value) {
+              AnalyticsService.logSettingChanged('haptic_feedback', value.toString());
+              settings.setHapticEnabled(value);
+            },
           ),
         ],
       ),

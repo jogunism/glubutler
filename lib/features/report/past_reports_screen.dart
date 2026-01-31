@@ -9,6 +9,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/providers/report_provider.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/widgets/common/input_dialog.dart';
 
 /// 지난 리포트 목록 화면
@@ -99,6 +100,10 @@ class _PastReportsScreenState extends State<PastReportsScreen> {
   }
 
   void _viewReport(Report report) {
+    // Log past report viewed
+    final reportDate = '${report.startDate.year}-${report.startDate.month.toString().padLeft(2, '0')}-${report.startDate.day.toString().padLeft(2, '0')}';
+    AnalyticsService.logPastReportViewed(reportDate);
+
     // Set the selected report and navigate back to report screen
     context.read<ReportProvider>().setSelectedReport(report);
     Navigator.of(context).pop();

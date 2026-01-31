@@ -167,6 +167,11 @@ class GluButlerApp extends StatelessWidget {
           // Navigation - basic Navigator instead of GoRouter
           initialRoute: initialRoute,
           onGenerateRoute: AppRoutes.generateRoute,
+
+          // Firebase Analytics - screen tracking
+          navigatorObservers: [
+            AnalyticsService.getObserver(),
+          ],
         );
       },
     );

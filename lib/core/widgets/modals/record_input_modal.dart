@@ -11,6 +11,7 @@ import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/core/constants/app_constants.dart';
 import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/providers/feed_provider.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
@@ -72,6 +73,9 @@ class _RecordInputModalState extends State<RecordInputModal> {
     _insulinFocusNode.addListener(_onFocusChange);
     _glucoseController.addListener(_onTextChange);
     _insulinDoseController.addListener(_onTextChange);
+
+    // Log manual glucose input opened (default tab)
+    AnalyticsService.logManualGlucoseInputOpened();
   }
 
   void _onFocusChange() {
@@ -131,6 +135,9 @@ class _RecordInputModalState extends State<RecordInputModal> {
         // Save via FeedProvider (handles Health/Local routing)
         await feedProvider.addGlucoseRecord(record);
 
+        // Log manual glucose saved
+        AnalyticsService.logManualGlucoseSaved();
+
         if (mounted) {
           TopBanner.success(context, message: l10n.glucoseSaved);
           nav.pop();
@@ -170,6 +177,9 @@ class _RecordInputModalState extends State<RecordInputModal> {
       try {
         // Save via FeedProvider (handles Health/Local routing)
         await feedProvider.addInsulinRecord(record);
+
+        // Log insulin saved
+        AnalyticsService.logInsulinSaved();
 
         if (mounted) {
           TopBanner.success(context, message: l10n.insulinSaved);
@@ -306,6 +316,11 @@ class _RecordInputModalState extends State<RecordInputModal> {
                       setState(() {
                         _selectedType = value;
                       });
+
+                      // Log insulin input opened when switching to insulin tab
+                      if (value == RecordType.insulin) {
+                        AnalyticsService.logInsulinInputOpened();
+                      }
                     }
                   },
                 ),

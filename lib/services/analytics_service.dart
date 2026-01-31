@@ -168,4 +168,290 @@ class AnalyticsService {
   static FirebaseAnalyticsObserver getObserver() {
     return FirebaseAnalyticsObserver(analytics: _analytics);
   }
+
+  // ============================================================================
+  // User Action Tracking
+  // ============================================================================
+
+  /// Log tab navigation (Home, Diary, Report, Settings)
+  static Future<void> logTabNavigation(String tabName) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'tab_navigation',
+      parameters: {'tab': tabName},
+    );
+    debugPrint('[Analytics] Tab navigation: $tabName');
+  }
+
+  /// Log glucose entry started
+  static Future<void> logGlucoseEntryStarted() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'glucose_entry_started');
+    debugPrint('[Analytics] Glucose entry started');
+  }
+
+  /// Log glucose entry saved
+  static Future<void> logGlucoseEntrySaved() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'glucose_entry_saved');
+    debugPrint('[Analytics] Glucose entry saved');
+  }
+
+  /// Log diary entry started
+  static Future<void> logDiaryEntryStarted() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_entry_started');
+    debugPrint('[Analytics] Diary entry started');
+  }
+
+  /// Log diary entry saved
+  static Future<void> logDiaryEntrySaved() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_entry_saved');
+    debugPrint('[Analytics] Diary entry saved');
+  }
+
+  /// Log diary entry edited
+  static Future<void> logDiaryEntryEdited() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_entry_edited');
+    debugPrint('[Analytics] Diary entry edited');
+  }
+
+  /// Log diary entry deleted
+  static Future<void> logDiaryEntryDeleted() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_entry_deleted');
+    debugPrint('[Analytics] Diary entry deleted');
+  }
+
+  /// Log report generation started
+  static Future<void> logReportGenerationStarted() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'report_generation_started');
+    debugPrint('[Analytics] Report generation started');
+  }
+
+  /// Log report viewed
+  static Future<void> logReportViewed() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'report_viewed');
+    debugPrint('[Analytics] Report viewed');
+  }
+
+  /// Log settings changed
+  static Future<void> logSettingChanged(String settingName, String value) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'setting_changed',
+      parameters: {
+        'setting': settingName,
+        'value': value,
+      },
+    );
+    debugPrint('[Analytics] Setting changed: $settingName = $value');
+  }
+
+  /// Log photo added to diary
+  static Future<void> logPhotoAdded() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'photo_added');
+    debugPrint('[Analytics] Photo added');
+  }
+
+  /// Log meal record added
+  static Future<void> logMealRecordAdded() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'meal_record_added');
+    debugPrint('[Analytics] Meal record added');
+  }
+
+  // ============================================================================
+  // Detailed User Actions (Home, Feed, Diary, Report, Settings)
+  // ============================================================================
+
+  /// Log date picker opened in Home tab
+  static Future<void> logDatePickerOpened() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'date_picker_opened');
+    debugPrint('[Analytics] Date picker opened');
+  }
+
+  /// Log date selected in Home tab
+  static Future<void> logDateSelected(String date) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'date_selected',
+      parameters: {'date': date},
+    );
+    debugPrint('[Analytics] Date selected: $date');
+  }
+
+  /// Log manual glucose input opened in Feed tab
+  static Future<void> logManualGlucoseInputOpened() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'manual_glucose_input_opened');
+    debugPrint('[Analytics] Manual glucose input opened');
+  }
+
+  /// Log manual glucose saved in Feed tab
+  static Future<void> logManualGlucoseSaved() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'manual_glucose_saved');
+    debugPrint('[Analytics] Manual glucose saved');
+  }
+
+  /// Log insulin input opened in Feed tab
+  static Future<void> logInsulinInputOpened() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'insulin_input_opened');
+    debugPrint('[Analytics] Insulin input opened');
+  }
+
+  /// Log insulin saved in Feed tab
+  static Future<void> logInsulinSaved() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'insulin_saved');
+    debugPrint('[Analytics] Insulin saved');
+  }
+
+  /// Log diary input opened in Diary tab
+  static Future<void> logDiaryInputOpened() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_input_opened');
+    debugPrint('[Analytics] Diary input opened');
+  }
+
+  /// Log diary saved in Diary tab
+  static Future<void> logDiarySaved() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_saved');
+    debugPrint('[Analytics] Diary saved');
+  }
+
+  /// Log diary photo added
+  static Future<void> logDiaryPhotoAdded() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_photo_added');
+    debugPrint('[Analytics] Diary photo added');
+  }
+
+  /// Log diary edited
+  static Future<void> logDiaryEdited() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_edited');
+    debugPrint('[Analytics] Diary edited');
+  }
+
+  /// Log diary deleted
+  static Future<void> logDiaryDeleted() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'diary_deleted');
+    debugPrint('[Analytics] Diary deleted');
+  }
+
+  /// Log report generation button tapped
+  static Future<void> logReportGenerationButtonTapped() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'report_generation_button_tapped');
+    debugPrint('[Analytics] Report generation button tapped');
+  }
+
+  /// Log report info popup opened
+  static Future<void> logReportInfoPopupOpened() async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(name: 'report_info_popup_opened');
+    debugPrint('[Analytics] Report info popup opened');
+  }
+
+  /// Log past report viewed
+  static Future<void> logPastReportViewed(String reportDate) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'past_report_viewed',
+      parameters: {'report_date': reportDate},
+    );
+    debugPrint('[Analytics] Past report viewed: $reportDate');
+  }
+
+  /// Log settings menu item tapped
+  static Future<void> logSettingsMenuTapped(String menuItem) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'settings_menu_tapped',
+      parameters: {'menu_item': menuItem},
+    );
+    debugPrint('[Analytics] Settings menu tapped: $menuItem');
+  }
+
+  /// Log language changed
+  static Future<void> logLanguageChanged(String language) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'language_changed',
+      parameters: {'language': language},
+    );
+    debugPrint('[Analytics] Language changed: $language');
+  }
+
+  /// Log theme changed
+  static Future<void> logThemeChanged(String theme) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'theme_changed',
+      parameters: {'theme': theme},
+    );
+    debugPrint('[Analytics] Theme changed: $theme');
+  }
+
+  /// Log glucose unit changed
+  static Future<void> logGlucoseUnitChanged(String unit) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'glucose_unit_changed',
+      parameters: {'unit': unit},
+    );
+    debugPrint('[Analytics] Glucose unit changed: $unit');
+  }
+
+  /// Log notification settings changed
+  static Future<void> logNotificationSettingsChanged(bool enabled) async {
+    if (!isEnabled) return;
+
+    await _analytics.logEvent(
+      name: 'notification_settings_changed',
+      parameters: {'enabled': enabled},
+    );
+    debugPrint('[Analytics] Notification settings changed: $enabled');
+  }
 }

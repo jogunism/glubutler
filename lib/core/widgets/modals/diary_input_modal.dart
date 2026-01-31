@@ -22,6 +22,7 @@ import 'package:glu_butler/services/vision_service.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/core/widgets/keyboard_dismiss_button.dart';
 import 'package:provider/provider.dart';
@@ -80,6 +81,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
   void initState() {
     super.initState();
     _contentFocusNode.addListener(_onFocusChange);
+
+    // Log diary input opened
+    AnalyticsService.logDiaryInputOpened();
 
     // 수정 모드일 경우 기존 데이터 로드
     if (widget.entry != null) {
@@ -229,6 +233,13 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
           : await diaryProvider.addEntry(entry);
 
       if (success) {
+        // Log diary saved or edited
+        if (isEditMode) {
+          AnalyticsService.logDiaryEdited();
+        } else {
+          AnalyticsService.logDiarySaved();
+        }
+
         // 음식 사진이 있으면 meal 레코드 생성/재생성
         if (hasMealDetected) {
           if (isEditMode) {
@@ -343,6 +354,9 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
         setState(() {
           _selectedImages.addAll(validFiles);
         });
+
+        // Log photo added
+        AnalyticsService.logDiaryPhotoAdded();
 
         // Vision Framework로 음식 사진 분석
         _analyzeFoodPhotos(validFiles);

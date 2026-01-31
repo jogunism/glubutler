@@ -9,6 +9,7 @@ import 'package:glu_butler/core/theme/app_text_styles.dart';
 import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/theme/app_decorations.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 
@@ -78,7 +79,10 @@ class DisplaySettingsScreen extends StatelessWidget {
                     subtitle: l10n.systemDefaultDescription,
                     value: AppConstants.themeModeSystem,
                     currentValue: currentMode,
-                    onTap: () => settings.setThemeMode(AppConstants.themeModeSystem),
+                    onTap: () {
+                      AnalyticsService.logThemeChanged(AppConstants.themeModeSystem);
+                      settings.setThemeMode(AppConstants.themeModeSystem);
+                    },
                     isFirst: true,
                   ),
                   _buildDivider(context),
@@ -89,7 +93,10 @@ class DisplaySettingsScreen extends StatelessWidget {
                     title: l10n.lightMode,
                     value: AppConstants.themeModeLight,
                     currentValue: currentMode,
-                    onTap: () => settings.setThemeMode(AppConstants.themeModeLight),
+                    onTap: () {
+                      AnalyticsService.logThemeChanged(AppConstants.themeModeLight);
+                      settings.setThemeMode(AppConstants.themeModeLight);
+                    },
                   ),
                   _buildDivider(context),
                   _buildThemeOption(
@@ -99,7 +106,10 @@ class DisplaySettingsScreen extends StatelessWidget {
                     title: l10n.darkModeOption,
                     value: AppConstants.themeModeDark,
                     currentValue: currentMode,
-                    onTap: () => settings.setThemeMode(AppConstants.themeModeDark),
+                    onTap: () {
+                      AnalyticsService.logThemeChanged(AppConstants.themeModeDark);
+                      settings.setThemeMode(AppConstants.themeModeDark);
+                    },
                     isLast: true,
                   ),
                 ],
