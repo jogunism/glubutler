@@ -82,6 +82,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mmoll => 'mmol/L';
 
   @override
+  String get chartSizeLarge => '大きく';
+
+  @override
+  String get chartSizeSmall => '小さく';
+
+  @override
   String get low => '低血糖';
 
   @override

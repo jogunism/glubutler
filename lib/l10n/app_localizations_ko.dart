@@ -81,6 +81,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mmoll => 'mmol/L';
 
   @override
+  String get chartSizeLarge => '크게';
+
+  @override
+  String get chartSizeSmall => '작게';
+
+  @override
   String get low => '저혈당';
 
   @override

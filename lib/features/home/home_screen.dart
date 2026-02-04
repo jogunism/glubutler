@@ -1,10 +1,12 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/navigation/main_screen.dart';
@@ -15,6 +17,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/modals/date_picker_modal.dart';
 import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/glucose_score_service.dart';
 import 'package:glu_butler/services/health_service.dart';
@@ -49,6 +52,14 @@ class _HomeScreenState extends State<HomeScreen>
   double? _sleepHours;
   int? _exerciseMinutes;
 
+  // 차트 터치 상태
+  int? _touchedBarIndex;
+  final ScrollController _chartScrollController = ScrollController();
+  bool _isChartTouching = false;
+
+  // 차트 크기 설정
+  String _chartSize = 'large'; // 'large' or 'small'
+
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -67,8 +78,10 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
+  @override
   void dispose() {
     _animationController.dispose();
+    _chartScrollController.dispose();
     super.dispose();
   }
 
@@ -374,18 +387,56 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       child: Column(
         children: [
-          // 타이틀
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              l10n.todaysGlucose,
-              style: context.textStyles.tileTitle.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          // 타이틀 + 차트 크기 선택
+          Padding(
+            padding: const EdgeInsets.only(left: 0),
+            child: Row(
+              children: [
+                Text(
+                  l10n.todaysGlucose,
+                  style: context.textStyles.tileTitle.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 0),
+                  child: MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      platformBrightness: Theme.of(context).brightness,
+                    ),
+                    child: AdaptivePopupMenuButton.widget<String>(
+                      items: [
+                        AdaptivePopupMenuItem<String>(
+                          value: 'large',
+                          label: l10n.chartSizeLarge,
+                        ),
+                        AdaptivePopupMenuItem<String>(
+                          value: 'small',
+                          label: l10n.chartSizeSmall,
+                        ),
+                      ],
+                      onSelected: (index, item) {
+                        if (item.value != null) {
+                          setState(() {
+                            _chartSize = item.value!;
+                          });
+                        }
+                      },
+                      child: Text(
+                        _chartSize == 'large'
+                            ? l10n.chartSizeLarge
+                            : l10n.chartSizeSmall,
+                        style: context.textStyles.tileSubtitle,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
-          // 차트
+          // 차트 (스크롤 가능)
           SizedBox(
             height: 200,
             child: AnimatedBuilder(
@@ -423,18 +474,32 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
 
-    // 시간별로 데이터 그룹화 (0~23시)
-    final hourlyData = <int, List<double>>{};
-    for (final record in _todayRecords) {
-      final hour = record.timestamp.hour;
-      final value = record.valueIn('mg/dL');
-      hourlyData.putIfAbsent(hour, () => []).add(value);
+    // _chartSize에 따라 데이터 그룹화 방식 변경
+    final timeData = <int, List<double>>{};
+    final totalBars = _chartSize == 'large' ? 96 : 24;
+
+    if (_chartSize == 'large') {
+      // 15분 단위로 데이터 그룹화 (0~95, 총 96개 구간 = 24시간 * 4)
+      for (final record in _todayRecords) {
+        final hour = record.timestamp.hour;
+        final minute = record.timestamp.minute;
+        final quarterHourIndex = hour * 4 + (minute ~/ 15); // 0~95
+        final value = record.valueIn('mg/dL');
+        timeData.putIfAbsent(quarterHourIndex, () => []).add(value);
+      }
+    } else {
+      // 1시간 단위로 데이터 그룹화 (0~23, 총 24개 구간)
+      for (final record in _todayRecords) {
+        final hour = record.timestamp.hour; // 0~23
+        final value = record.valueIn('mg/dL');
+        timeData.putIfAbsent(hour, () => []).add(value);
+      }
     }
 
-    // 각 시간대의 평균값 계산
-    final hourlyAverage = <int, double>{};
-    hourlyData.forEach((hour, values) {
-      hourlyAverage[hour] = values.reduce((a, b) => a + b) / values.length;
+    // 각 구간의 평균값 계산
+    final timeAverage = <int, double>{};
+    timeData.forEach((index, values) {
+      timeAverage[index] = values.reduce((a, b) => a + b) / values.length;
     });
 
     // 설정에서 목표 혈당 범위 가져오기
@@ -459,173 +524,300 @@ class _HomeScreenState extends State<HomeScreen>
     // 하루 전체 평균 혈당
     final averageGlucose = _averageGlucose;
 
-    return BarChart(
-      BarChartData(
-        alignment: BarChartAlignment.spaceAround,
-        maxY: chartMaxY,
-        minY: chartMinY,
-        // 평균 혈당 수평선 추가
-        extraLinesData: ExtraLinesData(
-          horizontalLines: [
-            HorizontalLine(
-              y: averageGlucose,
-              color: averageLineColor.withValues(alpha: 0.4),
-              strokeWidth: 2,
-              dashArray: [8, 4], // 점선 패턴
-              label: HorizontalLineLabel(
-                show: true,
-                alignment: Alignment.topRight,
-                padding: const EdgeInsets.only(right: 8, bottom: 4),
-                style: TextStyle(
-                  color: averageLineColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  backgroundColor: context.colors.card.withValues(alpha: 0.8),
-                ),
-                labelResolver: (line) =>
-                    ' ${l10n.average} ${averageGlucose.toInt()} ',
-              ),
-            ),
-          ],
-        ),
-        // 목표 범위 배경색
-        rangeAnnotations: RangeAnnotations(
-          horizontalRangeAnnotations: [
-            HorizontalRangeAnnotation(
-              y1: glucoseRange.targetLow,
-              y2: glucoseRange.targetHigh,
-              color: Colors.green.withValues(alpha: 0.2),
-            ),
-          ],
-        ),
-        barTouchData: BarTouchData(
-          enabled: true,
-          touchTooltipData: BarTouchTooltipData(
-            tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-            getTooltipColor: (group) {
-              if (isDarkMode) {
-                return context.colors.card.withValues(alpha: 1.0);
-              }
-              return context.colors.card.withValues(alpha: 0.9);
-            },
-            tooltipBorder: BorderSide(
-              color: isDarkMode
-                  ? Colors.grey.withValues(alpha: 0.5)
-                  : context.colors.divider,
-              width: isDarkMode ? 1.5 : 1.0,
-            ),
-            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              final hour = group.x.toInt();
-              final value = rod.toY;
-              return BarTooltipItem(
-                '${hour.toString().padLeft(2, '0')}:00\n',
-                TextStyle(
-                  color: context.colors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.center,
-                children: [
-                  TextSpan(
-                    text: '${value.toInt()} ${settings.unit}',
-                    style: TextStyle(
-                      color: _getGlucoseColorForValue(value),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                final hour = value.toInt();
-                // 0, 6, 12, 18, 24시만 표시
-                if (hour % 6 == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      hour.toString().padLeft(2, '0'),
-                      style: TextStyle(
-                        color: context.colors.textSecondary,
-                        fontSize: 10,
-                      ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-              reservedSize: 24,
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  value.toInt().toString(),
-                  style: TextStyle(
-                    color: context.colors.textSecondary,
-                    fontSize: 10,
-                  ),
-                );
-              },
-              reservedSize: 35,
-              interval: (chartMaxY - chartMinY) / 4,
-            ),
-          ),
-        ),
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: false,
-          horizontalInterval: (chartMaxY - chartMinY) / 4,
-          getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: context.colors.divider.withValues(alpha: 0.3),
-              strokeWidth: 1,
-            );
-          },
-        ),
-        borderData: FlBorderData(show: false),
-        barGroups: List.generate(24, (hour) {
-          final value = hourlyAverage[hour];
-          if (value == null) {
-            // 데이터가 없는 시간대
-            return BarChartGroupData(
-              x: hour,
-              barRods: [
-                BarChartRodData(toY: 0, color: Colors.transparent, width: 8),
-              ],
-            );
-          }
+    // 해당 날짜의 이벤트 데이터 가져오기 (식사, 운동, 인슐린)
+    final feedProvider = context.watch<FeedProvider>();
+    final startOfDay = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+    final eventsInRange = feedProvider.items.where((item) {
+      return item.timestamp.isAfter(startOfDay) &&
+          item.timestamp.isBefore(endOfDay) &&
+          (item.type == FeedItemType.meal ||
+              item.type == FeedItemType.exercise ||
+              item.type == FeedItemType.insulin);
+    }).toList();
 
-          return BarChartGroupData(
-            x: hour,
-            barRods: [
-              BarChartRodData(
-                toY: value * _animation.value,
-                color: _getGlucoseColorForValue(value),
-                width: 8,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(4),
+    // 화면 너비 계산 (크게일 때만)
+    final screenWidth = MediaQuery.of(context).size.width;
+    final chartWidth = screenWidth * 2 - 35; // 크게: 2배 너비, 스크롤
+
+    // 차트 위젯 생성
+    final chartStack = Stack(
+      children: [
+        // 이벤트 배경 + 터치 라인 레이어 (CustomPaint)
+        CustomPaint(
+          painter: _EventBackgroundPainter(
+            events: eventsInRange,
+            chartMinY: chartMinY,
+            chartMaxY: chartMaxY,
+            getEventColor: _getEventColor,
+            getEventLabelColor: _getEventColor,
+            getEventLabel: (type) => _getEventLabel(type, l10n),
+            getEventDuration: _getEventDuration,
+            cardColor: context.colors.card,
+            textColor: isDarkMode
+                ? context.colors.textPrimary
+                : Colors.black,
+            touchedBarIndex: _touchedBarIndex,
+            touchLineColor: context.colors.textPrimary,
+            totalBars: totalBars,
+            isLargeChart: _chartSize == 'large',
+          ),
+          child: Container(),
+        ),
+        // 차트 레이어
+        BarChart(
+                    BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: chartMaxY,
+                      minY: chartMinY,
+                      // 평균 혈당 수평선 + 이벤트 배경선 + 이벤트 레이블
+                      extraLinesData: ExtraLinesData(
+                        horizontalLines: [
+                          HorizontalLine(
+                            y: averageGlucose,
+                            color: averageLineColor.withValues(alpha: 0.4),
+                            strokeWidth: 2,
+                            dashArray: [8, 4], // 점선 패턴
+                            label: HorizontalLineLabel(
+                              show: true,
+                              alignment: Alignment.topRight,
+                              padding: const EdgeInsets.only(
+                                right: 8,
+                                bottom: 4,
+                              ),
+                              style: TextStyle(
+                                color: averageLineColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                backgroundColor: context.colors.card.withValues(
+                                  alpha: 0.8,
+                                ),
+                              ),
+                              labelResolver: (line) =>
+                                  ' ${l10n.average} ${averageGlucose.toInt()} ',
+                            ),
+                          ),
+                        ],
+                        verticalLines: [],
+                      ),
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchCallback: (FlTouchEvent event, barTouchResponse) {
+                          setState(() {
+                            if (event is FlTapUpEvent ||
+                                event is FlPanEndEvent ||
+                                event is FlLongPressEnd) {
+                              _touchedBarIndex = null;
+                              _isChartTouching = false;
+                            } else if (barTouchResponse != null &&
+                                barTouchResponse.spot != null) {
+                              _touchedBarIndex =
+                                  barTouchResponse.spot!.touchedBarGroupIndex;
+                              _isChartTouching = true;
+                            }
+                          });
+                        },
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                          getTooltipColor: (group) {
+                            if (isDarkMode) {
+                              return context.colors.card.withValues(alpha: 1.0);
+                            }
+                            return context.colors.card.withValues(alpha: 0.9);
+                          },
+                          tooltipBorder: BorderSide(
+                            color: isDarkMode
+                                ? Colors.grey.withValues(alpha: 0.5)
+                                : context.colors.divider,
+                            width: isDarkMode ? 1.5 : 1.0,
+                          ),
+                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                            final index = group.x.toInt();
+                            final value = rod.toY;
+
+                            String timeText;
+                            if (_chartSize == 'large') {
+                              // 15분 단위
+                              final hour = index ~/ 4;
+                              final quarter = index % 4;
+                              final minute = quarter * 15;
+                              timeText = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                            } else {
+                              // 1시간 단위
+                              timeText = '${index.toString().padLeft(2, '0')}:00';
+                            }
+
+                            return BarTooltipItem(
+                              '$timeText\n',
+                              TextStyle(
+                                color: context.colors.textPrimary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              children: [
+                                TextSpan(
+                                  text: '${value.toInt()} ${settings.unit}',
+                                  style: TextStyle(
+                                    color: _getGlucoseColorForValue(value),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              final index = value.toInt();
+
+                              if (_chartSize == 'large') {
+                                // 15분 단위: index ~/ 4 = hour
+                                final hour = index ~/ 4;
+                                // 0, 3, 6, 9, 12, 15, 18, 21시 표시 (각 시간의 첫 15분)
+                                if (hour % 3 == 0 && index % 4 == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                      hour.toString().padLeft(2, '0'),
+                                      style: TextStyle(
+                                        color: context.colors.textSecondary,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                // 1시간 단위: index = hour
+                                // 0, 3, 6, 9, 12, 15, 18, 21시 표시
+                                if (index % 3 == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                      index.toString().padLeft(2, '0'),
+                                      style: TextStyle(
+                                        color: context.colors.textSecondary,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                              return const SizedBox.shrink();
+                            },
+                            reservedSize: 24,
+                          ),
+                        ),
+                        leftTitles: const AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: false,
+                          ), // Y축 라벨 숨김 (커스텀 페인터 사용)
+                        ),
+                      ),
+                      gridData: FlGridData(
+                        show: true,
+                        drawVerticalLine: false,
+                        horizontalInterval: (chartMaxY - chartMinY) / 4,
+                        getDrawingHorizontalLine: (value) {
+                          return FlLine(
+                            color: context.colors.divider.withValues(
+                              alpha: 0.3,
+                            ),
+                            strokeWidth: 1,
+                          );
+                        },
+                      ),
+                      borderData: FlBorderData(show: false),
+                      barGroups: List.generate(totalBars, (index) {
+                        final value = timeAverage[index];
+                        final barWidth = _chartSize == 'large' ? 4.0 : 8.0;
+
+                        if (value == null) {
+                          // 데이터가 없는 구간
+                          return BarChartGroupData(
+                            x: index,
+                            barRods: [
+                              BarChartRodData(
+                                toY: 0,
+                                color: Colors.transparent,
+                                width: barWidth,
+                              ),
+                            ],
+                          );
+                        }
+
+                        return BarChartGroupData(
+                          x: index,
+                          barRods: [
+                            BarChartRodData(
+                              toY: value * _animation.value,
+                              color: _getGlucoseColorForValue(value),
+                              width: barWidth,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(4),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    ),
+                  ),
+      ],
+    );
+
+    return Row(
+      children: [
+        // 고정된 Y축 라벨
+        SizedBox(
+          width: 35,
+          child: Column(
+            children: [
+              Expanded(
+                child: CustomPaint(
+                  painter: _YAxisPainter(
+                    minY: chartMinY,
+                    maxY: chartMaxY,
+                    textColor: context.colors.textSecondary,
+                  ),
                 ),
               ),
+              const SizedBox(height: 24), // bottomTitles reservedSize
             ],
-          );
-        }),
-      ),
+          ),
+        ),
+        // 차트 영역
+        Expanded(
+          child: _chartSize == 'large'
+              ? SingleChildScrollView(
+                  controller: _chartScrollController,
+                  scrollDirection: Axis.horizontal,
+                  physics: _isChartTouching
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    width: chartWidth,
+                    child: chartStack,
+                  ),
+                )
+              : chartStack, // 작게: 스크롤 없이
+        ),
+      ],
     );
   }
 
@@ -1255,6 +1447,247 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ],
     );
+  }
+
+  /// 이벤트 지속 시간 계산 (시간 단위)
+  double _getEventDuration(FeedItem event) {
+    switch (event.type) {
+      case FeedItemType.meal:
+        return 0.5; // 식사: 30분
+      case FeedItemType.exercise:
+        final exerciseData = event.exerciseRecord;
+        if (exerciseData != null) {
+          return exerciseData.durationMinutes / 60.0;
+        }
+        return 0.5; // 기본값: 30분
+      case FeedItemType.insulin:
+        return 0.05; // 순간 이벤트: 3분
+      default:
+        return 0.17; // 기본값: 10분
+    }
+  }
+
+  /// 이벤트 타입에 따른 텍스트 반환 (국제화)
+  String _getEventLabel(FeedItemType type, AppLocalizations l10n) {
+    switch (type) {
+      case FeedItemType.meal:
+        return l10n.meal;
+      case FeedItemType.exercise:
+        return l10n.exercise;
+      case FeedItemType.insulin:
+        return l10n.insulin;
+      case FeedItemType.glucose:
+        return l10n.bloodGlucose;
+      default:
+        return '•';
+    }
+  }
+
+  /// 이벤트 타입에 따른 색상 반환
+  Color _getEventColor(FeedItemType type) {
+    switch (type) {
+      case FeedItemType.meal:
+        return Colors.deepPurple[400]!;
+      case FeedItemType.exercise:
+        return AppTheme.iconOrange;
+      case FeedItemType.insulin:
+        return AppTheme.iconPurple;
+      case FeedItemType.glucose:
+        return AppTheme.iconRed;
+      default:
+        return Colors.grey;
+    }
+  }
+}
+
+/// Y축 라벨을 그리는 CustomPainter
+class _YAxisPainter extends CustomPainter {
+  final double minY;
+  final double maxY;
+  final Color textColor;
+
+  _YAxisPainter({
+    required this.minY,
+    required this.maxY,
+    required this.textColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final interval = (maxY - minY) / 4;
+
+    for (int i = 0; i <= 4; i++) {
+      final value = minY + (interval * i);
+      // 최소값은 표시하지 않음
+      if (i == 0) continue;
+
+      final yPosition = size.height * (1 - (i / 4.0));
+
+      final textSpan = TextSpan(
+        text: value.toInt().toString(),
+        style: TextStyle(color: textColor, fontSize: 10),
+      );
+
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: ui.TextDirection.ltr,
+        textAlign: TextAlign.right,
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(
+          size.width - textPainter.width - 5,
+          yPosition - textPainter.height / 2,
+        ),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+/// 이벤트 배경과 터치 라인을 그리는 CustomPainter
+class _EventBackgroundPainter extends CustomPainter {
+  final List<FeedItem> events;
+  final double chartMinY;
+  final double chartMaxY;
+  final Color Function(FeedItemType) getEventColor;
+  final Color Function(FeedItemType) getEventLabelColor;
+  final String Function(FeedItemType) getEventLabel;
+  final double Function(FeedItem) getEventDuration;
+  final Color cardColor;
+  final Color textColor;
+  final int? touchedBarIndex;
+  final Color touchLineColor;
+  final int totalBars;
+  final bool isLargeChart;
+
+  _EventBackgroundPainter({
+    required this.events,
+    required this.chartMinY,
+    required this.chartMaxY,
+    required this.getEventColor,
+    required this.getEventLabelColor,
+    required this.getEventLabel,
+    required this.getEventDuration,
+    required this.cardColor,
+    required this.textColor,
+    required this.touchedBarIndex,
+    required this.touchLineColor,
+    required this.totalBars,
+    required this.isLargeChart,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final barWidth = size.width / totalBars;
+
+    for (final event in events) {
+      if (event.type == FeedItemType.glucose) continue;
+
+      final eventHour = event.timestamp.hour;
+      final eventMinute = event.timestamp.minute;
+      final eventSecond = event.timestamp.second;
+
+      // 이벤트 지속시간 (시간 단위)
+      final duration = getEventDuration(event);
+
+      double eventIndex;
+      double durationInBars;
+      double halfWidth;
+
+      if (isLargeChart) {
+        // 15분 단위 (96개 구간)
+        eventIndex =
+            eventHour * 4 + (eventMinute / 15.0) + (eventSecond / 3600.0);
+        durationInBars = duration * 4; // 지속시간을 15분 단위로 변환
+        halfWidth = (durationInBars / 2) * 0.5;
+      } else {
+        // 1시간 단위 (24개 구간)
+        eventIndex = eventHour + (eventMinute / 60.0) + (eventSecond / 3600.0);
+        durationInBars = duration; // 지속시간이 이미 시간 단위
+        halfWidth = (durationInBars / 2) * 0.5;
+      }
+
+      // 이벤트 범위 계산
+      final x1 = (eventIndex - halfWidth).clamp(0.0, totalBars.toDouble());
+      final x2 = (eventIndex + halfWidth).clamp(0.0, totalBars.toDouble());
+
+      // 픽셀 좌표로 변환
+      final left = x1 * barWidth;
+      final right = x2 * barWidth;
+
+      // 차트 전체 높이를 채우는 사각형 그리기 (bottomTitles 영역 제외)
+      final rect = Rect.fromLTRB(
+        left,
+        0,
+        right,
+        size.height - 24, // bottomTitles reservedSize 제외
+      );
+
+      final paint = Paint()
+        ..color = getEventColor(event.type).withValues(alpha: 0.2)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRect(rect, paint);
+
+      // 레이블 텍스트 그리기
+      final labelText = ' ${getEventLabel(event.type)} ';
+      final textSpan = TextSpan(
+        text: labelText,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          backgroundColor: cardColor.withValues(alpha: 0.8),
+        ),
+      );
+
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: ui.TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+
+      textPainter.layout();
+
+      // 레이블을 배경 중앙 상단에 배치
+      final centerX = (left + right) / 2;
+      final labelX = centerX - (textPainter.width / 2);
+      final labelY = 4.0; // 상단에서 4px 아래
+
+      textPainter.paint(canvas, Offset(labelX, labelY));
+    }
+
+    // 터치된 바의 수직선 그리기
+    if (touchedBarIndex != null) {
+      final barWidth = size.width / totalBars;
+      final x = touchedBarIndex! * barWidth + (barWidth / 2); // 바의 중앙
+
+      final linePaint = Paint()
+        ..color = touchLineColor.withValues(alpha: 0.8)
+        ..strokeWidth = 1
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height - 24), // bottomTitles reservedSize 제외
+        linePaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _EventBackgroundPainter oldDelegate) {
+    return oldDelegate.events != events ||
+        oldDelegate.chartMinY != chartMinY ||
+        oldDelegate.chartMaxY != chartMaxY ||
+        oldDelegate.touchedBarIndex != touchedBarIndex ||
+        oldDelegate.totalBars != totalBars ||
+        oldDelegate.isLargeChart != isLargeChart;
   }
 }
 

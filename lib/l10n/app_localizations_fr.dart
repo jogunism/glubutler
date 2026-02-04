@@ -82,6 +82,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mmoll => 'mmol/L';
 
   @override
+  String get chartSizeLarge => 'Grand';
+
+  @override
+  String get chartSizeSmall => 'Petit';
+
+  @override
   String get low => 'Bas';
 
   @override

@@ -82,6 +82,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mmoll => 'mmol/L';
 
   @override
+  String get chartSizeLarge => '大';
+
+  @override
+  String get chartSizeSmall => '小';
+
+  @override
   String get low => '低血糖';
 
   @override

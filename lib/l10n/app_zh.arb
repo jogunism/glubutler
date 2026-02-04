@@ -25,6 +25,8 @@
   "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
+  "chartSizeLarge": "大",
+  "chartSizeSmall": "小",
 
   "low": "低血糖",
   "normal": "正常",

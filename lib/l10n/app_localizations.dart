@@ -254,6 +254,18 @@ abstract class AppLocalizations {
   /// **'mmol/L'**
   String get mmoll;
 
+  /// No description provided for @chartSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get chartSizeLarge;
+
+  /// No description provided for @chartSizeSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get chartSizeSmall;
+
   /// No description provided for @low.
   ///
   /// In en, this message translates to:

@@ -25,6 +25,8 @@
   "glucoseUnitDescription": "Select the unit for glucose measurement.",
   "mgdl": "mg/dL",
   "mmoll": "mmol/L",
+  "chartSizeLarge": "Grande",
+  "chartSizeSmall": "Pequeño",
 
   "low": "Bajo",
   "normal": "Normal",
