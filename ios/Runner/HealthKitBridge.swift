@@ -40,6 +40,7 @@ class HealthKitBridge {
     let writeTypes: Set<HKSampleType> = [
       HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
       HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
+      HKObjectType.quantityType(forIdentifier: .bodyMass)!,
     ]
 
     healthStore.requestAuthorization(toShare: writeTypes, read: readTypes) { success, error in
@@ -85,10 +86,39 @@ class HealthKitBridge {
             responseData["dateOfBirth"] = nil
           }
 
-          result(responseData)
+          // 최신 체중 가져오기
+          self.fetchLatestWeight { weightKg in
+            responseData["weightKg"] = weightKg
+            result(responseData)
+          }
         }
       }
     }
+  }
+
+  // MARK: - Fetch Latest Weight
+
+  private func fetchLatestWeight(completion: @escaping (Double?) -> Void) {
+    guard let weightType = HKQuantityType.quantityType(forIdentifier: .bodyMass) else {
+      completion(nil)
+      return
+    }
+
+    let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+    let query = HKSampleQuery(
+      sampleType: weightType,
+      predicate: nil,
+      limit: 1,
+      sortDescriptors: [sortDescriptor]
+    ) { _, samples, error in
+      guard let sample = samples?.first as? HKQuantitySample else {
+        completion(nil)
+        return
+      }
+      let kg = sample.quantity.doubleValue(for: HKUnit.gramUnit(with: .kilo))
+      completion(kg)
+    }
+    self.healthStore.execute(query)
   }
 
   // MARK: - Test Write Permissions
@@ -249,6 +279,45 @@ class HealthKitBridge {
       start: date,
       end: date,
       metadata: metadata
+    )
+
+    healthStore.save(sample) { success, error in
+      DispatchQueue.main.async {
+        if success {
+          result(true)
+        } else {
+          result(FlutterError(
+            code: "SAVE_FAILED",
+            message: error?.localizedDescription ?? "Failed to save",
+            details: nil
+          ))
+        }
+      }
+    }
+  }
+
+  // MARK: - Write Weight
+
+  func writeWeight(arguments: [String: Any], result: @escaping FlutterResult) {
+    guard HKHealthStore.isHealthDataAvailable() else {
+      result(FlutterError(code: "UNAVAILABLE", message: "HealthKit not available", details: nil))
+      return
+    }
+
+    guard let value = arguments["value"] as? Double else {
+      result(FlutterError(code: "INVALID_ARGS", message: "Missing required arguments", details: nil))
+      return
+    }
+
+    let weightType = HKQuantityType.quantityType(forIdentifier: .bodyMass)!
+    let quantity = HKQuantity(unit: HKUnit.gramUnit(with: .kilo), doubleValue: value)
+    let date = Date()
+
+    let sample = HKQuantitySample(
+      type: weightType,
+      quantity: quantity,
+      start: date,
+      end: date
     )
 
     healthStore.save(sample) { success, error in

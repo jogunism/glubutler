@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
@@ -10,6 +11,7 @@ import 'package:glu_butler/core/theme/app_colors.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/services/settings_service.dart';
+import 'package:glu_butler/services/health_service.dart';
 
 /// 프로필 설정 화면
 ///
@@ -107,6 +109,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     ),
                     _buildDivider(context),
                     _buildDateTile(context, settings, l10n),
+                    _buildDivider(context),
+                    _buildWeightTile(context, settings, l10n),
                   ],
                 ),
 
@@ -214,6 +218,47 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           ),
           GestureDetector(
             onTap: () => _showDatePicker(context, settings),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  displayValue,
+                  style: context.textStyles.tileSubtitle,
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  CupertinoIcons.chevron_down,
+                  size: 16,
+                  color: context.colors.iconGrey,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeightTile(BuildContext context, SettingsService settings, AppLocalizations l10n) {
+    final weightFormatted = _formatWeight(settings.userProfile.weightKg, context);
+    final displayValue = settings.userProfile.weightKg != null
+        ? '$weightFormatted kg'
+        : '-';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GlassIcon(icon: CupertinoIcons.gauge, color: AppTheme.iconPink, size: 32),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              l10n.weight,
+              style: context.textStyles.tileTitle,
+            ),
+          ),
+          GestureDetector(
+            onTap: () => _showWeightPicker(context, settings),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -411,6 +456,21 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
+  /// 앱 언어에 따라 소수점 구분자를 반환
+  /// de, fr, it, es: "," / en, ko, ja, zh: "."
+  String _getDecimalSeparator(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    const commaLocales = ['de', 'fr', 'it', 'es'];
+    return commaLocales.contains(locale) ? ',' : '.';
+  }
+
+  /// 숫자를 앱 언어에 맞는 소수점 형식으로 변환
+  String _formatWeight(double? weight, BuildContext context) {
+    if (weight == null) return '-';
+    final separator = _getDecimalSeparator(context);
+    final formatted = weight.toStringAsFixed(1);
+    return separator == ',' ? formatted.replaceAll('.', ',') : formatted;
+  }
 
   void _showDatePicker(BuildContext context, SettingsService settings) {
     final l10n = AppLocalizations.of(context)!;
@@ -551,6 +611,140 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showWeightPicker(BuildContext context, SettingsService settings) {
+    final l10n = AppLocalizations.of(context)!;
+    final decimalSeparator = _getDecimalSeparator(context);
+    final initialValue = settings.userProfile.weightKg != null
+        ? _formatWeight(settings.userProfile.weightKg, context)
+        : '';
+    final controller = TextEditingController(text: initialValue);
+    final placeholder = decimalSeparator == ',' ? '0,0' : '0.0';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          behavior: HitTestBehavior.opaque,
+          child: GestureDetector(
+            onTap: () {},
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.colors.background,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(
+                              l10n.cancel,
+                              style: TextStyle(color: context.colors.textSecondary),
+                            ),
+                          ),
+                          Text(
+                            l10n.weight,
+                            style: context.textStyles.tileTitle.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () async {
+                              final normalizedText = controller.text.replaceAll(',', '.');
+                              final value = double.tryParse(normalizedText);
+                              if (value != null && value > 0) {
+                                final profile = settings.userProfile.copyWith(weightKg: value);
+                                settings.updateUserProfile(profile);
+
+                                // Apple Health에도 체중 저장
+                                final healthService = HealthService();
+                                await healthService.writeWeight(value);
+                              }
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            child: Text(
+                              l10n.done,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Weight input field
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CupertinoTextField(
+                              controller: controller,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.primaryColor,
+                              ),
+                              placeholder: placeholder,
+                              placeholderStyle: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[400],
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.colors.card,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: context.colors.divider),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                              autofocus: true,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d{0,1}')),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'kg',
+                            style: context.textStyles.bodyTextSecondary.copyWith(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

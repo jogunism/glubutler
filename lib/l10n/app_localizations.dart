@@ -398,6 +398,12 @@ abstract class AppLocalizations {
   /// **'Birthday'**
   String get birthday;
 
+  /// No description provided for @weight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get weight;
+
   /// No description provided for @diabetesType.
   ///
   /// In en, this message translates to:

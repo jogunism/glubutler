@@ -54,6 +54,7 @@
   "female": "Female",
   "otherGender": "Other",
   "birthday": "Birthday",
+  "weight": "Weight",
   "diabetesType": "Diabetes Type",
   "preDiabetes": "Pre-Diabetes",
   "type1": "Type 1",

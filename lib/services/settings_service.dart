@@ -416,6 +416,13 @@ class SettingsService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Set user weight in kg (for onboarding)
+  Future<void> setWeight(double weightKg) async {
+    _userProfile = _userProfile.copyWith(weightKg: weightKg);
+    await _prefs.setString(AppConstants.keyUserProfile, jsonEncode(_userProfile.toJson()));
+    notifyListeners();
+  }
+
   /// Set diabetes type (for onboarding)
   Future<void> setDiabetesType(String type) async {
     _diabetesType = type;

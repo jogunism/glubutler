@@ -154,6 +154,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get birthday => '生年月日';
 
   @override
+  String get weight => '体重';
+
+  @override
   String get diabetesType => '糖尿病タイプ';
 
   @override

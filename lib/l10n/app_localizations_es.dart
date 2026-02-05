@@ -154,6 +154,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get birthday => 'Fecha de nacimiento';
 
   @override
+  String get weight => 'Peso';
+
+  @override
   String get diabetesType => 'Tipo de diabetes';
 
   @override

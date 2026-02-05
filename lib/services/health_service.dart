@@ -126,7 +126,7 @@ class HealthService {
   /// - dateOfBirth: String? (ISO 8601 date string, or null)
   Future<Map<String, dynamic>> requestAuthorizationWithCharacteristics() async {
     if (!Platform.isIOS) {
-      return {'granted': false, 'biologicalSex': null, 'dateOfBirth': null};
+      return {'granted': false, 'biologicalSex': null, 'dateOfBirth': null, 'weightKg': null};
     }
 
     try {
@@ -140,6 +140,7 @@ class HealthService {
           'granted': result['granted'] ?? false,
           'biologicalSex': result['biologicalSex'],
           'dateOfBirth': result['dateOfBirth'],
+          'weightKg': result['weightKg'] != null ? (result['weightKg'] as num).toDouble() : null,
         };
       } else {
         // 기존 방식 호환성
@@ -147,11 +148,11 @@ class HealthService {
         await checkPermissionStatus();
         _isAuthorized = _permissionStatus.values.any((status) => status == true);
 
-        return {'granted': _isAuthorized, 'biologicalSex': null, 'dateOfBirth': null};
+        return {'granted': _isAuthorized, 'biologicalSex': null, 'dateOfBirth': null, 'weightKg': null};
       }
     } catch (e) {
       debugPrint('[HealthService] Error requesting authorization: $e');
-      return {'granted': false, 'biologicalSex': null, 'dateOfBirth': null};
+      return {'granted': false, 'biologicalSex': null, 'dateOfBirth': null, 'weightKg': null};
     }
   }
 
@@ -502,6 +503,23 @@ class HealthService {
 
     // TODO: Implement native iOS weight fetching if needed
     return [];
+  }
+
+  /// Write weight to Apple HealthKit
+  Future<bool> writeWeight(double weightKg) async {
+    if (!Platform.isIOS) {
+      return false;
+    }
+
+    try {
+      final result = await _healthKitChannel.invokeMethod('writeWeight', {
+        'value': weightKg,
+      });
+      return result == true;
+    } catch (e) {
+      debugPrint('[HealthService] Error writing weight: $e');
+      return false;
+    }
   }
 
   Future<List<WaterRecord>> fetchWaterData({

@@ -40,6 +40,7 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
       final granted = result['granted'] as bool;
       final biologicalSex = result['biologicalSex'] as String?;
       final dateOfBirth = result['dateOfBirth'] as String?;
+      final weightKg = result['weightKg'] as double?;
 
       if (mounted) {
         final settings = context.read<SettingsService>();
@@ -64,6 +65,11 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
         // 성별 저장
         if (biologicalSex != null) {
           await settings.setGender(biologicalSex);
+        }
+
+        // 체중 저장
+        if (weightKg != null) {
+          await settings.setWeight(weightKg);
         }
 
         // 생년월일 저장 및 나이별 폰트 크기 자동 설정

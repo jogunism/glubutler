@@ -54,6 +54,7 @@
   "female": "여성",
   "otherGender": "기타",
   "birthday": "생년월일",
+  "weight": "체중",
   "diabetesType": "당뇨 유형",
   "preDiabetes": "당뇨전단계",
   "type1": "1형",

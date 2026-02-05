@@ -153,6 +153,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get birthday => '생년월일';
 
   @override
+  String get weight => '체중';
+
+  @override
   String get diabetesType => '당뇨 유형';
 
   @override

@@ -4,6 +4,7 @@ class UserProfile {
   final DateTime? birthday;
   final String diabetesType;
   final int? diagnosisYear;
+  final double? weightKg;
 
   UserProfile({
     this.name,
@@ -11,6 +12,7 @@ class UserProfile {
     this.birthday,
     this.diabetesType = 'none',
     this.diagnosisYear,
+    this.weightKg,
   });
 
   UserProfile copyWith({
@@ -19,6 +21,7 @@ class UserProfile {
     DateTime? birthday,
     String? diabetesType,
     int? diagnosisYear,
+    double? weightKg,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -26,6 +29,7 @@ class UserProfile {
       birthday: birthday ?? this.birthday,
       diabetesType: diabetesType ?? this.diabetesType,
       diagnosisYear: diagnosisYear ?? this.diagnosisYear,
+      weightKg: weightKg ?? this.weightKg,
     );
   }
 
@@ -36,6 +40,7 @@ class UserProfile {
       'birthday': birthday?.toIso8601String(),
       'diabetesType': diabetesType,
       'diagnosisYear': diagnosisYear,
+      'weightKg': weightKg,
     };
   }
 
@@ -48,6 +53,7 @@ class UserProfile {
           : null,
       diabetesType: json['diabetesType'] as String? ?? 'none',
       diagnosisYear: json['diagnosisYear'] as int?,
+      weightKg: (json['weightKg'] as num?)?.toDouble(),
     );
   }
 

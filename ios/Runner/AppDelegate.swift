@@ -237,6 +237,12 @@ import CloudKit
         self.healthKitBridge.getBiologicalSex(result: result)
       case "getDateOfBirth":
         self.healthKitBridge.getDateOfBirth(result: result)
+      case "writeWeight":
+        if let args = call.arguments as? [String: Any] {
+          self.healthKitBridge.writeWeight(arguments: args, result: result)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
       default:
         result(FlutterMethodNotImplemented)
       }
