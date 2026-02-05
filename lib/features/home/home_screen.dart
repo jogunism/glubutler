@@ -57,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen>
   final ScrollController _chartScrollController = ScrollController();
   bool _isChartTouching = false;
 
-  // 차트 크기 설정
-  String _chartSize = 'large'; // 'large' or 'small'
+  // 차트 크기 설정 (기본값: small, 메모리상으로만 저장)
+  String _chartSize = 'small'; // 'large' or 'small'
 
   late AnimationController _animationController;
   late Animation<double> _animation;
