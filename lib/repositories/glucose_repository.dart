@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/database_service.dart';
@@ -21,7 +19,14 @@ class GlucoseRepository {
   /// Check if HealthKit write permission is granted for blood glucose
   Future<bool> hasHealthWritePermission() async {
     await _healthService.checkPermissionStatus();
-    return _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+    final hasPermission = _healthService.getPermissionStatus(HealthDataType.BLOOD_GLUCOSE);
+
+    // If we have write permission, we can also read - ensure hasRequestedPermissions is true
+    if (hasPermission && !_healthService.hasRequestedPermissions) {
+      _healthService.setHasRequestedPermissions(true);
+    }
+
+    return hasPermission;
   }
 
   /// Save a glucose record.
@@ -39,7 +44,6 @@ class GlucoseRepository {
         return true;
       } else {
         // Fallback to local DB if HealthKit write fails
-        debugPrint('[GlucoseRepository] HealthKit write failed, falling back to local DB');
         await _databaseService.insertGlucose(record);
         return true;
       }
@@ -67,7 +71,6 @@ class GlucoseRepository {
       startDate: startDate,
       endDate: endDate,
     );
-    // debugPrint('[GlucoseRepository] Fetched ${localRecords.length} local glucose records');
     for (final record in localRecords) {
       recordsById[record.id] = record;
     }
@@ -78,7 +81,6 @@ class GlucoseRepository {
         startDate: startDate,
         endDate: endDate,
       );
-      // debugPrint('[GlucoseRepository] Fetched ${healthRecords.length} HealthKit glucose records');
       for (final record in healthRecords) {
         // HealthKit records override local records with same ID
         // (in case of migration where we wrote local to HealthKit)
@@ -89,7 +91,6 @@ class GlucoseRepository {
     // Sort by timestamp (newest first)
     final allRecords = recordsById.values.toList();
     allRecords.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-    // debugPrint('[GlucoseRepository] Total merged glucose records: ${allRecords.length}');
     return allRecords;
   }
 
@@ -108,7 +109,6 @@ class GlucoseRepository {
   Future<(int, int)> migrateLocalToHealth() async {
     final hasPermission = await hasHealthWritePermission();
     if (!hasPermission) {
-      debugPrint('[GlucoseRepository] No write permission, cannot migrate');
       return (0, 0);
     }
 
@@ -118,7 +118,6 @@ class GlucoseRepository {
     // Filter to only non-HealthKit records
     final recordsToMigrate = localRecords.where((r) => !r.isFromHealthKit).toList();
     if (recordsToMigrate.isEmpty) {
-      debugPrint('[GlucoseRepository] No local records to migrate');
       return (0, 0);
     }
 
@@ -129,8 +128,6 @@ class GlucoseRepository {
       final success = await _healthService.writeGlucoseRecord(record);
       if (success) {
         migratedIds.add(record.id);
-      } else {
-        debugPrint('[GlucoseRepository] Failed to migrate: ${record.id}');
       }
     }
 
@@ -139,7 +136,6 @@ class GlucoseRepository {
       await _databaseService.deleteGlucoseByIds(migratedIds);
     }
 
-    debugPrint('[GlucoseRepository] Migrated ${migratedIds.length}/${recordsToMigrate.length} records to HealthKit');
     return (recordsToMigrate.length, migratedIds.length);
   }
 
