@@ -159,4 +159,19 @@ class SubscriptionService {
       debugPrint('[Subscription] Error logging out: $e');
     }
   }
+
+  /// 프로모션 코드 입력 시트 표시 (iOS 14+)
+  static Future<void> presentCodeRedemptionSheet() async {
+    if (!_initialized) {
+      debugPrint('[Subscription] Not initialized');
+      return;
+    }
+
+    try {
+      await Purchases.presentCodeRedemptionSheet();
+      debugPrint('[Subscription] Code redemption sheet presented');
+    } catch (e) {
+      debugPrint('[Subscription] Error presenting code redemption sheet: $e');
+    }
+  }
 }

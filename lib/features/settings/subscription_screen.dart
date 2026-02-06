@@ -108,7 +108,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             title: l10n.subscription,
             showBackButton: true,
             showLargeTitle: false, // Hero section has its own title
-            fadeInNavTitle: true, // Fade in nav title when hero title scrolls away
+            fadeInNavTitle:
+                true, // Fade in nav title when hero title scrolls away
             onRefresh: null,
             slivers: [
               SliverPadding(
@@ -137,7 +138,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: SafeArea(
                   top: false,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       height: 56,
@@ -236,10 +240,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           onPressed: () => _showManageSubscriptionAlert(context),
           child: Text(
             l10n.manageSubscription,
-            style: TextStyle(
-              color: theme.colorScheme.primary,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: theme.colorScheme.primary, fontSize: 16),
           ),
         ),
         const SizedBox(height: 40),
@@ -311,19 +312,43 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             ),
 
-        // Restore purchases button
+        // Promo code & Restore purchases buttons
         const SizedBox(height: 12),
-        CupertinoButton(
-          onPressed: () => _showRestoreAlert(context),
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            l10n.restorePurchases,
-            style: const TextStyle(
-              color: AppTheme.primaryColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CupertinoButton(
+              onPressed: () => _showRedeemCodeSheet(context),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              child: Text(
+                l10n.onboardingSubscriptionRedeem,
+                style: const TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
+            Text(
+              '|',
+              style: TextStyle(
+                color: context.colors.textSecondary,
+                fontSize: 16,
+              ),
+            ),
+            CupertinoButton(
+              onPressed: () => _showRestoreAlert(context),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              child: Text(
+                l10n.restorePurchases,
+                style: const TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -354,109 +379,106 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           borderRadius: BorderRadius.circular(20),
           border: isActive
-              ? Border.all(
-                  color: AppTheme.iconAmber,
-                  width: 5,
-                )
+              ? Border.all(color: AppTheme.iconAmber, width: 5)
               : null,
         ),
         child: Padding(
           padding: EdgeInsets.zero,
           child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Icon
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: AppTheme.proGradient,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Icon
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: AppTheme.proGradient,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.shadowOrange,
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.shadowOrange,
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+                child: Center(
+                  child: Icon(
+                    CupertinoIcons.star_fill,
+                    color: Colors.white,
+                    size: 24,
                   ),
-                ],
-              ),
-              child: Center(
-                child: Icon(
-                  CupertinoIcons.star_fill,
-                  color: Colors.white,
-                  size: 24,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Title
-            Text(
-              'Glu Butler Pro',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
-            ),
-            const SizedBox(height: 12),
-            // Description with stars for active users
-            if (isActive)
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Text(
-                    l10n.proActiveDescription,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: context.colors.textSecondary,
-                      height: 1.5,
-                    ),
-                  ),
-                  // Star 1 - bottom right area
-                  Positioned(
-                    bottom: 8,
-                    right: -75,
-                    child: Icon(
-                      CupertinoIcons.star_fill,
-                      color: AppTheme.iconAmber,
-                      size: 24,
-                    ),
-                  ),
-                  // Star 2 - bottom middle
-                  Positioned(
-                    bottom: 25,
-                    right: -45,
-                    child: Icon(
-                      CupertinoIcons.star_fill,
-                      color: AppTheme.iconAmber,
-                      size: 18,
-                    ),
-                  ),
-                  // Star 3 - bottom far right
-                  Positioned(
-                    bottom: -5,
-                    right: -40,
-                    child: Icon(
-                      CupertinoIcons.star_fill,
-                      color: AppTheme.iconAmber,
-                      size: 21,
-                    ),
-                  ),
-                ],
-              )
-            else
+              const SizedBox(height: 20),
+              // Title
               Text(
-                l10n.proDescription,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: context.colors.textSecondary,
-                  height: 1.5,
+                'Glu Butler Pro',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
                 ),
               ),
-          ],
+              const SizedBox(height: 12),
+              // Description with stars for active users
+              if (isActive)
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Text(
+                      l10n.proActiveDescription,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: context.colors.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
+                    // Star 1 - bottom right area
+                    Positioned(
+                      bottom: -12,
+                      right: -12,
+                      child: Icon(
+                        CupertinoIcons.star_fill,
+                        color: AppTheme.iconAmber,
+                        size: 24,
+                      ),
+                    ),
+                    // Star 2 - upper right
+                    Positioned(
+                      bottom: 20,
+                      right: 8,
+                      child: Icon(
+                        CupertinoIcons.star_fill,
+                        color: AppTheme.iconAmber,
+                        size: 18,
+                      ),
+                    ),
+                    // Star 3 - lower right
+                    Positioned(
+                      bottom: -6,
+                      right: 24,
+                      child: Icon(
+                        CupertinoIcons.star_fill,
+                        color: AppTheme.iconAmber,
+                        size: 21,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Text(
+                  l10n.proDescription,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -484,16 +506,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         children: [
           GlassIcon(icon: icon, color: iconColor, size: 28),
           const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              title,
-              style: context.textStyles.tileTitle,
-            ),
-          ),
-          Text(
-            value,
-            style: context.textStyles.tileSubtitle,
-          ),
+          Expanded(child: Text(title, style: context.textStyles.tileTitle)),
+          Text(value, style: context.textStyles.tileSubtitle),
         ],
       ),
     );
@@ -511,12 +525,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         children: [
           GlassIcon(icon: icon, color: iconColor, size: 28),
           const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              title,
-              style: context.textStyles.tileTitle,
-            ),
-          ),
+          Expanded(child: Text(title, style: context.textStyles.tileTitle)),
           const Icon(
             CupertinoIcons.checkmark_circle_fill,
             color: AppTheme.iconGreen,
@@ -530,10 +539,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _buildDivider(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 58),
-      child: Divider(
-        height: 1,
-        color: context.colors.divider,
-      ),
+      child: Divider(height: 1, color: context.colors.divider),
     );
   }
 
@@ -545,22 +551,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final isYearly = package.packageType == PackageType.annual ||
+    final isYearly =
+        package.packageType == PackageType.annual ||
         package.identifier.contains('yearly');
 
     String title = isYearly
         ? l10n.yearly
         : package.packageType == PackageType.monthly ||
-                package.identifier.contains('monthly')
-            ? l10n.monthly
-            : package.storeProduct.title;
+              package.identifier.contains('monthly')
+        ? l10n.monthly
+        : package.storeProduct.title;
 
     String description = isYearly
         ? l10n.yearlyDescription
         : package.packageType == PackageType.monthly ||
-                package.identifier.contains('monthly')
-            ? l10n.monthlyDescription
-            : package.storeProduct.description;
+              package.identifier.contains('monthly')
+        ? l10n.monthlyDescription
+        : package.storeProduct.description;
 
     final price = package.storeProduct.priceString;
 
@@ -626,9 +633,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         useRootNavigator: true,
-        builder: (context) => PaywallScreen(
-          initialSelectedPackage: _selectedPackage,
-        ),
+        builder: (context) =>
+            PaywallScreen(initialSelectedPackage: _selectedPackage),
       );
 
       if (result == true && context.mounted) {
@@ -656,6 +662,36 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           isSuccess: false,
         );
       }
+    }
+  }
+
+  Future<void> _showRedeemCodeSheet(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      // 시트 표시 전 현재 상태 저장
+      final wasPremiumBefore = await SubscriptionService.isPremiumActive();
+
+      await SubscriptionService.presentCodeRedemptionSheet();
+
+      // 시트 닫힌 후 상태 체크
+      final isPremiumNow = await SubscriptionService.isPremiumActive();
+
+      // 상태가 변경되었을 때만 업데이트 (기존 비구독 → 구독)
+      if (!wasPremiumBefore && isPremiumNow && context.mounted) {
+        final settings = context.read<SettingsService>();
+        await settings.setProStatus(true);
+
+        if (context.mounted) {
+          TopBanner.show(
+            context,
+            message: l10n.subscriptionSuccessful,
+            isSuccess: true,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('[Subscription] Error presenting code redemption sheet: $e');
     }
   }
 
@@ -735,11 +771,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         // Close loading dialog
         Navigator.pop(context);
 
-        TopBanner.show(
-          context,
-          message: l10n.restoreFailed,
-          isSuccess: false,
-        );
+        TopBanner.show(context, message: l10n.restoreFailed, isSuccess: false);
       }
     }
   }
