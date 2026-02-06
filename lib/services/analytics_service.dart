@@ -454,4 +454,93 @@ class AnalyticsService {
     );
     debugPrint('[Analytics] Notification settings changed: $enabled');
   }
+
+  // ============================================================================
+  // User Properties (국가별, 연령별 집계용)
+  // ============================================================================
+
+  /// Set user country (Firebase가 자동 수집하지만 명시적으로 설정 가능)
+  static Future<void> setUserCountry(String countryCode) async {
+    if (!isEnabled) return;
+
+    await _analytics.setUserProperty(
+      name: 'country',
+      value: countryCode,
+    );
+    debugPrint('[Analytics] User country set: $countryCode');
+  }
+
+  /// Set user age group (연령대)
+  /// 예: "18-24", "25-34", "35-44", "45-54", "55-64", "65+"
+  static Future<void> setUserAgeGroup(String ageGroup) async {
+    if (!isEnabled) return;
+
+    await _analytics.setUserProperty(
+      name: 'age_group',
+      value: ageGroup,
+    );
+    debugPrint('[Analytics] User age group set: $ageGroup');
+  }
+
+  /// Set user birth year (출생 연도로 연령 계산 가능)
+  static Future<void> setUserBirthYear(int birthYear) async {
+    if (!isEnabled) return;
+
+    final age = DateTime.now().year - birthYear;
+    final ageGroup = _getAgeGroup(age);
+
+    await _analytics.setUserProperty(
+      name: 'birth_year',
+      value: birthYear.toString(),
+    );
+    await _analytics.setUserProperty(
+      name: 'age_group',
+      value: ageGroup,
+    );
+    debugPrint('[Analytics] User birth year set: $birthYear (age group: $ageGroup)');
+  }
+
+  /// Convert age to age group
+  static String _getAgeGroup(int age) {
+    if (age < 18) return 'under_18';
+    if (age < 25) return '18-24';
+    if (age < 35) return '25-34';
+    if (age < 45) return '35-44';
+    if (age < 55) return '45-54';
+    if (age < 65) return '55-64';
+    return '65+';
+  }
+
+  /// Set user diabetes type
+  static Future<void> setUserDiabetesType(String type) async {
+    if (!isEnabled) return;
+
+    await _analytics.setUserProperty(
+      name: 'diabetes_type',
+      value: type,
+    );
+    debugPrint('[Analytics] User diabetes type set: $type');
+  }
+
+  /// Set user subscription status
+  static Future<void> setUserSubscriptionStatus(bool isPro) async {
+    if (!isEnabled) return;
+
+    await _analytics.setUserProperty(
+      name: 'subscription_status',
+      value: isPro ? 'pro' : 'free',
+    );
+    debugPrint('[Analytics] User subscription status set: ${isPro ? 'pro' : 'free'}');
+  }
+
+  /// Set user language preference
+  static Future<void> setUserLanguage(String languageCode) async {
+    if (!isEnabled) return;
+
+    await _analytics.setUserProperty(
+      name: 'app_language',
+      value: languageCode,
+    );
+    debugPrint('[Analytics] User language set: $languageCode');
+  }
 }

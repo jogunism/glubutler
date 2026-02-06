@@ -364,123 +364,116 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     ThemeData theme, {
     required bool isActive,
   }) {
-    return SizedBox(
+    final content = Container(
       width: double.infinity,
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppTheme.proGradient[0].withValues(alpha: 0.3),
-              AppTheme.proGradient[1].withValues(alpha: 0.2),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          border: isActive
-              ? Border.all(color: AppTheme.iconAmber, width: 5)
-              : null,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.proGradient[0].withValues(alpha: 0.3),
+            AppTheme.proGradient[1].withValues(alpha: 0.2),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        child: Padding(
-          padding: EdgeInsets.zero,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Icon
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: AppTheme.proGradient,
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.shadowOrange,
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Icon(
-                    CupertinoIcons.star_fill,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
+        borderRadius: BorderRadius.circular(20),
+        border: isActive
+            ? Border.all(color: AppTheme.iconAmber, width: 5)
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icon
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: AppTheme.proGradient,
               ),
-              const SizedBox(height: 20),
-              // Title
-              Text(
-                'Glu Butler Pro',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.shadowOrange,
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
                 ),
+              ],
+            ),
+            child: const Center(
+              child: Icon(
+                CupertinoIcons.star_fill,
+                color: Colors.white,
+                size: 24,
               ),
-              const SizedBox(height: 12),
-              // Description with stars for active users
-              if (isActive)
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Text(
-                      l10n.proActiveDescription,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: context.colors.textSecondary,
-                        height: 1.5,
-                      ),
-                    ),
-                    // Star 1 - bottom right area
-                    Positioned(
-                      bottom: -12,
-                      right: -12,
-                      child: Icon(
-                        CupertinoIcons.star_fill,
-                        color: AppTheme.iconAmber,
-                        size: 24,
-                      ),
-                    ),
-                    // Star 2 - upper right
-                    Positioned(
-                      bottom: 20,
-                      right: 8,
-                      child: Icon(
-                        CupertinoIcons.star_fill,
-                        color: AppTheme.iconAmber,
-                        size: 18,
-                      ),
-                    ),
-                    // Star 3 - lower right
-                    Positioned(
-                      bottom: -6,
-                      right: 24,
-                      child: Icon(
-                        CupertinoIcons.star_fill,
-                        color: AppTheme.iconAmber,
-                        size: 21,
-                      ),
-                    ),
-                  ],
-                )
-              else
-                Text(
-                  l10n.proDescription,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: context.colors.textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-            ],
+            ),
           ),
-        ),
+          const SizedBox(height: 20),
+          // Title
+          Text(
+            'Glu Butler Pro',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Description
+          Text(
+            isActive ? l10n.proActiveDescription : l10n.proDescription,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: context.colors.textSecondary,
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
+
+    // 구독 활성 상태: Container 전체를 기준으로 별 배치
+    if (isActive) {
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          content,
+          // Star 1 - bottom right
+          const Positioned(
+            bottom: 12,
+            right: 12,
+            child: Icon(
+              CupertinoIcons.star_fill,
+              color: AppTheme.iconAmber,
+              size: 24,
+            ),
+          ),
+          // Star 2 - upper right
+          const Positioned(
+            bottom: 45,
+            right: 35,
+            child: Icon(
+              CupertinoIcons.star_fill,
+              color: AppTheme.iconAmber,
+              size: 18,
+            ),
+          ),
+          // Star 3 - middle right
+          const Positioned(
+            bottom: 20,
+            right: 50,
+            child: Icon(
+              CupertinoIcons.star_fill,
+              color: AppTheme.iconAmber,
+              size: 21,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return content;
   }
 
   Widget _buildCard({

@@ -95,6 +95,10 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
             }
 
             await settings.setTextScale(textScale);
+
+            // Firebase Analytics에 연령대 수집
+            await AnalyticsService.setUserBirthYear(birthDate.year);
+
             debugPrint('[HealthPermissionPage] Age: $age, Text scale set to: $textScale');
           } catch (e) {
             debugPrint('[HealthPermissionPage] Error parsing birth date: $e');
