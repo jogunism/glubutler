@@ -136,45 +136,6 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  Future<void> _deleteAllReports() async {
-    if (!mounted) return;
-
-    // 삭제 확인 다이얼로그
-    final confirmed = await showCupertinoDialog<bool>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        content: const Text('모두삭제'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('취소'),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('삭제'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true || !mounted) return;
-
-    debugPrint(
-      '[ReportScreen] Hard deleting all reports from DB and iCloud...',
-    );
-
-    final reportProvider = context.read<ReportProvider>();
-
-    // DB와 iCloud에서 완전히 삭제 (hard delete)
-    final deletedCount = await reportProvider.deleteAllReports();
-
-    debugPrint(
-      '[ReportScreen] Successfully hard deleted $deletedCount reports from DB and iCloud',
-    );
-  }
-
   Widget _buildTitleTrailingButtons() {
     final isDevMode = dotenv.env['APP_ENV'] == 'development';
     final reportProvider = context.watch<ReportProvider>();

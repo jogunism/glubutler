@@ -30,7 +30,6 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
   int? _touchedBarIndex;
   int? _touchedSpotIndex;
   double? _touchedXValue; // 터치된 X 좌표
-  double? _touchedYValue; // 터치된 Y 좌표 (혈당 값)
 
   void _toggleExpanded() {
     setState(() {
@@ -390,18 +389,15 @@ class _CgmGroupCardState extends State<CgmGroupCard> {
                     _touchedBarIndex = null;
                     _touchedSpotIndex = null;
                     _touchedXValue = null;
-                    _touchedYValue = null;
                   } else {
                     _touchedBarIndex = spot.barIndex;
                     _touchedSpotIndex = spot.spotIndex;
                     _touchedXValue = spot.x;
-                    _touchedYValue = spot.y;
                   }
                 } else {
                   _touchedBarIndex = null;
                   _touchedSpotIndex = null;
                   _touchedXValue = null;
-                  _touchedYValue = null;
                 }
               });
             },

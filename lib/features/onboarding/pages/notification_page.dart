@@ -67,12 +67,6 @@ class _NotificationPageState extends State<NotificationPage> {
     debugPrint('[NotificationPage] All notifications disabled due to permission denial or skip');
   }
 
-  Future<void> _handleSkip() async {
-    // 건너뛰기 시 모든 알림 설정 OFF
-    await _disableAllNotifications();
-    widget.onNext();
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;

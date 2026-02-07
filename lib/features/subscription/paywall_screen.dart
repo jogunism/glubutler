@@ -12,10 +12,7 @@ import 'package:glu_butler/services/subscription_service.dart';
 class PaywallScreen extends StatefulWidget {
   final Package? initialSelectedPackage;
 
-  const PaywallScreen({
-    super.key,
-    this.initialSelectedPackage,
-  });
+  const PaywallScreen({super.key, this.initialSelectedPackage});
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -86,7 +83,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
 
     try {
-      final customerInfo = await SubscriptionService.purchase(_selectedPackage!);
+      final customerInfo = await SubscriptionService.purchase(
+        _selectedPackage!,
+      );
 
       if (customerInfo != null && mounted) {
         Navigator.of(context).pop(true);
@@ -136,7 +135,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
     final bottomPadding = mediaQuery.padding.bottom;
 
@@ -154,102 +152,107 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 color: Colors.black.withValues(alpha: 0.05), // 95% opaque black
               ),
               child: Column(
-              children: [
-            // Drag indicator
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 36,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2.5),
-              ),
-            ),
-
-            // Content
-            Flexible(
-              child: _isLoading
-                  ? const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(48.0),
-                        child: CupertinoActivityIndicator(radius: 16),
-                      ),
-                    )
-                  : _errorMessage != null
-                      ? _buildErrorState(l10n)
-                      : SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 12),
-                                _buildHeroSection(),
-                                const SizedBox(height: 32),
-                                if (_currentOffering != null)
-                                  for (final package
-                                      in _currentOffering!.availablePackages)
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 12),
-                                      child: _buildPricingOption(
-                                        context: context,
-                                        package: package,
-                                        isSelected: _selectedPackage
-                                                ?.identifier ==
-                                            package.identifier,
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedPackage = package;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                const SizedBox(height: 24),
-                              ],
-                            ),
-                          ),
-                        ),
-            ),
-
-            // Bottom buttons
-            if (!_isLoading)
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    top: 12,
-                    bottom: bottomPadding + 12,
-                  ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: CupertinoButton(
-                      color: AppTheme.primaryColor,
-                      borderRadius: BorderRadius.circular(14),
-                      onPressed: _isPurchasing ? null : _purchase,
-                      child: _isPurchasing
-                          ? const CupertinoActivityIndicator(
-                              color: Colors.white)
-                          : Text(
-                              l10n.continuePurchase,
-                              style: context.textStyles.buttonText.copyWith(
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
+                children: [
+                  // Drag indicator
+                  Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 8),
+                    width: 36,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2.5),
                     ),
                   ),
-                ),
+
+                  // Content
+                  Flexible(
+                    child: _isLoading
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(48.0),
+                              child: CupertinoActivityIndicator(radius: 16),
+                            ),
+                          )
+                        : _errorMessage != null
+                        ? _buildErrorState(l10n)
+                        : SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 12),
+                                  _buildHeroSection(),
+                                  const SizedBox(height: 32),
+                                  if (_currentOffering != null)
+                                    for (final package
+                                        in _currentOffering!.availablePackages)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12,
+                                        ),
+                                        child: _buildPricingOption(
+                                          context: context,
+                                          package: package,
+                                          isSelected:
+                                              _selectedPackage?.identifier ==
+                                              package.identifier,
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedPackage = package;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                  const SizedBox(height: 24),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
+
+                  // Bottom buttons
+                  if (!_isLoading)
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                          top: 12,
+                          bottom: bottomPadding + 12,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: CupertinoButton(
+                            color: AppTheme.primaryColor,
+                            borderRadius: BorderRadius.circular(14),
+                            onPressed: _isPurchasing ? null : _purchase,
+                            child: _isPurchasing
+                                ? const CupertinoActivityIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    l10n.continuePurchase,
+                                    style: context.textStyles.buttonText
+                                        .copyWith(
+                                          decoration: TextDecoration.none,
+                                        ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              ],
             ),
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -320,15 +323,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final isYearly = package.packageType == PackageType.annual ||
+    final isYearly =
+        package.packageType == PackageType.annual ||
         package.identifier.contains('yearly');
 
     String title = isYearly
         ? l10n.yearly
         : package.packageType == PackageType.monthly ||
-                package.identifier.contains('monthly')
-            ? l10n.monthly
-            : package.storeProduct.title;
+              package.identifier.contains('monthly')
+        ? l10n.monthly
+        : package.storeProduct.title;
 
     final price = package.storeProduct.priceString;
 
