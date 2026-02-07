@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/report.dart';
-import 'package:glu_butler/models/report_guide_summary.dart';
 import 'package:glu_butler/services/database_service.dart';
 
 /// CloudKit 서비스
@@ -232,6 +230,8 @@ class CloudKitService {
       final reportData = {
         'id': report.id.toString(),
         'content': report.content,
+        'improvements': report.improvements ?? '',
+        'needsImprovement': report.needsImprovement ?? '',
         'startDate': report.startDate.toIso8601String(),
         'endDate': report.endDate.toIso8601String(),
         'createdAt': report.createdAt.toIso8601String(),
@@ -301,11 +301,19 @@ class CloudKitService {
           final contentStr = jsonMap['content'] as String?;
           final content = (contentStr == null || contentStr.isEmpty) ? null : contentStr;
 
+          // improvements, needsImprovement 가져오기
+          final improvementsStr = jsonMap['improvements'] as String?;
+          final improvements = (improvementsStr == null || improvementsStr.isEmpty) ? null : improvementsStr;
+          final needsImprovementStr = jsonMap['needsImprovement'] as String?;
+          final needsImprovement = (needsImprovementStr == null || needsImprovementStr.isEmpty) ? null : needsImprovementStr;
+
           final report = Report(
             id: localId,
             startDate: startDate,
             endDate: endDate,
             content: content,
+            improvements: improvements,
+            needsImprovement: needsImprovement,
             createdAt: createdAt,
           );
 
@@ -370,138 +378,6 @@ class CloudKitService {
       await _channel.invokeMethod('deleteAllReports');
     } on PlatformException catch (e) {
       throw Exception('Failed to delete all reports from CloudKit: ${e.message}');
-    }
-  }
-
-  // MARK: - ReportGuideSummary Sync
-
-  /// 단일 리포트 가이드 요약을 iCloud로 업로드
-  ///
-  /// [summary]: 업로드할 가이드 요약
-  static Future<void> uploadReportGuideSummary(ReportGuideSummary summary) async {
-    try {
-      // ReportGuideSummary를 Map으로 변환
-      final summaryData = {
-        'id': summary.id.toString(),
-        'reportDate': summary.reportDate,
-        'improvements': summary.improvements, // 쉼표로 구분된 문자열
-        'needsImprovement': summary.needsImprovement, // 쉼표로 구분된 문자열
-        'createdAt': summary.createdAt.toIso8601String(),
-      };
-
-      await _channel.invokeMethod('saveReportGuideSummary', {'summary': summaryData});
-    } catch (e) {
-      throw Exception('Failed to upload report guide summary: $e');
-    }
-  }
-
-  /// 로컬 리포트 가이드 요약을 iCloud로 업로드
-  ///
-  /// Returns: 업로드된 가이드 요약 개수
-  static Future<int> uploadReportGuideSummaries() async {
-    try {
-      // 로컬 DB에서 모든 guide summaries 가져오기 (limit 없이 전체)
-      final summaries = await _databaseService.getAllGuideSummaries(limit: 1000);
-
-      if (summaries.isEmpty) {
-        return 0;
-      }
-
-      int uploadedCount = 0;
-
-      for (final summary in summaries) {
-        try {
-          await uploadReportGuideSummary(summary);
-          uploadedCount++;
-        } catch (e) {
-          // 하나 실패해도 계속 진행
-        }
-      }
-
-      return uploadedCount;
-    } catch (e) {
-      throw Exception('Failed to upload report guide summaries: $e');
-    }
-  }
-
-  /// iCloud에서 리포트 가이드 요약 다운로드하여 로컬 DB에 저장
-  ///
-  /// Returns: 다운로드된 가이드 요약 개수
-  static Future<int> downloadReportGuideSummaries() async {
-    try {
-      final List<dynamic> summaries = await _channel.invokeMethod('fetchReportGuideSummaries');
-
-      if (summaries.isEmpty) {
-        return 0;
-      }
-
-      int savedCount = 0;
-
-      for (final summaryData in summaries) {
-        try {
-          final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(summaryData as Map);
-
-          // Parse date
-          final createdAt = DateTime.parse(jsonMap['createdAt'] as String);
-
-          // id를 int로 파싱
-          final int? localId = int.tryParse(jsonMap['id'] as String);
-
-          final summary = ReportGuideSummary.fromMap({
-            'id': localId,
-            'report_date': jsonMap['reportDate'],
-            'improvements': jsonMap['improvements'], // 쉼표로 구분된 문자열
-            'needs_improvement': jsonMap['needsImprovement'], // 쉼표로 구분된 문자열
-            'created_at': createdAt.toIso8601String(),
-          });
-
-          // 로컬 DB에 저장 (기존 데이터 확인 후 insert)
-          if (localId != null) {
-            final existing = await _databaseService.reportDao.getGuideSummaryByDate(summary.reportDate);
-            if (existing == null) {
-              await _databaseService.reportDao.insertGuideSummary(summary);
-            }
-            // 이미 있으면 스킵
-          }
-
-          savedCount++;
-        } catch (e) {
-          debugPrint('[CloudKitService] Failed to save guide summary: $e');
-          // 하나 실패해도 계속 진행
-        }
-      }
-
-      return savedCount;
-    } catch (e) {
-      throw Exception('Failed to download report guide summaries: $e');
-    }
-  }
-
-  /// 양방향 동기화: 업로드 후 다운로드
-  ///
-  /// Returns: (업로드 개수, 다운로드 개수)
-  static Future<(int, int)> syncReportGuideSummaries() async {
-    try {
-      // 1. 로컬 → iCloud 업로드
-      final uploadedCount = await uploadReportGuideSummaries();
-
-      // 2. iCloud → 로컬 다운로드
-      final downloadedCount = await downloadReportGuideSummaries();
-
-      return (uploadedCount, downloadedCount);
-    } catch (e) {
-      throw Exception('Failed to sync report guide summaries: $e');
-    }
-  }
-
-  /// 리포트 가이드 요약 삭제 (iCloud에서)
-  ///
-  /// [summaryId]: 삭제할 가이드 요약 ID
-  static Future<void> deleteReportGuideSummary(int summaryId) async {
-    try {
-      await _channel.invokeMethod('deleteReportGuideSummary', {'summaryId': summaryId.toString()});
-    } on PlatformException catch (e) {
-      throw Exception('Failed to delete report guide summary from CloudKit: ${e.message}');
     }
   }
 

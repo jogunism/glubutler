@@ -97,8 +97,7 @@ class _ReportPageState extends State<ReportPage> {
         debugPrint('[ReportPage] Downloaded $mealCount meal records');
 
         final reportCount = await CloudKitService.downloadReports();
-        final summaryCount = await CloudKitService.downloadReportGuideSummaries();
-        debugPrint('[ReportPage] Downloaded $reportCount reports, $summaryCount summaries');
+        debugPrint('[ReportPage] Downloaded $reportCount reports');
 
         // Log iCloud enabled
         await AnalyticsService.logICloudEnabled(success: true);

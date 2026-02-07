@@ -4,6 +4,8 @@ class Report {
   final DateTime startDate;
   final DateTime endDate;
   final String? content; // Markdown 형식 (삭제된 리포트는 빈 문자열)
+  final String? improvements; // 잘하고 계신점
+  final String? needsImprovement; // 개선이 필요한 부분
   final DateTime createdAt;
 
   Report({
@@ -11,17 +13,23 @@ class Report {
     required this.startDate,
     required this.endDate,
     this.content,
+    this.improvements,
+    this.needsImprovement,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
   /// 데이터베이스에서 읽어온 Map을 Report 객체로 변환
   factory Report.fromMap(Map<String, dynamic> map) {
     final contentStr = map['content'] as String?;
+    final improvementsStr = map['improvements'] as String?;
+    final needsImprovementStr = map['needs_improvement'] as String?;
     return Report(
       id: map['id'] as int?,
       startDate: DateTime.parse(map['start_date'] as String),
       endDate: DateTime.parse(map['end_date'] as String),
       content: (contentStr == null || contentStr.isEmpty) ? null : contentStr,
+      improvements: (improvementsStr == null || improvementsStr.isEmpty) ? null : improvementsStr,
+      needsImprovement: (needsImprovementStr == null || needsImprovementStr.isEmpty) ? null : needsImprovementStr,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
@@ -33,6 +41,8 @@ class Report {
       'start_date': startDate.toIso8601String(),
       'end_date': endDate.toIso8601String(),
       'content': content,
+      'improvements': improvements,
+      'needs_improvement': needsImprovement,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -71,6 +81,8 @@ class Report {
     DateTime? startDate,
     DateTime? endDate,
     String? content,
+    String? improvements,
+    String? needsImprovement,
     DateTime? createdAt,
   }) {
     return Report(
@@ -78,6 +90,8 @@ class Report {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       content: content ?? this.content,
+      improvements: improvements ?? this.improvements,
+      needsImprovement: needsImprovement ?? this.needsImprovement,
       createdAt: createdAt ?? this.createdAt,
     );
   }

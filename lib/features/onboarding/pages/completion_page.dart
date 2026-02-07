@@ -59,10 +59,8 @@ class _CompletionPageState extends State<CompletionPage> {
           if (isAvailable && isSignedIn) {
             final mealCount = await CloudKitService.downloadMealRecords();
             final reportCount = await CloudKitService.downloadReports();
-            final summaryCount =
-                await CloudKitService.downloadReportGuideSummaries();
             debugPrint(
-              '[CompletionPage] Downloaded $mealCount meals, $reportCount reports, $summaryCount summaries from iCloud',
+              '[CompletionPage] Downloaded $mealCount meals, $reportCount reports from iCloud',
             );
 
             // 기존 diary에서 meal_records 마이그레이션 (사진 촬영 시간 기준)

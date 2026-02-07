@@ -83,16 +83,13 @@ class ReportApiService {
           ),
         ]);
 
-        // 이전 가이드 요약 추가 (있는 경우에만)
-        if (previousGuideSummaries != null &&
-            previousGuideSummaries.isNotEmpty) {
-          formData.fields.add(
-            MapEntry(
-              'previousGuideSummaries',
-              jsonEncode(previousGuideSummaries),
-            ),
-          );
-        }
+        // 이전 가이드 요약 항상 전송 (서버 로그에서 디버깅 가능)
+        formData.fields.add(
+          MapEntry(
+            'previousGuideSummaries',
+            jsonEncode(previousGuideSummaries ?? []),
+          ),
+        );
 
         // debugPrint('[ReportApiService] FormData fields added successfully');
       } catch (e) {

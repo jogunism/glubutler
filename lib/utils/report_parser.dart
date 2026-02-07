@@ -1,25 +1,21 @@
-import 'package:glu_butler/models/report_guide_summary.dart';
-
 /// 리포트 마크다운에서 가이드 섹션 파싱 유틸리티
 class ReportParser {
   /// 리포트 마크다운에서 가이드 요약 추출
   ///
   /// 마크다운 구조 기반 파싱 (언어 독립적):
-  /// - 3번째 ## 섹션 (index 2) = 가이드 섹션
+  /// - "## 📝" 이모지로 가이드 섹션 찾기
   /// - 첫 번째 ### = improvements
   /// - 두 번째 ### = needs_improvement
   ///
   /// [markdownContent]: 전체 리포트 마크다운 내용
-  /// [reportDate]: 리포트 날짜 (yyyy-MM-dd 형식)
   ///
-  /// Returns: ReportGuideSummary 객체, 파싱 실패 시 null
-  static ReportGuideSummary? extractGuideSummary(
+  /// Returns: (improvements, needsImprovement) 레코드, 파싱 실패 시 null
+  static ({String improvements, String needsImprovement})? extractGuideSummary(
     String markdownContent,
-    String reportDate,
   ) {
     try {
-      // 3번째 ## 섹션 찾기 (index 2 = 가이드 섹션)
-      final guideSection = _extractSectionByIndex(markdownContent, 2, 2);
+      // "## 📝" 이모지로 가이드 섹션 찾기 (언어 독립적)
+      final guideSection = _extractSectionByEmoji(markdownContent, '📝');
       if (guideSection == null) {
         return null;
       }
@@ -41,46 +37,36 @@ class ReportParser {
       final improvements = improvementsList.join(', ');
       final needsImprovement = needsImprovementList.join(', ');
 
-      return ReportGuideSummary(
-        reportDate: reportDate,
-        improvements: improvements,
-        needsImprovement: needsImprovement,
-      );
+      return (improvements: improvements, needsImprovement: needsImprovement);
     } catch (e) {
       return null;
     }
   }
 
-  /// N번째 레벨2 헤더(##) 섹션 추출
+  /// 이모지로 ## 섹션 찾기 (언어 독립적)
   ///
   /// [content]: 마크다운 전체 내용
-  /// [headerLevel]: 헤더 레벨 (2 for ##)
-  /// [index]: 0부터 시작하는 인덱스
+  /// [emoji]: 찾을 이모지 (예: '📝')
   ///
   /// Returns: 섹션 내용, 없으면 null
-  static String? _extractSectionByIndex(
-    String content,
-    int headerLevel,
-    int index,
-  ) {
-    // 모든 레벨2 헤더 찾기 (예: ## 제목)
-    final regex = RegExp('^#{$headerLevel} .+\$', multiLine: true);
-    final matches = regex.allMatches(content).toList();
+  static String? _extractSectionByEmoji(String content, String emoji) {
+    // "## 📝" 패턴으로 시작하는 헤더 찾기
+    final regex = RegExp('^## $emoji.+\$', multiLine: true);
+    final match = regex.firstMatch(content);
 
-    if (index >= matches.length) {
+    if (match == null) {
       return null;
     }
 
-    final targetMatch = matches[index];
-    final headerEnd = targetMatch.end;
+    final headerEnd = match.end;
 
-    // 다음 같은 레벨 헤더 찾기
-    final nextMatches = regex.allMatches(content, headerEnd);
+    // 다음 ## 헤더 찾기
+    final nextHeaderRegex = RegExp('^## .+\$', multiLine: true);
+    final nextMatches = nextHeaderRegex.allMatches(content, headerEnd);
     final endIndex = nextMatches.isEmpty
         ? content.length
         : nextMatches.first.start;
 
-    // 헤더 다음 줄부터 다음 헤더 전까지
     return content.substring(headerEnd, endIndex).trim();
   }
 

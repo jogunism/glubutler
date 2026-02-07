@@ -73,18 +73,17 @@ class ReportRepository {
     final language = _settingsService.language;
     final glucoseRange = _settingsService.glucoseRange;
 
-    debugPrint('[ReportRepository] Current language setting: $language');
-    debugPrint('[ReportRepository] User profile: ${userProfile.toJson()}');
-    debugPrint('[ReportRepository] Glucose range: ${glucoseRange.toJson()}');
-    debugPrint('[ReportRepository] Simplified feed data count: ${simplifiedFeedData.length}');
-    debugPrint('[ReportRepository] Simplified diary data count: ${simplifiedDiaryData.length}');
-    debugPrint('[ReportRepository] Image paths count: ${imagePaths.length}');
-
     try {
-      // 이전 가이드 요약 가져오기 (최대 10개)
-      final previousGuideSummaries = await _databaseService.getAllGuideSummaries(limit: 10);
-      final previousGuideSummariesJson = previousGuideSummaries
-          .map((summary) => summary.toJson())
+      // 이전 가이드 요약 가져오기 - reports 테이블에서 직접 조회
+      final allReports = await _databaseService.getAllReports();
+      final previousGuideSummariesJson = allReports
+          .where((r) => r.improvements != null || r.needsImprovement != null)
+          .take(10)
+          .map((r) => {
+            'reportDate': DateFormat('yyyy-MM-dd').format(r.endDate),
+            'improvements': r.improvements ?? '',
+            'needsImprovement': r.needsImprovement ?? '',
+          })
           .toList();
 
       // 실제 API 호출
@@ -102,11 +101,16 @@ class ReportRepository {
         onProgress: onProgress,
       );
 
-      // API 호출 성공 시에만 DB에 저장
+      // 리포트에서 가이드 요약 추출
+      final guideSummary = ReportParser.extractGuideSummary(reportContent);
+
+      // API 호출 성공 시에만 DB에 저장 (improvements/needsImprovement 포함)
       final report = Report(
         startDate: startDate,
         endDate: endDate,
         content: reportContent,
+        improvements: guideSummary?.improvements,
+        needsImprovement: guideSummary?.needsImprovement,
       );
       final reportId = await _databaseService.insertReport(report);
       final savedReport = report.copyWith(id: reportId);
@@ -120,33 +124,6 @@ class ReportRepository {
           debugPrint('[ReportRepository] Failed to upload report to iCloud: $e');
           // iCloud 업로드 실패해도 로컬 저장은 성공했으므로 계속 진행
         }
-      }
-
-      // 리포트에서 가이드 요약 추출 및 저장
-      try {
-        final reportDate = DateFormat('yyyy-MM-dd').format(endDate);
-        final guideSummary = ReportParser.extractGuideSummary(reportContent, reportDate);
-
-        if (guideSummary != null) {
-          final summaryId = await _databaseService.insertGuideSummary(guideSummary);
-          final savedSummary = guideSummary.copyWith(id: summaryId);
-          debugPrint('[ReportRepository] Guide summary extracted and saved');
-
-          // iCloud에 업로드
-          if (_settingsService.iCloudSyncEnabled) {
-            try {
-              await CloudKitService.uploadReportGuideSummary(savedSummary);
-              debugPrint('[ReportRepository] Guide summary uploaded to iCloud');
-            } catch (e) {
-              debugPrint('[ReportRepository] Failed to upload guide summary to iCloud: $e');
-            }
-          }
-        } else {
-          debugPrint('[ReportRepository] No guide summary found in report');
-        }
-      } catch (e) {
-        debugPrint('[ReportRepository] Failed to extract/save guide summary: $e');
-        // 가이드 요약 저장 실패해도 리포트는 반환
       }
 
       return savedReport;
@@ -224,10 +201,6 @@ class ReportRepository {
         // iCloud 삭제 실패해도 로컬 삭제는 성공했으므로 무시
       }
     }
-
-    // 가이드 요약도 모두 삭제
-    final deletedSummaries = await _databaseService.reportDao.deleteAllGuideSummaries();
-    debugPrint('[ReportRepository] All guide summaries deleted: $deletedSummaries');
 
     return deletedCount;
   }

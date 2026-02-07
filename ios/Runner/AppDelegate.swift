@@ -86,18 +86,8 @@ import CloudKit
           result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
         }
 
-      case "saveReportGuideSummary":
-        if let args = call.arguments as? [String: Any] {
-          self.cloudKitBridge.saveReportGuideSummary(arguments: args, result: result)
-        } else {
-          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
-        }
-
       case "fetchReports":
         self.cloudKitBridge.fetchReports(result: result)
-
-      case "fetchReportGuideSummaries":
-        self.cloudKitBridge.fetchReportGuideSummaries(result: result)
 
       case "deleteReport":
         if let args = call.arguments as? [String: Any] {
@@ -108,13 +98,6 @@ import CloudKit
 
       case "deleteAllReports":
         self.cloudKitBridge.deleteAllReports(result: result)
-
-      case "deleteReportGuideSummary":
-        if let args = call.arguments as? [String: Any] {
-          self.cloudKitBridge.deleteReportGuideSummary(arguments: args, result: result)
-        } else {
-          result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
-        }
 
       case "saveServiceStartDate":
         if let args = call.arguments as? [String: Any] {

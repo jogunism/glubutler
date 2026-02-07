@@ -150,12 +150,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           '[SettingsScreen] Report sync complete: $reportUploaded uploaded, $reportDownloaded downloaded',
         );
 
-        // 가이드 요약 양방향 동기화
-        final (summaryUploaded, summaryDownloaded) = await CloudKitService.syncReportGuideSummaries();
-        debugPrint(
-          '[SettingsScreen] Guide summary sync complete: $summaryUploaded uploaded, $summaryDownloaded downloaded',
-        );
-
         // 모든 Provider 리프레시
         if (mounted) {
           debugPrint('[SettingsScreen] Refreshing all providers...');

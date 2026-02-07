@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:glu_butler/models/report.dart';
-import 'package:glu_butler/models/report_guide_summary.dart';
 import 'package:glu_butler/services/database/database_schema.dart';
 
 /// 리포트 데이터 접근 객체 (DAO)
@@ -175,65 +174,4 @@ class ReportDao {
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
-  // ============ Report Guide Summaries ============
-
-  /// 새 리포트 가이드 요약 저장
-  ///
-  /// Returns: 삽입된 가이드 요약의 ID
-  Future<int> insertGuideSummary(ReportGuideSummary summary) async {
-    return await db.insert(
-      DatabaseSchema.tableReportGuideSummaries,
-      summary.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  /// 모든 가이드 요약 조회 (최신순, 최대 10개)
-  ///
-  /// Returns: 생성일 기준 내림차순으로 정렬된 가이드 요약 리스트
-  Future<List<ReportGuideSummary>> getAllGuideSummaries({int limit = 10}) async {
-    final List<Map<String, dynamic>> maps = await db.query(
-      DatabaseSchema.tableReportGuideSummaries,
-      orderBy: 'created_at DESC',
-      limit: limit,
-    );
-
-    return List.generate(maps.length, (i) {
-      return ReportGuideSummary.fromMap(maps[i]);
-    });
-  }
-
-  /// 특정 날짜의 가이드 요약 조회
-  ///
-  /// Returns: 해당 날짜의 가이드 요약, 없으면 null
-  Future<ReportGuideSummary?> getGuideSummaryByDate(String reportDate) async {
-    final List<Map<String, dynamic>> maps = await db.query(
-      DatabaseSchema.tableReportGuideSummaries,
-      where: 'report_date = ?',
-      whereArgs: [reportDate],
-      limit: 1,
-    );
-
-    if (maps.isEmpty) {
-      return null;
-    }
-
-    return ReportGuideSummary.fromMap(maps.first);
-  }
-
-  /// 가이드 요약 삭제
-  ///
-  /// Returns: 삭제된 행의 수
-  Future<int> deleteGuideSummary(int id) async {
-    return await db.delete(
-      DatabaseSchema.tableReportGuideSummaries,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  /// 모든 가이드 요약 삭제 (테스트용)
-  Future<int> deleteAllGuideSummaries() async {
-    return await db.delete(DatabaseSchema.tableReportGuideSummaries);
-  }
 }

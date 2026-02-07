@@ -10,7 +10,6 @@ class CloudKitBridge {
   private static let DiaryEntryRecordType = "DiaryEntry"
   private static let DiaryFileRecordType = "DiaryFile"
   private static let ReportRecordType = "Report"
-  private static let ReportGuideSummaryRecordType = "ReportGuideSummary"
   private static let MealRecordType = "MealRecord"
   private static let AppSettingsRecordType = "AppSettings"
 
@@ -715,6 +714,14 @@ class CloudKitBridge {
       record["id"] = id as CKRecordValue
       record["content"] = content as CKRecordValue
 
+      // Optional fields
+      if let improvements = reportData["improvements"] as? String {
+        record["improvements"] = improvements as CKRecordValue
+      }
+      if let needsImprovement = reportData["needsImprovement"] as? String {
+        record["needs_improvement"] = needsImprovement as CKRecordValue
+      }
+
       // Parse dates
       let dateFormatter = ISO8601DateFormatter()
       dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -744,76 +751,6 @@ class CloudKitBridge {
             result(FlutterError(
               code: "SAVE_FAILED",
               message: "Failed to save report",
-              details: error.localizedDescription
-            ))
-          } else {
-            result(true)
-          }
-        }
-      }
-    }
-  }
-
-  // MARK: - Save ReportGuideSummary
-
-  func saveReportGuideSummary(arguments: [String: Any], result: @escaping FlutterResult) {
-    guard let summaryData = arguments["summary"] as? [String: Any] else {
-      result(FlutterError(code: "INVALID_ARGS", message: "Missing summary data", details: nil))
-      return
-    }
-
-    guard let id = summaryData["id"] as? String,
-          let reportDate = summaryData["reportDate"] as? String,
-          let improvements = summaryData["improvements"] as? String,
-          let needsImprovement = summaryData["needsImprovement"] as? String,
-          let createdAtStr = summaryData["createdAt"] as? String else {
-      result(FlutterError(code: "INVALID_ARGS", message: "Missing required fields", details: nil))
-      return
-    }
-
-    let recordID = CKRecord.ID(recordName: id)
-
-    // Fetch existing record first, or create new one
-    privateDatabase.fetch(withRecordID: recordID) { existingRecord, error in
-      let record: CKRecord
-
-      if let existingRecord = existingRecord {
-        // Update existing record
-        record = existingRecord
-      } else {
-        // Create new record
-        record = CKRecord(recordType: CloudKitBridge.ReportGuideSummaryRecordType, recordID: recordID)
-      }
-
-      // Set fields
-      record["id"] = id as CKRecordValue
-      record["report_date"] = reportDate as CKRecordValue
-      record["improvements"] = improvements as CKRecordValue
-      record["needs_improvement"] = needsImprovement as CKRecordValue
-
-      // Parse date
-      let dateFormatter = ISO8601DateFormatter()
-      dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-      func truncateToMilliseconds(_ dateString: String) -> String {
-        if let dotIndex = dateString.lastIndex(of: "."),
-           let nextIndex = dateString.index(dotIndex, offsetBy: 4, limitedBy: dateString.endIndex) {
-          return String(dateString[..<nextIndex]) + "Z"
-        }
-        return dateString + "Z"
-      }
-
-      if let createdAt = dateFormatter.date(from: truncateToMilliseconds(createdAtStr)) {
-        record["created_at"] = createdAt as CKRecordValue
-      }
-
-      // Save the record
-      self.privateDatabase.save(record) { savedRecord, error in
-        DispatchQueue.main.async {
-          if let error = error {
-            result(FlutterError(
-              code: "SAVE_FAILED",
-              message: "Failed to save report guide summary",
               details: error.localizedDescription
             ))
           } else {
@@ -860,68 +797,26 @@ class CloudKitBridge {
           return nil
         }
 
-        return [
+        var reportData: [String: Any] = [
           "id": id,
           "content": content,
           "startDate": dateFormatter.string(from: startDate),
           "endDate": dateFormatter.string(from: endDate),
           "createdAt": dateFormatter.string(from: createdAt)
         ]
+
+        if let improvements = record["improvements"] as? String {
+          reportData["improvements"] = improvements
+        }
+        if let needsImprovement = record["needs_improvement"] as? String {
+          reportData["needsImprovement"] = needsImprovement
+        }
+
+        return reportData
       }
 
       DispatchQueue.main.async {
         result(reports)
-      }
-    }
-  }
-
-  // MARK: - Fetch ReportGuideSummaries
-
-  func fetchReportGuideSummaries(result: @escaping FlutterResult) {
-    let predicate = NSPredicate(format: "id != %@", "")
-    let query = CKQuery(recordType: CloudKitBridge.ReportGuideSummaryRecordType, predicate: predicate)
-
-    privateDatabase.perform(query, inZoneWith: nil) { records, error in
-      if let error = error {
-        DispatchQueue.main.async {
-          result(FlutterError(
-            code: "FETCH_FAILED",
-            message: "Failed to fetch report guide summaries",
-            details: error.localizedDescription
-          ))
-        }
-        return
-      }
-
-      guard let records = records else {
-        DispatchQueue.main.async {
-          result([])
-        }
-        return
-      }
-
-      // Convert records to JSON
-      let dateFormatter = ISO8601DateFormatter()
-      let summaries = records.compactMap { record -> [String: Any]? in
-        guard let id = record["id"] as? String,
-              let reportDate = record["report_date"] as? String,
-              let improvements = record["improvements"] as? String,
-              let needsImprovement = record["needs_improvement"] as? String,
-              let createdAt = record["created_at"] as? Date else {
-          return nil
-        }
-
-        return [
-          "id": id,
-          "reportDate": reportDate,
-          "improvements": improvements,
-          "needsImprovement": needsImprovement,
-          "createdAt": dateFormatter.string(from: createdAt)
-        ]
-      }
-
-      DispatchQueue.main.async {
-        result(summaries)
       }
     }
   }
@@ -1017,39 +912,6 @@ class CloudKitBridge {
       self.privateDatabase.add(deleteOperation)
     }
 
-    // Delete all ReportGuideSummary records
-    group.enter()
-    let summaryPredicate = NSPredicate(format: "id != %@", "")
-    let summaryQuery = CKQuery(recordType: CloudKitBridge.ReportGuideSummaryRecordType, predicate: summaryPredicate)
-
-    privateDatabase.perform(summaryQuery, inZoneWith: nil) { records, error in
-      if let error = error {
-        errors.append(error)
-        group.leave()
-        return
-      }
-
-      guard let records = records, !records.isEmpty else {
-        group.leave()
-        return
-      }
-
-      let recordIDs = records.map { $0.recordID }
-      let deleteOperation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: recordIDs)
-
-      deleteOperation.modifyRecordsResultBlock = { result in
-        switch result {
-        case .success:
-          break
-        case .failure(let error):
-          errors.append(error)
-        }
-        group.leave()
-      }
-
-      self.privateDatabase.add(deleteOperation)
-    }
-
     group.notify(queue: .main) {
       if errors.isEmpty {
         result(true)
@@ -1059,31 +921,6 @@ class CloudKitBridge {
           message: "Failed to delete all reports",
           details: errors.map { $0.localizedDescription }.joined(separator: ", ")
         ))
-      }
-    }
-  }
-
-  // MARK: - Delete ReportGuideSummary
-
-  func deleteReportGuideSummary(arguments: [String: Any], result: @escaping FlutterResult) {
-    guard let summaryId = arguments["summaryId"] as? String else {
-      result(FlutterError(code: "INVALID_ARGS", message: "Missing summaryId", details: nil))
-      return
-    }
-
-    let recordID = CKRecord.ID(recordName: summaryId)
-
-    privateDatabase.delete(withRecordID: recordID) { _, error in
-      DispatchQueue.main.async {
-        if let error = error {
-          result(FlutterError(
-            code: "DELETE_FAILED",
-            message: "Failed to delete report guide summary",
-            details: error.localizedDescription
-          ))
-        } else {
-          result(true)
-        }
       }
     }
   }

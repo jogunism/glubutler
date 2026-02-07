@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database schema definition and migration logic
 class DatabaseSchema {
-  static const int version = 1;
+  static const int version = 2;
 
   // Table names
   static const String tableGlucose = 'glucose_records';
@@ -15,7 +15,6 @@ class DatabaseSchema {
   static const String tableDiary = 'diary_entries';
   static const String tableDiaryFiles = 'diary_files';
   static const String tableReports = 'reports';
-  static const String tableReportGuideSummaries = 'report_guide_summaries';
 
   /// Create all tables (called on first install)
   static Future<void> onCreate(Database db, int version) async {
@@ -30,7 +29,6 @@ class DatabaseSchema {
     await _createDiaryTable(db);
     await _createDiaryFilesTable(db);
     await _createReportsTable(db);
-    await _createReportGuideSummariesTable(db);
     await _createIndexes(db);
 
     debugPrint('[DatabaseSchema] Database tables created successfully');
@@ -42,7 +40,12 @@ class DatabaseSchema {
     debugPrint(
         '[DatabaseSchema] Upgrading database from v$oldVersion to v$newVersion');
 
-    // No migrations needed - app not yet released
+    if (oldVersion < 2) {
+      await db.execute(
+          'ALTER TABLE $tableReports ADD COLUMN improvements TEXT');
+      await db.execute(
+          'ALTER TABLE $tableReports ADD COLUMN needs_improvement TEXT');
+    }
   }
 
   // ============ Table Creation ============
@@ -159,18 +162,8 @@ class DatabaseSchema {
         start_date TEXT NOT NULL,
         end_date TEXT NOT NULL,
         content TEXT,
-        created_at TEXT NOT NULL
-      )
-    ''');
-  }
-
-  static Future<void> _createReportGuideSummariesTable(Database db) async {
-    await db.execute('''
-      CREATE TABLE $tableReportGuideSummaries (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        report_date TEXT NOT NULL,
-        improvements TEXT NOT NULL,
-        needs_improvement TEXT NOT NULL,
+        improvements TEXT,
+        needs_improvement TEXT,
         created_at TEXT NOT NULL
       )
     ''');
@@ -195,7 +188,5 @@ class DatabaseSchema {
         'CREATE INDEX idx_diary_files_diary_id ON $tableDiaryFiles (diary_id)');
     await db.execute(
         'CREATE INDEX idx_reports_created_at ON $tableReports (created_at)');
-    await db.execute(
-        'CREATE INDEX idx_report_guide_summaries_report_date ON $tableReportGuideSummaries (report_date)');
   }
 }
