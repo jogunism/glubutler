@@ -46,6 +46,7 @@ void main() async {
   await SubscriptionService.initialize();
 
   // Lock orientation to portrait mode
+  // (구독 리스너는 settingsService init 후 등록)
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -56,6 +57,21 @@ void main() async {
 
   final settingsService = SettingsService();
   await settingsService.init();
+
+  // RevenueCat 구독 상태를 로컬과 동기화
+  final isPremium = await SubscriptionService.isPremiumActive();
+  if (isPremium && !settingsService.isPro) {
+    await settingsService.setProStatus(true);
+    debugPrint('[Main] Synced subscription status from RevenueCat: premium=true');
+  }
+
+  // RevenueCat 구독 상태 변경 리스너 등록 (redeem, 외부 구매 등 실시간 반영)
+  SubscriptionService.setOnSubscriptionChanged((isPremium) async {
+    if (isPremium && !settingsService.isPro) {
+      await settingsService.setProStatus(true);
+      debugPrint('[Main] Subscription changed via listener: premium=true');
+    }
+  });
 
   // Initialize notification service (권한 요청은 온보딩에서 처리)
   final notificationService = NotificationService();

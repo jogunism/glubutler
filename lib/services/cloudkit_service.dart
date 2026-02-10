@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/report.dart';
@@ -109,25 +111,37 @@ class CloudKitService {
 
   /// iCloud에서 다이어리 데이터를 다운로드하여 로컬 DB에 저장
   ///
+  /// delta sync: lastSyncDate 이후 변경된 레코드만 가져옴
   /// Returns: 다운로드된 다이어리 개수
   static Future<int> downloadDiaryEntries() async {
     try {
+      // lastSyncDate 조회 (delta sync)
+      final prefs = await SharedPreferences.getInstance();
+      final lastSyncDateStr = prefs.getString('lastDiarySyncDate');
+      final syncStartTime = DateTime.now().toUtc();
 
-      // CloudKit에서 다이어리 가져오기
-      final List<dynamic> entries = await _channel.invokeMethod('syncDiaryEntries');
+      // CloudKit에서 다이어리 가져오기 (lastSyncDate 전달)
+      final List<dynamic> entries = await _channel.invokeMethod(
+        'syncDiaryEntries',
+        lastSyncDateStr != null ? {'lastSyncDate': lastSyncDateStr} : null,
+      );
 
       if (entries.isEmpty) {
+        // 빈 결과도 성공이므로 syncDate 업데이트
+        await prefs.setString('lastDiarySyncDate', syncStartTime.toIso8601String());
         return 0;
       }
+
+      // 로컬 diary ID를 Set으로 배치 로드 (O(1) 존재 확인)
+      final allLocalDiaries = await _databaseService.recordDao.getDiaryEntries();
+      final localDiaryIds = allLocalDiaries.map((d) => d.id).toSet();
 
       int savedCount = 0;
 
       for (final entryData in entries) {
         try {
-          // Map을 DiaryItem으로 변환 (타입 캐스팅 안전하게 처리)
           final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(entryData as Map);
 
-          // files 배열도 타입 변환 필요
           if (jsonMap['files'] != null) {
             final filesList = jsonMap['files'] as List;
             jsonMap['files'] = filesList.map((file) => Map<String, dynamic>.from(file as Map)).toList();
@@ -135,15 +149,13 @@ class CloudKitService {
 
           final item = DiaryItem.fromJson(jsonMap);
 
-          // 로컬 DB에 저장 (기존 데이터 확인 후 insert 또는 update)
-          final existing = await _databaseService.recordDao.getDiaryItem(item.id);
-          if (existing == null) {
-            await _databaseService.recordDao.insertDiary(item);
-          } else {
+          // Set.contains()로 O(1) 존재 확인 (개별 DB 쿼리 대신)
+          if (localDiaryIds.contains(item.id)) {
             await _databaseService.recordDao.updateDiary(item);
+          } else {
+            await _databaseService.recordDao.insertDiary(item);
           }
 
-          // 파일 저장 (CKAsset에서 이미 다운로드됨)
           if (item.files.isNotEmpty) {
             for (final file in item.files) {
               await _databaseService.recordDao.insertDiaryFile(file);
@@ -155,6 +167,10 @@ class CloudKitService {
           // 하나 실패해도 계속 진행
         }
       }
+
+      // 성공 시 syncDate 업데이트
+      await prefs.setString('lastDiarySyncDate', syncStartTime.toIso8601String());
+      debugPrint('[CloudKit] Diary sync complete: $savedCount records (delta since $lastSyncDateStr)');
 
       return savedCount;
     } catch (e) {
@@ -274,14 +290,30 @@ class CloudKitService {
 
   /// iCloud에서 리포트 다운로드하여 로컬 DB에 저장
   ///
+  /// delta sync: lastSyncDate 이후 변경된 레코드만 가져옴
   /// Returns: 다운로드된 리포트 개수
   static Future<int> downloadReports() async {
     try {
-      final List<dynamic> reports = await _channel.invokeMethod('fetchReports');
+      // lastSyncDate 조회 (delta sync)
+      final prefs = await SharedPreferences.getInstance();
+      final lastSyncDateStr = prefs.getString('lastReportSyncDate');
+      final syncStartTime = DateTime.now().toUtc();
+
+      // CloudKit에서 리포트 가져오기 (lastSyncDate 전달)
+      final List<dynamic> reports = await _channel.invokeMethod(
+        'fetchReports',
+        lastSyncDateStr != null ? {'lastSyncDate': lastSyncDateStr} : null,
+      );
 
       if (reports.isEmpty) {
+        // 빈 결과도 성공이므로 syncDate 업데이트
+        await prefs.setString('lastReportSyncDate', syncStartTime.toIso8601String());
         return 0;
       }
+
+      // 로컬 report ID를 Set으로 배치 로드 (O(1) 존재 확인)
+      final allLocalReports = await _databaseService.reportDao.getAllReportsIncludingDeleted();
+      final localReportIds = allLocalReports.map((r) => r.id).toSet();
 
       int savedCount = 0;
 
@@ -317,16 +349,20 @@ class CloudKitService {
             createdAt: createdAt,
           );
 
-          // 로컬 DB에 저장 (기존 데이터 확인 후 insert 또는 update)
+          // Set.contains()로 O(1) 존재 확인 (개별 DB 쿼리 대신)
           if (localId != null) {
-            final existing = await _databaseService.reportDao.getReportById(localId);
-            if (existing == null) {
-              await _databaseService.reportDao.insertReport(report);
-            } else {
-              // content가 빈 문자열로 변경되었다면 (soft delete) 로컬도 업데이트
-              if (content == null && existing.content != null) {
-                await _databaseService.reportDao.deleteReport(localId);
+            if (localReportIds.contains(localId)) {
+              // content가 빈 문자열로 변경되었다면 (soft delete) 로컬도 삭제
+              if (content == null) {
+                final existing = allLocalReports.firstWhere(
+                  (r) => r.id == localId,
+                );
+                if (existing.content != null) {
+                  await _databaseService.reportDao.deleteReport(localId);
+                }
               }
+            } else {
+              await _databaseService.reportDao.insertReport(report);
             }
           }
 
@@ -335,6 +371,10 @@ class CloudKitService {
           // 하나 실패해도 계속 진행
         }
       }
+
+      // 성공 시 syncDate 업데이트
+      await prefs.setString('lastReportSyncDate', syncStartTime.toIso8601String());
+      debugPrint('[CloudKit] Report sync complete: $savedCount records (delta since $lastSyncDateStr)');
 
       return savedCount;
     } catch (e) {

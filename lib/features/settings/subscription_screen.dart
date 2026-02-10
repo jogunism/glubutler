@@ -662,25 +662,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     try {
-      // 시트 표시 전 현재 상태 저장
-      final wasPremiumBefore = await SubscriptionService.isPremiumActive();
-
       await SubscriptionService.presentCodeRedemptionSheet();
 
-      // 시트 닫힌 후 상태 체크
-      final isPremiumNow = await SubscriptionService.isPremiumActive();
-
-      // 상태가 변경되었을 때만 업데이트 (기존 비구독 → 구독)
-      if (!wasPremiumBefore && isPremiumNow && context.mounted) {
-        final settings = context.read<SettingsService>();
-        await settings.setProStatus(true);
-
-        if (context.mounted) {
-          TopBanner.show(
-            context,
-            message: l10n.subscriptionSuccessful,
-            isSuccess: true,
-          );
+      // presentCodeRedemptionSheet()는 시트 표시 즉시 반환됨
+      // 사용자가 코드를 입력하고 redeem 완료까지 시간이 걸리므로
+      // 지연 후 여러 번 체크하여 상태 반영
+      for (int i = 0; i < 5; i++) {
+        await Future.delayed(const Duration(seconds: 2));
+        final isPremiumNow = await SubscriptionService.isPremiumActive();
+        if (isPremiumNow && context.mounted) {
+          final settings = context.read<SettingsService>();
+          if (!settings.isPro) {
+            await settings.setProStatus(true);
+            if (context.mounted) {
+              TopBanner.show(
+                context,
+                message: l10n.subscriptionSuccessful,
+                isSuccess: true,
+              );
+            }
+          }
+          break;
         }
       }
     } catch (e) {

@@ -146,10 +146,7 @@ class InitializationService {
             debugPrint('[InitializationService] Failed to sync service start date: $e');
           }
 
-          // iCloud에서 최신 데이터 다운로드
-          await CloudKitService.downloadDiaryEntries();
-
-          // 리포트 다운로드
+          // 리포트 다운로드 (다이어리는 main.dart에서 백그라운드 동기화)
           await CloudKitService.downloadReports();
         }
       } catch (e) {

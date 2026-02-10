@@ -6,6 +6,12 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 /// RevenueCat 구독 관리 서비스
 class SubscriptionService {
   static bool _initialized = false;
+  static void Function(bool isPremium)? _onSubscriptionChanged;
+
+  /// 구독 상태 변경 콜백 등록
+  static void setOnSubscriptionChanged(void Function(bool isPremium) callback) {
+    _onSubscriptionChanged = callback;
+  }
 
   /// RevenueCat SDK 초기화
   static Future<void> initialize() async {
@@ -38,6 +44,13 @@ class SubscriptionService {
       if (dotenv.env['APP_ENV'] != 'production') {
         await Purchases.setLogLevel(LogLevel.debug);
       }
+
+      // 구독 상태 변경 리스너 등록
+      Purchases.addCustomerInfoUpdateListener((customerInfo) {
+        final hasPro = customerInfo.entitlements.active.containsKey('premium');
+        debugPrint('[Subscription] Customer info updated - Premium: $hasPro');
+        _onSubscriptionChanged?.call(hasPro);
+      });
 
       _initialized = true;
       debugPrint('[Subscription] Initialized successfully');

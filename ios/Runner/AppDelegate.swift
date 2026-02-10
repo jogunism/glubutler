@@ -67,7 +67,14 @@ import CloudKit
         }
 
       case "syncDiaryEntries":
-        self.cloudKitBridge.syncOnStartup(result: result)
+        let args = call.arguments as? [String: Any]
+        var lastSyncDate: Date? = nil
+        if let dateStr = args?["lastSyncDate"] as? String {
+          let formatter = ISO8601DateFormatter()
+          formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+          lastSyncDate = formatter.date(from: dateStr)
+        }
+        self.cloudKitBridge.syncOnStartup(lastSyncDate: lastSyncDate, result: result)
 
       case "deleteDiaryEntry":
         if let args = call.arguments as? [String: Any] {
@@ -87,7 +94,14 @@ import CloudKit
         }
 
       case "fetchReports":
-        self.cloudKitBridge.fetchReports(result: result)
+        let args = call.arguments as? [String: Any]
+        var lastSyncDate: Date? = nil
+        if let dateStr = args?["lastSyncDate"] as? String {
+          let formatter = ISO8601DateFormatter()
+          formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+          lastSyncDate = formatter.date(from: dateStr)
+        }
+        self.cloudKitBridge.fetchReports(lastSyncDate: lastSyncDate, result: result)
 
       case "deleteReport":
         if let args = call.arguments as? [String: Any] {

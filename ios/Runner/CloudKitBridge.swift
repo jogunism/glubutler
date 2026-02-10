@@ -463,7 +463,7 @@ class CloudKitBridge {
 
   // MARK: - Sync on Startup
 
-  func syncOnStartup(result: @escaping FlutterResult) {
+  func syncOnStartup(lastSyncDate: Date?, result: @escaping FlutterResult) {
     // Check if user is signed in first
     container.accountStatus { accountStatus, error in
       if let error = error {
@@ -488,10 +488,13 @@ class CloudKitBridge {
         return
       }
 
-      // Fetch all diary entries from CloudKit
-      // Use a predicate that queries on a queryable field instead of NSPredicate(value: true)
-      // Query for records where id field exists (all records should have an id)
-      let predicate = NSPredicate(format: "id != %@", "")
+      // Fetch diary entries from CloudKit (delta sync if lastSyncDate provided)
+      let predicate: NSPredicate
+      if let lastSyncDate = lastSyncDate {
+        predicate = NSPredicate(format: "modificationDate > %@", lastSyncDate as NSDate)
+      } else {
+        predicate = NSPredicate(format: "id != %@", "")
+      }
       let query = CKQuery(recordType: CloudKitBridge.DiaryEntryRecordType, predicate: predicate)
 
       self.privateDatabase.perform(query, inZoneWith: nil) { records, error in
@@ -647,26 +650,26 @@ class CloudKitBridge {
            let assetURL = asset.fileURL {
           group.enter()
 
-          // Copy from CKAsset to new local path
-          let destinationURL = URL(fileURLWithPath: newFilePath)
-          do {
-            // Create directory if needed
-            let directory = destinationURL.deletingLastPathComponent()
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+          // Skip copy if file already exists locally (delta sync optimization)
+          if FileManager.default.fileExists(atPath: newFilePath) {
+            downloadedFiles.append(fileData)
+            group.leave()
+          } else {
+            // Copy from CKAsset to new local path
+            let destinationURL = URL(fileURLWithPath: newFilePath)
+            do {
+              // Create directory if needed
+              let directory = destinationURL.deletingLastPathComponent()
+              try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+              try FileManager.default.copyItem(at: assetURL, to: destinationURL)
 
-            // Copy file (overwrite if exists)
-            if FileManager.default.fileExists(atPath: newFilePath) {
-              try FileManager.default.removeItem(atPath: newFilePath)
+              downloadedFiles.append(fileData)
+            } catch {
+              // Still add file data even if download fails
+              downloadedFiles.append(fileData)
             }
-            try FileManager.default.copyItem(at: assetURL, to: destinationURL)
-
-            downloadedFiles.append(fileData)
-          } catch {
-            // Still add file data even if download fails
-            downloadedFiles.append(fileData)
+            group.leave()
           }
-
-          group.leave()
         } else {
           // No asset, just add the metadata
           downloadedFiles.append(fileData)
@@ -763,8 +766,13 @@ class CloudKitBridge {
 
   // MARK: - Fetch Reports
 
-  func fetchReports(result: @escaping FlutterResult) {
-    let predicate = NSPredicate(format: "id != %@", "")
+  func fetchReports(lastSyncDate: Date?, result: @escaping FlutterResult) {
+    let predicate: NSPredicate
+    if let lastSyncDate = lastSyncDate {
+      predicate = NSPredicate(format: "modificationDate > %@", lastSyncDate as NSDate)
+    } else {
+      predicate = NSPredicate(format: "id != %@", "")
+    }
     let query = CKQuery(recordType: CloudKitBridge.ReportRecordType, predicate: predicate)
 
     privateDatabase.perform(query, inZoneWith: nil) { records, error in
