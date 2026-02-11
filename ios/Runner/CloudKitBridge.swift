@@ -489,6 +489,7 @@ class CloudKitBridge {
       }
 
       // Fetch diary entries from CloudKit (delta sync if lastSyncDate provided)
+      // Use a predicate that queries on a queryable field instead of NSPredicate(value: true)
       let predicate: NSPredicate
       if let lastSyncDate = lastSyncDate {
         predicate = NSPredicate(format: "modificationDate > %@", lastSyncDate as NSDate)
@@ -767,6 +768,7 @@ class CloudKitBridge {
   // MARK: - Fetch Reports
 
   func fetchReports(lastSyncDate: Date?, result: @escaping FlutterResult) {
+    // Use a predicate that queries on a queryable field instead of NSPredicate(value: true)
     let predicate: NSPredicate
     if let lastSyncDate = lastSyncDate {
       predicate = NSPredicate(format: "modificationDate > %@", lastSyncDate as NSDate)
