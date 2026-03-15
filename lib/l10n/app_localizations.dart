@@ -2090,6 +2090,78 @@ abstract class AppLocalizations {
   /// **'Please reconnect in the Settings menu.'**
   String get iCloudSyncRetryMessage;
 
+  /// No description provided for @googleSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Google connection failed'**
+  String get googleSyncFailed;
+
+  /// No description provided for @googleNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed'**
+  String get googleNotSignedIn;
+
+  /// No description provided for @googleSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sync'**
+  String get googleSync;
+
+  /// No description provided for @googleSyncEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sync enabled'**
+  String get googleSyncEnabled;
+
+  /// No description provided for @googleSyncDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sync disabled'**
+  String get googleSyncDisabled;
+
+  /// No description provided for @healthConnectDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with Health Connect to view various data to help manage your blood glucose.'**
+  String get healthConnectDescription;
+
+  /// No description provided for @connectHealthConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Health Connect'**
+  String get connectHealthConnect;
+
+  /// No description provided for @disconnectedHealthConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected from Health Connect'**
+  String get disconnectedHealthConnect;
+
+  /// No description provided for @failedToConnectHealthConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect. Please check your permissions in Health Connect.'**
+  String get failedToConnectHealthConnect;
+
+  /// No description provided for @privacyNoteAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Your health data is stored only on your device and is never shared externally. You can manage access in Health Connect > Data & privacy > Glu Butler.'**
+  String get privacyNoteAndroid;
+
+  /// No description provided for @feedEmptyHintAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Health Connect to see more insights'**
+  String get feedEmptyHintAndroid;
+
+  /// No description provided for @reportRequiresGoogleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Google account sync is required to generate reports.\nSettings > Google Sync'**
+  String get reportRequiresGoogleMessage;
+
   /// No description provided for @onboardingWelcomeTo.
   ///
   /// In en, this message translates to:
@@ -2192,6 +2264,18 @@ abstract class AppLocalizations {
   /// **'Sync blood glucose, insulin, steps, and weight automatically'**
   String get onboardingHealthSubtitle;
 
+  /// No description provided for @onboardingHealthTitleAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with Health Connect'**
+  String get onboardingHealthTitleAndroid;
+
+  /// No description provided for @onboardingHealthSubtitleAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync blood glucose, insulin, steps, and weight automatically'**
+  String get onboardingHealthSubtitleAndroid;
+
   /// No description provided for @onboardingHealthConnect.
   ///
   /// In en, this message translates to:
@@ -2215,6 +2299,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'iCloud sync required'**
   String get onboardingReportICloudRequired;
+
+  /// No description provided for @onboardingReportGoogleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Google account sync required'**
+  String get onboardingReportGoogleRequired;
 
   /// No description provided for @onboardingReportEnable.
   ///
@@ -2611,6 +2701,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred'**
   String get anErrorOccurred;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @genderOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get genderOther;
+
+  /// No description provided for @birthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get birthDate;
 }
 
 class _AppLocalizationsDelegate

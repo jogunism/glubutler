@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/features/onboarding/widgets/onboarding_primary_button.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
 import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
@@ -23,6 +27,70 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   bool _isEnabling = false;
+
+  // ---------------------------------------------------------------------------
+  // Android: Google Sign-In 흐름
+  // ---------------------------------------------------------------------------
+
+  Future<void> _enableGoogleSync() async {
+    setState(() => _isEnabling = true);
+
+    try {
+      final googleSignIn = GoogleSignIn(scopes: ['email']);
+      final account = await googleSignIn.signIn();
+
+      if (account == null) {
+        // 사용자가 로그인 취소
+        if (mounted) {
+          setState(() => _isEnabling = false);
+          _showErrorAlert(AppLocalizations.of(context)!.googleNotSignedIn);
+        }
+        return;
+      }
+
+      // Firebase Auth에 Google 계정으로 로그인 (Firestore 접근 권한 획득)
+      final googleAuth = await account.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final googleId = account.id;
+
+      if (mounted) {
+        final settings = context.read<SettingsService>();
+        await settings.updateGoogleId(googleId);
+        await settings.setGoogleSync(true);
+
+        // 서비스 시작일 Firestore 동기화 (구독 우회 방지)
+        await settings.syncServiceStartDateToFirestore();
+
+        // Firestore에서 기존 데이터 다운로드
+        debugPrint('[ReportPage] Starting Firestore download...');
+        final downloadedDiaries = await FirestoreService.downloadDiaryEntries(googleId);
+        debugPrint('[ReportPage] Downloaded $downloadedDiaries diary entries');
+
+        final mealCount = await FirestoreService.downloadMealRecords(googleId);
+        debugPrint('[ReportPage] Downloaded $mealCount meal records');
+
+        final reportCount = await FirestoreService.downloadReports(googleId);
+        debugPrint('[ReportPage] Downloaded $reportCount reports');
+
+        await AnalyticsService.logICloudEnabled(success: true);
+
+        setState(() => _isEnabling = false);
+        widget.onNext();
+      }
+    } catch (e, st) {
+      debugPrint('[ReportPage] _enableGoogleSync error: $e\n$st');
+      await AnalyticsService.logICloudEnabled(success: false);
+      if (mounted) {
+        setState(() => _isEnabling = false);
+        _showErrorAlert(AppLocalizations.of(context)!.googleSyncFailed);
+      }
+    }
+  }
 
   void _showErrorAlert(String reason) {
     final l10n = AppLocalizations.of(context)!;
@@ -182,19 +250,32 @@ class _ReportPageState extends State<ReportPage> {
 
               const SizedBox(height: 24),
 
-              // iCloud sync required message
+              // 동기화 안내 메시지 (플랫폼별)
               Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.cloud,
-                      size: 20,
-                      color: AppTheme.iconCyan,
-                    ),
+                    if (Platform.isIOS)
+                      const Icon(
+                        Icons.cloud,
+                        size: 20,
+                        color: AppTheme.iconCyan,
+                      )
+                    else
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: Image.asset(
+                          'assets/images/google.png',
+                          width: 20,
+                          height: 20,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     const SizedBox(width: 8),
                     Text(
-                      l10n.onboardingReportICloudRequired,
+                      Platform.isIOS
+                          ? l10n.onboardingReportICloudRequired
+                          : l10n.onboardingReportGoogleRequired,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -218,7 +299,7 @@ class _ReportPageState extends State<ReportPage> {
           bottom: 24,
           child: OnboardingPrimaryButton(
             text: l10n.onboardingNext,
-            onPressed: _enableICloudSync,
+            onPressed: Platform.isIOS ? _enableICloudSync : _enableGoogleSync,
             isLoading: _isEnabling,
           ),
         ),

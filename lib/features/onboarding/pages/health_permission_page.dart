@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,9 @@ import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
 
-/// Apple Health permission page
+/// 건강 데이터 권한 페이지
+/// iOS: Apple Health (HealthKit) - 성별/생년월일 자동 가져오기
+/// Android: Health Connect + 성별/생년월일 직접 입력
 class HealthPermissionPage extends StatefulWidget {
   final VoidCallback onNext;
 
@@ -25,6 +28,92 @@ class HealthPermissionPage extends StatefulWidget {
 
 class _HealthPermissionPageState extends State<HealthPermissionPage> {
   bool _isRequesting = false;
+
+  // Android 직접 입력 필드
+  String? _selectedGender; // 'male' | 'female' | 'other'
+  DateTime? _selectedBirthDate;
+
+  // ---------------------------------------------------------------------------
+  // Android: Health Connect 권한 요청 + 직접 입력 저장
+  // ---------------------------------------------------------------------------
+
+  Future<void> _requestHealthPermissionAndroid() async {
+    setState(() => _isRequesting = true);
+    try {
+      final healthService = HealthService();
+      final result = await healthService.requestAuthorizationWithCharacteristics();
+      final granted = result['granted'] as bool;
+
+      if (mounted) {
+        final settings = context.read<SettingsService>();
+        await settings.setHealthConnected(granted);
+        await AnalyticsService.logHealthConnected(success: granted);
+
+        if (granted) {
+          final databaseService = DatabaseService();
+          final now = DateTime.now();
+          await databaseService.saveHealthConnection(HealthConnectionInfo(
+            isConnected: true,
+            syncPeriodDays: AppConstants.defaultSyncPeriod,
+            connectedAt: now,
+            updatedAt: now,
+          ));
+        }
+
+        // 직접 입력한 성별 저장
+        if (_selectedGender != null) {
+          await settings.setGender(_selectedGender!);
+        }
+
+        // 직접 입력한 생년월일 저장 + 폰트 크기 자동 설정
+        if (_selectedBirthDate != null) {
+          await settings.setBirthDate(_selectedBirthDate!);
+          await _applyTextScaleFromBirthDate(settings, _selectedBirthDate!);
+          await AnalyticsService.setUserBirthYear(_selectedBirthDate!.year);
+        }
+
+        setState(() => _isRequesting = false);
+        widget.onNext();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isRequesting = false);
+        widget.onNext();
+      }
+    }
+  }
+
+  Future<void> _applyTextScaleFromBirthDate(SettingsService settings, DateTime birthDate) async {
+    final now = DateTime.now();
+    final age = now.year - birthDate.year -
+        (now.month < birthDate.month ||
+            (now.month == birthDate.month && now.day < birthDate.day) ? 1 : 0);
+    double textScale;
+    if (age < 40) {
+      textScale = AppConstants.textScaleSmall;
+    } else if (age < 50) {
+      textScale = AppConstants.textScaleMedium;
+    } else {
+      textScale = AppConstants.textScaleLarge;
+    }
+    await settings.setTextScale(textScale);
+  }
+
+  Future<void> _pickBirthDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedBirthDate ?? DateTime(1980),
+      firstDate: DateTime(1920),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() => _selectedBirthDate = picked);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // iOS: 기존 HealthKit 권한 요청
+  // ---------------------------------------------------------------------------
 
   Future<void> _requestHealthPermission() async {
     setState(() {
@@ -123,60 +212,117 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isIOS) {
+      return _buildIOS(context);
+    } else {
+      return _buildAndroid(context);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // iOS UI: Apple Health 이미지 + 권한 요청 버튼
+  // ---------------------------------------------------------------------------
+
+  Widget _buildIOS(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // 화면 크기에 따라 동적으로 조정 (welcome_page와 동일)
     final imageWidth = screenWidth * 0.7;
     final imageHeight = imageWidth * 1.43;
 
     return Stack(
       children: [
-        // Main content
         Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-
-              // Title
-              Text(
-                l10n.onboardingHealthTitle,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textPrimary(context),
-                  height: 1.2,
-                  letterSpacing: -0.5,
-                ),
-              ),
-
+              Text(l10n.onboardingHealthTitle,
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700,
+                      color: AppTheme.textPrimary(context), height: 1.2, letterSpacing: -0.5)),
               const SizedBox(height: 12),
-
-              // Subtitle
-              Text(
-                l10n.onboardingHealthSubtitle,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: AppTheme.textSecondary(context),
-                  height: 1.4,
-                  letterSpacing: -0.3,
-                ),
-              ),
-
+              Text(l10n.onboardingHealthSubtitle,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400,
+                      color: AppTheme.textSecondary(context), height: 1.4, letterSpacing: -0.3)),
               const SizedBox(height: 32),
-
-              // Image - matching welcome page position and size
               Center(
                 child: SizedBox(
-                  width: imageWidth,
-                  height: imageHeight,
-                  child: Image.asset(
-                    'assets/images/screen_apple_health.png',
-                    fit: BoxFit.cover,
-                  ),
+                  width: imageWidth, height: imageHeight,
+                  child: Image.asset('assets/images/screen_apple_health.png', fit: BoxFit.cover),
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
+        Positioned(
+          left: 24, right: 24, bottom: 24,
+          child: OnboardingPrimaryButton(
+            text: l10n.onboardingNext,
+            onPressed: _requestHealthPermission,
+            isLoading: _isRequesting,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Android UI: Health Connect 권한 + 성별/생년월일 직접 입력
+  // ---------------------------------------------------------------------------
+
+  Widget _buildAndroid(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Text(l10n.onboardingHealthTitleAndroid,
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700,
+                      color: AppTheme.textPrimary(context), height: 1.2, letterSpacing: -0.5)),
+              const SizedBox(height: 12),
+              Text(l10n.onboardingHealthSubtitleAndroid,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400,
+                      color: AppTheme.textSecondary(context), height: 1.4, letterSpacing: -0.3)),
+              const SizedBox(height: 32),
+
+              // 성별 선택
+              Text(l10n.gender,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600,
+                      color: AppTheme.textPrimary(context))),
+              const SizedBox(height: 8),
+              SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(value: 'male', label: Text(l10n.genderMale)),
+                  ButtonSegment(value: 'female', label: Text(l10n.genderFemale)),
+                  ButtonSegment(value: 'other', label: Text(l10n.genderOther)),
+                ],
+                selected: _selectedGender != null ? {_selectedGender!} : {},
+                emptySelectionAllowed: true,
+                onSelectionChanged: (val) =>
+                    setState(() => _selectedGender = val.firstOrNull),
+              ),
+
+              const SizedBox(height: 24),
+
+              // 생년월일 선택
+              Text(l10n.birthDate,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600,
+                      color: AppTheme.textPrimary(context))),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _pickBirthDate,
+                icon: const Icon(Icons.calendar_today, size: 18),
+                label: Text(
+                  _selectedBirthDate != null
+                      ? '${_selectedBirthDate!.year}.${_selectedBirthDate!.month.toString().padLeft(2, '0')}.${_selectedBirthDate!.day.toString().padLeft(2, '0')}'
+                      : l10n.selectDate,
+                  style: const TextStyle(fontSize: 15),
                 ),
               ),
 
@@ -184,15 +330,11 @@ class _HealthPermissionPageState extends State<HealthPermissionPage> {
             ],
           ),
         ),
-
-        // Button positioned at bottom
         Positioned(
-          left: 24,
-          right: 24,
-          bottom: 24,
+          left: 24, right: 24, bottom: 24,
           child: OnboardingPrimaryButton(
             text: l10n.onboardingNext,
-            onPressed: _requestHealthPermission,
+            onPressed: _requestHealthPermissionAndroid,
             isLoading: _isRequesting,
           ),
         ),

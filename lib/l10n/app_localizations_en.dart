@@ -1055,6 +1055,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iCloudSyncRetryMessage => 'Please reconnect in the Settings menu.';
 
   @override
+  String get googleSyncFailed => 'Google connection failed';
+
+  @override
+  String get googleNotSignedIn => 'Google sign-in failed';
+
+  @override
+  String get googleSync => 'Google Sync';
+
+  @override
+  String get googleSyncEnabled => 'Google sync enabled';
+
+  @override
+  String get googleSyncDisabled => 'Google sync disabled';
+
+  @override
+  String get healthConnectDescription =>
+      'Connect with Health Connect to view various data to help manage your blood glucose.';
+
+  @override
+  String get connectHealthConnect => 'Connect Health Connect';
+
+  @override
+  String get disconnectedHealthConnect => 'Disconnected from Health Connect';
+
+  @override
+  String get failedToConnectHealthConnect =>
+      'Failed to connect. Please check your permissions in Health Connect.';
+
+  @override
+  String get privacyNoteAndroid =>
+      'Your health data is stored only on your device and is never shared externally. You can manage access in Health Connect > Data & privacy > Glu Butler.';
+
+  @override
+  String get feedEmptyHintAndroid =>
+      'Connect Health Connect to see more insights';
+
+  @override
+  String get reportRequiresGoogleMessage =>
+      'Google account sync is required to generate reports.\nSettings > Google Sync';
+
+  @override
   String get onboardingWelcomeTo => 'Welcome to';
 
   @override
@@ -1114,6 +1155,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sync blood glucose, insulin, steps, and weight automatically';
 
   @override
+  String get onboardingHealthTitleAndroid => 'Connect with Health Connect';
+
+  @override
+  String get onboardingHealthSubtitleAndroid =>
+      'Sync blood glucose, insulin, steps, and weight automatically';
+
+  @override
   String get onboardingHealthConnect => 'Connect';
 
   @override
@@ -1125,6 +1173,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingReportICloudRequired => 'iCloud sync required';
+
+  @override
+  String get onboardingReportGoogleRequired => 'Google account sync required';
 
   @override
   String get onboardingReportEnable => 'Sync iCloud';
@@ -1336,4 +1387,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get anErrorOccurred => 'An error occurred';
+
+  @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderOther => 'Other';
+
+  @override
+  String get birthDate => 'Date of Birth';
 }

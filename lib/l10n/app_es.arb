@@ -17,7 +17,6 @@
   "yesterday": "Ayer",
   "thisWeek": "Esta semana",
   "thisMonth": "Este mes",
-
   "bloodGlucose": "Glucosa en sangre",
   "meal": "Comida",
   "exercise": "Ejercicio",
@@ -27,26 +26,21 @@
   "mmoll": "mmol/L",
   "chartSizeLarge": "Grande",
   "chartSizeSmall": "Pequeño",
-
   "low": "Bajo",
   "normal": "Normal",
   "high": "Alto",
-
   "breakfast": "Desayuno",
   "lunch": "Almuerzo",
   "dinner": "Cena",
   "snack": "Merienda",
-
   "fasting": "En ayunas",
   "beforeMeal": "Antes de comer",
   "afterMeal": "Después de comer",
   "unspecified": "Sin especificar",
-
   "dailyReport": "Informe diario",
   "weeklyReport": "Informe semanal",
   "aiInsight": "Análisis IA",
   "glucoseScore": "Puntuación de glucosa",
-
   "profile": "Perfil",
   "name": "Nombre",
   "gender": "Género",
@@ -69,7 +63,6 @@
   "personal": "Básico",
   "diabetes": "Diabetes",
   "yearOfDiagnosis": "Año de diagnóstico",
-
   "language": "Idioma",
   "changeInSettings": "Cambiar en Ajustes",
   "darkMode": "Modo oscuro",
@@ -90,19 +83,17 @@
   "notificationPermissionRequired": "Se requiere permiso de notificación",
   "notificationPermissionDescription": "Habilite los permisos de notificación en Configuración de iOS para recibir notificaciones.",
   "allowNotifications": "Permitir",
-  "goToSettings": "Ir a Configuración",
+  "goToSettings": "Ir a Ajustes",
   "notificationTime": "Hora de notificación",
   "sync": "Sincronización",
-  "healthConnect": "Conexión de salud",
+  "healthConnect": "Health Connect",
   "iCloudSync": "Sincronización iCloud",
   "iCloudSyncDescription": "Sincronizar datos entre dispositivos",
   "connected": "Conectado",
   "notConnected": "No conectado",
   "connect": "Conectar",
   "disconnect": "Desconectar",
-
   "disclaimer": "Esta aplicación es solo de referencia. Por favor, consulte directamente con su médico para consejos médicos.",
-
   "enterGlucose": "Introducir glucosa",
   "enterMeal": "Añadir comida",
   "enterExercise": "Añadir ejercicio",
@@ -123,18 +114,14 @@
   "imageLoadFailed": "Error al cargar las fotos.",
   "photoPermissionRequired": "Permiso de acceso a fotos requerido",
   "photoPermissionMessage": "Para adjuntar fotos, necesita permitir el acceso a su biblioteca de fotos.  Vaya a Ajustes > Glu Butler para habilitar el acceso a fotos.",
-  "goToSettings": "Ir a Ajustes",
-
   "noRecords": "No hay registros",
   "noReportTitle": "No hay informe",
   "startTracking": "¡Comienza a registrar tu salud!",
   "feedEmptyHint": "Conecta Apple Salud para ver más información",
-
   "goodMorning": "¡Buenos días!",
   "goodAfternoon": "¡Buenas tardes!",
   "goodEvening": "¡Buenas noches!",
   "butlerGreeting": "Su mayordomo está listo para ayudar.",
-
   "subscription": "Suscripción",
   "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "Actualizar a Pro",
@@ -154,7 +141,6 @@
   "freePlan": "Gratis",
   "proPlan": "Pro",
   "noReportYet": "¡Genera tu informe de glucosa!",
-
   "home": "Hoy",
   "yourToday": "Tu Hoy",
   "points": "pts",
@@ -181,7 +167,6 @@
   "diarySaveFailed": "Error al guardar la entrada",
   "yes": "Sí",
   "no": "No",
-
   "insulin": "Insulina",
   "addInsulin": "Añadir Insulina",
   "insulinType": "Tipo de Insulina",
@@ -202,9 +187,8 @@
   "measurementTiming": "Momento",
   "addRecord": "Añadir registro",
   "glucoseSaved": "Glucosa guardada",
-  "insulinSaved": "Insulina guardada",
+  "insulinSaved": "Dosis de insulina guardada",
   "saveFailed": "Error al guardar",
-
   "appleHealth": "Apple Salud",
   "appleHealthDescription": "Conéctate con la app Salud para ver diversos datos que pueden ayudarte a controlar tu glucosa.",
   "syncedData": "Datos sincronizados",
@@ -236,43 +220,30 @@
   "steps": "Pasos",
   "mindfulness": "Atención plena",
   "openHealthApp": "Abre Salud > Compartir > Apps para gestionar permisos",
-
   "syncPeriod": "Período de sincronización",
   "syncPeriod1Week": "1 semana",
   "syncPeriod2Weeks": "2 semanas",
   "syncPeriod1Month": "1 mes",
   "syncPeriod3Months": "3 meses",
-
   "disconnected": "Desconectado de Apple Salud",
-
   "cgmBaseline": "Estable",
   "cgmFluctuation": "Fluctuación",
-
   "targetGlucoseRange": "Rango objetivo de glucosa",
   "veryHigh": "Muy Alto",
-  "high": "Alto",
   "warning": "Advertencia",
   "target": "Objetivo",
   "veryLow": "Muy Bajo",
-
   "appSlogan": "Tu compañero de salud",
-
   "initLoadingSettings": "Cargando configuración...",
   "initCheckingHealth": "Verificando sincronización de salud...",
   "initCheckingiCloud": "Verificando sincronización de iCloud...",
   "initLocalDatabase": "Inicializando base de datos local...",
   "initNotifications": "Configurando notificaciones...",
   "initDone": "Listo",
-
-  "glucoseSaved": "Glucosa guardada",
-  "insulinSaved": "Dosis de insulina guardada",
-  "saveFailed": "Error al guardar",
-
-  "deleteGlucoseConfirmation": "¿Estás seguro de que quieres eliminar? Esta acción no se puede deshacer.",
+  "deleteGlucoseConfirmation": "Se eliminará este registro de glucosa.",
   "glucoseDeleted": "Glucosa eliminada",
   "insulinDeleted": "Insulina eliminada",
   "deleteFailed": "Error al eliminar",
-
   "glucoseStatus": "Estado de Glucosa",
   "scoreHint": "Conoce más sobre la puntuación",
   "scoreInfoTitle": "Guía de puntuación de glucosa",
@@ -288,10 +259,8 @@
   "scoreInfoLifestyle": "Estilo de vida (con app Salud)",
   "scoreInfoLifestyleDesc": "Los datos de sueño y ejercicio de Apple Salud se incluyen para una puntuación más precisa.",
   "scoreInfoPrivacy": "※ Toda la información utilizada en la app no se almacena por separado ni se comparte externamente.",
-
   "deleteGlucose": "Eliminar registro de glucosa",
   "deleteInsulin": "Eliminar registro de insulina",
-  "deleteGlucoseConfirmation": "Se eliminará este registro de glucosa.",
   "deleteInsulinConfirmation": "Se eliminará este registro de insulina.",
   "deleteDiary": "Eliminar diario",
   "deleteDiaryConfirmation": "¿Está seguro de que desea eliminar este diario?",
@@ -327,7 +296,6 @@
       }
     }
   },
-
   "generateReport": "Generar informe",
   "reportRequiresICloud": "Generar informe",
   "reportRequiresICloudMessage": "Se requiere sincronización con iCloud para generar informes.\nAjustes > Sincronización de iCloud",
@@ -376,7 +344,6 @@
     }
   },
   "imageLoadError": "No se puede cargar la imagen",
-
   "apiErrorNetwork": "Se produjo un error de red.",
   "apiErrorConnectionTimeout": "Se agotó el tiempo de conexión. Por favor, verifica tu conexión de red.",
   "apiErrorReceiveTimeout": "Se agotó el tiempo de generación del informe AI. Por favor, inténtalo de nuevo más tarde.",
@@ -394,14 +361,24 @@
       }
     }
   },
-
   "iCloudSyncEnabled": "Sincronización de iCloud activada",
   "iCloudSyncDisabled": "Sincronización de iCloud desactivada",
   "iCloudSyncFailed": "No se pudo conectar a iCloud",
   "iCloudNotAvailable": "iCloud no está disponible",
   "iCloudNotSignedIn": "No ha iniciado sesión en iCloud",
   "iCloudSyncRetryMessage": "Vuelva a conectar en el menú Ajustes.",
-
+  "googleSyncFailed": "Error de conexión con Google",
+  "googleNotSignedIn": "Error al iniciar sesión en Google",
+  "googleSync": "Sincronización Google",
+  "googleSyncEnabled": "Sincronización Google activada",
+  "googleSyncDisabled": "Sincronización Google desactivada",
+  "healthConnectDescription": "Conéctate con Health Connect para ver datos que te ayuden a gestionar tu glucosa.",
+  "connectHealthConnect": "Conectar Health Connect",
+  "disconnectedHealthConnect": "Desconectado de Health Connect",
+  "failedToConnectHealthConnect": "Error de conexión. Verifica los permisos en Health Connect.",
+  "privacyNoteAndroid": "Tus datos de salud se almacenan solo en tu dispositivo y nunca se comparten. Puedes gestionar el acceso en Health Connect > Datos y privacidad > Glu Butler.",
+  "feedEmptyHintAndroid": "Conecta Health Connect para ver más información",
+  "reportRequiresGoogleMessage": "Se requiere sincronización de cuenta Google para generar informes.\nAjustes > Sincronización Google",
   "onboardingWelcomeTo": "Bienvenido a",
   "onboardingWelcomeDescription": "Glu Butler te ayuda a gestionar tu glucosa en sangre. Rastrea tus patrones diarios de manera más inteligente y construye una mejor salud.",
   "onboardingLetsBegin": "Comenzar",
@@ -426,10 +403,13 @@
   },
   "onboardingHealthTitle": "Conecta con Apple Health",
   "onboardingHealthSubtitle": "Sincroniza glucosa, insulina, pasos y peso automáticamente",
+  "onboardingHealthTitleAndroid": "Conecta con Health Connect",
+  "onboardingHealthSubtitleAndroid": "Sincroniza glucosa, insulina, pasos y peso automáticamente",
   "onboardingHealthConnect": "Conectar",
   "onboardingReportTitle": "Recibe informes de glucosa",
   "onboardingReportSubtitle": "Obtén informes periódicos basados en tus datos registrados",
   "onboardingReportICloudRequired": "Se requiere sincronización con iCloud",
+  "onboardingReportGoogleRequired": "Se requiere sincronización con Google",
   "onboardingReportEnable": "Sincronizar iCloud",
   "onboardingDiaryTitle": "Empieza a escribir tu diario de glucosa",
   "onboardingDiarySubtitle": "Registra comidas y sube fotos para hacer seguimiento de tu alimentación en el feed",
@@ -437,7 +417,6 @@
   "onboardingNotificationTitle": "Recibe notificaciones",
   "onboardingNotificationSubtitle": "Te ayudaremos a mantener registros diarios consistentes",
   "onboardingNotificationEnable": "Activar Notificaciones",
-
   "notificationGlucoseReminderBody": "Se recomienda la medición regular de glucosa\nObserva los cambios de glucosa antes y después de las comidas",
   "notificationDiaryReminderBody": "Escribe tu diario de glucosa de hoy",
   "notificationReportReminderBody": "Revisa tu informe de salud",
@@ -455,7 +434,6 @@
   "onboardingSubscriptionRedeem": "Canjear código",
   "onboardingSubscriptionRestore": "Restaurar compra",
   "onboardingSubscriptionPurchase": "Comprar",
-
   "onboardingCompletionTitle": "¡Todo listo!",
   "onboardingCompletionSubtitle": "Gestiona tu glucosa de forma más inteligente con Glu Butler",
   "onboardingCompletionFeature1": "Insights de salud con IA",
@@ -463,13 +441,11 @@
   "onboardingCompletionFeature3": "Informes avanzados",
   "onboardingGetStarted": "Empezar",
   "diabetesTypeUnknown": "No estoy seguro",
-
   "manageNotifications": "Gestionar notificaciones",
   "mealGlucoseReminders": "Recordatorios de glucosa antes de desayuno, almuerzo, cena",
   "longTermGlucoseAbsence": "Alerta de ausencia prolongada de registro de glucosa",
   "longTermDiaryAbsence": "Alerta de ausencia prolongada de entradas de diario",
   "reportCreationReminder": "Recordatorio de creación de informe",
-
   "notifFirstReportTitle": "Crea tu primer informe de glucosa",
   "notifReportReminderTitle": "Genera tu informe de glucosa y consulta los resultados",
   "notifGlucoseReminderTitle": "Verifica y registra tu glucosa",
@@ -477,20 +453,17 @@
   "notifDiaryReminderBody": "Sigue tus hábitos alimenticios",
   "notifGlucoseRecordReminderTitle": "No olvides medir tu glucosa",
   "notifGlucoseRecordReminderBody": "El registro constante es el primer paso para el manejo de la glucosa",
-
   "exportReport": "Exportar informe por correo electrónico",
   "exportReportTitle": "Enviar correo",
   "exportReportMessage": "Por favor, ingrese la dirección de correo electrónico para recibir el informe",
   "send": "Enviar",
   "exportSuccess": "El informe se ha enviado por correo electrónico",
   "exportFailed": "Error al enviar el informe",
-
   "onboardingTermsPrefix": "Al usar Glu Butler,\naceptas nuestros",
   "onboardingTermsAnd": "y",
   "onboardingTermsSuffix": ".",
   "onboardingTermsOfService": "Términos de servicio",
   "onboardingPrivacyPolicy": "Política de privacidad",
-
   "unlockGluButlerPro": "Desbloquear Glu Butler Pro",
   "continuePurchase": "Continuar",
   "yearly": "Anual",
@@ -505,5 +478,9 @@
   "noSubscriptionPackages": "No hay paquetes de suscripción disponibles",
   "loadSubscriptionsFailed": "Error al cargar la información de suscripción",
   "retry": "Reintentar",
-  "anErrorOccurred": "Ocurrió un error"
+  "anErrorOccurred": "Ocurrió un error",
+  "genderMale": "Masculino",
+  "genderFemale": "Femenino",
+  "genderOther": "Otro",
+  "birthDate": "Fecha de nacimiento"
 }

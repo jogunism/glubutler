@@ -46,9 +46,10 @@ class AuthService {
       throw AuthException('BASE_URL not configured');
     }
 
-    // cloudKitId는 필수 (iCloud 연동 필수)
-    if (userIdentity.cloudKitId == null || userIdentity.cloudKitId!.isEmpty) {
-      throw AuthException('cloudKitId is required (iCloud sync must be enabled)');
+    // userId는 필수 (iOS: cloudKitId, Android: googleId)
+    final userId = userIdentity.userId;
+    if (userId == null || userId.isEmpty) {
+      throw AuthException('userId is required (iCloud or Google sync must be enabled)');
     }
 
     try {
@@ -57,7 +58,7 @@ class AuthService {
       final response = await _dio.post(
         '$baseUrl/API/auth/token',
         data: {
-          'cloudKitId': userIdentity.cloudKitId,
+          'cloudKitId': userId,
         },
         options: Options(
           headers: {'Content-Type': 'application/json'},

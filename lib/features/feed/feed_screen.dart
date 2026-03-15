@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -133,7 +134,7 @@ class _FeedScreenState extends State<FeedScreen> {
             Text(l10n.noRecords, style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              l10n.feedEmptyHint,
+              Platform.isIOS ? l10n.feedEmptyHint : l10n.feedEmptyHintAndroid,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: context.colors.textSecondary,
               ),

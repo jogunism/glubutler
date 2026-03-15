@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +17,9 @@ class CloudKitService {
   static const MethodChannel _channel = MethodChannel('cloudkit');
 
   static final DatabaseService _databaseService = DatabaseService();
+
+  /// Android에서 CloudKit 메서드 호출 시 안전하게 반환
+  static bool get _isiOS => Platform.isIOS;
 
   /// CloudKit 사용자 Record ID 가져오기
   ///
@@ -45,8 +49,9 @@ class CloudKitService {
 
   /// CloudKit 사용 가능 여부 확인
   ///
-  /// Returns: true if CloudKit is available
+  /// Returns: true if CloudKit is available (Android에서는 항상 false)
   static Future<bool> isAvailable() async {
+    if (!_isiOS) return false;
     try {
       final bool available = await _channel.invokeMethod('isAvailable');
       return available;
@@ -57,8 +62,9 @@ class CloudKitService {
 
   /// iCloud 로그인 여부 확인
   ///
-  /// Returns: true if user is signed in to iCloud
+  /// Returns: true if user is signed in to iCloud (Android에서는 항상 false)
   static Future<bool> isUserSignedIn() async {
+    if (!_isiOS) return false;
     try {
       final bool signedIn = await _channel.invokeMethod('isUserSignedIn');
       return signedIn;
@@ -109,11 +115,9 @@ class CloudKitService {
     }
   }
 
-  /// iCloud에서 다이어리 데이터를 다운로드하여 로컬 DB에 저장
-  ///
-  /// delta sync: lastSyncDate 이후 변경된 레코드만 가져옴
-  /// Returns: 다운로드된 다이어리 개수
+  /// iCloud에서 다이어리 데이터를 다운로드하여 로컬 DB에 저장 (Android에서는 0 반환)
   static Future<int> downloadDiaryEntries() async {
+    if (!_isiOS) return 0;
     try {
       // lastSyncDate 조회 (delta sync)
       final prefs = await SharedPreferences.getInstance();
@@ -288,11 +292,9 @@ class CloudKitService {
     }
   }
 
-  /// iCloud에서 리포트 다운로드하여 로컬 DB에 저장
-  ///
-  /// delta sync: lastSyncDate 이후 변경된 레코드만 가져옴
-  /// Returns: 다운로드된 리포트 개수
+  /// iCloud에서 리포트 다운로드하여 로컬 DB에 저장 (Android에서는 0 반환)
   static Future<int> downloadReports() async {
+    if (!_isiOS) return 0;
     try {
       // lastSyncDate 조회 (delta sync)
       final prefs = await SharedPreferences.getInstance();
@@ -423,13 +425,9 @@ class CloudKitService {
 
   // MARK: - App Settings Sync
 
-  /// 서비스 시작일을 iCloud에 저장
-  ///
-  /// [serviceStartDate]: 앱 설치 날짜 (첫 실행일)
-  ///
-  /// 이 메서드는 iCloud 연동 시 한 번만 호출되며, 이후 업데이트하지 않습니다.
-  /// iCloud에 이미 저장된 날짜가 있으면 덮어쓰지 않습니다.
+  /// 서비스 시작일을 iCloud에 저장 (Android에서는 no-op)
   static Future<void> saveServiceStartDate(DateTime serviceStartDate) async {
+    if (!_isiOS) return;
     try {
       final dateString = serviceStartDate.toIso8601String();
       await _channel.invokeMethod('saveServiceStartDate', {'serviceStartDate': dateString});
@@ -438,10 +436,9 @@ class CloudKitService {
     }
   }
 
-  /// iCloud에서 서비스 시작일 가져오기
-  ///
-  /// Returns: 저장된 서비스 시작일 (없으면 null)
+  /// iCloud에서 서비스 시작일 가져오기 (Android에서는 null 반환)
   static Future<DateTime?> fetchServiceStartDate() async {
+    if (!_isiOS) return null;
     try {
       final String? dateString = await _channel.invokeMethod('fetchServiceStartDate');
       if (dateString == null || dateString.isEmpty) {
@@ -453,10 +450,9 @@ class CloudKitService {
     }
   }
 
-  /// iCloud에 언어 설정 저장
-  ///
-  /// [language]: 저장할 언어 코드 (예: 'ko', 'en', 'ja')
+  /// iCloud에 언어 설정 저장 (Android에서는 no-op)
   static Future<void> saveLanguage(String language) async {
+    if (!_isiOS) return;
     try {
       await _channel.invokeMethod('saveLanguage', {'language': language});
     } on PlatformException catch (e) {
@@ -464,10 +460,9 @@ class CloudKitService {
     }
   }
 
-  /// iCloud에서 언어 설정 가져오기
-  ///
-  /// Returns: 저장된 언어 코드 (없으면 null)
+  /// iCloud에서 언어 설정 가져오기 (Android에서는 null 반환)
   static Future<String?> fetchLanguage() async {
+    if (!_isiOS) return null;
     try {
       final String? language = await _channel.invokeMethod('fetchLanguage');
       return language;
@@ -527,10 +522,9 @@ class CloudKitService {
     }
   }
 
-  /// iCloud에서 식사 기록 다운로드하여 로컬 DB에 저장
-  ///
-  /// Returns: 다운로드된 식사 기록 개수
+  /// iCloud에서 식사 기록 다운로드하여 로컬 DB에 저장 (Android에서는 0 반환)
   static Future<int> downloadMealRecords() async {
+    if (!_isiOS) return 0;
     try {
       final List<dynamic> meals = await _channel.invokeMethod('fetchMealRecords');
 

@@ -268,7 +268,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sync => '連携';
 
   @override
-  String get healthConnect => 'ヘルスケア連携';
+  String get healthConnect => 'Health Connect 連携';
 
   @override
   String get iCloudSync => 'iCloud同期';
@@ -1025,6 +1025,44 @@ class AppLocalizationsJa extends AppLocalizations {
   String get iCloudSyncRetryMessage => '設定メニューから再度接続してください。';
 
   @override
+  String get googleSyncFailed => 'Google接続に失敗しました';
+
+  @override
+  String get googleNotSignedIn => 'Googleサインインに失敗しました';
+
+  @override
+  String get googleSync => 'Google同期';
+
+  @override
+  String get googleSyncEnabled => 'Google同期が有効になりました';
+
+  @override
+  String get googleSyncDisabled => 'Google同期が無効になりました';
+
+  @override
+  String get healthConnectDescription => 'ヘルスコネクトと連携して、血糖管理に役立つ様々なデータを確認できます。';
+
+  @override
+  String get connectHealthConnect => 'ヘルスコネクトを接続';
+
+  @override
+  String get disconnectedHealthConnect => 'ヘルスコネクトとの接続が解除されました';
+
+  @override
+  String get failedToConnectHealthConnect => '接続に失敗しました。ヘルスコネクトで権限を確認してください。';
+
+  @override
+  String get privacyNoteAndroid =>
+      '健康データはデバイス内にのみ保存され、外部に共有されることはありません。ヘルスコネクト > データとプライバシー > Glu Butlerで管理できます。';
+
+  @override
+  String get feedEmptyHintAndroid => 'ヘルスコネクトを連携してより多くの情報を確認';
+
+  @override
+  String get reportRequiresGoogleMessage =>
+      'レポートを生成するにはGoogleアカウントの同期が必要です。\n設定 > Google同期';
+
+  @override
   String get onboardingWelcomeTo => 'ようこそ';
 
   @override
@@ -1079,6 +1117,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingHealthSubtitle => '血糖値、インスリン、歩数、体重などを自動的に同期します';
 
   @override
+  String get onboardingHealthTitleAndroid => 'Health Connectと連携しましょう';
+
+  @override
+  String get onboardingHealthSubtitleAndroid => '血糖値、インスリン、歩数、体重などを自動的に同期します';
+
+  @override
   String get onboardingHealthConnect => '連携する';
 
   @override
@@ -1089,6 +1133,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get onboardingReportICloudRequired => 'iCloud同期が必要です';
+
+  @override
+  String get onboardingReportGoogleRequired => 'Googleアカウントの連携が必要です';
 
   @override
   String get onboardingReportEnable => 'iCloud同期';
@@ -1289,4 +1336,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get anErrorOccurred => 'エラーが発生しました';
+
+  @override
+  String get genderMale => '男性';
+
+  @override
+  String get genderFemale => '女性';
+
+  @override
+  String get genderOther => 'その他';
+
+  @override
+  String get birthDate => '生年月日';
 }

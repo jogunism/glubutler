@@ -67,7 +67,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
+    return PopScope(
+      canPop: false, // Android 뒤로가기 버튼으로 온보딩 이탈 방지
+      child: MediaQuery(
       // 온보딩 화면은 항상 "작게" 텍스트 크기(0.85) 사용
       data: MediaQuery.of(context).copyWith(
         textScaler: const TextScaler.linear(0.85),
@@ -115,6 +117,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
         ],
+      ),
       ),
       ),
     );

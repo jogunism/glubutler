@@ -350,6 +350,11 @@ class NotificationService {
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
+    // Android 알림 채널 생성
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await _createAndroidNotificationChannels();
+    }
+
     // 앱이 종료된 상태에서 알림을 클릭해서 실행된 경우 처리
     final launchDetails = await _notifications.getNotificationAppLaunchDetails();
     if (launchDetails?.didNotificationLaunchApp ?? false) {
@@ -370,7 +375,36 @@ class NotificationService {
     _isInitialized = true;
   }
 
-  /// 알림 권한 요청 (iOS)
+  /// Android 알림 채널 생성 (Android 8.0+)
+  Future<void> _createAndroidNotificationChannels() async {
+    final androidPlugin = _notifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+
+    await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+      'glucose_reminder',
+      '혈당 측정 알림',
+      description: '혈당 측정을 권장하는 알림',
+      importance: Importance.high,
+    ));
+
+    await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+      'diary_reminder',
+      '일기 작성 알림',
+      description: '혈당 일기 작성을 권장하는 알림',
+      importance: Importance.defaultImportance,
+    ));
+
+    await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+      'report_reminder',
+      '리포트 알림',
+      description: '건강 리포트 확인을 권장하는 알림',
+      importance: Importance.defaultImportance,
+    ));
+  }
+
+  /// 알림 권한 요청 (iOS: 시스템 다이얼로그, Android 13+: POST_NOTIFICATIONS)
   Future<bool> requestPermissions() async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       final result = await _notifications
@@ -383,6 +417,16 @@ class NotificationService {
           );
       return result ?? false;
     }
+
+    // Android 13+ (API 33+): POST_NOTIFICATIONS 런타임 권한 요청
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final androidPlugin = _notifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      final granted = await androidPlugin?.requestNotificationsPermission();
+      return granted ?? true;
+    }
+
     return true;
   }
 
@@ -393,11 +437,16 @@ class NotificationService {
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.checkPermissions();
-
-      // isEnabled가 true면 권한이 허용된 상태
       return result?.isEnabled ?? false;
     }
-    // Android는 기본적으로 true (권한이 필요 없음)
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final androidPlugin = _notifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      return await androidPlugin?.areNotificationsEnabled() ?? true;
+    }
+
     return true;
   }
 
@@ -585,9 +634,9 @@ class NotificationService {
       taskName,
       frequency: const Duration(days: 1),
       initialDelay: initialDelay,
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
       constraints: Constraints(
-        networkType: NetworkType.not_required,
+        networkType: NetworkType.notRequired,
       ),
     );
 

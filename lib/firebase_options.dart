@@ -24,10 +24,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -51,6 +48,14 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyA5EYKOwohgDBNEUdjp2aS3WSi6CYnA8x8',
+    appId: '1:759962797676:android:6c2cde59cd7e98db147a49',
+    messagingSenderId: '759962797676',
+    projectId: 'glubutler',
+    storageBucket: 'glubutler.firebasestorage.app',
+  );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBfpvgs0TQje9vpDUL1SOY_SfAtIAAW-xw',

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:uuid/uuid.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 
@@ -415,11 +415,7 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
             child: Text(l10n.goToSettings),
             onPressed: () async {
               Navigator.of(context).pop();
-              // Open iOS app settings
-              final Uri url = Uri.parse('app-settings:');
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              }
+              await AppSettings.openAppSettings();
             },
           ),
         ],

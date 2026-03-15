@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
 
@@ -94,9 +95,16 @@ class _ScreenFabState extends State<ScreenFab>
         // Button should slide from behind the tab bar upward (50px from bottom)
         final offsetY = -50 * (1 - slideValue);
 
+        final bottomPadding = MediaQuery.of(context).padding.bottom;
+        // iOS: floating tab bar (64px + 8px gap + bottomPadding)
+        // Android: fixed tab bar (56px + bottomPadding)
+        final tabBarClearance = Platform.isIOS
+            ? 92.0
+            : (bottomPadding + 56 + 12).toDouble();
+
         return Positioned(
           right: 22,
-          bottom: 92 + offsetY,
+          bottom: tabBarClearance + offsetY,
           child: Transform.scale(
             scale: scaleValue,
             child: Opacity(

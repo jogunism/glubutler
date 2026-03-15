@@ -83,7 +83,6 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
 
     // 화면 크기에 따라 동적으로 조정 (welcome_page와 동일)
     final imageWidth = screenWidth * 0.7;
-    final imageHeight = imageWidth * 1.43;
 
     return Stack(
       children: [
@@ -123,25 +122,24 @@ class _DiaryPermissionPageState extends State<DiaryPermissionPage> {
 
               const SizedBox(height: 32),
 
-              // Image - matching health permission page size with animation
-              Center(
-                child: SizedBox(
-                  width: imageWidth,
-                  height: imageHeight,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 800),
-                    switchInCurve: Curves.easeIn,
-                    switchOutCurve: Curves.easeOut,
-                    child: Image.asset(
-                      _screenImages[_currentImageIndex],
-                      key: ValueKey<int>(_currentImageIndex),
-                      fit: BoxFit.cover,
+              // Image - Expanded so it never overflows on smaller screens
+              Expanded(
+                child: Center(
+                  child: SizedBox(
+                    width: imageWidth,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 800),
+                      switchInCurve: Curves.easeIn,
+                      switchOutCurve: Curves.easeOut,
+                      child: Image.asset(
+                        _screenImages[_currentImageIndex],
+                        key: ValueKey<int>(_currentImageIndex),
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
               ),
-
-              const Spacer(),
             ],
           ),
         ),

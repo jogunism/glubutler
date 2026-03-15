@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -65,7 +66,7 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
       // Now disconnected
       TopBanner.show(
         context,
-        message: l10n.disconnected,
+        message: Platform.isIOS ? l10n.disconnected : l10n.disconnectedHealthConnect,
         isSuccess: false,
       );
     }
@@ -175,7 +176,7 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
           const SizedBox(height: 12),
           // Description
           Text(
-            l10n.appleHealthDescription,
+            Platform.isIOS ? l10n.appleHealthDescription : l10n.healthConnectDescription,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: context.colors.textSecondary,
               height: 1.5,
@@ -524,7 +525,7 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
                     } else {
                       TopBanner.show(
                         context,
-                        message: l10n.failedToConnect,
+                        message: Platform.isIOS ? l10n.failedToConnect : l10n.failedToConnectHealthConnect,
                         isSuccess: false,
                       );
                     }
@@ -553,7 +554,9 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    isConnected ? l10n.connected : l10n.connectAppleHealth,
+                    isConnected
+                        ? l10n.connected
+                        : (Platform.isIOS ? l10n.connectAppleHealth : l10n.connectHealthConnect),
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
@@ -609,7 +612,7 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              l10n.privacyNote,
+              Platform.isIOS ? l10n.privacyNote : l10n.privacyNoteAndroid,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: context.colors.textSecondary,
                 height: 1.4,

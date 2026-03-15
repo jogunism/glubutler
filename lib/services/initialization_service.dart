@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
 import 'package:glu_butler/services/notification_service.dart';
 
 /// 앱 초기화 서비스
@@ -114,50 +116,83 @@ class InitializationService {
     }
   }
 
-  /// iCloud 데이터 동기화
+  /// 클라우드 데이터 동기화
   ///
-  /// iCloud 연결이 활성화된 경우 iCloud에서 최신 데이터를 다운로드하여 로컬을 최신 상태로 유지합니다.
+  /// iOS: iCloud(CloudKit), Android: Firestore
   /// 업로드는 다이어리 작성/수정/삭제 시 실시간으로 처리되므로 여기서는 다운로드만 수행합니다.
   Future<void> _synciCloudData() async {
     // 최소 표시 시간 보장
     const minDisplayTime = Duration(milliseconds: 400);
     final startTime = DateTime.now();
 
-    if (settingsService.iCloudSyncEnabled) {
-      try {
-        // CloudKit 사용 가능 여부 확인
-        final isAvailable = await CloudKitService.isAvailable();
-        final isSignedIn = await CloudKitService.isUserSignedIn();
-
-        if (isAvailable && isSignedIn) {
-          // Service start date 체크 (무료 체험 우회 방지)
-          try {
-            final iCloudDate = await CloudKitService.fetchServiceStartDate();
-            if (iCloudDate != null) {
-              final localDate = settingsService.serviceStartDate;
-              // iCloud 날짜가 더 오래되면 로컬 업데이트
-              if (localDate == null || iCloudDate.isBefore(localDate)) {
-                debugPrint('[InitializationService] Updating service start date from iCloud: $iCloudDate');
-                // SettingsService에 직접 업데이트 메서드 호출
-                await settingsService.updateServiceStartDateFromICloud(iCloudDate);
-              }
-            }
-          } catch (e) {
-            debugPrint('[InitializationService] Failed to sync service start date: $e');
-          }
-
-          // 리포트 다운로드 (다이어리는 main.dart에서 백그라운드 동기화)
-          await CloudKitService.downloadReports();
-        }
-      } catch (e) {
-        debugPrint('[InitializationService] iCloud sync error: $e');
-      }
+    if (Platform.isIOS) {
+      await _syncIOS();
+    } else {
+      await _syncAndroid();
     }
 
     // 최소 표시 시간까지 대기
     final elapsed = DateTime.now().difference(startTime);
     if (elapsed < minDisplayTime) {
       await Future.delayed(minDisplayTime - elapsed);
+    }
+  }
+
+  Future<void> _syncIOS() async {
+    if (!settingsService.iCloudSyncEnabled) return;
+
+    try {
+      final isAvailable = await CloudKitService.isAvailable();
+      final isSignedIn = await CloudKitService.isUserSignedIn();
+
+      if (isAvailable && isSignedIn) {
+        // Service start date 체크 (무료 체험 우회 방지)
+        try {
+          final iCloudDate = await CloudKitService.fetchServiceStartDate();
+          if (iCloudDate != null) {
+            final localDate = settingsService.serviceStartDate;
+            if (localDate == null || iCloudDate.isBefore(localDate)) {
+              debugPrint('[InitializationService] Updating service start date from iCloud: $iCloudDate');
+              await settingsService.updateServiceStartDateFromICloud(iCloudDate);
+            }
+          }
+        } catch (e) {
+          debugPrint('[InitializationService] Failed to sync service start date: $e');
+        }
+
+        // 리포트 다운로드 (다이어리는 main.dart에서 백그라운드 동기화)
+        await CloudKitService.downloadReports();
+      }
+    } catch (e) {
+      debugPrint('[InitializationService] iCloud sync error: $e');
+    }
+  }
+
+  Future<void> _syncAndroid() async {
+    if (!settingsService.googleSyncEnabled) return;
+
+    final googleId = settingsService.userIdentity.googleId;
+    if (googleId == null || googleId.isEmpty) return;
+
+    try {
+      // Service start date 체크 (무료 체험 우회 방지)
+      try {
+        final firestoreDate = await FirestoreService.fetchServiceStartDate(googleId);
+        if (firestoreDate != null) {
+          final localDate = settingsService.serviceStartDate;
+          if (localDate == null || firestoreDate.isBefore(localDate)) {
+            debugPrint('[InitializationService] Updating service start date from Firestore: $firestoreDate');
+            await settingsService.updateServiceStartDateFromICloud(firestoreDate);
+          }
+        }
+      } catch (e) {
+        debugPrint('[InitializationService] Failed to sync service start date from Firestore: $e');
+      }
+
+      // 리포트 다운로드
+      await FirestoreService.downloadReports(googleId);
+    } catch (e) {
+      debugPrint('[InitializationService] Firestore sync error: $e');
     }
   }
 

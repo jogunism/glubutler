@@ -17,7 +17,6 @@
   "yesterday": "昨日",
   "thisWeek": "今週",
   "thisMonth": "今月",
-
   "bloodGlucose": "血糖値",
   "meal": "食事",
   "exercise": "運動",
@@ -27,26 +26,21 @@
   "mmoll": "mmol/L",
   "chartSizeLarge": "大きく",
   "chartSizeSmall": "小さく",
-
   "low": "低血糖",
   "normal": "正常",
-  "high": "高血糖",
-
+  "high": "高い",
   "breakfast": "朝食",
   "lunch": "昼食",
   "dinner": "夕食",
   "snack": "おやつ",
-
   "fasting": "空腹",
   "beforeMeal": "食前",
   "afterMeal": "食後",
   "unspecified": "未指定",
-
   "dailyReport": "日次レポート",
   "weeklyReport": "週次レポート",
   "aiInsight": "AIインサイト",
   "glucoseScore": "血糖スコア",
-
   "profile": "プロフィール",
   "name": "名前",
   "gender": "性別",
@@ -69,7 +63,6 @@
   "personal": "基本",
   "diabetes": "糖尿病",
   "yearOfDiagnosis": "診断年",
-
   "language": "言語",
   "changeInSettings": "設定アプリで変更",
   "darkMode": "ダークモード",
@@ -90,17 +83,16 @@
   "notificationPermissionRequired": "通知権限が必要です",
   "notificationPermissionDescription": "iOS設定で通知権限を有効にすると通知を受け取れます。",
   "allowNotifications": "許可",
-  "goToSettings": "設定に移動",
+  "goToSettings": "設定へ移動",
   "notificationTime": "通知時間",
   "sync": "連携",
-  "healthConnect": "ヘルスケア連携",
+  "healthConnect": "Health Connect 連携",
   "iCloudSync": "iCloud同期",
   "iCloudSyncDescription": "複数のデバイスでデータを同期",
   "connected": "接続済み",
   "notConnected": "未接続",
   "connect": "接続する",
   "disconnect": "接続解除",
-
   "subscription": "サブスクリプション",
   "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "Proにアップグレード",
@@ -119,9 +111,7 @@
   "currentPlan": "現在のプラン",
   "freePlan": "無料",
   "proPlan": "Pro",
-
   "disclaimer": "このアプリは参考用です。医療アドバイスについては必ず医師に直接ご相談ください。",
-
   "enterGlucose": "血糖値を入力",
   "enterMeal": "食事を追加",
   "enterExercise": "運動を追加",
@@ -142,19 +132,15 @@
   "imageLoadFailed": "写真の読み込みに失敗しました。",
   "photoPermissionRequired": "写真アクセス権限が必要です",
   "photoPermissionMessage": "写真を添付するには、フォトライブラリへのアクセス権限が必要です。\n\n設定 > Glu Butlerで写真アクセスを許可してください。",
-  "goToSettings": "設定へ移動",
-
   "noRecords": "記録がありません",
   "noReportTitle": "レポートがありません",
   "startTracking": "健康記録を始めましょう！",
   "feedEmptyHint": "ヘルスケアアプリと連携してより多くの情報を確認できます",
   "noReportYet": "血糖レポートを生成しましょう！",
-
   "goodMorning": "おはようございます！",
   "goodAfternoon": "こんにちは！",
   "goodEvening": "こんばんは！",
   "butlerGreeting": "執事がお手伝いいたします。",
-
   "home": "今日",
   "yourToday": "今日のあなた",
   "points": "点",
@@ -181,7 +167,6 @@
   "diarySaveFailed": "日記の保存に失敗しました",
   "yes": "はい",
   "no": "いいえ",
-
   "insulin": "インスリン",
   "addInsulin": "インスリンを追加",
   "insulinType": "インスリンの種類",
@@ -202,9 +187,8 @@
   "measurementTiming": "測定タイミング",
   "addRecord": "記録を追加",
   "glucoseSaved": "血糖値を保存しました",
-  "insulinSaved": "インスリンを保存しました",
+  "insulinSaved": "インスリン投与量を保存しました",
   "saveFailed": "保存に失敗しました",
-
   "appleHealth": "Apple ヘルスケア",
   "appleHealthDescription": "ヘルスケアアプリと連携して、血糖管理に役立つ様々なデータを確認できます。",
   "syncedData": "連携データ",
@@ -236,27 +220,20 @@
   "steps": "歩数",
   "mindfulness": "マインドフルネス",
   "openHealthApp": "ヘルスケアアプリ > 共有 > Appで権限を管理してください",
-
   "syncPeriod": "連携期間",
   "syncPeriod1Week": "1週間",
   "syncPeriod2Weeks": "2週間",
   "syncPeriod1Month": "1ヶ月",
   "syncPeriod3Months": "3ヶ月",
-
   "disconnected": "Apple ヘルスケアとの連携が解除されました",
-
   "cgmBaseline": "安定",
   "cgmFluctuation": "変動",
-
   "targetGlucoseRange": "目標血糖値範囲",
   "veryHigh": "非常に高い",
-  "high": "高い",
   "warning": "注意",
   "target": "目標",
   "veryLow": "非常に低い",
-
   "appSlogan": "あなたの健康パートナー",
-
   "initLoadingSettings": "設定を読み込み中...",
   "initCheckingHealth": "ヘルスデータ同期を確認中...",
   "initCheckingiCloud": "iCloud同期を確認中...",
@@ -264,16 +241,10 @@
   "initNotifications": "通知を設定中...",
   "initDone": "完了",
   "initFirstTime": "初回起動の準備をしています。",
-
-  "glucoseSaved": "血糖値を保存しました",
-  "insulinSaved": "インスリン投与量を保存しました",
-  "saveFailed": "保存に失敗しました",
-
-  "deleteGlucoseConfirmation": "本当に削除しますか？\nこの操作は元に戻せません。",
+  "deleteGlucoseConfirmation": "この血糖記録を削除します。",
   "glucoseDeleted": "血糖値を削除しました",
   "insulinDeleted": "インスリンを削除しました",
   "deleteFailed": "削除に失敗しました",
-
   "glucoseStatus": "血糖状態",
   "scoreHint": "スコアについて詳しく",
   "scoreInfoTitle": "血糖スコアガイド",
@@ -289,10 +260,8 @@
   "scoreInfoLifestyle": "生活習慣（ヘルスケア連携時）",
   "scoreInfoLifestyleDesc": "睡眠時間、運動記録などのヘルスケアデータを一緒に評価してスコアを計算します。",
   "scoreInfoPrivacy": "※ アプリで使用されるすべての情報は、別途保存されたり外部に共有されることはありません。",
-
   "deleteGlucose": "血糖記録を削除",
   "deleteInsulin": "インスリン記録を削除",
-  "deleteGlucoseConfirmation": "この血糖記録を削除します。",
   "deleteInsulinConfirmation": "このインスリン記録を削除します。",
   "deleteDiary": "日記を削除",
   "deleteDiaryConfirmation": "この日記を本当に削除しますか？",
@@ -328,7 +297,6 @@
       }
     }
   },
-
   "generateReport": "レポート生成",
   "reportRequiresICloud": "レポート生成",
   "reportRequiresICloudMessage": "レポートを生成するにはiCloud連携が必要です。\n設定 > iCloud連携",
@@ -378,7 +346,6 @@
     }
   },
   "imageLoadError": "画像を読み込めません",
-
   "apiErrorNetwork": "ネットワークエラーが発生しました。",
   "apiErrorConnectionTimeout": "接続がタイムアウトしました。ネットワーク接続を確認してください。",
   "apiErrorReceiveTimeout": "AIレポート生成がタイムアウトしました。しばらくしてから再度お試しください。",
@@ -396,14 +363,24 @@
       }
     }
   },
-
   "iCloudSyncEnabled": "iCloud同期が有効になりました",
   "iCloudSyncDisabled": "iCloud同期が無効になりました",
   "iCloudSyncFailed": "iCloud接続ができませんでした",
   "iCloudNotAvailable": "iCloudが利用できません",
   "iCloudNotSignedIn": "iCloudにサインインしていません",
   "iCloudSyncRetryMessage": "設定メニューから再度接続してください。",
-
+  "googleSyncFailed": "Google接続に失敗しました",
+  "googleNotSignedIn": "Googleサインインに失敗しました",
+  "googleSync": "Google同期",
+  "googleSyncEnabled": "Google同期が有効になりました",
+  "googleSyncDisabled": "Google同期が無効になりました",
+  "healthConnectDescription": "ヘルスコネクトと連携して、血糖管理に役立つ様々なデータを確認できます。",
+  "connectHealthConnect": "ヘルスコネクトを接続",
+  "disconnectedHealthConnect": "ヘルスコネクトとの接続が解除されました",
+  "failedToConnectHealthConnect": "接続に失敗しました。ヘルスコネクトで権限を確認してください。",
+  "privacyNoteAndroid": "健康データはデバイス内にのみ保存され、外部に共有されることはありません。ヘルスコネクト > データとプライバシー > Glu Butlerで管理できます。",
+  "feedEmptyHintAndroid": "ヘルスコネクトを連携してより多くの情報を確認",
+  "reportRequiresGoogleMessage": "レポートを生成するにはGoogleアカウントの同期が必要です。\n設定 > Google同期",
   "onboardingWelcomeTo": "ようこそ",
   "onboardingWelcomeDescription": "Glu Butlerがあなたの血糖管理をサポートします。\nスマートな方法で日々の生活パターンを追跡し、より健康的な生活を築きましょう。",
   "onboardingLetsBegin": "始める",
@@ -428,10 +405,13 @@
   },
   "onboardingHealthTitle": "Apple Healthと連携しましょう",
   "onboardingHealthSubtitle": "血糖値、インスリン、歩数、体重などを自動的に同期します",
+  "onboardingHealthTitleAndroid": "Health Connectと連携しましょう",
+  "onboardingHealthSubtitleAndroid": "血糖値、インスリン、歩数、体重などを自動的に同期します",
   "onboardingHealthConnect": "連携する",
   "onboardingReportTitle": "血糖レポートを受け取りましょう",
   "onboardingReportSubtitle": "記録されたデータに基づいて定期的なレポートを受け取りましょう",
   "onboardingReportICloudRequired": "iCloud同期が必要です",
+  "onboardingReportGoogleRequired": "Googleアカウントの連携が必要です",
   "onboardingReportEnable": "iCloud同期",
   "onboardingDiaryTitle": "血糖日記を書いてみましょう",
   "onboardingDiarySubtitle": "食事を記録し、写真をアップロードしてフィードに食事を記録しましょう",
@@ -439,7 +419,6 @@
   "onboardingNotificationTitle": "通知を受け取りましょう",
   "onboardingNotificationSubtitle": "毎日規則正しく記録できるようサポートします",
   "onboardingNotificationEnable": "通知を有効にする",
-
   "notificationGlucoseReminderBody": "定期的な血糖測定をお勧めします\n食前食後の血糖変化を観察してみましょう",
   "notificationDiaryReminderBody": "今日の血糖日記を書いてみましょう",
   "notificationReportReminderBody": "健康レポートを確認してください",
@@ -457,7 +436,6 @@
   "onboardingSubscriptionRedeem": "コードを使用",
   "onboardingSubscriptionRestore": "購入を復元",
   "onboardingSubscriptionPurchase": "購入する",
-
   "onboardingCompletionTitle": "準備完了！",
   "onboardingCompletionSubtitle": "Glu Butlerでよりスマートに血糖値を管理しましょう",
   "onboardingCompletionFeature1": "AI搭載の健康インサイト",
@@ -465,13 +443,11 @@
   "onboardingCompletionFeature3": "高度なレポート",
   "onboardingGetStarted": "始める",
   "diabetesTypeUnknown": "わからない",
-
   "manageNotifications": "通知管理",
   "mealGlucoseReminders": "朝食、昼食、夕食前の血糖測定通知",
   "longTermGlucoseAbsence": "長期間血糖記録なし通知",
   "longTermDiaryAbsence": "長期間日記記録なし通知",
   "reportCreationReminder": "レポート作成通知",
-
   "notifFirstReportTitle": "初めての血糖レポートを作成してみましょう",
   "notifReportReminderTitle": "血糖レポートを作成して結果を確認してみましょう",
   "notifGlucoseReminderTitle": "血糖値を確認して記録を残してみましょう",
@@ -479,20 +455,17 @@
   "notifDiaryReminderBody": "自分の食生活パターンを把握できます",
   "notifGlucoseRecordReminderTitle": "血糖測定を忘れないでください",
   "notifGlucoseRecordReminderBody": "継続的な記録が血糖管理の第一歩です",
-
   "exportReport": "メールでレポートをエクスポート",
   "exportReportTitle": "メール送信",
   "exportReportMessage": "レポートを受け取るメールアドレスを入力してください",
   "send": "送信",
   "exportSuccess": "レポートがメールで送信されました",
   "exportFailed": "レポートの送信に失敗しました",
-
   "onboardingTermsPrefix": "Glu Butlerを使用することで、",
   "onboardingTermsAnd": "と",
   "onboardingTermsSuffix": "に同意したものとみなされます。",
   "onboardingTermsOfService": "利用規約",
   "onboardingPrivacyPolicy": "プライバシーポリシー",
-
   "unlockGluButlerPro": "Glu Butlerプロをアンロック",
   "continuePurchase": "続ける",
   "yearly": "年間",
@@ -507,5 +480,9 @@
   "noSubscriptionPackages": "利用可能なサブスクリプションパッケージがありません",
   "loadSubscriptionsFailed": "サブスクリプション情報の読み込みに失敗しました",
   "retry": "再試行",
-  "anErrorOccurred": "エラーが発生しました"
+  "anErrorOccurred": "エラーが発生しました",
+  "genderMale": "男性",
+  "genderFemale": "女性",
+  "genderOther": "その他",
+  "birthDate": "生年月日"
 }

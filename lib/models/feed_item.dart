@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/exercise_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
@@ -109,7 +110,7 @@ class FeedItem implements Comparable<FeedItem> {
       case FeedItemType.meal:
         return null;
       case FeedItemType.steps:
-        return 'Apple Health';
+        return Platform.isIOS ? 'Apple Health' : 'Health Connect';
       case FeedItemType.sleepGroup:
         return sleepGroup?.sourceName;
       case FeedItemType.waterGroup:

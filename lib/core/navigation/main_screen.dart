@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -169,23 +170,23 @@ class MainScreenState extends State<MainScreen> {
           AnimatedPositioned(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
-            bottom: _isTabBarVisible ? 60 : -100,
-            right: MediaQuery.of(context).size.width / 8,
+            bottom: _isTabBarVisible
+                ? (Platform.isIOS
+                      ? 60.0
+                      : MediaQuery.of(context).padding.bottom + 40.0)
+                : -100,
+            right: Platform.isIOS
+                ? MediaQuery.of(context).size.width / 8
+                : MediaQuery.of(context).size.width / 8 - 16,
             child: IgnorePointer(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
                   color: _currentIndex == 3
                       ? Colors.transparent
                       : AppTheme.primaryColor,
                   border: _currentIndex == 3
-                      ? Border.all(
-                          color: AppTheme.primaryColor,
-                          width: 1,
-                        )
+                      ? Border.all(color: AppTheme.primaryColor, width: 1)
                       : null,
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
@@ -310,33 +311,104 @@ class MainScreenState extends State<MainScreen> {
         ],
       );
     } else {
-      // Android: NavigationBar
-      return NavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedIndex: _currentIndex,
-        onDestinationSelected: handleTap,
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(CupertinoIcons.drop),
-            selectedIcon: const Icon(CupertinoIcons.drop_fill),
-            label: l10n.home,
-          ),
-          NavigationDestination(
-            icon: const Icon(CupertinoIcons.square_grid_2x2),
-            selectedIcon: const Icon(CupertinoIcons.square_grid_2x2_fill),
-            label: l10n.feed,
-          ),
-          NavigationDestination(
-            icon: const Icon(CupertinoIcons.book),
-            selectedIcon: const Icon(CupertinoIcons.book_fill),
-            label: l10n.diary,
-          ),
-          NavigationDestination(
-            icon: const Icon(CupertinoIcons.doc_text),
-            selectedIcon: const Icon(CupertinoIcons.doc_text_fill),
-            label: l10n.report,
-          ),
-        ],
+      // Android: 커스텀 탭바
+      final bottomPadding = MediaQuery.of(context).padding.bottom;
+      final selectedColor = AppTheme.primaryColor;
+      final unselectedColor = AppTheme.textSecondary(context);
+      final tabs = [
+        (
+          icon: CupertinoIcons.drop,
+          selectedIcon: CupertinoIcons.drop_fill,
+          label: l10n.home,
+          index: 0,
+          isImage: true,
+        ),
+        (
+          icon: CupertinoIcons.square_grid_2x2,
+          selectedIcon: CupertinoIcons.square_grid_2x2_fill,
+          label: l10n.feed,
+          index: 1,
+          isImage: false,
+        ),
+        (
+          icon: CupertinoIcons.book,
+          selectedIcon: CupertinoIcons.book_fill,
+          label: l10n.diary,
+          index: 2,
+          isImage: false,
+        ),
+        (
+          icon: CupertinoIcons.doc_text,
+          selectedIcon: CupertinoIcons.doc_text_fill,
+          label: l10n.report,
+          index: 3,
+          isImage: false,
+        ),
+      ];
+
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return Container(
+        color: isDark ? const Color(0xFF111118) : const Color(0xFFE5E5EA),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Divider(
+              height: 1,
+              thickness: 0.5,
+              color: AppTheme.divider(context),
+            ),
+            SizedBox(
+              height: 56,
+              child: Row(
+                children: tabs.map((tab) {
+                  final isSelected = tab.index == _currentIndex;
+                  final color = isSelected ? selectedColor : unselectedColor;
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () => handleTap(tab.index),
+                      behavior: HitTestBehavior.opaque,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (tab.isImage)
+                            ColorFiltered(
+                              colorFilter: ColorFilter.mode(
+                                color,
+                                BlendMode.srcIn,
+                              ),
+                              child: Image.asset(
+                                'assets/images/main_icon.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            )
+                          else
+                            Icon(
+                              isSelected ? tab.selectedIcon : tab.icon,
+                              color: color,
+                              size: 24,
+                            ),
+                          const SizedBox(height: 3),
+                          Text(
+                            tab.label,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                              color: color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            SizedBox(height: bottomPadding),
+          ],
+        ),
       );
     }
   }

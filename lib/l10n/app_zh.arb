@@ -17,7 +17,6 @@
   "yesterday": "昨天",
   "thisWeek": "本周",
   "thisMonth": "本月",
-
   "bloodGlucose": "血糖",
   "meal": "餐食",
   "exercise": "运动",
@@ -27,26 +26,21 @@
   "mmoll": "mmol/L",
   "chartSizeLarge": "大",
   "chartSizeSmall": "小",
-
   "low": "低血糖",
   "normal": "正常",
-  "high": "高血糖",
-
+  "high": "高",
   "breakfast": "早餐",
   "lunch": "午餐",
   "dinner": "晚餐",
   "snack": "零食",
-
   "fasting": "空腹",
   "beforeMeal": "餐前",
   "afterMeal": "餐后",
   "unspecified": "未指定",
-
   "dailyReport": "每日报告",
   "weeklyReport": "每周报告",
   "aiInsight": "AI洞察",
   "glucoseScore": "血糖评分",
-
   "profile": "个人资料",
   "name": "姓名",
   "gender": "性别",
@@ -69,7 +63,6 @@
   "personal": "基本",
   "diabetes": "糖尿病",
   "yearOfDiagnosis": "诊断年份",
-
   "language": "语言",
   "changeInSettings": "在设置中更改",
   "darkMode": "深色模式",
@@ -93,16 +86,14 @@
   "goToSettings": "前往设置",
   "notificationTime": "通知时间",
   "sync": "同步",
-  "healthConnect": "健康连接",
+  "healthConnect": "Health Connect",
   "iCloudSync": "iCloud同步",
   "iCloudSyncDescription": "跨设备同步数据",
   "connected": "已连接",
   "notConnected": "未连接",
   "connect": "连接",
   "disconnect": "断开连接",
-
   "disclaimer": "本应用仅供参考，医疗建议请务必直接咨询医生。",
-
   "enterGlucose": "输入血糖",
   "enterMeal": "添加餐食",
   "enterExercise": "添加运动",
@@ -123,18 +114,14 @@
   "imageLoadFailed": "加载照片失败。",
   "photoPermissionRequired": "需要照片访问权限",
   "photoPermissionMessage": "要附加照片，需要允许访问照片库。  请在设置 > Glu Butler中启用照片访问。",
-  "goToSettings": "前往设置",
-
   "noRecords": "暂无记录",
   "noReportTitle": "暂无报告",
   "startTracking": "开始记录您的健康！",
   "feedEmptyHint": "连接健康 App 查看更多信息",
-
   "goodMorning": "早上好！",
   "goodAfternoon": "下午好！",
   "goodEvening": "晚上好！",
   "butlerGreeting": "您的管家随时准备为您服务。",
-
   "subscription": "订阅",
   "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "升级到 Pro",
@@ -154,7 +141,6 @@
   "freePlan": "免费版",
   "proPlan": "Pro",
   "noReportYet": "生成您的血糖报告！",
-
   "home": "今天",
   "yourToday": "你的今天",
   "points": "分",
@@ -181,7 +167,6 @@
   "diarySaveFailed": "保存日记失败",
   "yes": "是",
   "no": "否",
-
   "insulin": "胰岛素",
   "addInsulin": "添加胰岛素",
   "insulinType": "胰岛素类型",
@@ -201,10 +186,9 @@
   "basal": "长效型",
   "measurementTiming": "测量时机",
   "addRecord": "添加记录",
-  "glucoseSaved": "血糖已保存",
-  "insulinSaved": "胰岛素已保存",
+  "glucoseSaved": "血糖记录已保存",
+  "insulinSaved": "胰岛素剂量已保存",
   "saveFailed": "保存失败",
-
   "appleHealth": "Apple 健康",
   "appleHealthDescription": "连接健康 App，查看有助于血糖管理的各种数据。",
   "syncedData": "同步数据",
@@ -236,43 +220,30 @@
   "steps": "步数",
   "mindfulness": "正念",
   "openHealthApp": "在健康 App > 共享 > App 中管理权限",
-
   "syncPeriod": "同步周期",
   "syncPeriod1Week": "1周",
   "syncPeriod2Weeks": "2周",
   "syncPeriod1Month": "1个月",
   "syncPeriod3Months": "3个月",
-
   "disconnected": "已断开与 Apple 健康的连接",
-
   "cgmBaseline": "稳定",
   "cgmFluctuation": "波动",
-
   "targetGlucoseRange": "目标血糖范围",
   "veryHigh": "非常高",
-  "high": "高",
   "warning": "注意",
   "target": "目标",
   "veryLow": "非常低",
-
   "appSlogan": "您的健康伙伴",
-
   "initLoadingSettings": "正在加载设置...",
   "initCheckingHealth": "正在检查健康数据同步...",
   "initCheckingiCloud": "正在检查 iCloud 同步...",
   "initLocalDatabase": "正在初始化本地数据库...",
   "initNotifications": "正在设置通知...",
   "initDone": "完成",
-
-  "glucoseSaved": "血糖记录已保存",
-  "insulinSaved": "胰岛素剂量已保存",
-  "saveFailed": "保存失败",
-
-  "deleteGlucoseConfirmation": "确定要删除吗？ 此操作无法撤销。",
+  "deleteGlucoseConfirmation": "将删除此血糖记录。",
   "glucoseDeleted": "血糖记录已删除",
   "insulinDeleted": "胰岛素记录已删除",
   "deleteFailed": "删除失败",
-
   "glucoseStatus": "血糖状态",
   "scoreHint": "了解评分",
   "scoreInfoTitle": "血糖评分指南",
@@ -288,10 +259,8 @@
   "scoreInfoLifestyle": "生活习惯（连接健康App时）",
   "scoreInfoLifestyleDesc": "结合睡眠时间、运动记录等健康App数据计算评分。",
   "scoreInfoPrivacy": "※ 应用中使用的所有信息不会单独存储或分享到外部。",
-
   "deleteGlucose": "删除血糖记录",
   "deleteInsulin": "删除胰岛素记录",
-  "deleteGlucoseConfirmation": "将删除此血糖记录。",
   "deleteInsulinConfirmation": "将删除此胰岛素记录。",
   "deleteDiary": "删除日记",
   "deleteDiaryConfirmation": "确定要删除此日记吗？",
@@ -327,7 +296,6 @@
       }
     }
   },
-
   "generateReport": "生成报告",
   "reportRequiresICloud": "生成报告",
   "reportRequiresICloudMessage": "生成报告需要iCloud同步。\n设置 > iCloud同步",
@@ -376,7 +344,6 @@
     }
   },
   "imageLoadError": "无法加载图片",
-
   "apiErrorNetwork": "发生网络错误。",
   "apiErrorConnectionTimeout": "连接超时。请检查您的网络连接。",
   "apiErrorReceiveTimeout": "AI报告生成超时。请稍后重试。",
@@ -394,14 +361,24 @@
       }
     }
   },
-
   "iCloudSyncEnabled": "iCloud同步已启用",
   "iCloudSyncDisabled": "iCloud同步已禁用",
   "iCloudSyncFailed": "iCloud连接未成功",
   "iCloudNotAvailable": "iCloud不可用",
   "iCloudNotSignedIn": "您未登录iCloud",
   "iCloudSyncRetryMessage": "请在设置菜单中重新连接。",
-
+  "googleSyncFailed": "Google连接失败",
+  "googleNotSignedIn": "Google登录失败",
+  "googleSync": "Google同步",
+  "googleSyncEnabled": "Google同步已启用",
+  "googleSyncDisabled": "Google同步已禁用",
+  "healthConnectDescription": "连接Health Connect，查看有助于管理血糖的各种数据。",
+  "connectHealthConnect": "连接Health Connect",
+  "disconnectedHealthConnect": "已断开Health Connect连接",
+  "failedToConnectHealthConnect": "连接失败。请在Health Connect中检查权限。",
+  "privacyNoteAndroid": "您的健康数据仅存储在设备上，不会与外部共享。您可以在Health Connect > 数据和隐私 > Glu Butler中管理访问权限。",
+  "feedEmptyHintAndroid": "连接Health Connect查看更多信息",
+  "reportRequiresGoogleMessage": "生成报告需要同步Google账户。\n设置 > Google同步",
   "onboardingWelcomeTo": "欢迎使用",
   "onboardingWelcomeDescription": "Glu Butler帮助您管理血糖。 以更智能的方式追踪您的日常模式，建立更健康的生活。",
   "onboardingLetsBegin": "开始使用",
@@ -426,10 +403,13 @@
   },
   "onboardingHealthTitle": "与 Apple Health 连接",
   "onboardingHealthSubtitle": "自动同步血糖、胰岛素、步数和体重",
+  "onboardingHealthTitleAndroid": "与 Health Connect 连接",
+  "onboardingHealthSubtitleAndroid": "自动同步血糖、胰岛素、步数和体重",
   "onboardingHealthConnect": "连接",
   "onboardingReportTitle": "接收血糖报告",
   "onboardingReportSubtitle": "根据您的记录数据获取定期报告",
   "onboardingReportICloudRequired": "需要 iCloud 同步",
+  "onboardingReportGoogleRequired": "需要 Google 账户同步",
   "onboardingReportEnable": "同步 iCloud",
   "onboardingDiaryTitle": "开始写血糖日记",
   "onboardingDiarySubtitle": "记录餐食并上传照片，在动态中追踪您的饮食",
@@ -437,7 +417,6 @@
   "onboardingNotificationTitle": "接收通知",
   "onboardingNotificationSubtitle": "我们将帮助您保持每日规律记录",
   "onboardingNotificationEnable": "启用通知",
-
   "notificationGlucoseReminderBody": "建议定期测量血糖\n观察餐前餐后的血糖变化",
   "notificationDiaryReminderBody": "记录今天的血糖日记吧",
   "notificationReportReminderBody": "查看健康报告",
@@ -455,7 +434,6 @@
   "onboardingSubscriptionRedeem": "兑换代码",
   "onboardingSubscriptionRestore": "恢复购买",
   "onboardingSubscriptionPurchase": "购买",
-
   "onboardingCompletionTitle": "一切就绪！",
   "onboardingCompletionSubtitle": "使用Glu Butler更智能地管理您的血糖",
   "onboardingCompletionFeature1": "AI驱动的健康洞察",
@@ -463,13 +441,11 @@
   "onboardingCompletionFeature3": "高级报告",
   "onboardingGetStarted": "开始使用",
   "diabetesTypeUnknown": "不确定",
-
   "manageNotifications": "通知管理",
   "mealGlucoseReminders": "早餐、午餐、晚餐前血糖测量通知",
   "longTermGlucoseAbsence": "长期血糖记录缺失通知",
   "longTermDiaryAbsence": "长期日记记录缺失通知",
   "reportCreationReminder": "报告创建通知",
-
   "notifFirstReportTitle": "生成您的第一份血糖报告",
   "notifReportReminderTitle": "生成血糖报告并查看结果",
   "notifGlucoseReminderTitle": "检查并记录您的血糖水平",
@@ -477,20 +453,17 @@
   "notifDiaryReminderBody": "了解您的饮食模式",
   "notifGlucoseRecordReminderTitle": "别忘了测量血糖",
   "notifGlucoseRecordReminderBody": "持续记录是血糖管理的第一步",
-
   "exportReport": "通过电子邮件导出报告",
   "exportReportTitle": "发送邮件",
   "exportReportMessage": "请输入接收报告的电子邮件地址",
   "send": "发送",
   "exportSuccess": "报告已通过电子邮件发送",
   "exportFailed": "发送报告失败",
-
   "onboardingTermsPrefix": "使用Glu Butler即表示您同意我们的",
   "onboardingTermsAnd": "和",
   "onboardingTermsSuffix": "。",
   "onboardingTermsOfService": "服务条款",
   "onboardingPrivacyPolicy": "隐私政策",
-
   "unlockGluButlerPro": "解锁Glu Butler Pro",
   "continuePurchase": "继续",
   "yearly": "年度",
@@ -505,5 +478,9 @@
   "noSubscriptionPackages": "没有可用的订阅套餐",
   "loadSubscriptionsFailed": "加载订阅信息失败",
   "retry": "重试",
-  "anErrorOccurred": "发生错误"
+  "anErrorOccurred": "发生错误",
+  "genderMale": "男",
+  "genderFemale": "女",
+  "genderOther": "其他",
+  "birthDate": "出生日期"
 }

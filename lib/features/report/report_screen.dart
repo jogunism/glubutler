@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -220,7 +221,7 @@ class _ReportScreenState extends State<ReportScreen> {
         context: context,
         builder: (context) => CupertinoAlertDialog(
           title: Text(l10n.reportRequiresICloud),
-          content: Text(l10n.reportRequiresICloudMessage),
+          content: Text(Platform.isIOS ? l10n.reportRequiresICloudMessage : l10n.reportRequiresGoogleMessage),
           actions: [
             CupertinoDialogAction(
               onPressed: () => Navigator.of(context).pop(),

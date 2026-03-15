@@ -47,7 +47,7 @@ class AnalyticsService {
 
     await _analytics.logEvent(
       name: 'health_connected',
-      parameters: {'success': success},
+      parameters: {'success': success ? 1 : 0},
     );
     debugPrint('[Analytics] Health connected: $success');
   }
@@ -58,7 +58,7 @@ class AnalyticsService {
 
     await _analytics.logEvent(
       name: 'icloud_enabled',
-      parameters: {'success': success},
+      parameters: {'success': success ? 1 : 0},
     );
     debugPrint('[Analytics] iCloud enabled: $success');
   }
@@ -69,7 +69,7 @@ class AnalyticsService {
 
     await _analytics.logEvent(
       name: 'report_generated',
-      parameters: {'success': success},
+      parameters: {'success': success ? 1 : 0},
     );
     debugPrint('[Analytics] Report generated: $success');
   }
@@ -80,7 +80,7 @@ class AnalyticsService {
 
     await _analytics.logEvent(
       name: 'report_exported',
-      parameters: {'success': success},
+      parameters: {'success': success ? 1 : 0},
     );
     debugPrint('[Analytics] Report exported: $success');
   }

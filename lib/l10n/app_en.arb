@@ -17,7 +17,6 @@
   "yesterday": "Yesterday",
   "thisWeek": "This Week",
   "thisMonth": "This Month",
-
   "bloodGlucose": "Blood Glucose",
   "meal": "Meal",
   "exercise": "Exercise",
@@ -27,26 +26,21 @@
   "mmoll": "mmol/L",
   "chartSizeLarge": "Large",
   "chartSizeSmall": "Small",
-
   "low": "Low",
   "normal": "Normal",
   "high": "High",
-
   "breakfast": "Breakfast",
   "lunch": "Lunch",
   "dinner": "Dinner",
   "snack": "Snack",
-
   "fasting": "Fasting",
   "beforeMeal": "Before Meal",
   "afterMeal": "After Meal",
   "unspecified": "Unspecified",
-
   "dailyReport": "Daily Report",
   "weeklyReport": "Weekly Report",
   "aiInsight": "AI Insight",
   "glucoseScore": "Glucose Score",
-
   "profile": "Profile",
   "name": "Name",
   "gender": "Gender",
@@ -69,7 +63,6 @@
   "personal": "Basic",
   "diabetes": "Diabetes",
   "yearOfDiagnosis": "Year of Diagnosis",
-
   "language": "Language",
   "changeInSettings": "Change in Settings app",
   "darkMode": "Dark Mode",
@@ -100,7 +93,6 @@
   "notConnected": "Not Connected",
   "connect": "Connect",
   "disconnect": "Disconnect",
-
   "subscription": "Subscription",
   "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "Upgrade to Pro",
@@ -132,9 +124,7 @@
   "noSubscriptionFound": "No active subscription found.",
   "unableToOpenAppStore": "Unable to open App Store.",
   "restoringPurchases": "Restoring...",
-
   "disclaimer": "This app is for reference only. Please consult with your doctor directly for medical advice.",
-
   "enterGlucose": "Enter Blood Glucose",
   "enterMeal": "Add Meal",
   "enterExercise": "Add Exercise",
@@ -155,19 +145,15 @@
   "imageLoadFailed": "Failed to load images.",
   "photoPermissionRequired": "Photo Access Permission Required",
   "photoPermissionMessage": "To attach photos, you need to allow access to your photo library.\n\nGo to Settings > Glu Butler to enable photo access.",
-  "goToSettings": "Go to Settings",
-
   "noRecords": "No records yet",
   "noReportTitle": "No report available",
   "noReportYet": "Generate your glucose report!",
   "startTracking": "Start tracking your health!",
   "feedEmptyHint": "Connect Apple Health to see more insights",
-
   "goodMorning": "Good morning!",
   "goodAfternoon": "Good afternoon!",
   "goodEvening": "Good evening!",
   "butlerGreeting": "Your butler is ready to help.",
-
   "home": "Today",
   "yourToday": "Your Today",
   "points": "pts",
@@ -209,7 +195,6 @@
   "diarySaveFailed": "Failed to save diary entry",
   "yes": "Yes",
   "no": "No",
-
   "insulin": "Insulin",
   "addInsulin": "Add Insulin",
   "insulinType": "Insulin Type",
@@ -232,7 +217,6 @@
   "glucoseSaved": "Blood glucose saved",
   "insulinSaved": "Insulin dose saved",
   "saveFailed": "Failed to save",
-
   "appleHealth": "Apple Health",
   "appleHealthDescription": "Connect with the Health app to view various data that can help you manage your blood glucose.",
   "syncedData": "Synced Data",
@@ -264,28 +248,21 @@
   "steps": "Steps",
   "mindfulness": "Mindfulness",
   "openHealthApp": "Open Health app > Sharing > Apps to manage permissions",
-
   "syncPeriod": "Sync Period",
   "syncPeriod1Week": "1 Week",
   "syncPeriod2Weeks": "2 Weeks",
   "syncPeriod1Month": "1 Month",
   "syncPeriod3Months": "3 Months",
-
   "disconnected": "Disconnected from Apple Health",
-
   "cgmBaseline": "Stable",
   "cgmFluctuation": "Fluctuation",
-
   "targetGlucoseRange": "Target Glucose Range",
   "targetGlucoseRangeDescription": "Your target values are used to analyze glucose data more accurately in the feed.",
   "veryHigh": "Very High",
-  "high": "High",
   "warning": "Warning",
   "target": "Target",
   "veryLow": "Very Low",
-
   "appSlogan": "Your Health Companion",
-
   "initLoadingSettings": "Loading settings...",
   "initCheckingHealth": "Checking health data sync...",
   "initCheckingiCloud": "Checking iCloud sync...",
@@ -293,22 +270,26 @@
   "initNotifications": "Setting up notifications...",
   "initDone": "Done",
   "initFirstTime": "Preparing to start the app for the first time...",
-
   "syncCompleteMessage": "{count} records synced to Apple Health",
   "@syncCompleteMessage": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "syncPartialMessage": "{success} of {total} records synced. Rest will retry later.",
   "@syncPartialMessage": {
     "placeholders": {
-      "success": {"type": "int"},
-      "total": {"type": "int"}
+      "success": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "syncFailedMessage": "Sync failed. Will retry on next app launch.",
-
   "deleteGlucose": "Delete Glucose Record",
   "deleteInsulin": "Delete Insulin Record",
   "deleteGlucoseConfirmation": "This glucose record will be deleted.",
@@ -316,7 +297,6 @@
   "glucoseDeleted": "Glucose record deleted",
   "insulinDeleted": "Insulin record deleted",
   "deleteFailed": "Delete failed",
-
   "deleteDiary": "Delete Diary",
   "deleteDiaryConfirmation": "Are you sure you want to delete this diary?",
   "deleteDiaryWithMealConfirmation": "Are you sure you want to delete this diary?\nAssociated meal information in the feed will also be deleted.",
@@ -351,7 +331,6 @@
       }
     }
   },
-
   "generateReport": "Generate Report",
   "reportRequiresICloud": "Generate Report",
   "reportRequiresICloudMessage": "iCloud sync is required to generate reports.\nSettings > iCloud Sync",
@@ -401,7 +380,6 @@
     }
   },
   "imageLoadError": "Failed to load image",
-
   "apiErrorNetwork": "A network error occurred.",
   "apiErrorConnectionTimeout": "Connection timed out. Please check your network connection.",
   "apiErrorReceiveTimeout": "AI report generation timed out. Please try again later.",
@@ -419,14 +397,24 @@
       }
     }
   },
-
   "iCloudSyncEnabled": "iCloud sync enabled",
   "iCloudSyncDisabled": "iCloud sync disabled",
   "iCloudSyncFailed": "iCloud connection failed",
   "iCloudNotAvailable": "iCloud is not available",
   "iCloudNotSignedIn": "You are not signed in to iCloud",
   "iCloudSyncRetryMessage": "Please reconnect in the Settings menu.",
-
+  "googleSyncFailed": "Google connection failed",
+  "googleNotSignedIn": "Google sign-in failed",
+  "googleSync": "Google Sync",
+  "googleSyncEnabled": "Google sync enabled",
+  "googleSyncDisabled": "Google sync disabled",
+  "healthConnectDescription": "Connect with Health Connect to view various data to help manage your blood glucose.",
+  "connectHealthConnect": "Connect Health Connect",
+  "disconnectedHealthConnect": "Disconnected from Health Connect",
+  "failedToConnectHealthConnect": "Failed to connect. Please check your permissions in Health Connect.",
+  "privacyNoteAndroid": "Your health data is stored only on your device and is never shared externally. You can manage access in Health Connect > Data & privacy > Glu Butler.",
+  "feedEmptyHintAndroid": "Connect Health Connect to see more insights",
+  "reportRequiresGoogleMessage": "Google account sync is required to generate reports.\nSettings > Google Sync",
   "onboardingWelcomeTo": "Welcome to",
   "onboardingWelcomeDescription": "Glu Butler helps you manage your blood glucose.\nTrack your daily patterns smarter and build better health.",
   "onboardingLetsBegin": "Let's Begin",
@@ -454,15 +442,17 @@
   "onboardingPhotoAccess": "Photo Access",
   "onboardingHealthTitle": "Connect with Apple Health",
   "onboardingHealthSubtitle": "Sync blood glucose, insulin, steps, and weight automatically",
+  "onboardingHealthTitleAndroid": "Connect with Health Connect",
+  "onboardingHealthSubtitleAndroid": "Sync blood glucose, insulin, steps, and weight automatically",
   "onboardingHealthConnect": "Connect",
   "onboardingReportTitle": "Receive glucose reports",
   "onboardingReportSubtitle": "Get periodic reports based on your recorded data",
   "onboardingReportICloudRequired": "iCloud sync required",
+  "onboardingReportGoogleRequired": "Google account sync required",
   "onboardingReportEnable": "Sync iCloud",
   "onboardingNotificationTitle": "Receive notifications",
   "onboardingNotificationSubtitle": "We'll help you keep consistent daily records",
   "onboardingNotificationEnable": "Enable Notifications",
-
   "notificationGlucoseReminderBody": "Regular glucose monitoring is recommended\nObserve glucose changes before and after meals",
   "notificationDiaryReminderBody": "Write your glucose diary for today",
   "notificationReportReminderBody": "Check your health report",
@@ -480,7 +470,6 @@
   "onboardingSubscriptionRedeem": "Redeem Code",
   "onboardingSubscriptionRestore": "Restore Purchase",
   "onboardingSubscriptionPurchase": "Purchase",
-
   "onboardingCompletionTitle": "You're all set!",
   "onboardingCompletionSubtitle": "Manage your glucose smarter with Glu Butler",
   "onboardingCompletionFeature1": "AI-powered health insights",
@@ -488,13 +477,11 @@
   "onboardingCompletionFeature3": "Advanced reports",
   "onboardingGetStarted": "Get Started",
   "diabetesTypeUnknown": "I don't know",
-
   "manageNotifications": "Manage Notifications",
   "mealGlucoseReminders": "Pre-meal Glucose Reminders (Breakfast, Lunch, Dinner)",
   "longTermGlucoseAbsence": "Long-term Glucose Record Absence Alert",
   "longTermDiaryAbsence": "Long-term Diary Entry Absence Alert",
   "reportCreationReminder": "Report Creation Reminder",
-
   "notifFirstReportTitle": "Create your first glucose report",
   "notifReportReminderTitle": "Generate your glucose report and check the results",
   "notifGlucoseReminderTitle": "Check and record your glucose level",
@@ -502,20 +489,17 @@
   "notifDiaryReminderBody": "Track your eating patterns",
   "notifGlucoseRecordReminderTitle": "Don't forget to check your glucose",
   "notifGlucoseRecordReminderBody": "Consistent tracking is the first step to glucose management",
-
   "exportReport": "Export Report via Email",
   "exportReportTitle": "Send Email",
   "exportReportMessage": "Please enter the email address to receive the report",
   "send": "Send",
   "exportSuccess": "Report has been sent to your email",
   "exportFailed": "Failed to send report",
-
   "onboardingTermsPrefix": "By using Glu Butler,\nyou agree to our",
   "onboardingTermsAnd": "and",
   "onboardingTermsSuffix": ".",
   "onboardingTermsOfService": "Terms of Service",
   "onboardingPrivacyPolicy": "Privacy Policy",
-
   "unlockGluButlerPro": "Unlock Glu Butler Pro",
   "continuePurchase": "Continue",
   "yearly": "Yearly",
@@ -530,5 +514,9 @@
   "noSubscriptionPackages": "No subscription packages available",
   "loadSubscriptionsFailed": "Failed to load subscriptions",
   "retry": "Retry",
-  "anErrorOccurred": "An error occurred"
+  "anErrorOccurred": "An error occurred",
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "genderOther": "Other",
+  "birthDate": "Date of Birth"
 }

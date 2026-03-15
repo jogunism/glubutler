@@ -98,8 +98,8 @@ class CgmGroupingService {
     // CGM 데이터와 수동 입력 데이터 분리
     final cgmRecords = <GlucoseRecord>[];
     for (final record in sorted) {
-      if (isManualEntrySource(record.sourceName)) {
-        // 수동 입력은 개별 레코드로 처리
+      if (!record.isFromHealthKit || isManualEntrySource(record.sourceName)) {
+        // 수동 입력(로컬 DB)은 개별 레코드로 처리
         individualRecords.add(record);
       } else {
         // CGM 데이터

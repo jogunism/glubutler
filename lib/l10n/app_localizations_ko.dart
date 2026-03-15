@@ -268,7 +268,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sync => '연동';
 
   @override
-  String get healthConnect => '건강 앱 연동';
+  String get healthConnect => 'Health Connect 연동';
 
   @override
   String get iCloudSync => 'iCloud';
@@ -1026,6 +1026,46 @@ class AppLocalizationsKo extends AppLocalizations {
   String get iCloudSyncRetryMessage => '설정 메뉴에서 다시 연결해주세요.';
 
   @override
+  String get googleSyncFailed => 'Google 연결에 실패했습니다';
+
+  @override
+  String get googleNotSignedIn => 'Google 로그인에 실패했습니다';
+
+  @override
+  String get googleSync => 'Google 동기화';
+
+  @override
+  String get googleSyncEnabled => 'Google 동기화가 활성화되었습니다';
+
+  @override
+  String get googleSyncDisabled => 'Google 동기화가 비활성화되었습니다';
+
+  @override
+  String get healthConnectDescription =>
+      'Health Connect와 연동하여 혈당 관리에 도움이 되는 다양한 데이터를 함께 확인할 수 있습니다.';
+
+  @override
+  String get connectHealthConnect => 'Health Connect 연결';
+
+  @override
+  String get disconnectedHealthConnect => 'Health Connect 연동이 해제되었습니다';
+
+  @override
+  String get failedToConnectHealthConnect =>
+      '연결에 실패했습니다. Health Connect에서 권한을 확인해주세요.';
+
+  @override
+  String get privacyNoteAndroid =>
+      '건강 데이터는 사용자의 기기에만 저장되며, 그 어떤 데이터도 외부에 공유되지 않습니다. Health Connect > 데이터 및 개인정보 > Glu Butler에서 권한을 관리할 수 있습니다.';
+
+  @override
+  String get feedEmptyHintAndroid => 'Health Connect를 연동해 더 많은 정보를 확인하세요';
+
+  @override
+  String get reportRequiresGoogleMessage =>
+      '리포트를 생성하기 위해선 Google 계정 동기화가 되어 있어야 합니다.\n설정 > Google 동기화';
+
+  @override
   String get onboardingWelcomeTo => '환영합니다';
 
   @override
@@ -1080,6 +1120,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingHealthSubtitle => '혈당, 인슐린, 걸음 수, 체중 등을 자동으로 동기화하세요';
 
   @override
+  String get onboardingHealthTitleAndroid => 'Health Connect와 연동하세요';
+
+  @override
+  String get onboardingHealthSubtitleAndroid =>
+      '혈당, 인슐린, 걸음 수, 체중 등을 자동으로 동기화하세요';
+
+  @override
   String get onboardingHealthConnect => '연결하기';
 
   @override
@@ -1090,6 +1137,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get onboardingReportICloudRequired => 'iCloud 연동이 필요해요';
+
+  @override
+  String get onboardingReportGoogleRequired => 'Google 계정 연동이 필요해요';
 
   @override
   String get onboardingReportEnable => 'iCloud 연동';
@@ -1290,4 +1340,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get anErrorOccurred => '오류가 발생했습니다';
+
+  @override
+  String get genderMale => '남성';
+
+  @override
+  String get genderFemale => '여성';
+
+  @override
+  String get genderOther => '기타';
+
+  @override
+  String get birthDate => '생년월일';
 }

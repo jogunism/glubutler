@@ -12,7 +12,20 @@
           "package_name": "com.jogunism.gluButler"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "759962797676-9a1k1oh842u9322h0vcsvsr6vonl9c64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jogunism.gluButler",
+            "certificate_hash": "508a9900074810416e0de01687e7ab44e701f403"
+          }
+        },
+        {
+          "client_id": "759962797676-nc1f3va2ku70a6srqqggk71oevri30mf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA5EYKOwohgDBNEUdjp2aS3WSi6CYnA8x8"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759962797676-nc1f3va2ku70a6srqqggk71oevri30mf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "759962797676-ea5e1sv3kerc44a25i84aeevbq8qbjgq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.glubutler.gluButler"
+              }
+            }
+          ]
         }
       }
     }

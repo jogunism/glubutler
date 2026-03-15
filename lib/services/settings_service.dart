@@ -11,6 +11,7 @@ import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/models/user_identity.dart';
 import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
 
 class SettingsService extends ChangeNotifier {
   late SharedPreferences _prefs;
@@ -30,6 +31,7 @@ class SettingsService extends ChangeNotifier {
   bool _hapticEnabled = AppConstants.defaultHapticEnabled;
   UserIdentity? _userIdentity;
   bool _iCloudSyncEnabled = false;
+  bool _googleSyncEnabled = false;
   bool _hasCompletedOnboarding = false;
   String? _diabetesType;
   double? _fastingGlucoseTarget;
@@ -50,6 +52,9 @@ class SettingsService extends ChangeNotifier {
   bool get hapticEnabled => _hapticEnabled;
   UserIdentity get userIdentity => _userIdentity ?? const UserIdentity();
   bool get iCloudSyncEnabled => _iCloudSyncEnabled;
+  bool get googleSyncEnabled => _googleSyncEnabled;
+  /// iOS: iCloudSyncEnabled, Android: googleSyncEnabled
+  bool get isCloudSyncEnabled => Platform.isIOS ? _iCloudSyncEnabled : _googleSyncEnabled;
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   String? get diabetesType => _diabetesType;
   double? get fastingGlucoseTarget => _fastingGlucoseTarget;
@@ -82,15 +87,23 @@ class SettingsService extends ChangeNotifier {
     // 저장된 언어 확인
     final savedLanguage = _prefs.getString(AppConstants.keyLanguage);
 
-    // 1단계: iCloud에서 언어 가져오기 시도 (다른 기기에서 복원 시)
+    // 1단계: 클라우드에서 언어 가져오기 시도 (다른 기기에서 복원 시)
+    // iOS: iCloud(CloudKit), Android: Firestore
     String? iCloudLanguage;
     try {
-      iCloudLanguage = await CloudKitService.fetchLanguage();
+      if (Platform.isIOS) {
+        iCloudLanguage = await CloudKitService.fetchLanguage();
+      } else {
+        final googleId = _userIdentity?.googleId;
+        if (googleId != null && googleId.isNotEmpty) {
+          iCloudLanguage = await FirestoreService.fetchLanguage(googleId);
+        }
+      }
       if (iCloudLanguage != null && iCloudLanguage.isNotEmpty) {
-        debugPrint('[SettingsService] Language fetched from iCloud: $iCloudLanguage');
+        debugPrint('[SettingsService] Language fetched from cloud: $iCloudLanguage');
       }
     } catch (e) {
-      debugPrint('[SettingsService] Failed to fetch language from iCloud: $e');
+      debugPrint('[SettingsService] Failed to fetch language from cloud: $e');
     }
 
     // 2단계: 언어 우선순위 결정
@@ -108,13 +121,8 @@ class SettingsService extends ChangeNotifier {
       // 업데이트된 언어 저장
       await _prefs.setString(AppConstants.keyLanguage, _language);
 
-      // iCloud에도 저장
-      try {
-        await CloudKitService.saveLanguage(_language);
-        debugPrint('[SettingsService] Language changed via iOS settings, synced to iCloud: $_language');
-      } catch (e) {
-        debugPrint('[SettingsService] Failed to sync language to iCloud: $e');
-      }
+      // 클라우드에도 저장
+      await _saveLanguageToCloud(_language);
     } else if (savedLanguage != null) {
       // 저장된 언어가 있고 시스템 언어와 일치하면 그대로 사용
       _language = savedLanguage;
@@ -138,13 +146,8 @@ class SettingsService extends ChangeNotifier {
       // 저장
       await _prefs.setString(AppConstants.keyLanguage, _language);
 
-      // iCloud에도 저장
-      try {
-        await CloudKitService.saveLanguage(_language);
-        debugPrint('[SettingsService] Initial language setup, synced to iCloud: $_language');
-      } catch (e) {
-        debugPrint('[SettingsService] Failed to sync language to iCloud: $e');
-      }
+      // 클라우드에도 저장
+      await _saveLanguageToCloud(_language);
     }
 
     _unit = _prefs.getString(AppConstants.keyUnit) ?? AppConstants.defaultUnit;
@@ -201,6 +204,7 @@ class SettingsService extends ChangeNotifier {
     _hapticEnabled = _prefs.getBool(AppConstants.keyHapticEnabled) ?? AppConstants.defaultHapticEnabled;
 
     _iCloudSyncEnabled = _prefs.getBool(AppConstants.keyICloudSyncEnabled) ?? false;
+    _googleSyncEnabled = _prefs.getBool('google_sync_enabled') ?? false;
 
     // Load onboarding status
     _hasCompletedOnboarding = _prefs.getBool('has_completed_onboarding') ?? false;
@@ -267,15 +271,29 @@ class SettingsService extends ChangeNotifier {
     _language = language;
     await _prefs.setString(AppConstants.keyLanguage, language);
 
-    // iCloud에도 저장 (언어는 iCloud 동기화 설정과 무관하게 항상 저장)
-    try {
-      await CloudKitService.saveLanguage(language);
-      debugPrint('[SettingsService] Language saved to iCloud: $language');
-    } catch (e) {
-      debugPrint('[SettingsService] Failed to save language to iCloud: $e');
-    }
+    // 클라우드에도 저장 (언어는 동기화 설정과 무관하게 항상 저장)
+    await _saveLanguageToCloud(language);
 
     notifyListeners();
+  }
+
+  /// 언어를 플랫폼별 클라우드에 저장
+  /// iOS: CloudKit, Android: Firestore (googleId 있을 때만)
+  Future<void> _saveLanguageToCloud(String language) async {
+    try {
+      if (Platform.isIOS) {
+        await CloudKitService.saveLanguage(language);
+        debugPrint('[SettingsService] Language saved to iCloud: $language');
+      } else {
+        final googleId = _userIdentity?.googleId;
+        if (googleId != null && googleId.isNotEmpty) {
+          await FirestoreService.saveLanguage(googleId, language);
+          debugPrint('[SettingsService] Language saved to Firestore: $language');
+        }
+      }
+    } catch (e) {
+      debugPrint('[SettingsService] Failed to save language to cloud: $e');
+    }
   }
 
   Future<void> setUnit(String unit) async {
@@ -388,11 +406,61 @@ class SettingsService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// iCloud Sync 상태 설정
+  /// iCloud Sync 상태 설정 (iOS 전용)
   Future<void> setICloudSync(bool enabled) async {
     _iCloudSyncEnabled = enabled;
     await _prefs.setBool(AppConstants.keyICloudSyncEnabled, enabled);
     notifyListeners();
+  }
+
+  /// Google 사용자 ID 업데이트 (Android 전용)
+  Future<void> updateGoogleId(String googleId) async {
+    if (_userIdentity == null) {
+      _userIdentity = UserIdentity(googleId: googleId);
+    } else {
+      _userIdentity = _userIdentity!.withGoogleId(googleId);
+    }
+    await _prefs.setString(
+      AppConstants.keyUserIdentity,
+      jsonEncode(_userIdentity!.toJson()),
+    );
+    notifyListeners();
+  }
+
+  /// Google Sync 상태 설정 (Android 전용)
+  Future<void> setGoogleSync(bool enabled) async {
+    _googleSyncEnabled = enabled;
+    await _prefs.setBool('google_sync_enabled', enabled);
+    notifyListeners();
+  }
+
+  /// 서비스 시작일을 Firestore에 동기화 (Android 전용, Google 로그인 시 호출)
+  Future<void> syncServiceStartDateToFirestore() async {
+    final googleId = _userIdentity?.googleId;
+    if (googleId == null || googleId.isEmpty) return;
+
+    try {
+      final firestoreDate = await FirestoreService.fetchServiceStartDate(googleId);
+
+      if (firestoreDate == null) {
+        if (_serviceStartDate != null) {
+          await FirestoreService.saveServiceStartDate(googleId, _serviceStartDate!);
+          debugPrint('[SettingsService] Service start date synced to Firestore: $_serviceStartDate');
+        }
+      } else {
+        if (_serviceStartDate == null || firestoreDate.isBefore(_serviceStartDate!)) {
+          _serviceStartDate = firestoreDate;
+          await _prefs.setString(
+            AppConstants.keyServiceStartDate,
+            firestoreDate.toIso8601String(),
+          );
+          debugPrint('[SettingsService] Service start date updated from Firestore: $firestoreDate');
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      debugPrint('[SettingsService] Failed to sync service start date to Firestore: $e');
+    }
   }
 
   /// Set user name (for onboarding)

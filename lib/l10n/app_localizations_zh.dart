@@ -268,7 +268,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync => '同步';
 
   @override
-  String get healthConnect => '健康连接';
+  String get healthConnect => 'Health Connect';
 
   @override
   String get iCloudSync => 'iCloud同步';
@@ -1024,6 +1024,43 @@ class AppLocalizationsZh extends AppLocalizations {
   String get iCloudSyncRetryMessage => '请在设置菜单中重新连接。';
 
   @override
+  String get googleSyncFailed => 'Google连接失败';
+
+  @override
+  String get googleNotSignedIn => 'Google登录失败';
+
+  @override
+  String get googleSync => 'Google同步';
+
+  @override
+  String get googleSyncEnabled => 'Google同步已启用';
+
+  @override
+  String get googleSyncDisabled => 'Google同步已禁用';
+
+  @override
+  String get healthConnectDescription => '连接Health Connect，查看有助于管理血糖的各种数据。';
+
+  @override
+  String get connectHealthConnect => '连接Health Connect';
+
+  @override
+  String get disconnectedHealthConnect => '已断开Health Connect连接';
+
+  @override
+  String get failedToConnectHealthConnect => '连接失败。请在Health Connect中检查权限。';
+
+  @override
+  String get privacyNoteAndroid =>
+      '您的健康数据仅存储在设备上，不会与外部共享。您可以在Health Connect > 数据和隐私 > Glu Butler中管理访问权限。';
+
+  @override
+  String get feedEmptyHintAndroid => '连接Health Connect查看更多信息';
+
+  @override
+  String get reportRequiresGoogleMessage => '生成报告需要同步Google账户。\n设置 > Google同步';
+
+  @override
   String get onboardingWelcomeTo => '欢迎使用';
 
   @override
@@ -1078,6 +1115,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingHealthSubtitle => '自动同步血糖、胰岛素、步数和体重';
 
   @override
+  String get onboardingHealthTitleAndroid => '与 Health Connect 连接';
+
+  @override
+  String get onboardingHealthSubtitleAndroid => '自动同步血糖、胰岛素、步数和体重';
+
+  @override
   String get onboardingHealthConnect => '连接';
 
   @override
@@ -1088,6 +1131,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingReportICloudRequired => '需要 iCloud 同步';
+
+  @override
+  String get onboardingReportGoogleRequired => '需要 Google 账户同步';
 
   @override
   String get onboardingReportEnable => '同步 iCloud';
@@ -1286,4 +1332,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get anErrorOccurred => '发生错误';
+
+  @override
+  String get genderMale => '男';
+
+  @override
+  String get genderFemale => '女';
+
+  @override
+  String get genderOther => '其他';
+
+  @override
+  String get birthDate => '出生日期';
 }

@@ -17,7 +17,6 @@
   "yesterday": "Gestern",
   "thisWeek": "Diese Woche",
   "thisMonth": "Dieser Monat",
-
   "bloodGlucose": "Blutzucker",
   "meal": "Mahlzeit",
   "exercise": "Bewegung",
@@ -27,26 +26,21 @@
   "mmoll": "mmol/L",
   "chartSizeLarge": "Groß",
   "chartSizeSmall": "Klein",
-
   "low": "Niedrig",
   "normal": "Normal",
   "high": "Hoch",
-
   "breakfast": "Frühstück",
   "lunch": "Mittagessen",
   "dinner": "Abendessen",
   "snack": "Snack",
-
   "fasting": "Nüchtern",
   "beforeMeal": "Vor dem Essen",
   "afterMeal": "Nach dem Essen",
   "unspecified": "Nicht angegeben",
-
   "dailyReport": "Tagesbericht",
   "weeklyReport": "Wochenbericht",
   "aiInsight": "KI-Einblick",
   "glucoseScore": "Blutzucker-Punktzahl",
-
   "profile": "Profil",
   "name": "Name",
   "gender": "Geschlecht",
@@ -69,7 +63,6 @@
   "personal": "Grundlegend",
   "diabetes": "Diabetes",
   "yearOfDiagnosis": "Jahr der Diagnose",
-
   "language": "Sprache",
   "changeInSettings": "In Einstellungen ändern",
   "darkMode": "Dunkelmodus",
@@ -90,7 +83,7 @@
   "notificationPermissionRequired": "Benachrichtigungsberechtigung erforderlich",
   "notificationPermissionDescription": "Aktivieren Sie Benachrichtigungsberechtigungen in den iOS-Einstellungen, um Benachrichtigungen zu erhalten.",
   "allowNotifications": "Erlauben",
-  "goToSettings": "Zu den Einstellungen",
+  "goToSettings": "Zu Einstellungen",
   "notificationTime": "Benachrichtigungszeit",
   "sync": "Synchronisierung",
   "healthConnect": "Health Connect",
@@ -100,9 +93,7 @@
   "notConnected": "Nicht verbunden",
   "connect": "Verbinden",
   "disconnect": "Trennen",
-
   "disclaimer": "Diese App dient nur als Referenz. Bitte konsultieren Sie Ihren Arzt direkt für medizinische Beratung.",
-
   "enterGlucose": "Blutzucker eingeben",
   "enterMeal": "Mahlzeit hinzufügen",
   "enterExercise": "Bewegung hinzufügen",
@@ -123,18 +114,14 @@
   "imageLoadFailed": "Fehler beim Laden der Fotos.",
   "photoPermissionRequired": "Fotoberechtigung erforderlich",
   "photoPermissionMessage": "Um Fotos anzuhängen, müssen Sie den Zugriff auf Ihre Fotobibliothek erlauben.  Gehen Sie zu Einstellungen > Glu Butler, um den Fotozugriff zu aktivieren.",
-  "goToSettings": "Zu Einstellungen",
-
   "noRecords": "Keine Einträge vorhanden",
   "noReportTitle": "Kein Bericht verfügbar",
   "startTracking": "Beginnen Sie mit der Gesundheitsüberwachung!",
   "feedEmptyHint": "Verbinden Sie Apple Health für mehr Einblicke",
-
   "goodMorning": "Guten Morgen!",
   "goodAfternoon": "Guten Tag!",
   "goodEvening": "Guten Abend!",
   "butlerGreeting": "Ihr Butler steht bereit.",
-
   "subscription": "Abonnement",
   "gluButlerPro": "Glu Butler Pro",
   "upgradeToPro": "Auf Pro upgraden",
@@ -154,7 +141,6 @@
   "freePlan": "Kostenlos",
   "proPlan": "Pro",
   "noReportYet": "Erstellen Sie Ihren Glukosebericht!",
-
   "home": "Heute",
   "yourToday": "Dein Heute",
   "points": "Pkt",
@@ -181,7 +167,6 @@
   "diarySaveFailed": "Fehler beim Speichern des Tagebucheintrags",
   "yes": "Ja",
   "no": "Nein",
-
   "insulin": "Insulin",
   "addInsulin": "Insulin hinzufügen",
   "insulinType": "Insulintyp",
@@ -202,9 +187,8 @@
   "measurementTiming": "Messzeitpunkt",
   "addRecord": "Eintrag hinzufügen",
   "glucoseSaved": "Blutzucker gespeichert",
-  "insulinSaved": "Insulin gespeichert",
+  "insulinSaved": "Insulindosis gespeichert",
   "saveFailed": "Speichern fehlgeschlagen",
-
   "appleHealth": "Apple Health",
   "appleHealthDescription": "Verbinden Sie sich mit der Health-App, um verschiedene Daten anzuzeigen, die bei der Blutzuckerkontrolle helfen können.",
   "syncedData": "Synchronisierte Daten",
@@ -236,43 +220,30 @@
   "steps": "Schritte",
   "mindfulness": "Achtsamkeit",
   "openHealthApp": "Öffnen Sie Health-App > Freigabe > Apps, um Berechtigungen zu verwalten",
-
   "syncPeriod": "Sync-Zeitraum",
   "syncPeriod1Week": "1 Woche",
   "syncPeriod2Weeks": "2 Wochen",
   "syncPeriod1Month": "1 Monat",
   "syncPeriod3Months": "3 Monate",
-
   "disconnected": "Verbindung zu Apple Health getrennt",
-
   "cgmBaseline": "Stabil",
   "cgmFluctuation": "Schwankung",
-
   "targetGlucoseRange": "Zielbereich Blutzucker",
   "veryHigh": "Sehr Hoch",
-  "high": "Hoch",
   "warning": "Warnung",
   "target": "Ziel",
   "veryLow": "Sehr Niedrig",
-
   "appSlogan": "Ihr Gesundheitsbegleiter",
-
   "initLoadingSettings": "Einstellungen werden geladen...",
   "initCheckingHealth": "Gesundheitsdaten-Sync wird überprüft...",
   "initCheckingiCloud": "iCloud-Sync wird überprüft...",
   "initLocalDatabase": "Lokale Datenbank wird initialisiert...",
   "initNotifications": "Benachrichtigungen werden eingerichtet...",
   "initDone": "Fertig",
-
-  "glucoseSaved": "Blutzucker gespeichert",
-  "insulinSaved": "Insulindosis gespeichert",
-  "saveFailed": "Speichern fehlgeschlagen",
-
-  "deleteGlucoseConfirmation": "Möchten Sie wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "deleteGlucoseConfirmation": "Dieser Blutzuckereintrag wird gelöscht.",
   "glucoseDeleted": "Blutzucker gelöscht",
   "insulinDeleted": "Insulin gelöscht",
   "deleteFailed": "Löschen fehlgeschlagen",
-
   "glucoseStatus": "Blutzuckerstatus",
   "scoreHint": "Mehr über die Bewertung erfahren",
   "scoreInfoTitle": "Blutzucker-Bewertungsleitfaden",
@@ -288,10 +259,8 @@
   "scoreInfoLifestyle": "Lebensstil (mit Health-App)",
   "scoreInfoLifestyleDesc": "Schlaf- und Bewegungsdaten aus der Health-App werden für eine genauere Bewertung berücksichtigt.",
   "scoreInfoPrivacy": "※ Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.",
-
   "deleteGlucose": "Blutzuckereintrag löschen",
   "deleteInsulin": "Insulineintrag löschen",
-  "deleteGlucoseConfirmation": "Dieser Blutzuckereintrag wird gelöscht.",
   "deleteInsulinConfirmation": "Dieser Insulineintrag wird gelöscht.",
   "deleteDiary": "Tagebuch löschen",
   "deleteDiaryConfirmation": "Möchten Sie dieses Tagebuch wirklich löschen?",
@@ -327,7 +296,6 @@
       }
     }
   },
-
   "generateReport": "Bericht erstellen",
   "reportRequiresICloud": "Bericht erstellen",
   "reportRequiresICloudMessage": "iCloud-Synchronisierung ist erforderlich, um Berichte zu erstellen.\nEinstellungen > iCloud-Synchronisierung",
@@ -376,7 +344,6 @@
     }
   },
   "imageLoadError": "Bild kann nicht geladen werden",
-
   "apiErrorNetwork": "Ein Netzwerkfehler ist aufgetreten.",
   "apiErrorConnectionTimeout": "Zeitüberschreitung bei der Verbindung. Bitte überprüfen Sie Ihre Netzwerkverbindung.",
   "apiErrorReceiveTimeout": "Zeitüberschreitung bei der AI-Berichterstellung. Bitte versuchen Sie es später erneut.",
@@ -394,14 +361,24 @@
       }
     }
   },
-
   "iCloudSyncEnabled": "iCloud-Synchronisierung aktiviert",
   "iCloudSyncDisabled": "iCloud-Synchronisierung deaktiviert",
   "iCloudSyncFailed": "iCloud-Verbindung nicht möglich",
   "iCloudNotAvailable": "iCloud ist nicht verfügbar",
   "iCloudNotSignedIn": "Sie sind nicht bei iCloud angemeldet",
   "iCloudSyncRetryMessage": "Bitte verbinden Sie sich erneut im Einstellungsmenü.",
-
+  "googleSyncFailed": "Google-Verbindung fehlgeschlagen",
+  "googleNotSignedIn": "Google-Anmeldung fehlgeschlagen",
+  "googleSync": "Google-Synchronisierung",
+  "googleSyncEnabled": "Google-Synchronisierung aktiviert",
+  "googleSyncDisabled": "Google-Synchronisierung deaktiviert",
+  "healthConnectDescription": "Verbinden Sie Health Connect, um Daten zur Blutzuckerkontrolle anzuzeigen.",
+  "connectHealthConnect": "Health Connect verbinden",
+  "disconnectedHealthConnect": "Verbindung zu Health Connect getrennt",
+  "failedToConnectHealthConnect": "Verbindung fehlgeschlagen. Prüfen Sie Ihre Berechtigungen in Health Connect.",
+  "privacyNoteAndroid": "Ihre Gesundheitsdaten werden nur auf Ihrem Gerät gespeichert und niemals extern geteilt. Verwalten Sie den Zugriff in Health Connect > Daten und Datenschutz > Glu Butler.",
+  "feedEmptyHintAndroid": "Verbinden Sie Health Connect für mehr Einblicke",
+  "reportRequiresGoogleMessage": "Für die Berichtserstellung ist eine Google-Konto-Synchronisierung erforderlich.\nEinstellungen > Google-Synchronisierung",
   "onboardingWelcomeTo": "Willkommen bei",
   "onboardingWelcomeDescription": "Glu Butler hilft Ihnen bei der Blutzuckerverwaltung. Verfolgen Sie Ihre täglichen Muster intelligenter und bauen Sie bessere Gesundheit auf.",
   "onboardingLetsBegin": "Los geht's",
@@ -426,10 +403,13 @@
   },
   "onboardingHealthTitle": "Mit Apple Health verbinden",
   "onboardingHealthSubtitle": "Synchronisieren Sie Blutzucker, Insulin, Schritte und Gewicht automatisch",
+  "onboardingHealthTitleAndroid": "Mit Health Connect verbinden",
+  "onboardingHealthSubtitleAndroid": "Synchronisieren Sie Blutzucker, Insulin, Schritte und Gewicht automatisch",
   "onboardingHealthConnect": "Verbinden",
   "onboardingReportTitle": "Blutzuckerberichte erhalten",
   "onboardingReportSubtitle": "Erhalten Sie regelmäßige Berichte basierend auf Ihren erfassten Daten",
   "onboardingReportICloudRequired": "iCloud-Synchronisation erforderlich",
+  "onboardingReportGoogleRequired": "Google-Kontosynchronisation erforderlich",
   "onboardingReportEnable": "iCloud synchronisieren",
   "onboardingDiaryTitle": "Beginnen Sie Ihr Blutzucker-Tagebuch zu schreiben",
   "onboardingDiarySubtitle": "Zeichnen Sie Mahlzeiten auf und laden Sie Fotos hoch, um Ihre Ernährung im Feed zu verfolgen",
@@ -437,7 +417,6 @@
   "onboardingNotificationTitle": "Benachrichtigungen erhalten",
   "onboardingNotificationSubtitle": "Wir helfen Ihnen, tägliche Aufzeichnungen konsequent zu führen",
   "onboardingNotificationEnable": "Benachrichtigungen aktivieren",
-
   "notificationGlucoseReminderBody": "Regelmäßige Blutzuckermessung wird empfohlen\nBeobachten Sie Blutzuckerveränderungen vor und nach den Mahlzeiten",
   "notificationDiaryReminderBody": "Schreiben Sie Ihr heutiges Blutzucker-Tagebuch",
   "notificationReportReminderBody": "Überprüfen Sie Ihren Gesundheitsbericht",
@@ -455,7 +434,6 @@
   "onboardingSubscriptionRedeem": "Code einlösen",
   "onboardingSubscriptionRestore": "Kauf wiederherstellen",
   "onboardingSubscriptionPurchase": "Kaufen",
-
   "onboardingCompletionTitle": "Alles bereit!",
   "onboardingCompletionSubtitle": "Verwalten Sie Ihre Glukose intelligenter mit Glu Butler",
   "onboardingCompletionFeature1": "KI-gestützte Gesundheits-Insights",
@@ -463,13 +441,11 @@
   "onboardingCompletionFeature3": "Erweiterte Berichte",
   "onboardingGetStarted": "Loslegen",
   "diabetesTypeUnknown": "Ich weiß es nicht",
-
   "manageNotifications": "Benachrichtigungen verwalten",
   "mealGlucoseReminders": "Blutzuckermessung vor Frühstück, Mittagessen, Abendessen",
   "longTermGlucoseAbsence": "Langfristige Blutzuckeraufzeichnung fehlt Alarm",
   "longTermDiaryAbsence": "Langfristiger Tagebucheintrag fehlt Alarm",
   "reportCreationReminder": "Berichterstellung Erinnerung",
-
   "notifFirstReportTitle": "Erstellen Sie Ihren ersten Blutzuckerbericht",
   "notifReportReminderTitle": "Erstellen Sie Ihren Blutzuckerbericht und prüfen Sie die Ergebnisse",
   "notifGlucoseReminderTitle": "Überprüfen und erfassen Sie Ihren Blutzuckerspiegel",
@@ -477,20 +453,17 @@
   "notifDiaryReminderBody": "Verfolgen Sie Ihre Essgewohnheiten",
   "notifGlucoseRecordReminderTitle": "Vergessen Sie nicht, Ihren Blutzucker zu messen",
   "notifGlucoseRecordReminderBody": "Konsequente Aufzeichnung ist der erste Schritt zum Blutzuckermanagement",
-
   "exportReport": "Bericht per E-Mail exportieren",
   "exportReportTitle": "E-Mail senden",
   "exportReportMessage": "Bitte geben Sie die E-Mail-Adresse ein, um den Bericht zu erhalten",
   "send": "Senden",
   "exportSuccess": "Bericht wurde per E-Mail gesendet",
   "exportFailed": "Fehler beim Senden des Berichts",
-
   "onboardingTermsPrefix": "Durch die Nutzung von Glu Butler\nstimmen Sie unseren",
   "onboardingTermsAnd": "und",
   "onboardingTermsSuffix": "zu.",
   "onboardingTermsOfService": "Nutzungsbedingungen",
   "onboardingPrivacyPolicy": "Datenschutzrichtlinie",
-
   "unlockGluButlerPro": "Glu Butler Pro freischalten",
   "continuePurchase": "Fortfahren",
   "yearly": "Jährlich",
@@ -505,5 +478,9 @@
   "noSubscriptionPackages": "Keine Abonnementpakete verfügbar",
   "loadSubscriptionsFailed": "Abonnementinformationen konnten nicht geladen werden",
   "retry": "Erneut versuchen",
-  "anErrorOccurred": "Ein Fehler ist aufgetreten"
+  "anErrorOccurred": "Ein Fehler ist aufgetreten",
+  "genderMale": "Männlich",
+  "genderFemale": "Weiblich",
+  "genderOther": "Andere",
+  "birthDate": "Geburtsdatum"
 }

@@ -270,7 +270,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sync => 'Sincronización';
 
   @override
-  String get healthConnect => 'Conexión de salud';
+  String get healthConnect => 'Health Connect';
 
   @override
   String get iCloudSync => 'Sincronización iCloud';
@@ -1057,6 +1057,47 @@ class AppLocalizationsEs extends AppLocalizations {
   String get iCloudSyncRetryMessage => 'Vuelva a conectar en el menú Ajustes.';
 
   @override
+  String get googleSyncFailed => 'Error de conexión con Google';
+
+  @override
+  String get googleNotSignedIn => 'Error al iniciar sesión en Google';
+
+  @override
+  String get googleSync => 'Sincronización Google';
+
+  @override
+  String get googleSyncEnabled => 'Sincronización Google activada';
+
+  @override
+  String get googleSyncDisabled => 'Sincronización Google desactivada';
+
+  @override
+  String get healthConnectDescription =>
+      'Conéctate con Health Connect para ver datos que te ayuden a gestionar tu glucosa.';
+
+  @override
+  String get connectHealthConnect => 'Conectar Health Connect';
+
+  @override
+  String get disconnectedHealthConnect => 'Desconectado de Health Connect';
+
+  @override
+  String get failedToConnectHealthConnect =>
+      'Error de conexión. Verifica los permisos en Health Connect.';
+
+  @override
+  String get privacyNoteAndroid =>
+      'Tus datos de salud se almacenan solo en tu dispositivo y nunca se comparten. Puedes gestionar el acceso en Health Connect > Datos y privacidad > Glu Butler.';
+
+  @override
+  String get feedEmptyHintAndroid =>
+      'Conecta Health Connect para ver más información';
+
+  @override
+  String get reportRequiresGoogleMessage =>
+      'Se requiere sincronización de cuenta Google para generar informes.\nAjustes > Sincronización Google';
+
+  @override
   String get onboardingWelcomeTo => 'Bienvenido a';
 
   @override
@@ -1116,6 +1157,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Sincroniza glucosa, insulina, pasos y peso automáticamente';
 
   @override
+  String get onboardingHealthTitleAndroid => 'Conecta con Health Connect';
+
+  @override
+  String get onboardingHealthSubtitleAndroid =>
+      'Sincroniza glucosa, insulina, pasos y peso automáticamente';
+
+  @override
   String get onboardingHealthConnect => 'Conectar';
 
   @override
@@ -1128,6 +1176,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get onboardingReportICloudRequired =>
       'Se requiere sincronización con iCloud';
+
+  @override
+  String get onboardingReportGoogleRequired =>
+      'Se requiere sincronización con Google';
 
   @override
   String get onboardingReportEnable => 'Sincronizar iCloud';
@@ -1343,4 +1395,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get anErrorOccurred => 'Ocurrió un error';
+
+  @override
+  String get genderMale => 'Masculino';
+
+  @override
+  String get genderFemale => 'Femenino';
+
+  @override
+  String get genderOther => 'Otro';
+
+  @override
+  String get birthDate => 'Fecha de nacimiento';
 }

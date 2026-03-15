@@ -54,3 +54,16 @@ app.*.map.json
 *.g.dart
 *.freezed.dart
 lib/l10n/generated/
+
+# Android local environment
+android/local.properties
+android/.gradle/
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# macOS/Windows generated
+macos/Flutter/GeneratedPluginRegistrant.swift
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugins.cmake
+
+# Claude Code local settings
+.claude/settings.local.json

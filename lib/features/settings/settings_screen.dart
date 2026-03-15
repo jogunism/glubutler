@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,9 @@ import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/app_settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:glu_butler/services/analytics_service.dart';
 import 'package:glu_butler/core/widgets/glass_icon.dart';
 import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
@@ -70,93 +74,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (mounted) {
       setState(() {
-        _iCloudSyncEnabled = settings.iCloudSyncEnabled;
+        _iCloudSyncEnabled = settings.isCloudSyncEnabled;
       });
     }
   }
 
   Future<void> _toggleICloudSync(BuildContext context, bool value) async {
+    if (Platform.isIOS) {
+      await _toggleICloudSyncIOS(context, value);
+    } else {
+      await _toggleGoogleSyncAndroid(context, value);
+    }
+  }
+
+  // iOS: CloudKit 기반 iCloud 동기화 토글
+  Future<void> _toggleICloudSyncIOS(BuildContext context, bool value) async {
     if (_isTogglingSync) return;
 
     final l10n = AppLocalizations.of(context)!;
-
-    // Provider들을 미리 가져오기 (async gap 전)
     final settings = context.read<SettingsService>();
     final feedProvider = context.read<FeedProvider>();
     final diaryProvider = context.read<DiaryProvider>();
     final reportProvider = context.read<ReportProvider>();
 
-    setState(() {
-      _isTogglingSync = true;
-    });
+    setState(() => _isTogglingSync = true);
 
     try {
-      // Check if iCloud is available
       final isAvailable = await CloudKitService.isAvailable();
       final isSignedIn = await CloudKitService.isUserSignedIn();
 
       if (!isAvailable) {
         if (mounted) {
-          setState(() {
-            _isTogglingSync = false;
-          });
-          _showToast(
-            context,
-            '${l10n.iCloudSyncFailed}.\n${l10n.iCloudNotAvailable}',
-            isSuccess: false,
-          );
+          setState(() => _isTogglingSync = false);
+          _showToast(context, '${l10n.iCloudSyncFailed}.\n${l10n.iCloudNotAvailable}', isSuccess: false);
         }
         return;
       }
 
       if (!isSignedIn) {
         if (mounted) {
-          setState(() {
-            _isTogglingSync = false;
-          });
-          _showToast(
-            context,
-            '${l10n.iCloudSyncFailed}.\n${l10n.iCloudNotSignedIn}',
-            isSuccess: false,
-          );
+          setState(() => _isTogglingSync = false);
+          _showToast(context, '${l10n.iCloudSyncFailed}.\n${l10n.iCloudNotSignedIn}', isSuccess: false);
         }
         return;
       }
 
       if (value) {
-        // Enable iCloud sync: Get CloudKit ID and save it
         final cloudKitId = await CloudKitService.getUserRecordID();
         await settings.updateCloudKitId(cloudKitId);
-
-        // Sync service start date to iCloud
         await settings.syncServiceStartDateToICloud();
 
-        // 동기화 실행: 로컬 → iCloud 업로드, iCloud → 로컬 다운로드
-        debugPrint('[SettingsScreen] Starting initial iCloud sync...');
         final (uploaded, downloaded) = await CloudKitService.syncDiaryEntries();
-        debugPrint(
-          '[SettingsScreen] Diary sync complete: $uploaded uploaded, $downloaded downloaded',
-        );
-
-        // 식사 기록 양방향 동기화
+        debugPrint('[SettingsScreen] Diary sync: $uploaded uploaded, $downloaded downloaded');
         final (mealUploaded, mealDownloaded) = await CloudKitService.syncMealRecords();
-        debugPrint(
-          '[SettingsScreen] Meal sync complete: $mealUploaded uploaded, $mealDownloaded downloaded',
-        );
-
-        // 리포트 양방향 동기화
+        debugPrint('[SettingsScreen] Meal sync: $mealUploaded uploaded, $mealDownloaded downloaded');
         final (reportUploaded, reportDownloaded) = await CloudKitService.syncReports();
-        debugPrint(
-          '[SettingsScreen] Report sync complete: $reportUploaded uploaded, $reportDownloaded downloaded',
-        );
+        debugPrint('[SettingsScreen] Report sync: $reportUploaded uploaded, $reportDownloaded downloaded');
 
-        // 모든 Provider 리프레시
         if (mounted) {
-          debugPrint('[SettingsScreen] Refreshing all providers...');
           await feedProvider.refreshData();
           await diaryProvider.refreshData();
           await reportProvider.loadLatestReport();
-          debugPrint('[SettingsScreen] All providers refreshed');
         }
       }
 
@@ -167,21 +145,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _iCloudSyncEnabled = value;
           _isTogglingSync = false;
         });
-
-        _showToast(
-          context,
-          value ? l10n.iCloudSyncEnabled : l10n.iCloudSyncDisabled,
-          isSuccess: true,
-        );
+        _showToast(context, value ? l10n.iCloudSyncEnabled : l10n.iCloudSyncDisabled, isSuccess: true);
       }
     } catch (e) {
       debugPrint('[SettingsScreen] iCloud sync toggle failed: $e');
       if (mounted) {
+        setState(() => _isTogglingSync = false);
+        _showToast(context, l10n.iCloudSyncFailed, isSuccess: false);
+      }
+    }
+  }
+
+  // Android: Google Sign-In 기반 동기화 토글
+  Future<void> _toggleGoogleSyncAndroid(BuildContext context, bool value) async {
+    if (_isTogglingSync) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final settings = context.read<SettingsService>();
+    final feedProvider = context.read<FeedProvider>();
+    final diaryProvider = context.read<DiaryProvider>();
+    final reportProvider = context.read<ReportProvider>();
+
+    setState(() => _isTogglingSync = true);
+
+    try {
+      if (value) {
+        // Google 로그인 시도
+        final googleSignIn = GoogleSignIn(scopes: ['email']);
+        final account = await googleSignIn.signIn();
+
+        if (account == null) {
+          if (mounted) {
+            setState(() => _isTogglingSync = false);
+            _showToast(context, '${l10n.googleSyncFailed}.\n${l10n.googleNotSignedIn}', isSuccess: false);
+          }
+          return;
+        }
+
+        final googleAuth = await account.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        final googleId = account.id;
+        await settings.updateGoogleId(googleId);
+        await settings.syncServiceStartDateToFirestore();
+
+        // Firestore에서 기존 데이터 다운로드
+        await FirestoreService.downloadDiaryEntries(googleId);
+        await FirestoreService.downloadMealRecords(googleId);
+        await FirestoreService.downloadReports(googleId);
+
+        if (mounted) {
+          await feedProvider.refreshData();
+          await diaryProvider.refreshData();
+          await reportProvider.loadLatestReport();
+        }
+      }
+
+      await settings.setGoogleSync(value);
+
+      if (mounted) {
         setState(() {
+          _iCloudSyncEnabled = value;
           _isTogglingSync = false;
         });
-
-        _showToast(context, l10n.iCloudSyncFailed, isSuccess: false);
+        _showToast(context, value ? l10n.googleSyncEnabled : l10n.googleSyncDisabled, isSuccess: true);
+      }
+    } catch (e) {
+      debugPrint('[SettingsScreen] Google sync toggle failed: $e');
+      if (mounted) {
+        setState(() => _isTogglingSync = false);
+        _showToast(context, l10n.googleSyncFailed, isSuccess: false);
       }
     }
   }
@@ -360,11 +397,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         context: context,
                         icon: CupertinoIcons.heart_fill,
                         iconColor: AppTheme.iconPink,
-                        title: l10n.appleHealth,
+                        title: Platform.isIOS ? l10n.appleHealth : l10n.healthConnect,
                         subtitle: feedProvider.isHealthConnected
                             ? l10n.connected
                             : l10n.notConnected,
-                        customIcon: _buildAppleHealthIcon(),
+                        customIcon: Platform.isIOS
+                            ? _buildAppleHealthIcon()
+                            : _buildHealthConnectIcon(),
                         onTap: () {
                           AnalyticsService.logSettingsMenuTapped('apple_health');
                           AppRoutes.goToHealthConnect(context);
@@ -430,7 +469,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              SizedBox(
+                height: Platform.isIOS
+                    ? 32
+                    : 32 + MediaQuery.of(context).padding.bottom,
+              ),
             ]),
           ),
         ),
@@ -510,6 +553,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Google 아이콘 - assets/images/google.png 사용
+  Widget _buildGoogleIcon() {
+    const double size = 32;
+    const double iconSize = size * 0.6;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.25),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Image.asset(
+          'assets/images/google.png',
+          width: iconSize,
+          height: iconSize,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+
+  /// Health Connect 아이콘 - assets/images/health_connect.png 사용
+  Widget _buildHealthConnectIcon() {
+    const double size = 32;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.25),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.25),
+        child: Image.asset(
+          'assets/images/health_connect.png',
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
         ),
       ),
     );
@@ -681,17 +782,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          GlassIcon(
-            icon: CupertinoIcons.cloud,
-            color: CupertinoColors.activeBlue,
-            size: 32,
-          ),
+          if (Platform.isIOS)
+            GlassIcon(
+              icon: CupertinoIcons.cloud,
+              color: CupertinoColors.activeBlue,
+              size: 32,
+            )
+          else
+            _buildGoogleIcon(),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.iCloudSync, style: context.textStyles.tileTitle),
+                Text(
+                  Platform.isIOS ? l10n.iCloudSync : l10n.googleSync,
+                  style: context.textStyles.tileTitle,
+                ),
                 Text(
                   l10n.iCloudSyncDescription,
                   style: context.textStyles.tileSubtitle,
@@ -716,7 +823,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     BuildContext context,
     AppLocalizations l10n,
   ) {
-    final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+    final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.app';
     final theme = Theme.of(context);
     final lang = Localizations.localeOf(context).languageCode;
     final langPrefix = lang == 'en' ? '' : '/$lang';
@@ -761,8 +868,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// URL 열기
   Future<void> _launchURL(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     }
   }
 }

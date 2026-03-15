@@ -185,8 +185,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   /// URL 열기
   Future<void> _launchURL(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     }
   }
 
@@ -312,7 +314,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+                          final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.app';
                           final lang = Localizations.localeOf(context).languageCode;
                           final langPrefix = lang == 'en' ? '' : '/$lang';
                           _launchURL('$baseUrl$langPrefix/terms');
@@ -341,7 +343,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.com';
+                          final baseUrl = dotenv.env['BASE_URL'] ?? 'https://glubutler.app';
                           final lang = Localizations.localeOf(context).languageCode;
                           final langPrefix = lang == 'en' ? '' : '/$lang';
                           _launchURL('$baseUrl$langPrefix/privacy');

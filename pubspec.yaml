@@ -33,7 +33,7 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^18.0.1
   timezone: ^0.9.4
-  workmanager: ^0.5.2
+  workmanager: ^0.9.0
   app_settings: ^5.1.1
 
   # Internationalization (version pinned by flutter_localizations)
@@ -75,9 +75,15 @@ dependencies:
   # Device Info (for IDFV)
   device_info_plus: ^10.1.0
 
-  # Firebase Analytics
+  # Firebase Analytics + Firestore (Android sync) + Storage (diary images)
   firebase_core: ^3.8.1
   firebase_analytics: ^11.3.4
+  cloud_firestore: ^5.6.0
+  firebase_storage: ^12.4.0
+
+  # Google Sign-In (Android user identity)
+  google_sign_in: ^6.2.1
+  firebase_auth: ^5.3.4
 
   # In-App Purchases (RevenueCat)
   purchases_flutter: ^9.10.7

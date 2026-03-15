@@ -68,7 +68,7 @@ class ReportApiService {
       // debugPrint('[ReportApiService] Simplified diary data count: ${simplifiedDiaryData.length}');
       try {
         formData.fields.addAll([
-          MapEntry('cloudKitId', userIdentity.cloudKitId ?? ''),
+          MapEntry('cloudKitId', userIdentity.userId ?? ''),
           MapEntry('userProfile', _encodeJson(userProfile.toJson())),
           MapEntry('target', glucoseRange.target.toString()),
           MapEntry('lang', language),
