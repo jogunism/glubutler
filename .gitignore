@@ -67,3 +67,6 @@ windows/flutter/generated_plugins.cmake
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# App icon source (빌드 결과물은 별도 커밋)
+assets/icon/
