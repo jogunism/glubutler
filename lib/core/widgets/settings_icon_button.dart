@@ -23,7 +23,6 @@ class SettingsIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoButton(
       padding: const EdgeInsets.only(left: 36, right: 8),
-      minimumSize: Size.zero,
       onPressed: () => AppRoutes.goToSettings(context),
       child: const Icon(
         CupertinoIcons.gear,

@@ -8,6 +8,7 @@ class MealRecord {
   final String? foodName;
   final DateTime mealTime;
   final DateTime createdAt;
+  final int mealWindowMinutes;
 
   MealRecord({
     required this.id,
@@ -15,6 +16,7 @@ class MealRecord {
     this.foodName,
     required this.mealTime,
     required this.createdAt,
+    this.mealWindowMinutes = 30,
   });
 
   MealRecord copyWith({
@@ -23,6 +25,7 @@ class MealRecord {
     String? foodName,
     DateTime? mealTime,
     DateTime? createdAt,
+    int? mealWindowMinutes,
   }) {
     return MealRecord(
       id: id ?? this.id,
@@ -30,6 +33,7 @@ class MealRecord {
       foodName: foodName ?? this.foodName,
       mealTime: mealTime ?? this.mealTime,
       createdAt: createdAt ?? this.createdAt,
+      mealWindowMinutes: mealWindowMinutes ?? this.mealWindowMinutes,
     );
   }
 
@@ -41,6 +45,7 @@ class MealRecord {
       'food_name': foodName,
       'meal_time': mealTime.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
+      'meal_window_minutes': mealWindowMinutes,
     };
   }
 
@@ -52,6 +57,7 @@ class MealRecord {
       foodName: map['food_name'] as String?,
       mealTime: DateTime.parse(map['meal_time'] as String),
       createdAt: DateTime.parse(map['created_at'] as String),
+      mealWindowMinutes: (map['meal_window_minutes'] as int?) ?? 30,
     );
   }
 

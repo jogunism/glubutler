@@ -681,6 +681,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get readOnly => 'Nur Lesen';
 
   @override
+  String get cloudBackup => 'Cloud-Backup';
+
+  @override
   String get workouts => 'Workouts';
 
   @override
@@ -751,16 +754,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncPeriod => 'Sync-Zeitraum';
 
   @override
-  String get syncPeriod1Week => '1 Woche';
-
-  @override
-  String get syncPeriod2Weeks => '2 Wochen';
-
-  @override
   String get syncPeriod1Month => '1 Monat';
 
   @override
   String get syncPeriod3Months => '3 Monate';
+
+  @override
+  String get syncPeriod6Months => '6 Monate';
 
   @override
   String get disconnected => 'Verbindung zu Apple Health getrennt';
@@ -801,6 +801,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get initCheckingiCloud => 'iCloud-Sync wird überprüft...';
+
+  @override
+  String get initCheckingGoogle => 'Google-Sync wird überprüft...';
+
+  @override
+  String get initCheckingHealthConnect =>
+      'Health Connect-Sync wird überprüft...';
 
   @override
   String get initLocalDatabase => 'Lokale Datenbank wird initialisiert...';
@@ -1170,6 +1177,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingHealthConnect => 'Verbinden';
 
   @override
+  String get hcNotInstalled =>
+      'Health Connect ist nicht installiert. Installieren Sie es, um Gesundheitsdaten zu synchronisieren.';
+
+  @override
+  String get hcNeedsUpdate =>
+      'Health Connect muss aktualisiert werden, um eine Verbindung herzustellen.';
+
+  @override
+  String get hcInstallFromPlayStore => 'Im Play Store installieren';
+
+  @override
+  String get hcUpdateFromPlayStore => 'Im Play Store aktualisieren';
+
+  @override
   String get onboardingReportTitle => 'Blutzuckerberichte erhalten';
 
   @override
@@ -1415,4 +1436,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get birthDate => 'Geburtsdatum';
+
+  @override
+  String get diaryAddMealToFeed => 'Als Mahlzeit zum Feed hinzufügen';
+
+  @override
+  String get mealWindow30min => '30 Min';
+
+  @override
+  String get mealWindow1hour => '1 Stunde';
+
+  @override
+  String get mealWindow1hour30min => '1h 30min';
+
+  @override
+  String get mealWindow2hours => '2 Stunden';
 }

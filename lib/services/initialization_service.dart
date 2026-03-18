@@ -93,27 +93,46 @@ class InitializationService {
 
   /// 건강앱 데이터 동기화
   ///
-  /// HealthKit (iOS) 또는 Google Fit (Android)에서 데이터를 가져옵니다.
-  /// 건강앱 연결이 활성화된 경우에만 동기화를 수행합니다.
+  /// iOS: HealthKit, Android: Health Connect
+  /// 건강앱 연결이 활성화된 경우에만 수행합니다.
   Future<void> _syncHealthData() async {
-    // 최소 표시 시간 보장
     const minDisplayTime = Duration(milliseconds: 400);
     final startTime = DateTime.now();
 
     if (settingsService.isHealthConnected) {
       try {
-        // TODO: 실제 HealthKit/Google Fit 동기화 구현
-        await Future.delayed(const Duration(milliseconds: 800));
+        if (Platform.isIOS) {
+          await _syncHealthDataIOS();
+        } else {
+          await _syncHealthDataAndroid();
+        }
       } catch (e) {
         debugPrint('[InitializationService] Health sync error: $e');
       }
+    } else {
+      debugPrint('[InitializationService] ${Platform.isAndroid ? "Health Connect" : "HealthKit"} not connected, skipping');
     }
 
-    // 최소 표시 시간까지 대기
     final elapsed = DateTime.now().difference(startTime);
     if (elapsed < minDisplayTime) {
       await Future.delayed(minDisplayTime - elapsed);
     }
+  }
+
+  /// iOS: HealthKit 연결 상태 확인
+  /// 백그라운드 옵저버가 실시간 동기화를 처리하므로 여기서는 상태 확인만 수행
+  Future<void> _syncHealthDataIOS() async {
+    debugPrint('[InitializationService] HealthKit connected, background observer handles real-time sync');
+    await Future.delayed(const Duration(milliseconds: 600));
+  }
+
+  /// Android: Health Connect 연결 상태 확인
+  /// TODO: Health Connect SDK 연동 완료 후 실제 데이터 동기화 구현
+  Future<void> _syncHealthDataAndroid() async {
+    debugPrint('[InitializationService] Health Connect connected, verifying status...');
+    // Health Connect 권한 확인 (HealthConnectBridge 스텁 → 추후 실제 구현)
+    // 현재는 상태 로깅만 수행
+    debugPrint('[InitializationService] Health Connect sync: stub implementation, skipping data fetch');
   }
 
   /// 클라우드 데이터 동기화
@@ -169,10 +188,19 @@ class InitializationService {
   }
 
   Future<void> _syncAndroid() async {
-    if (!settingsService.googleSyncEnabled) return;
+    if (!settingsService.googleSyncEnabled) {
+      debugPrint('[InitializationService] Google sync disabled, skipping');
+      return;
+    }
 
     final googleId = settingsService.userIdentity.googleId;
-    if (googleId == null || googleId.isEmpty) return;
+    if (googleId == null || googleId.isEmpty) {
+      // Google 동기화가 활성화됐지만 googleId가 없음 → 온보딩에서 Google 로그인 미완료
+      debugPrint('[InitializationService] Google sync enabled but googleId not found — Google sign-in may be incomplete');
+      return;
+    }
+
+    debugPrint('[InitializationService] Google sync started (googleId: $googleId)');
 
     try {
       // Service start date 체크 (무료 체험 우회 방지)
@@ -189,8 +217,15 @@ class InitializationService {
         debugPrint('[InitializationService] Failed to sync service start date from Firestore: $e');
       }
 
-      // 리포트 다운로드
-      await FirestoreService.downloadReports(googleId);
+      // 모든 데이터 다운로드 (병렬 실행)
+      await Future.wait([
+        FirestoreService.downloadGlucoseRecords(googleId),
+        FirestoreService.downloadInsulinRecords(googleId),
+        FirestoreService.downloadDiaryEntries(googleId),
+        FirestoreService.downloadMealRecords(googleId),
+        FirestoreService.downloadReports(googleId),
+      ]);
+      debugPrint('[InitializationService] Firestore sync complete');
     } catch (e) {
       debugPrint('[InitializationService] Firestore sync error: $e');
     }

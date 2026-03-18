@@ -27,23 +27,27 @@ class _CompletionPageState extends State<CompletionPage> {
   void initState() {
     super.initState();
     // CompletionPage가 로드될 때 미리 모든 Provider 초기화
-    _initializeProviders();
+    // addPostFrameCallback으로 빌드 완료 후 실행 (build 중 notifyListeners 방지)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeProviders();
+    });
   }
 
   Future<void> _initializeProviders() async {
     try {
       final settings = context.read<SettingsService>();
 
-      // FeedProvider를 refresh하여 health connection 상태 업데이트
+      // FeedProvider 데이터 갱신 (health connection 상태는 connectToHealth()에서 이미 설정됨)
       if (mounted) {
         final feedProvider = context.read<FeedProvider>();
-        await feedProvider.initialize();
+        await feedProvider.refreshData();
       }
 
-      // DiaryProvider iCloud 동기화
+      // DiaryProvider 동기화 및 데이터 로드
       if (mounted) {
         final diaryProvider = context.read<DiaryProvider>();
-        await diaryProvider.syncFromICloud();
+        await diaryProvider.syncFromICloud(); // iOS: iCloud 동기화
+        await diaryProvider.refreshData();    // Android/iOS 모두: 로컬 DB에서 최신 데이터 로드
       }
 
       // iCloud에서 리포트 다운로드 (iCloud 동기화가 활성화된 경우)

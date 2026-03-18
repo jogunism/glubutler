@@ -298,7 +298,10 @@ class _ImageZoomView extends StatelessWidget {
 
         final fileExists = snapshot.data ?? false;
 
-        if (!fileExists) {
+        // 로컬 파일이 없고 downloadUrl이 있으면 네트워크 이미지 사용
+        final useNetwork = !fileExists && file.downloadUrl != null;
+
+        if (!fileExists && !useNetwork) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -321,6 +324,44 @@ class _ImageZoomView extends StatelessWidget {
           );
         }
 
+        Widget imageWidget = useNetwork
+            ? Image.network(
+                file.downloadUrl!,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(CupertinoIcons.exclamationmark_triangle,
+                            color: Colors.white.withValues(alpha: 0.5), size: 48),
+                        const SizedBox(height: 16),
+                        Text(l10n.imageLoadError,
+                            style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16)),
+                      ],
+                    ),
+                  );
+                },
+              )
+            : Image.file(
+                imageFile,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(CupertinoIcons.exclamationmark_triangle,
+                            color: Colors.white.withValues(alpha: 0.5), size: 48),
+                        const SizedBox(height: 16),
+                        Text(l10n.imageLoadError,
+                            style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16)),
+                      ],
+                    ),
+                  );
+                },
+              );
+
         return Stack(
           children: [
             // 이미지 (전체 화면)
@@ -331,35 +372,7 @@ class _ImageZoomView extends StatelessWidget {
                 maxScale: 4.0,
                 panEnabled: true,
                 scaleEnabled: true,
-                child: SizedBox.expand(
-                  child: Image.file(
-                    imageFile,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              CupertinoIcons.exclamationmark_triangle,
-                              color: Colors.white.withValues(alpha: 0.5),
-                              size: 48,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              l10n.imageLoadError,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                child: SizedBox.expand(child: imageWidget),
               ),
             ),
             // 캡처 시간 표시 (이미지 위, 중앙 상단)

@@ -51,6 +51,11 @@
             <action android:name="android.intent.action.SEND" />
             <data android:mimeType="*/*" />
         </intent>
+        <!-- Health Connect: permission activity 가시성 허용 -->
+        <package android:name="com.google.android.apps.healthdata" />
+        <intent>
+            <action android:name="androidx.health.ACTION_REQUEST_PERMISSIONS" />
+        </intent>
     </queries>
 
     <application
@@ -75,6 +80,11 @@
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
             </intent-filter>
 
+            <!-- Health Connect: 앱이 사용하는 권한 목록 -->
+            <meta-data
+                android:name="health_permissions"
+                android:resource="@array/health_permissions"/>
+
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme"/>
@@ -84,6 +94,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- Health Connect: Connected apps 목록에 표시 + 권한 사용 설명 -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+            </intent-filter>
+        </activity-alias>
 
         <!-- WorkManager (알림 백그라운드 작업) -->
         <receiver

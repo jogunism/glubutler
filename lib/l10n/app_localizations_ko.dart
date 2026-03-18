@@ -664,6 +664,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get readOnly => '읽기 전용';
 
   @override
+  String get cloudBackup => '클라우드 백업';
+
+  @override
   String get workouts => '운동';
 
   @override
@@ -733,16 +736,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get syncPeriod => '연동 기간';
 
   @override
-  String get syncPeriod1Week => '1주';
-
-  @override
-  String get syncPeriod2Weeks => '2주';
-
-  @override
   String get syncPeriod1Month => '1개월';
 
   @override
   String get syncPeriod3Months => '3개월';
+
+  @override
+  String get syncPeriod6Months => '6개월';
 
   @override
   String get disconnected => 'Apple 건강 연동이 해제되었습니다';
@@ -783,6 +783,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get initCheckingiCloud => 'iCloud 동기화 확인 중...';
+
+  @override
+  String get initCheckingGoogle => 'Google 동기화 확인 중...';
+
+  @override
+  String get initCheckingHealthConnect => 'Health Connect 동기화 확인 중...';
 
   @override
   String get initLocalDatabase => '로컬 데이터베이스 초기화 중...';
@@ -1130,6 +1136,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingHealthConnect => '연결하기';
 
   @override
+  String get hcNotInstalled =>
+      '이 기기에 Health Connect가 설치되어 있지 않습니다. 건강 데이터 동기화를 위해 설치해 주세요.';
+
+  @override
+  String get hcNeedsUpdate => 'Health Connect를 업데이트해야 연결할 수 있습니다.';
+
+  @override
+  String get hcInstallFromPlayStore => 'Play Store에서 설치';
+
+  @override
+  String get hcUpdateFromPlayStore => 'Play Store에서 업데이트';
+
+  @override
   String get onboardingReportTitle => '혈당 리포트를 받아보세요';
 
   @override
@@ -1352,4 +1371,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get birthDate => '생년월일';
+
+  @override
+  String get diaryAddMealToFeed => '피드에 식사 추가';
+
+  @override
+  String get mealWindow30min => '30분';
+
+  @override
+  String get mealWindow1hour => '1시간';
+
+  @override
+  String get mealWindow1hour30min => '1시간 30분';
+
+  @override
+  String get mealWindow2hours => '2시간';
 }

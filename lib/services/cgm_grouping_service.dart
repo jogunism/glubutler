@@ -40,6 +40,7 @@ class CgmGroupingService {
   /// These are apps where users manually enter glucose readings
   static const List<String> manualEntrySources = [
     'Glu Butler',
+    'glubutler',   // Android package name: com.jogunism.gluButler
     'Glu Sight',
     'Health2Sync',
   ];

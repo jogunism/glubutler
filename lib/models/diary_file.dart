@@ -11,6 +11,8 @@ class DiaryFile {
   final DateTime? capturedAt;
   final int? fileSize;
   final DateTime createdAt;
+  /// Firebase Storage / CloudKit 다운로드 URL (재설치 후 이미지 복원용)
+  final String? downloadUrl;
 
   DiaryFile({
     required this.id,
@@ -21,6 +23,7 @@ class DiaryFile {
     this.capturedAt,
     this.fileSize,
     required this.createdAt,
+    this.downloadUrl,
   });
 
   /// SQLite 맵으로부터 생성
@@ -36,6 +39,7 @@ class DiaryFile {
           : null,
       fileSize: map['file_size'] as int?,
       createdAt: DateTime.parse(map['created_at'] as String),
+      downloadUrl: map['download_url'] as String?,
     );
   }
 
@@ -50,10 +54,11 @@ class DiaryFile {
       'captured_at': capturedAt?.toIso8601String(),
       'file_size': fileSize,
       'created_at': createdAt.toIso8601String(),
+      'download_url': downloadUrl,
     };
   }
 
-  /// JSON으로부터 생성 (CloudKit 용)
+  /// JSON으로부터 생성 (CloudKit / Firestore 용)
   factory DiaryFile.fromJson(Map<String, dynamic> json) {
     return DiaryFile(
       id: json['id'] as String,
@@ -66,10 +71,11 @@ class DiaryFile {
           : null,
       fileSize: json['fileSize'] as int?,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      downloadUrl: json['downloadUrl'] as String?,
     );
   }
 
-  /// JSON으로 변환 (CloudKit 용)
+  /// JSON으로 변환 (CloudKit / Firestore 용)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -80,6 +86,7 @@ class DiaryFile {
       'capturedAt': capturedAt?.toIso8601String(),
       'fileSize': fileSize,
       'createdAt': createdAt.toIso8601String(),
+      if (downloadUrl != null) 'downloadUrl': downloadUrl,
     };
   }
 
@@ -92,6 +99,7 @@ class DiaryFile {
     DateTime? capturedAt,
     int? fileSize,
     DateTime? createdAt,
+    String? downloadUrl,
   }) {
     return DiaryFile(
       id: id ?? this.id,
@@ -102,6 +110,7 @@ class DiaryFile {
       capturedAt: capturedAt ?? this.capturedAt,
       fileSize: fileSize ?? this.fileSize,
       createdAt: createdAt ?? this.createdAt,
+      downloadUrl: downloadUrl ?? this.downloadUrl,
     );
   }
 }

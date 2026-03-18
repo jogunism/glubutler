@@ -88,21 +88,41 @@ class HealthService {
   final Map<HealthDataType, bool> _permissionStatus = {};
   Map<HealthDataType, bool> get permissionStatus => Map.unmodifiable(_permissionStatus);
 
-  Future<bool> requestAuthorization() async {
-    if (!Platform.isIOS) {
-      return false;
+  /// Android 전용: Health Connect 설치 상태 확인
+  /// Returns: 'available' | 'needsUpdate' | 'unavailable'
+  Future<String> checkHealthConnectAvailability() async {
+    if (!Platform.isAndroid) return 'available';
+    try {
+      final result = await _healthKitChannel.invokeMethod<String>('checkHealthConnectAvailability');
+      return result ?? 'unavailable';
+    } catch (e) {
+      return 'unavailable';
     }
+  }
 
+  // 마지막 권한 요청 실패 이유: "notInstalled" = HC가 설치되지 않아 다이얼로그 불가
+  String? _lastAuthFailReason;
+  String? get lastAuthFailReason => _lastAuthFailReason;
+
+  Future<bool> requestAuthorization() async {
+    _lastAuthFailReason = null;
     try {
       final result = await _healthKitChannel.invokeMethod('requestAuthorization');
+      debugPrint('[HealthService] requestAuthorization raw result: $result');
 
-      // iOS에서 Map을 반환하면 처리, 아니면 기존 방식 유지 (하위 호환성)
+      // Map 반환 처리 (iOS native 및 Android Health Connect)
       if (result is Map) {
         _hasRequestedPermissions = true;
         _isAuthorized = result['granted'] == true;
+        _lastAuthFailReason = result['reason'] as String?;
+        debugPrint('[HealthService] requestAuthorization granted: $_isAuthorized, reason: $_lastAuthFailReason');
+        // Android: permission 상태 맵도 동기화하여 categoryPermissions 녹색 표시 반영
+        if (_isAuthorized) {
+          await checkPermissionStatus();
+        }
         return _isAuthorized;
       } else {
-        // 기존 방식 (boolean 반환)
+        // 기존 방식 (boolean 반환, iOS 하위 호환성)
         _hasRequestedPermissions = true;
 
         // Check actual permission status
@@ -165,10 +185,6 @@ class HealthService {
   /// For READ-only types, we can't reliably check - iOS just returns empty data.
   /// So after requestAuthorization succeeds, we assume READ permissions are granted.
   Future<void> checkPermissionStatus() async {
-    if (!Platform.isIOS) {
-      return;
-    }
-
     try {
       // Test blood glucose write permission
       final glucosePermission = await _healthKitChannel.invokeMethod('testBloodGlucoseWritePermission') as bool;
@@ -246,12 +262,6 @@ class HealthService {
   }
 
   Future<bool> hasPermissions() async {
-    if (!Platform.isIOS) {
-      return false;
-    }
-
-    // iOS permissions are checked via checkPermissionStatus()
-    // Return the current authorization status
     return _isAuthorized;
   }
 
@@ -263,58 +273,50 @@ class HealthService {
       return [];
     }
 
-    if (Platform.isIOS) {
-      // Use native iOS HealthKit to get meal context metadata
-      try {
-        final Map<String, dynamic> arguments = {
-          'type': 'BLOOD_GLUCOSE',
-          'startTime': startDate.millisecondsSinceEpoch,
-          'endTime': endDate.millisecondsSinceEpoch,
-        };
+    // iOS: HealthKit, Android: Health Connect — 동일한 채널 인터페이스 사용
+    try {
+      final Map<String, dynamic> arguments = {
+        'type': 'BLOOD_GLUCOSE',
+        'startTime': startDate.millisecondsSinceEpoch,
+        'endTime': endDate.millisecondsSinceEpoch,
+      };
 
-        final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
+      final List<dynamic> data = await _healthKitChannel.invokeMethod('readHealthData', arguments);
 
-        final records = <GlucoseRecord>[];
+      final records = <GlucoseRecord>[];
 
-        for (final item in data) {
-          final map = item as Map<dynamic, dynamic>;
+      for (final item in data) {
+        final map = item as Map<dynamic, dynamic>;
 
-          String? mealContext;
-
-          // Map HealthKit meal time metadata back to our app's mealContext
-          if (map['mealTime'] != null) {
-            switch (map['mealTime']) {
-              case 'preprandial':
-                mealContext = 'before_meal';
-                break;
-              case 'postprandial':
-                mealContext = 'after_meal';
-                break;
-            }
+        String? mealContext;
+        if (map['mealTime'] != null) {
+          switch (map['mealTime']) {
+            case 'preprandial':
+              mealContext = 'before_meal';
+              break;
+            case 'postprandial':
+              mealContext = 'after_meal';
+              break;
           }
-
-          final sourceName = map['dataSource'] as String?;
-
-          records.add(GlucoseRecord(
-            id: 'hk_${(map['startTime'] as num).toInt()}',
-            value: (map['value'] as num).toDouble(),
-            unit: 'mg/dL',
-            timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
-            mealContext: mealContext,
-            isFromHealthKit: true,
-            sourceName: sourceName,
-          ));
         }
 
-        // debugPrint('[HealthService] Fetched ${records.length} glucose records from native iOS');
-        return records;
-      } catch (e) {
-        return [];
-      }
-    }
+        final sourceName = map['dataSource'] as String?;
 
-    // Platform not supported
-    return [];
+        records.add(GlucoseRecord(
+          id: 'hk_${(map['startTime'] as num).toInt()}',
+          value: (map['value'] as num).toDouble(),
+          unit: 'mg/dL',
+          timestamp: DateTime.fromMillisecondsSinceEpoch((map['startTime'] as num).toInt()),
+          mealContext: mealContext,
+          isFromHealthKit: true,
+          sourceName: sourceName,
+        ));
+      }
+
+      return records;
+    } catch (e) {
+      return [];
+    }
   }
 
   Future<List<ExerciseRecord>> fetchWorkoutData({
@@ -705,66 +707,40 @@ class HealthService {
   }
 
   Future<bool> writeGlucoseRecord(GlucoseRecord record) async {
-    if (!Platform.isIOS) {
+    try {
+      final Map<String, dynamic> arguments = {
+        'value': record.value,
+        'startTime': record.timestamp.millisecondsSinceEpoch,
+      };
+
+      if (record.mealContext != null) {
+        switch (record.mealContext) {
+          case 'before_meal':
+          case 'beforeMeal':
+            arguments['mealTime'] = 'preprandial';
+            break;
+          case 'after_meal':
+          case 'afterMeal':
+            arguments['mealTime'] = 'postprandial';
+            break;
+          case 'fasting':
+          default:
+            break;
+        }
+      }
+
+      final success = await _healthKitChannel.invokeMethod('writeBloodGlucose', arguments);
+      return success as bool;
+    } catch (e) {
       return false;
     }
-
-    if (Platform.isIOS) {
-      // Use native iOS HealthKit with meal context metadata support
-      try {
-        final Map<String, dynamic> arguments = {
-          'value': record.value,
-          'startTime': record.timestamp.millisecondsSinceEpoch,
-        };
-
-        // Map mealContext to HealthKit metadata
-        // Only preprandial and postprandial are supported by Apple Health
-        // Fasting is stored without meal time metadata
-        if (record.mealContext != null) {
-          switch (record.mealContext) {
-            case 'before_meal':
-            case 'beforeMeal':
-              arguments['mealTime'] = 'preprandial';
-              break;
-            case 'after_meal':
-            case 'afterMeal':
-              arguments['mealTime'] = 'postprandial';
-              break;
-            case 'fasting':
-            default:
-              // Fasting: no mealTime metadata (not pre/post meal)
-              break;
-          }
-        }
-
-        // debugPrint('[HealthService] Writing glucose: value=${record.value}, mealContext=${record.mealContext}, mealTime=${arguments['mealTime']}');
-
-        final success = await _healthKitChannel.invokeMethod('writeBloodGlucose', arguments);
-        // debugPrint('[HealthService] Native iOS glucose write result: $success');
-        return success as bool;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    // Platform not supported
-    return false;
   }
 
   Future<bool> deleteBloodGlucose(DateTime timestamp) async {
-    if (!Platform.isIOS) {
-      return false;
-    }
-
     try {
-      final Map<String, dynamic> arguments = {
+      final success = await _healthKitChannel.invokeMethod('deleteBloodGlucose', {
         'timestamp': timestamp.millisecondsSinceEpoch,
-      };
-
-      // debugPrint('[HealthService] Deleting glucose at timestamp: ${timestamp.toIso8601String()}');
-
-      final success = await _healthKitChannel.invokeMethod('deleteBloodGlucose', arguments);
-      // debugPrint('[HealthService] Native iOS glucose delete result: $success');
+      });
       return success as bool;
     } catch (e) {
       return false;
@@ -772,19 +748,10 @@ class HealthService {
   }
 
   Future<bool> deleteInsulinDelivery(DateTime timestamp) async {
-    if (!Platform.isIOS) {
-      return false;
-    }
-
     try {
-      final Map<String, dynamic> arguments = {
+      final success = await _healthKitChannel.invokeMethod('deleteInsulinDelivery', {
         'timestamp': timestamp.millisecondsSinceEpoch,
-      };
-
-      // debugPrint('[HealthService] Deleting insulin at timestamp: ${timestamp.toIso8601String()}');
-
-      final success = await _healthKitChannel.invokeMethod('deleteInsulinDelivery', arguments);
-      // debugPrint('[HealthService] Native iOS insulin delete result: $success');
+      });
       return success as bool;
     } catch (e) {
       return false;
@@ -792,32 +759,16 @@ class HealthService {
   }
 
   Future<bool> writeInsulinRecord(InsulinRecord record) async {
-    if (!Platform.isIOS) {
+    try {
+      final success = await _healthKitChannel.invokeMethod('writeInsulin', {
+        'value': record.units,
+        'startTime': record.timestamp.millisecondsSinceEpoch,
+        'reason': record.deliveryReason.name,
+      });
+      return success as bool;
+    } catch (e) {
       return false;
     }
-
-    if (Platform.isIOS) {
-      // Use native iOS HealthKit with delivery reason metadata (required)
-      try {
-        // Use the explicit deliveryReason from the record
-        final deliveryReason = record.deliveryReason.name;
-
-        final Map<String, dynamic> arguments = {
-          'value': record.units,
-          'startTime': record.timestamp.millisecondsSinceEpoch,
-          'reason': deliveryReason,
-        };
-
-        final success = await _healthKitChannel.invokeMethod('writeInsulin', arguments);
-        // debugPrint('[HealthService] Native iOS insulin write result: $success (reason: $deliveryReason)');
-        return success as bool;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    // Platform not supported
-    return false;
   }
 
   Future<List<InsulinRecord>> fetchInsulinData({

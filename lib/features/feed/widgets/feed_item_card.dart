@@ -177,7 +177,7 @@ class FeedItemCard extends StatelessWidget {
                         title,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: context.colors.textSecondary,
-                          fontSize: isLargeItem ? null : 11,
+                          fontSize: isLargeItem ? 12.0 : 11.0,
                         ),
                       ),
                       if (sourceName != null) ...[
@@ -187,7 +187,7 @@ class FeedItemCard extends StatelessWidget {
                             color: context.colors.textSecondary.withValues(
                               alpha: 0.7,
                             ),
-                            fontSize: isLargeItem ? null : 10,
+                            fontSize: isLargeItem ? 11.0 : 10.0,
                           ),
                         ),
                       ],
@@ -372,12 +372,35 @@ class FeedItemCard extends StatelessWidget {
         mealTypeText = l10n.meal;
     }
 
-    return Text(
-      mealTypeText,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
+    final windowMinutes = meal.mealWindowMinutes;
+    final windowText = switch (windowMinutes) {
+      30 => l10n.mealWindow30min,
+      60 => l10n.mealWindow1hour,
+      90 => l10n.mealWindow1hour30min,
+      120 => l10n.mealWindow2hours,
+      _ => '$windowMinutes min',
+    };
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text(
+          mealTypeText,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          windowText,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
+        ),
+      ],
     );
   }
 
@@ -644,8 +667,10 @@ class FeedItemCard extends StatelessWidget {
     String label;
     switch (mealContext) {
       case 'before_meal':
+      case 'beforeMeal':
         label = l10n.beforeMeal;
       case 'after_meal':
+      case 'afterMeal':
         label = l10n.afterMeal;
       case 'fasting':
       default:

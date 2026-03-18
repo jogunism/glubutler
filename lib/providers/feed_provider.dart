@@ -14,6 +14,7 @@ import 'package:glu_butler/services/sleep_grouping_service.dart';
 import 'package:glu_butler/services/water_grouping_service.dart';
 import 'package:glu_butler/repositories/glucose_repository.dart';
 import 'package:glu_butler/services/analytics_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
 import 'package:glu_butler/repositories/insulin_repository.dart';
 
 /// Enum for health data categories shown in UI
@@ -172,7 +173,9 @@ class FeedProvider extends ChangeNotifier {
 
     try {
       // requestAuthorization now checks actual write permission internally
-      _isHealthConnected = await _healthService.requestAuthorization();
+      final authResult = await _healthService.requestAuthorization();
+      debugPrint('[FeedProvider] connectToHealth: requestAuthorization returned $authResult');
+      _isHealthConnected = authResult;
 
       if (_isHealthConnected) {
         // Save connection status to DB only if write permission was granted
@@ -619,6 +622,8 @@ class FeedProvider extends ChangeNotifier {
       await refreshData();
       // Log glucose recorded (sampled - once per day)
       await AnalyticsService.logGlucoseRecorded();
+      // Android: Firestore 백업
+      _syncGlucoseToFirestore(record);
     }
     return success;
   }
@@ -644,6 +649,8 @@ class FeedProvider extends ChangeNotifier {
     final success = await _insulinRepository.save(record);
     if (success) {
       await refreshData();
+      // Android: Firestore 백업
+      _syncInsulinToFirestore(record);
     }
     return success;
   }
@@ -707,6 +714,9 @@ class FeedProvider extends ChangeNotifier {
         await _healthService.deleteBloodGlucose(timestamp);
       }
 
+      // Android: Firestore 삭제
+      _deleteGlucoseFromFirestore(id);
+
       // Refresh feed data
       await refreshData();
 
@@ -729,6 +739,9 @@ class FeedProvider extends ChangeNotifier {
         await _healthService.deleteInsulinDelivery(timestamp);
       }
 
+      // Android: Firestore 삭제
+      _deleteInsulinFromFirestore(id);
+
       // Refresh feed data
       await refreshData();
 
@@ -737,6 +750,46 @@ class FeedProvider extends ChangeNotifier {
       _error = 'Failed to delete insulin record';
       notifyListeners();
       return false;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Firestore 동기화 헬퍼 (Android only, fire-and-forget)
+  // ---------------------------------------------------------------------------
+
+  String? get _googleId => _settingsService?.userIdentity.googleId;
+  bool get _googleSyncEnabled => _settingsService?.googleSyncEnabled ?? false;
+
+  void _syncGlucoseToFirestore(GlucoseRecord record) {
+    final googleId = _googleId;
+    if (!_googleSyncEnabled || googleId == null || googleId.isEmpty) return;
+    FirestoreService.uploadGlucoseRecord(googleId, record);
+  }
+
+  void _syncInsulinToFirestore(InsulinRecord record) {
+    final googleId = _googleId;
+    if (!_googleSyncEnabled || googleId == null || googleId.isEmpty) return;
+    FirestoreService.uploadInsulinRecord(googleId, record);
+  }
+
+  void _deleteGlucoseFromFirestore(String id) {
+    final googleId = _googleId;
+    if (!_googleSyncEnabled || googleId == null || googleId.isEmpty) return;
+    FirestoreService.deleteGlucoseRecord(googleId, id);
+    // HC에서 읽은 record는 'hk_<timestamp>' ID지만 Firestore엔 'manual_<timestamp>'로 저장됨
+    if (id.startsWith('hk_')) {
+      final manualId = 'manual_${id.substring(3)}';
+      FirestoreService.deleteGlucoseRecord(googleId, manualId);
+    }
+  }
+
+  void _deleteInsulinFromFirestore(String id) {
+    final googleId = _googleId;
+    if (!_googleSyncEnabled || googleId == null || googleId.isEmpty) return;
+    FirestoreService.deleteInsulinRecord(googleId, id);
+    if (id.startsWith('hk_')) {
+      final manualId = 'manual_${id.substring(3)}';
+      FirestoreService.deleteInsulinRecord(googleId, manualId);
     }
   }
 

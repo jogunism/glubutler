@@ -663,6 +663,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get readOnly => '読み取りのみ';
 
   @override
+  String get cloudBackup => 'クラウドバックアップ';
+
+  @override
   String get workouts => 'ワークアウト';
 
   @override
@@ -732,16 +735,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncPeriod => '連携期間';
 
   @override
-  String get syncPeriod1Week => '1週間';
-
-  @override
-  String get syncPeriod2Weeks => '2週間';
-
-  @override
   String get syncPeriod1Month => '1ヶ月';
 
   @override
   String get syncPeriod3Months => '3ヶ月';
+
+  @override
+  String get syncPeriod6Months => '6ヶ月';
 
   @override
   String get disconnected => 'Apple ヘルスケアとの連携が解除されました';
@@ -782,6 +782,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get initCheckingiCloud => 'iCloud同期を確認中...';
+
+  @override
+  String get initCheckingGoogle => 'Google同期を確認中...';
+
+  @override
+  String get initCheckingHealthConnect => 'Health Connect同期を確認中...';
 
   @override
   String get initLocalDatabase => 'ローカルデータベースを初期化中...';
@@ -1126,6 +1132,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingHealthConnect => '連携する';
 
   @override
+  String get hcNotInstalled =>
+      'Health Connectがインストールされていません。健康データを同期するにはインストールしてください。';
+
+  @override
+  String get hcNeedsUpdate => '接続するにはHealth Connectをアップデートする必要があります。';
+
+  @override
+  String get hcInstallFromPlayStore => 'Play Storeからインストール';
+
+  @override
+  String get hcUpdateFromPlayStore => 'Play Storeからアップデート';
+
+  @override
   String get onboardingReportTitle => '血糖レポートを受け取りましょう';
 
   @override
@@ -1348,4 +1367,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get birthDate => '生年月日';
+
+  @override
+  String get diaryAddMealToFeed => 'フィードに食事を追加';
+
+  @override
+  String get mealWindow30min => '30分';
+
+  @override
+  String get mealWindow1hour => '1時間';
+
+  @override
+  String get mealWindow1hour30min => '1時間30分';
+
+  @override
+  String get mealWindow2hours => '2時間';
 }

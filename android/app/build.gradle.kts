@@ -25,7 +25,7 @@ android {
         applicationId = "com.jogunism.gluButler"
         // Health Connect requires API 26+
         minSdk = 26
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -50,9 +50,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
 
-    // Google Sign-In
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
-
     // Health Connect
     implementation("androidx.health.connect:connect-client:1.1.0-rc01")
 
@@ -61,4 +58,7 @@ dependencies {
 
     // Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // ML Kit Image Labeling (food photo detection)
+    implementation("com.google.mlkit:image-labeling:17.0.9")
 }

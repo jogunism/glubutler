@@ -38,7 +38,7 @@ class GlucoseRepository {
     final hasPermission = await hasHealthWritePermission();
 
     if (hasPermission) {
-      // Write to HealthKit
+      // Write to HealthKit/Health Connect
       final success = await _healthService.writeGlucoseRecord(record);
       if (success) {
         return true;
@@ -75,7 +75,7 @@ class GlucoseRepository {
       recordsById[record.id] = record;
     }
 
-    // Fetch from HealthKit if permissions were requested (read permission may exist)
+    // Fetch from HealthKit/Health Connect if permissions were requested (read permission may exist)
     if (_healthService.hasRequestedPermissions) {
       final healthRecords = await _healthService.fetchGlucoseData(
         startDate: startDate,

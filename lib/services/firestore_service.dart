@@ -1,10 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/models/diary_item.dart';
+import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/models/insulin_record.dart';
 import 'package:glu_butler/models/meal_record.dart';
 import 'package:glu_butler/models/report.dart';
 import 'package:glu_butler/services/database_service.dart';
@@ -19,11 +25,8 @@ import 'package:glu_butler/services/database_service.dart';
 ///   users/{googleId}/reports/{id}
 ///   users/{googleId}/settings/app   → serviceStartDate, language
 ///
-/// Firebase Storage (다이어리 이미지):
-///   users/{googleId}/diary_images/{diaryId}/{filename}
 class FirestoreService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final DatabaseService _databaseService = DatabaseService();
 
   // ---------------------------------------------------------------------------
@@ -36,11 +39,20 @@ class FirestoreService {
   static CollectionReference<Map<String, dynamic>> _mealCol(String googleId) =>
       _firestore.collection('users').doc(googleId).collection('mealRecords');
 
+  static CollectionReference<Map<String, dynamic>> _glucoseCol(String googleId) =>
+      _firestore.collection('users').doc(googleId).collection('glucoseRecords');
+
+  static CollectionReference<Map<String, dynamic>> _insulinCol(String googleId) =>
+      _firestore.collection('users').doc(googleId).collection('insulinRecords');
+
   static CollectionReference<Map<String, dynamic>> _reportCol(String googleId) =>
       _firestore.collection('users').doc(googleId).collection('reports');
 
   static DocumentReference<Map<String, dynamic>> _settingsDoc(String googleId) =>
       _firestore.collection('users').doc(googleId).collection('settings').doc('app');
+
+  static CollectionReference<Map<String, dynamic>> _diaryFilesCol(String googleId) =>
+      _firestore.collection('users').doc(googleId).collection('diaryFiles');
 
   // ---------------------------------------------------------------------------
   // 설정 동기화
@@ -135,43 +147,57 @@ class FirestoreService {
     }
   }
 
-  /// 단일 다이어리 엔트리를 Firestore에 업로드 (이미지는 Storage에)
+  /// 단일 다이어리 엔트리를 Firestore에 업로드 (이미지는 diaryFiles 서브컬렉션에 별도 저장)
   static Future<void> uploadDiaryEntry(String googleId, DiaryItem entry) async {
     try {
       final data = entry.toJson();
-
-      // 이미지 파일을 Firebase Storage에 업로드하고 URL로 교체
-      if (entry.files.isNotEmpty) {
-        final uploadedFiles = <Map<String, dynamic>>[];
-        for (final file in entry.files) {
-          final localPath = file.filePath;
-          if (File(localPath).existsSync()) {
-            try {
-              final filename = localPath.split('/').last;
-              final ref = _storage
-                  .ref('users/$googleId/diary_images/${entry.id}/$filename');
-              await ref.putFile(File(localPath));
-              final downloadUrl = await ref.getDownloadURL();
-
-              final fileMap = Map<String, dynamic>.from(file.toJson());
-              fileMap['downloadUrl'] = downloadUrl;
-              uploadedFiles.add(fileMap);
-            } catch (e) {
-              debugPrint('[Firestore] Failed to upload image $localPath: $e');
-              uploadedFiles.add(file.toJson());
-            }
-          } else {
-            uploadedFiles.add(file.toJson());
-          }
-        }
-        data['files'] = uploadedFiles;
-      }
-
+      data.remove('files');
       data['updatedAt'] = DateTime.now().toUtc().toIso8601String();
-
       await _diaryCol(googleId).doc(entry.id).set(data);
+
+      for (final file in entry.files) {
+        await _uploadDiaryFile(googleId, file);
+      }
     } catch (e) {
       throw Exception('Failed to upload diary entry to Firestore: $e');
+    }
+  }
+
+  /// 이미지를 압축 후 base64로 diaryFiles에 업로드
+  static Future<void> _uploadDiaryFile(String googleId, DiaryFile file) async {
+    try {
+      final localFile = File(file.filePath);
+      if (!localFile.existsSync()) return;
+
+      final bytes = await localFile.readAsBytes();
+      final decoded = img.decodeImage(bytes);
+      if (decoded == null) return;
+
+      // 최대 1024px로 축소 (비율 유지)
+      img.Image resized = decoded;
+      if (decoded.width > 1024 || decoded.height > 1024) {
+        resized = decoded.width >= decoded.height
+            ? img.copyResize(decoded, width: 1024)
+            : img.copyResize(decoded, height: 1024);
+      }
+
+      final compressed = img.encodeJpg(resized, quality: 82);
+      final base64Data = base64Encode(compressed);
+
+      await _diaryFilesCol(googleId).doc(file.id).set({
+        'id': file.id,
+        'diaryId': file.diaryId,
+        'fileName': file.filePath.split('/').last,
+        'imageData': base64Data,
+        'capturedAt': file.capturedAt?.toIso8601String(),
+        'latitude': file.latitude,
+        'longitude': file.longitude,
+        'updatedAt': DateTime.now().toUtc().toIso8601String(),
+      });
+
+      debugPrint('[Firestore] Uploaded image ${file.id} (${compressed.length ~/ 1024}KB)');
+    } catch (e) {
+      debugPrint('[Firestore] Failed to upload diary file ${file.id}: $e');
     }
   }
 
@@ -203,13 +229,7 @@ class FirestoreService {
         try {
           final jsonMap = Map<String, dynamic>.from(doc.data());
           jsonMap.remove('updatedAt');
-
-          if (jsonMap['files'] != null) {
-            final filesList = jsonMap['files'] as List;
-            jsonMap['files'] = filesList
-                .map((f) => Map<String, dynamic>.from(f as Map))
-                .toList();
-          }
+          jsonMap['files'] = <Map<String, dynamic>>[];
 
           final item = DiaryItem.fromJson(jsonMap);
 
@@ -219,10 +239,9 @@ class FirestoreService {
             await _databaseService.recordDao.insertDiary(item);
           }
 
-          if (item.files.isNotEmpty) {
-            for (final file in item.files) {
-              await _databaseService.recordDao.insertDiaryFile(file);
-            }
+          // 이미지 복원 (diaryFiles 서브컬렉션)
+          if (!localDiaryIds.contains(item.id)) {
+            await _downloadDiaryFiles(googleId, item.id);
           }
 
           savedCount++;
@@ -240,6 +259,53 @@ class FirestoreService {
     }
   }
 
+  /// diaryFiles 서브컬렉션에서 이미지를 로컬에 복원
+  static Future<void> _downloadDiaryFiles(String googleId, String diaryId) async {
+    try {
+      final snapshot = await _diaryFilesCol(googleId)
+          .where('diaryId', isEqualTo: diaryId)
+          .get();
+      if (snapshot.docs.isEmpty) return;
+
+      final docsDir = await getApplicationDocumentsDirectory();
+      final imageDir = Directory('${docsDir.path}/diary_images');
+      if (!imageDir.existsSync()) imageDir.createSync(recursive: true);
+
+      for (final doc in snapshot.docs) {
+        try {
+          final data = doc.data();
+          final base64Data = data['imageData'] as String?;
+          if (base64Data == null) continue;
+
+          final fileName = data['fileName'] as String? ?? '${data['id']}.jpg';
+          final localPath = '${imageDir.path}/$fileName';
+
+          if (!File(localPath).existsSync()) {
+            final bytes = base64Decode(base64Data);
+            await File(localPath).writeAsBytes(bytes);
+          }
+
+          final diaryFile = DiaryFile(
+            id: data['id'] as String,
+            diaryId: diaryId,
+            filePath: localPath,
+            capturedAt: data['capturedAt'] != null
+                ? DateTime.tryParse(data['capturedAt'] as String)
+                : null,
+            latitude: (data['latitude'] as num?)?.toDouble(),
+            longitude: (data['longitude'] as num?)?.toDouble(),
+            createdAt: DateTime.now(),
+          );
+          await _databaseService.recordDao.insertDiaryFile(diaryFile);
+        } catch (e) {
+          debugPrint('[Firestore] Failed to restore diary file ${doc.id}: $e');
+        }
+      }
+    } catch (e) {
+      debugPrint('[Firestore] Failed to download diary files for $diaryId: $e');
+    }
+  }
+
   /// 양방향 다이어리 동기화
   static Future<(int, int)> syncDiaryEntries(String googleId) async {
     final uploaded = await uploadDiaryEntries(googleId);
@@ -247,10 +313,17 @@ class FirestoreService {
     return (uploaded, downloaded);
   }
 
-  /// 단일 다이어리 삭제 (Firestore)
+  /// 단일 다이어리 삭제 (Firestore + diaryFiles 서브컬렉션)
   static Future<void> deleteDiaryEntry(String googleId, String entryId) async {
     try {
       await _diaryCol(googleId).doc(entryId).delete();
+      // 연결된 이미지 파일도 삭제
+      final filesSnapshot = await _diaryFilesCol(googleId)
+          .where('diaryId', isEqualTo: entryId)
+          .get();
+      for (final doc in filesSnapshot.docs) {
+        await doc.reference.delete();
+      }
     } catch (e) {
       throw Exception('Failed to delete diary entry from Firestore: $e');
     }
@@ -479,6 +552,154 @@ class FirestoreService {
       }
     } catch (e) {
       throw Exception('Failed to delete meal records by diaryId from Firestore: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 혈당 기록 동기화
+  // ---------------------------------------------------------------------------
+
+  /// 단일 혈당 기록을 Firestore로 업로드
+  static Future<void> uploadGlucoseRecord(String googleId, GlucoseRecord record) async {
+    try {
+      final data = {
+        'id': record.id,
+        'value': record.value,
+        'unit': record.unit,
+        'timestamp': record.timestamp.toIso8601String(),
+        'mealContext': record.mealContext,
+        'note': record.note,
+        'isFromHealthKit': record.isFromHealthKit,
+        'updatedAt': DateTime.now().toUtc().toIso8601String(),
+      };
+      await _glucoseCol(googleId).doc(record.id).set(data);
+    } catch (e) {
+      debugPrint('[Firestore] Failed to upload glucose record ${record.id}: $e');
+    }
+  }
+
+  /// Firestore에서 혈당 기록 다운로드하여 로컬 DB에 저장 (delta sync)
+  static Future<int> downloadGlucoseRecords(String googleId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lastSyncDateStr = prefs.getString('firestore_lastGlucoseSyncDate');
+      final syncStartTime = DateTime.now().toUtc();
+
+      Query<Map<String, dynamic>> query = _glucoseCol(googleId);
+      if (lastSyncDateStr != null) {
+        query = query.where('updatedAt', isGreaterThan: lastSyncDateStr);
+      }
+
+      final snapshot = await query.get();
+      if (snapshot.docs.isEmpty) {
+        await prefs.setString('firestore_lastGlucoseSyncDate', syncStartTime.toIso8601String());
+        return 0;
+      }
+
+      final allLocal = await _databaseService.getGlucoseRecords();
+      final localIds = allLocal.map((r) => r.id).toSet();
+
+      int savedCount = 0;
+      for (final doc in snapshot.docs) {
+        try {
+          final json = Map<String, dynamic>.from(doc.data());
+          json.remove('updatedAt');
+          final record = GlucoseRecord.fromJson(json);
+          if (!localIds.contains(record.id)) {
+            await _databaseService.insertGlucose(record);
+            savedCount++;
+          }
+        } catch (e) {
+          debugPrint('[Firestore] Failed to process glucose doc ${doc.id}: $e');
+        }
+      }
+
+      await prefs.setString('firestore_lastGlucoseSyncDate', syncStartTime.toIso8601String());
+      debugPrint('[Firestore] Glucose sync complete: $savedCount new records');
+      return savedCount;
+    } catch (e) {
+      debugPrint('[Firestore] Failed to download glucose records: $e');
+      return 0;
+    }
+  }
+
+  /// 혈당 기록 삭제 (Firestore)
+  static Future<void> deleteGlucoseRecord(String googleId, String recordId) async {
+    try {
+      await _glucoseCol(googleId).doc(recordId).delete();
+    } catch (e) {
+      debugPrint('[Firestore] Failed to delete glucose record $recordId: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 인슐린 기록 동기화
+  // ---------------------------------------------------------------------------
+
+  /// 단일 인슐린 기록을 Firestore로 업로드
+  static Future<void> uploadInsulinRecord(String googleId, InsulinRecord record) async {
+    try {
+      final data = {
+        ...record.toJson(),
+        'updatedAt': DateTime.now().toUtc().toIso8601String(),
+      };
+      await _insulinCol(googleId).doc(record.id).set(data);
+    } catch (e) {
+      debugPrint('[Firestore] Failed to upload insulin record ${record.id}: $e');
+    }
+  }
+
+  /// Firestore에서 인슐린 기록 다운로드하여 로컬 DB에 저장 (delta sync)
+  static Future<int> downloadInsulinRecords(String googleId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lastSyncDateStr = prefs.getString('firestore_lastInsulinSyncDate');
+      final syncStartTime = DateTime.now().toUtc();
+
+      Query<Map<String, dynamic>> query = _insulinCol(googleId);
+      if (lastSyncDateStr != null) {
+        query = query.where('updatedAt', isGreaterThan: lastSyncDateStr);
+      }
+
+      final snapshot = await query.get();
+      if (snapshot.docs.isEmpty) {
+        await prefs.setString('firestore_lastInsulinSyncDate', syncStartTime.toIso8601String());
+        return 0;
+      }
+
+      final allLocal = await _databaseService.getInsulinRecords();
+      final localIds = allLocal.map((r) => r.id).toSet();
+
+      int savedCount = 0;
+      for (final doc in snapshot.docs) {
+        try {
+          final json = Map<String, dynamic>.from(doc.data());
+          json.remove('updatedAt');
+          final record = InsulinRecord.fromJson(json);
+          if (!localIds.contains(record.id)) {
+            await _databaseService.insertInsulin(record);
+            savedCount++;
+          }
+        } catch (e) {
+          debugPrint('[Firestore] Failed to process insulin doc ${doc.id}: $e');
+        }
+      }
+
+      await prefs.setString('firestore_lastInsulinSyncDate', syncStartTime.toIso8601String());
+      debugPrint('[Firestore] Insulin sync complete: $savedCount new records');
+      return savedCount;
+    } catch (e) {
+      debugPrint('[Firestore] Failed to download insulin records: $e');
+      return 0;
+    }
+  }
+
+  /// 인슐린 기록 삭제 (Firestore)
+  static Future<void> deleteInsulinRecord(String googleId, String recordId) async {
+    try {
+      await _insulinCol(googleId).doc(recordId).delete();
+    } catch (e) {
+      debugPrint('[Firestore] Failed to delete insulin record $recordId: $e');
     }
   }
 }

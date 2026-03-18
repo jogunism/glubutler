@@ -680,6 +680,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readOnly => 'Read only';
 
   @override
+  String get cloudBackup => 'Cloud backup';
+
+  @override
   String get workouts => 'Workouts';
 
   @override
@@ -750,16 +753,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncPeriod => 'Sync Period';
 
   @override
-  String get syncPeriod1Week => '1 Week';
-
-  @override
-  String get syncPeriod2Weeks => '2 Weeks';
-
-  @override
   String get syncPeriod1Month => '1 Month';
 
   @override
   String get syncPeriod3Months => '3 Months';
+
+  @override
+  String get syncPeriod6Months => '6 Months';
 
   @override
   String get disconnected => 'Disconnected from Apple Health';
@@ -800,6 +800,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get initCheckingiCloud => 'Checking iCloud sync...';
+
+  @override
+  String get initCheckingGoogle => 'Checking Google sync...';
+
+  @override
+  String get initCheckingHealthConnect => 'Checking Health Connect sync...';
 
   @override
   String get initLocalDatabase => 'Initializing local database...';
@@ -1165,6 +1171,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingHealthConnect => 'Connect';
 
   @override
+  String get hcNotInstalled =>
+      'Health Connect is not installed. Install it to sync health data.';
+
+  @override
+  String get hcNeedsUpdate => 'Health Connect needs to be updated to connect.';
+
+  @override
+  String get hcInstallFromPlayStore => 'Install from Play Store';
+
+  @override
+  String get hcUpdateFromPlayStore => 'Update from Play Store';
+
+  @override
   String get onboardingReportTitle => 'Receive glucose reports';
 
   @override
@@ -1399,4 +1418,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get birthDate => 'Date of Birth';
+
+  @override
+  String get diaryAddMealToFeed => 'Add to Feed as Meal';
+
+  @override
+  String get mealWindow30min => '30 min';
+
+  @override
+  String get mealWindow1hour => '1 hour';
+
+  @override
+  String get mealWindow1hour30min => '1h 30min';
+
+  @override
+  String get mealWindow2hours => '2 hours';
 }

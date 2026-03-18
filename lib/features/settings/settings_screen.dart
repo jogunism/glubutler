@@ -171,10 +171,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       if (value) {
         // Google 로그인 시도
-        final googleSignIn = GoogleSignIn(scopes: ['email']);
-        final account = await googleSignIn.signIn();
-
-        if (account == null) {
+        final GoogleSignInAccount account;
+        try {
+          account = await GoogleSignIn.instance.authenticate();
+        } on GoogleSignInException {
           if (mounted) {
             setState(() => _isTogglingSync = false);
             _showToast(context, '${l10n.googleSyncFailed}.\n${l10n.googleNotSignedIn}', isSuccess: false);
@@ -182,10 +182,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return;
         }
 
-        final googleAuth = await account.authentication;
+        final idToken = account.authentication.idToken;
+        final authz = await account.authorizationClient.authorizeScopes(['email']);
         final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
+          accessToken: authz.accessToken,
+          idToken: idToken,
         );
         await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -558,35 +559,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  /// Google 아이콘 - assets/images/google.png 사용
-  Widget _buildGoogleIcon() {
-    const double size = 32;
-    const double iconSize = size * 0.6;
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(size * 0.25),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Image.asset(
-          'assets/images/google.png',
-          width: iconSize,
-          height: iconSize,
-          fit: BoxFit.contain,
-        ),
-      ),
-    );
-  }
-
   /// Health Connect 아이콘 - assets/images/health_connect.png 사용
   Widget _buildHealthConnectIcon() {
     const double size = 32;
@@ -789,7 +761,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
               size: 32,
             )
           else
-            _buildGoogleIcon(),
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  'assets/images/google_cloud.png',
+                  width: 32,
+                  height: 32,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(

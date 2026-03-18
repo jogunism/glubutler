@@ -90,13 +90,8 @@ class VisionService {
 
   static const MethodChannel _visionChannel = MethodChannel('vision_analysis');
 
-  /// 음식 사진인지 분석
+  /// 음식 사진인지 분석 (iOS: Vision Framework, Android: ML Kit)
   Future<FoodAnalysisResult> analyzeFoodPhoto(String filePath) async {
-    if (!Platform.isIOS) {
-      debugPrint('[VisionService] Platform not supported (iOS only)');
-      return FoodAnalysisResult(isFood: false, foodItems: [], confidence: 0.0);
-    }
-
     try {
       final result = await _visionChannel.invokeMethod('analyzeFoodPhoto', {
         'filePath': filePath,

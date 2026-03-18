@@ -15,6 +15,7 @@ import 'package:glu_butler/core/widgets/top_banner.dart';
 import 'package:glu_butler/core/widgets/modals/diary_input_modal.dart';
 import 'package:glu_butler/core/widgets/swipeable_card.dart';
 import 'package:glu_butler/models/diary_item.dart';
+import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/features/diary/diary_image_viewer.dart';
 
@@ -194,13 +195,13 @@ class DiaryScreenState extends State<DiaryScreen> {
 }
 
 class _DiaryImageWidget extends StatelessWidget {
-  final String filePath;
+  final DiaryFile diaryFile;
 
-  const _DiaryImageWidget({required this.filePath});
+  const _DiaryImageWidget({required this.diaryFile});
 
   @override
   Widget build(BuildContext context) {
-    final file = File(filePath);
+    final file = File(diaryFile.filePath);
 
     return FutureBuilder<bool>(
       future: file.exists(),
@@ -224,6 +225,28 @@ class _DiaryImageWidget extends StatelessWidget {
         }
 
         final fileExists = snapshot.data ?? false;
+
+        // 로컬 파일이 없지만 downloadUrl이 있으면 네트워크 이미지 사용
+        if (!fileExists && diaryFile.downloadUrl != null) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Image.network(
+              diaryFile.downloadUrl!,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: context.colors.divider,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(Icons.broken_image, color: context.colors.iconGrey),
+              ),
+            ),
+          );
+        }
 
         if (!fileExists) {
           return Container(
@@ -427,7 +450,7 @@ class _DiaryItemCardState extends State<_DiaryItemCard> {
                         initialIndex: index,
                       );
                     },
-                    child: _DiaryImageWidget(filePath: file.filePath),
+                    child: _DiaryImageWidget(diaryFile: file),
                   );
                 }).toList(),
               ),

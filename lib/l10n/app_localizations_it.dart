@@ -681,6 +681,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get readOnly => 'Solo lettura';
 
   @override
+  String get cloudBackup => 'Backup cloud';
+
+  @override
   String get workouts => 'Allenamenti';
 
   @override
@@ -751,16 +754,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get syncPeriod => 'Periodo di sincronizzazione';
 
   @override
-  String get syncPeriod1Week => '1 settimana';
-
-  @override
-  String get syncPeriod2Weeks => '2 settimane';
-
-  @override
   String get syncPeriod1Month => '1 mese';
 
   @override
   String get syncPeriod3Months => '3 mesi';
+
+  @override
+  String get syncPeriod6Months => '6 mesi';
 
   @override
   String get disconnected => 'Disconnesso da Apple Salute';
@@ -801,6 +801,13 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get initCheckingiCloud => 'Verifica sincronizzazione iCloud...';
+
+  @override
+  String get initCheckingGoogle => 'Verifica sincronizzazione Google...';
+
+  @override
+  String get initCheckingHealthConnect =>
+      'Verifica sincronizzazione Health Connect...';
 
   @override
   String get initLocalDatabase => 'Inizializzazione database locale...';
@@ -1168,6 +1175,20 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboardingHealthConnect => 'Collega';
 
   @override
+  String get hcNotInstalled =>
+      'Health Connect non è installato. Installalo per sincronizzare i dati sanitari.';
+
+  @override
+  String get hcNeedsUpdate =>
+      'Health Connect deve essere aggiornato per connettersi.';
+
+  @override
+  String get hcInstallFromPlayStore => 'Installa dal Play Store';
+
+  @override
+  String get hcUpdateFromPlayStore => 'Aggiorna dal Play Store';
+
+  @override
   String get onboardingReportTitle => 'Ricevi report glicemici';
 
   @override
@@ -1412,4 +1433,19 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get birthDate => 'Data di nascita';
+
+  @override
+  String get diaryAddMealToFeed => 'Aggiungi pasto al feed';
+
+  @override
+  String get mealWindow30min => '30 min';
+
+  @override
+  String get mealWindow1hour => '1 ora';
+
+  @override
+  String get mealWindow1hour30min => '1h 30min';
+
+  @override
+  String get mealWindow2hours => '2 ore';
 }

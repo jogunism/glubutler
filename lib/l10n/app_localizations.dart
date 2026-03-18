@@ -1406,6 +1406,12 @@ abstract class AppLocalizations {
   /// **'Read only'**
   String get readOnly;
 
+  /// No description provided for @cloudBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup'**
+  String get cloudBackup;
+
   /// No description provided for @workouts.
   ///
   /// In en, this message translates to:
@@ -1544,18 +1550,6 @@ abstract class AppLocalizations {
   /// **'Sync Period'**
   String get syncPeriod;
 
-  /// No description provided for @syncPeriod1Week.
-  ///
-  /// In en, this message translates to:
-  /// **'1 Week'**
-  String get syncPeriod1Week;
-
-  /// No description provided for @syncPeriod2Weeks.
-  ///
-  /// In en, this message translates to:
-  /// **'2 Weeks'**
-  String get syncPeriod2Weeks;
-
   /// No description provided for @syncPeriod1Month.
   ///
   /// In en, this message translates to:
@@ -1567,6 +1561,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'3 Months'**
   String get syncPeriod3Months;
+
+  /// No description provided for @syncPeriod6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'6 Months'**
+  String get syncPeriod6Months;
 
   /// No description provided for @disconnected.
   ///
@@ -1645,6 +1645,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Checking iCloud sync...'**
   String get initCheckingiCloud;
+
+  /// No description provided for @initCheckingGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking Google sync...'**
+  String get initCheckingGoogle;
+
+  /// No description provided for @initCheckingHealthConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking Health Connect sync...'**
+  String get initCheckingHealthConnect;
 
   /// No description provided for @initLocalDatabase.
   ///
@@ -2282,6 +2294,30 @@ abstract class AppLocalizations {
   /// **'Connect'**
   String get onboardingHealthConnect;
 
+  /// No description provided for @hcNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Connect is not installed. Install it to sync health data.'**
+  String get hcNotInstalled;
+
+  /// No description provided for @hcNeedsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Connect needs to be updated to connect.'**
+  String get hcNeedsUpdate;
+
+  /// No description provided for @hcInstallFromPlayStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Install from Play Store'**
+  String get hcInstallFromPlayStore;
+
+  /// No description provided for @hcUpdateFromPlayStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Update from Play Store'**
+  String get hcUpdateFromPlayStore;
+
   /// No description provided for @onboardingReportTitle.
   ///
   /// In en, this message translates to:
@@ -2725,6 +2761,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Date of Birth'**
   String get birthDate;
+
+  /// No description provided for @diaryAddMealToFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Feed as Meal'**
+  String get diaryAddMealToFeed;
+
+  /// No description provided for @mealWindow30min.
+  ///
+  /// In en, this message translates to:
+  /// **'30 min'**
+  String get mealWindow30min;
+
+  /// No description provided for @mealWindow1hour.
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour'**
+  String get mealWindow1hour;
+
+  /// No description provided for @mealWindow1hour30min.
+  ///
+  /// In en, this message translates to:
+  /// **'1h 30min'**
+  String get mealWindow1hour30min;
+
+  /// No description provided for @mealWindow2hours.
+  ///
+  /// In en, this message translates to:
+  /// **'2 hours'**
+  String get mealWindow2hours;
 }
 
 class _AppLocalizationsDelegate

@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database schema definition and migration logic
 class DatabaseSchema {
-  static const int version = 2;
+  static const int version = 3;
 
   // Table names
   static const String tableGlucose = 'glucose_records';
@@ -46,6 +46,10 @@ class DatabaseSchema {
       await db.execute(
           'ALTER TABLE $tableReports ADD COLUMN needs_improvement TEXT');
     }
+    if (oldVersion < 3) {
+      await db.execute(
+          'ALTER TABLE $tableMeal ADD COLUMN meal_window_minutes INTEGER NOT NULL DEFAULT 30');
+    }
   }
 
   // ============ Table Creation ============
@@ -71,7 +75,8 @@ class DatabaseSchema {
         diary_id TEXT,
         food_name TEXT,
         meal_time TEXT NOT NULL,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        meal_window_minutes INTEGER NOT NULL DEFAULT 30
       )
     ''');
   }
@@ -150,6 +155,7 @@ class DatabaseSchema {
         captured_at TEXT,
         file_size INTEGER,
         created_at TEXT NOT NULL,
+        download_url TEXT,
         FOREIGN KEY (diary_id) REFERENCES $tableDiary (id) ON DELETE CASCADE
       )
     ''');

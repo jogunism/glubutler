@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +9,8 @@ import 'package:glu_butler/core/theme/app_theme.dart';
 import 'package:glu_butler/core/navigation/app_routes.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/initialization_service.dart';
+import 'package:glu_butler/providers/feed_provider.dart';
+import 'package:glu_butler/providers/diary_provider.dart';
 import 'package:glu_butler/features/onboarding/onboarding_screen.dart' show kShowOnboarding;
 
 /// 스플래시/로딩 화면
@@ -145,6 +149,13 @@ class _SplashScreenState extends State<SplashScreen>
       debugPrint('[SplashScreen] Service Start Date: ${serviceStartDate?.toString() ?? "Not set"}');
       debugPrint('[SplashScreen] Is Trial User: $isTrialUser');
       debugPrint('[SplashScreen] Is Pro User: $isPro');
+
+      // Refresh providers so Firestore/iCloud-downloaded records are immediately visible
+      if (mounted) {
+        await context.read<FeedProvider>().refreshData();
+        await context.read<DiaryProvider>().refreshData();
+        debugPrint('[SplashScreen] Providers refreshed after sync');
+      }
     } catch (e) {
       debugPrint('[SplashScreen] Initialization error: $e');
     }
@@ -197,9 +208,9 @@ class _SplashScreenState extends State<SplashScreen>
       case InitializationStep.settings:
         return l10n.initLoadingSettings;
       case InitializationStep.healthSync:
-        return l10n.initCheckingHealth;
+        return Platform.isAndroid ? l10n.initCheckingHealthConnect : l10n.initCheckingHealth;
       case InitializationStep.iCloudSync:
-        return l10n.initCheckingiCloud;
+        return Platform.isAndroid ? l10n.initCheckingGoogle : l10n.initCheckingiCloud;
       case InitializationStep.localDatabase:
         return l10n.initLocalDatabase;
       case InitializationStep.notifications:

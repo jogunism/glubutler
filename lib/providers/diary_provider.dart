@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/repositories/diary_repository.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/analytics_service.dart';
 
@@ -123,38 +126,32 @@ class DiaryProvider extends ChangeNotifier {
     }
   }
 
-  /// iCloud에서 삭제 (백그라운드, 에러 무시)
+  /// 클라우드에서 삭제 (백그라운드, 에러 무시)
   void _deleteFromICloudIfEnabled(String entryId) {
-    if (_settingsService?.iCloudSyncEnabled != true) {
-      return;
+    if (_settingsService?.isCloudSyncEnabled != true) return;
+
+    if (Platform.isIOS) {
+      CloudKitService.deleteDiaryEntry(entryId).catchError((_) {});
+      CloudKitService.deleteMealRecordsByDiaryId(entryId).catchError((_) {});
+    } else {
+      final googleId = _settingsService?.userIdentity.googleId;
+      if (googleId == null || googleId.isEmpty) return;
+      FirestoreService.deleteDiaryEntry(googleId, entryId).catchError((_) {});
+      FirestoreService.deleteMealRecordsByDiaryId(googleId, entryId).catchError((_) {});
     }
-
-    // 다이어리 삭제
-    CloudKitService.deleteDiaryEntry(entryId).then((_) {
-    }).catchError((error) {
-      // 에러 무시 (로컬 삭제는 이미 성공했으므로)
-    });
-
-    // 관련 식사 기록도 삭제
-    CloudKitService.deleteMealRecordsByDiaryId(entryId).then((_) {
-    }).catchError((error) {
-      // 에러 무시
-    });
   }
 
-  /// iCloud 동기화 (백그라운드, 에러 무시)
+  /// 클라우드 동기화 (백그라운드, 에러 무시)
   void _syncToICloudIfEnabled(DiaryItem entry) {
+    if (_settingsService?.isCloudSyncEnabled != true) return;
 
-    // iCloud Sync가 활성화되어 있는지 확인
-    if (_settingsService?.iCloudSyncEnabled != true) {
-      return;
+    if (Platform.isIOS) {
+      CloudKitService.uploadDiaryEntry(entry).catchError((_) {});
+    } else {
+      final googleId = _settingsService?.userIdentity.googleId;
+      if (googleId == null || googleId.isEmpty) return;
+      FirestoreService.uploadDiaryEntry(googleId, entry).catchError((_) {});
     }
-
-    // 백그라운드에서 단일 엔트리 업로드
-    CloudKitService.uploadDiaryEntry(entry).then((_) {
-    }).catchError((error) {
-      // 에러 무시 (로컬 저장은 이미 성공했으므로)
-    });
   }
 
   /// 특정 날짜 범위의 일기 가져오기 (리포트용)

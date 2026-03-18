@@ -80,6 +80,7 @@ class RecordDao {
   }
 
   GlucoseRecord _mapToGlucose(Map<String, dynamic> map) {
+    final isFromHealthKit = (map['is_from_health_kit'] as int) == 1;
     return GlucoseRecord(
       id: map['id'] as String,
       value: map['value'] as double,
@@ -87,7 +88,8 @@ class RecordDao {
       timestamp: DateTime.parse(map['timestamp'] as String),
       mealContext: map['meal_context'] as String?,
       note: map['note'] as String?,
-      isFromHealthKit: (map['is_from_health_kit'] as int) == 1,
+      isFromHealthKit: isFromHealthKit,
+      sourceName: isFromHealthKit ? null : 'Glu Butler',
     );
   }
 

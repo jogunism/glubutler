@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,11 +35,11 @@ class _ReportPageState extends State<ReportPage> {
     setState(() => _isEnabling = true);
 
     try {
-      final googleSignIn = GoogleSignIn(scopes: ['email']);
-      final account = await googleSignIn.signIn();
-
-      if (account == null) {
-        // 사용자가 로그인 취소
+      final GoogleSignInAccount account;
+      try {
+        account = await GoogleSignIn.instance.authenticate();
+      } on GoogleSignInException {
+        // 사용자가 로그인 취소 또는 실패
         if (mounted) {
           setState(() => _isEnabling = false);
           _showErrorAlert(AppLocalizations.of(context)!.googleNotSignedIn);
@@ -49,10 +48,11 @@ class _ReportPageState extends State<ReportPage> {
       }
 
       // Firebase Auth에 Google 계정으로 로그인 (Firestore 접근 권한 획득)
-      final googleAuth = await account.authentication;
+      final idToken = account.authentication.idToken;
+      final authz = await account.authorizationClient.authorizeScopes(['email']);
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: authz.accessToken,
+        idToken: idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -76,6 +76,12 @@ class _ReportPageState extends State<ReportPage> {
 
         final reportCount = await FirestoreService.downloadReports(googleId);
         debugPrint('[ReportPage] Downloaded $reportCount reports');
+
+        final glucoseCount = await FirestoreService.downloadGlucoseRecords(googleId);
+        debugPrint('[ReportPage] Downloaded $glucoseCount glucose records');
+
+        final insulinCount = await FirestoreService.downloadInsulinRecords(googleId);
+        debugPrint('[ReportPage] Downloaded $insulinCount insulin records');
 
         await AnalyticsService.logICloudEnabled(success: true);
 
@@ -256,20 +262,16 @@ class _ReportPageState extends State<ReportPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (Platform.isIOS)
-                      const Icon(
-                        Icons.cloud,
+                      Icon(
+                        CupertinoIcons.cloud,
                         size: 20,
                         color: AppTheme.iconCyan,
                       )
                     else
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.asset(
-                          'assets/images/google.png',
-                          width: 20,
-                          height: 20,
-                          fit: BoxFit.cover,
-                        ),
+                      Image.asset(
+                        'assets/images/google_cloud.png',
+                        width: 20,
+                        height: 20,
                       ),
                     const SizedBox(width: 8),
                     Text(

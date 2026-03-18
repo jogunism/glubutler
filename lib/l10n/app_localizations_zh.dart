@@ -663,6 +663,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get readOnly => '只读';
 
   @override
+  String get cloudBackup => '云备份';
+
+  @override
   String get workouts => '体能训练';
 
   @override
@@ -732,16 +735,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncPeriod => '同步周期';
 
   @override
-  String get syncPeriod1Week => '1周';
-
-  @override
-  String get syncPeriod2Weeks => '2周';
-
-  @override
   String get syncPeriod1Month => '1个月';
 
   @override
   String get syncPeriod3Months => '3个月';
+
+  @override
+  String get syncPeriod6Months => '6个月';
 
   @override
   String get disconnected => '已断开与 Apple 健康的连接';
@@ -782,6 +782,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get initCheckingiCloud => '正在检查 iCloud 同步...';
+
+  @override
+  String get initCheckingGoogle => '正在检查 Google 同步...';
+
+  @override
+  String get initCheckingHealthConnect => '正在检查 Health Connect 同步...';
 
   @override
   String get initLocalDatabase => '正在初始化本地数据库...';
@@ -1124,6 +1130,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingHealthConnect => '连接';
 
   @override
+  String get hcNotInstalled => '未安装 Health Connect。请安装以同步健康数据。';
+
+  @override
+  String get hcNeedsUpdate => '需要更新 Health Connect 才能连接。';
+
+  @override
+  String get hcInstallFromPlayStore => '从 Play Store 安装';
+
+  @override
+  String get hcUpdateFromPlayStore => '从 Play Store 更新';
+
+  @override
   String get onboardingReportTitle => '接收血糖报告';
 
   @override
@@ -1344,4 +1362,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get birthDate => '出生日期';
+
+  @override
+  String get diaryAddMealToFeed => '添加到动态作为饮食';
+
+  @override
+  String get mealWindow30min => '30分钟';
+
+  @override
+  String get mealWindow1hour => '1小时';
+
+  @override
+  String get mealWindow1hour30min => '1小时30分';
+
+  @override
+  String get mealWindow2hours => '2小时';
 }

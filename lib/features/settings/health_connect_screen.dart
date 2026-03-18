@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
@@ -27,6 +28,11 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // 화면 첫 진입 시 실제 권한 상태 확인 (새로고침 없이도 최신 상태 반영)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<FeedProvider>();
+      _onRefresh(context, provider, AppLocalizations.of(context)!);
+    });
   }
 
   @override
@@ -124,13 +130,14 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
 
   Widget _buildHeroSection(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
+    final heroColor = Platform.isAndroid ? AppTheme.iconBlue : AppTheme.iconPink;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.iconPink.withValues(alpha: 0.1),
-            AppTheme.iconPink.withValues(alpha: 0.05),
+            heroColor.withValues(alpha: 0.1),
+            heroColor.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -140,29 +147,44 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon
+          // Icon (platform-specific)
           Container(
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: context.colors.card,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.iconPink.withValues(alpha: 0.2),
+                  color: Colors.grey.withValues(alpha: 0.25),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
               ],
             ),
-            child: const Align(
-              alignment: Alignment(0.35, -0.35),
-              child: Icon(
-                CupertinoIcons.heart_fill,
-                color: AppTheme.iconPink,
-                size: 24,
-              ),
-            ),
+            child: Platform.isAndroid
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.asset(
+                      'assets/images/health_connect.png',
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Stack(
+                    children: [
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Icon(
+                          CupertinoIcons.heart_fill,
+                          color: AppTheme.iconPink,
+                          size: 28,
+                        ),
+                      ),
+                    ],
+                  ),
           ),
           const SizedBox(height: 20),
           // Title
@@ -213,13 +235,14 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
         category: HealthDataCategory.bloodGlucose,
         isWriteType: true,
       ),
+      // iOS: HealthKit read/write, Android: Google Cloud backup (Health Connect doesn't support insulin)
       _DataTypeItem(
         icon: Icons.vaccines,
         title: l10n.insulin,
-        subtitle: l10n.readWrite,
+        subtitle: Platform.isAndroid ? l10n.cloudBackup : l10n.readWrite,
         color: AppTheme.iconPurple,
         category: HealthDataCategory.insulin,
-        isWriteType: true,
+        isWriteType: !Platform.isAndroid,
       ),
     ];
 
@@ -273,14 +296,16 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
         category: HealthDataCategory.steps,
         isWriteType: false,
       ),
-      _DataTypeItem(
-        icon: Icons.self_improvement,
-        title: l10n.mindfulness,
-        subtitle: l10n.readOnly,
-        color: AppTheme.iconTeal,
-        category: HealthDataCategory.mindfulness,
-        isWriteType: false,
-      ),
+      // Mindfulness not available in Health Connect SDK (MindfulnessSessionRecord absent)
+      if (!Platform.isAndroid)
+        _DataTypeItem(
+          icon: Icons.self_improvement,
+          title: l10n.mindfulness,
+          subtitle: l10n.readOnly,
+          color: AppTheme.iconTeal,
+          category: HealthDataCategory.mindfulness,
+          isWriteType: false,
+        ),
     ];
 
     return Container(
@@ -392,21 +417,24 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
 
     String getPeriodLabel(int days) {
       switch (days) {
-        case AppConstants.syncPeriod1Week:
-          return l10n.syncPeriod1Week;
-        case AppConstants.syncPeriod2Weeks:
-          return l10n.syncPeriod2Weeks;
         case AppConstants.syncPeriod1Month:
           return l10n.syncPeriod1Month;
         case AppConstants.syncPeriod3Months:
           return l10n.syncPeriod3Months;
+        case AppConstants.syncPeriod6Months:
+          return l10n.syncPeriod6Months;
         default:
-          return l10n.syncPeriod1Week;
+          return l10n.syncPeriod1Month;
       }
     }
 
-    // AdaptivePopupMenuButton용 아이템 리스트 생성 (짧은 기간부터)
+    // AdaptivePopupMenuButton용 아이템 리스트 생성
     final items = [
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod6Months,
+        label: l10n.syncPeriod6Months,
+        icon: currentPeriod == AppConstants.syncPeriod6Months ? 'checkmark' : null,
+      ),
       AdaptivePopupMenuItem<int>(
         value: AppConstants.syncPeriod3Months,
         label: l10n.syncPeriod3Months,
@@ -416,16 +444,6 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
         value: AppConstants.syncPeriod1Month,
         label: l10n.syncPeriod1Month,
         icon: currentPeriod == AppConstants.syncPeriod1Month ? 'checkmark' : null,
-      ),
-      AdaptivePopupMenuItem<int>(
-        value: AppConstants.syncPeriod2Weeks,
-        label: l10n.syncPeriod2Weeks,
-        icon: currentPeriod == AppConstants.syncPeriod2Weeks ? 'checkmark' : null,
-      ),
-      AdaptivePopupMenuItem<int>(
-        value: AppConstants.syncPeriod1Week,
-        label: l10n.syncPeriod1Week,
-        icon: currentPeriod == AppConstants.syncPeriod1Week ? 'checkmark' : null,
       ),
     ];
 
@@ -577,13 +595,18 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
   }
 
   Future<void> _openHealthApp(BuildContext context, AppLocalizations l10n) async {
-    // Try to open the Health app directly
-    final healthUri = Uri.parse('x-apple-health://');
+    if (Platform.isAndroid) {
+      try {
+        await const MethodChannel('custom_healthkit').invokeMethod('openHealthConnectSettings');
+      } catch (_) {}
+      return;
+    }
 
+    // iOS: Try to open the Health app directly
+    final healthUri = Uri.parse('x-apple-health://');
     if (await canLaunchUrl(healthUri)) {
       await launchUrl(healthUri);
     } else {
-      // Fallback: Open iOS Settings app
       final settingsUri = Uri.parse('app-settings:');
       if (await canLaunchUrl(settingsUri)) {
         await launchUrl(settingsUri);

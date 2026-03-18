@@ -42,7 +42,7 @@ class GlucoseInputModal extends StatefulWidget {
 
 class _GlucoseInputModalState extends State<GlucoseInputModal> {
   final _glucoseController = TextEditingController();
-  String _selectedTiming = 'fasting'; // fasting, beforeMeal, afterMeal
+  String _selectedTiming = 'fasting'; // fasting, before_meal, after_meal
   DateTime _selectedTime = DateTime.now();
 
   @override
@@ -222,13 +222,13 @@ class _GlucoseInputModalState extends State<GlucoseInputModal> {
                       _buildTimingChip(
                         context,
                         label: l10n.beforeMeal,
-                        value: 'beforeMeal',
+                        value: 'before_meal',
                       ),
                       const SizedBox(width: 8),
                       _buildTimingChip(
                         context,
                         label: l10n.afterMeal,
-                        value: 'afterMeal',
+                        value: 'after_meal',
                       ),
                     ],
                   ),

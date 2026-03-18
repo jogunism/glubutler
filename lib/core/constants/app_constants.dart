@@ -57,11 +57,10 @@ class AppConstants {
   static const String themeModeDark = 'dark';
 
   // Sync Period (days)
-  static const int syncPeriod1Week = 7;
-  static const int syncPeriod2Weeks = 14;
   static const int syncPeriod1Month = 30;
   static const int syncPeriod3Months = 90;
-  static const int defaultSyncPeriod = syncPeriod1Week;
+  static const int syncPeriod6Months = 180;
+  static const int defaultSyncPeriod = syncPeriod1Month;
 
   // Storage Keys
   static const String keyLanguage = 'language';

@@ -420,20 +420,17 @@ class _DatePickerModalState extends State<DatePickerModal> {
                 final syncPeriod = settings.syncPeriod;
                 String periodText;
                 switch (syncPeriod) {
-                  case 7:
-                    periodText = l10n.syncPeriod1Week;
-                    break;
-                  case 14:
-                    periodText = l10n.syncPeriod2Weeks;
-                    break;
                   case 30:
                     periodText = l10n.syncPeriod1Month;
                     break;
                   case 90:
                     periodText = l10n.syncPeriod3Months;
                     break;
+                  case 180:
+                    periodText = l10n.syncPeriod6Months;
+                    break;
                   default:
-                    periodText = l10n.syncPeriod1Week;
+                    periodText = l10n.syncPeriod1Month;
                 }
 
                 final message = l10n.dataSyncPeriodInfo(periodText);

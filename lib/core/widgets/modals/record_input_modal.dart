@@ -55,7 +55,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
   final _glucoseController = TextEditingController();
   final _glucoseFocusNode = FocusNode();
   bool _glucoseHasFocus = false;
-  String _selectedTiming = 'fasting'; // fasting, beforeMeal, afterMeal
+  String _selectedTiming = 'fasting'; // fasting, before_meal, after_meal
   bool _isSaving = false;
   DateTime _selectedDateTime = DateTime.now();
 
@@ -476,13 +476,13 @@ class _RecordInputModalState extends State<RecordInputModal> {
                   _buildTimingChip(
                     context,
                     label: l10n.beforeMeal,
-                    value: 'beforeMeal',
+                    value: 'before_meal',
                   ),
                   const SizedBox(width: 8),
                   _buildTimingChip(
                     context,
                     label: l10n.afterMeal,
-                    value: 'afterMeal',
+                    value: 'after_meal',
                   ),
                 ],
               ),
