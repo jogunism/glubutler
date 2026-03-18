@@ -78,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen>
   int? _comparisonPeriodIndex;
   List<GlucoseRecord> _comparisonRecords = [];
   bool _isLoadingComparison = false;
+  final List<GlobalKey> _chipKeys = List.generate(7, (_) => GlobalKey());
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -188,6 +189,7 @@ class _HomeScreenState extends State<HomeScreen>
         _comparisonPeriodIndex = available.first;
         _comparisonRecords = [];
       });
+      _scrollToChip(available.first);
       _loadComparisonData(available.first);
     } else {
       final pos = available.indexOf(_comparisonPeriodIndex!);
@@ -202,9 +204,32 @@ class _HomeScreenState extends State<HomeScreen>
           _comparisonPeriodIndex = next;
           _comparisonRecords = [];
         });
+        _scrollToChip(next);
         _loadComparisonData(next);
       }
     }
+  }
+
+  void _scrollToChip(int periodIndex) {
+    final syncPeriod = context.read<SettingsService>().syncPeriod;
+    final available = [
+      for (int i = 0; i < _comparisonPeriods.length; i++)
+        if (_comparisonPeriods[i].$2 <= syncPeriod) i,
+    ];
+    final isLast = available.isNotEmpty && available.last == periodIndex;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final key = _chipKeys[periodIndex];
+      final ctx = key.currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(
+          ctx,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          alignment: isLast ? 1.0 : 0.5,
+        );
+      }
+    });
   }
 
   /// 비교 기간 데이터 로드
@@ -438,11 +463,11 @@ class _HomeScreenState extends State<HomeScreen>
 
               // 시간대별 혈당 차트
               _buildChartCard(context, l10n),
-              // Android: Positioned.fill이 탭바 영역을 이미 제외하므로 여백만 추가
-              // iOS: 플로팅 탭바가 콘텐츠 위를 덮으므로 탭바 높이 + safe area만큼 확보
+              // Android: 탭바(56) + safe area + 여백 직접 확보 (중첩 Scaffold로 Positioned.fill 제약이 불안정)
+              // iOS: 플로팅 탭바(~64) + bottomPadding + 여백
               SizedBox(
                 height: Platform.isAndroid
-                    ? 24
+                    ? 56 + MediaQuery.of(context).padding.bottom + 16
                     : 80 + MediaQuery.of(context).padding.bottom,
               ),
             ]),
@@ -578,12 +603,15 @@ class _HomeScreenState extends State<HomeScreen>
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      clipBehavior: Clip.none,
+      padding: const EdgeInsets.only(right: 4),
       child: Row(
         children: available.map((i) {
           final label = _getPeriodLabel(i, l10n);
           final color = _periodColors[i];
           final isSelected = _comparisonPeriodIndex == i;
           return Padding(
+              key: _chipKeys[i],
               padding: const EdgeInsets.only(right: 12),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
