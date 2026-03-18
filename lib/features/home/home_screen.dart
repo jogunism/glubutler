@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -437,7 +438,13 @@ class _HomeScreenState extends State<HomeScreen>
 
               // 시간대별 혈당 차트
               _buildChartCard(context, l10n),
-              SizedBox(height: 80 + MediaQuery.of(context).padding.bottom), // 탭바 + 기종별 safe area
+              // Android: Positioned.fill이 탭바 영역을 이미 제외하므로 여백만 추가
+              // iOS: 플로팅 탭바가 콘텐츠 위를 덮으므로 탭바 높이 + safe area만큼 확보
+              SizedBox(
+                height: Platform.isAndroid
+                    ? 24
+                    : 80 + MediaQuery.of(context).padding.bottom,
+              ),
             ]),
           ),
         ),
