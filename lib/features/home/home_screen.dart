@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/navigation/main_screen.dart';
@@ -58,8 +57,26 @@ class _HomeScreenState extends State<HomeScreen>
   final ScrollController _chartScrollController = ScrollController();
   bool _isChartTouching = false;
 
-  // 차트 크기 설정 (기본값: small, 메모리상으로만 저장)
-  String _chartSize = 'small'; // 'large' or 'small'
+  // 차트 줌 설정 (60 = 1시간단위/기본, 10 = 최대확대/10분단위)
+  double _minutesPerBar = 60.0;
+  double _pinchStartMinutesPerBar = 60.0;
+  double _pinchStartDistance = 0.0;
+  final Map<int, Offset> _activePointers = {};
+
+  // 비교 기간 오버레이
+  // (label, startDaysAgo, endDaysAgo) — 선택된 날짜 기준
+  static const _comparisonPeriods = [
+    ('이번주', 7, 1),
+    ('지난주', 14, 8),
+    ('3주전', 21, 15),
+    ('1달전', 37, 31),
+    ('2달전', 67, 61),
+    ('3달전', 90, 84),
+    ('6개월전', 180, 174),
+  ];
+  int? _comparisonPeriodIndex;
+  List<GlucoseRecord> _comparisonRecords = [];
+  bool _isLoadingComparison = false;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -154,6 +171,62 @@ class _HomeScreenState extends State<HomeScreen>
     } catch (e) {
       debugPrint('[HomeScreen] Error loading selected date data: $e');
     }
+  }
+
+  /// 차트 탭 시 비교 기간 순환 (없음 → 이번주 → 지난주 → ... → 없음)
+  void _cycleComparisonPeriod() {
+    final syncPeriod = context.read<SettingsService>().syncPeriod;
+    final available = [
+      for (int i = 0; i < _comparisonPeriods.length; i++)
+        if (_comparisonPeriods[i].$2 <= syncPeriod) i,
+    ];
+    if (available.isEmpty) return;
+
+    if (_comparisonPeriodIndex == null) {
+      setState(() {
+        _comparisonPeriodIndex = available.first;
+        _comparisonRecords = [];
+      });
+      _loadComparisonData(available.first);
+    } else {
+      final pos = available.indexOf(_comparisonPeriodIndex!);
+      if (pos == -1 || pos == available.length - 1) {
+        setState(() {
+          _comparisonPeriodIndex = null;
+          _comparisonRecords = [];
+        });
+      } else {
+        final next = available[pos + 1];
+        setState(() {
+          _comparisonPeriodIndex = next;
+          _comparisonRecords = [];
+        });
+        _loadComparisonData(next);
+      }
+    }
+  }
+
+  /// 비교 기간 데이터 로드
+  Future<void> _loadComparisonData(int periodIndex) async {
+    final (_, startDaysAgo, endDaysAgo) = _comparisonPeriods[periodIndex];
+    setState(() => _isLoadingComparison = true);
+
+    final feedProvider = context.read<FeedProvider>();
+    final records = <GlucoseRecord>[];
+
+    for (int daysAgo = endDaysAgo; daysAgo <= startDaysAgo; daysAgo++) {
+      final date = _selectedDate.subtract(Duration(days: daysAgo));
+      try {
+        final dayRecords = await feedProvider.getHomeGraphData(date);
+        records.addAll(dayRecords);
+      } catch (_) {}
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _comparisonRecords = records;
+      _isLoadingComparison = false;
+    });
   }
 
   /// 건강 앱 데이터 로드 (수면, 운동)
@@ -364,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen>
 
               // 시간대별 혈당 차트
               _buildChartCard(context, l10n),
-              const SizedBox(height: 100), // 플로팅 탭바 높이만큼 여백
+              SizedBox(height: 80 + MediaQuery.of(context).padding.bottom), // 탭바 + 기종별 safe area
             ]),
           ),
         ),
@@ -388,66 +461,165 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       child: Column(
         children: [
-          // 타이틀 + 차트 크기 선택
-          Padding(
-            padding: const EdgeInsets.only(left: 0),
-            child: Row(
-              children: [
-                Text(
-                  l10n.todaysGlucose,
-                  style: context.textStyles.tileTitle.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+          // 타이틀
+          Row(
+            children: [
+              Text(
+                l10n.todaysGlucose,
+                style: context.textStyles.tileTitle.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(right: 0),
-                  child: MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      platformBrightness: Theme.of(context).brightness,
-                    ),
-                    child: AdaptivePopupMenuButton.widget<String>(
-                      items: [
-                        AdaptivePopupMenuItem<String>(
-                          value: 'large',
-                          label: l10n.chartSizeLarge,
-                        ),
-                        AdaptivePopupMenuItem<String>(
-                          value: 'small',
-                          label: l10n.chartSizeSmall,
-                        ),
-                      ],
-                      onSelected: (index, item) {
-                        if (item.value != null) {
-                          setState(() {
-                            _chartSize = item.value!;
-                          });
-                        }
-                      },
-                      child: Text(
-                        _chartSize == 'large'
-                            ? l10n.chartSizeLarge
-                            : l10n.chartSizeSmall,
-                        style: context.textStyles.tileSubtitle,
-                      ),
-                    ),
-                  ),
+              ),
+              const Spacer(),
+              Text(
+                l10n.tapToCompare,
+                style: context.textStyles.tileSubtitle.copyWith(
+                  fontSize: 11,
+                  color: context.colors.textSecondary.withValues(alpha: 0.45),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
-          // 차트 (스크롤 가능)
+          // 차트 (스크롤 가능, 핀치로 확대/축소)
           SizedBox(
             height: 200,
-            child: AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return _buildGlucoseChart(context, l10n);
+            child: Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (event) {
+                _activePointers[event.pointer] = event.localPosition;
+                if (_activePointers.length == 2) {
+                  final positions = _activePointers.values.toList();
+                  _pinchStartDistance = (positions[0] - positions[1]).distance;
+                  _pinchStartMinutesPerBar = _minutesPerBar;
+                }
               },
+              onPointerMove: (event) {
+                if (!_activePointers.containsKey(event.pointer)) return;
+                _activePointers[event.pointer] = event.localPosition;
+                if (_activePointers.length == 2 && _pinchStartDistance > 0) {
+                  final positions = _activePointers.values.toList();
+                  final currentDistance = (positions[0] - positions[1]).distance;
+                  final scale = currentDistance / _pinchStartDistance;
+                  final newMinutes = (_pinchStartMinutesPerBar / scale).clamp(10.0, 60.0);
+                  if ((newMinutes - _minutesPerBar).abs() > 0.2) {
+                    setState(() {
+                      _minutesPerBar = newMinutes;
+                      _touchedBarIndex = null;
+                    });
+                  }
+                }
+              },
+              onPointerUp: (event) {
+                _activePointers.remove(event.pointer);
+                if (_activePointers.length < 2) _pinchStartDistance = 0.0;
+              },
+              onPointerCancel: (event) {
+                _activePointers.remove(event.pointer);
+                if (_activePointers.length < 2) _pinchStartDistance = 0.0;
+              },
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return _buildGlucoseChart(context, l10n);
+                },
+              ),
             ),
           ),
+          const SizedBox(height: 12),
+          // 비교 기간 칩
+          _buildComparisonChips(context, l10n),
         ],
+      ),
+    );
+  }
+
+  // 기간별 고유 색상
+  static const _periodColors = [
+    Color(0xFF4A90D9), // 이번주 - 파랑
+    Color(0xFF4CAF50), // 지난주 - 초록
+    Color(0xFFFF9800), // 3주전  - 주황
+    Color(0xFF9C27B0), // 1달전  - 보라
+    Color(0xFF00BCD4), // 2달전  - 청록
+    Color(0xFFF44336), // 3달전  - 빨강
+    Color(0xFFFF8F00), // 6개월전 - 황금
+  ];
+
+  String _getPeriodLabel(int index, AppLocalizations l10n) {
+    switch (index) {
+      case 0: return l10n.compThisWeek;
+      case 1: return l10n.compLastWeek;
+      case 2: return l10n.comp3WeeksAgo;
+      case 3: return l10n.comp1MonthAgo;
+      case 4: return l10n.comp2MonthsAgo;
+      case 5: return l10n.comp3MonthsAgo;
+      case 6: return l10n.comp6MonthsAgo;
+      default: return _comparisonPeriods[index].$1;
+    }
+  }
+
+  Widget _buildComparisonChips(BuildContext context, AppLocalizations l10n) {
+    final settings = context.watch<SettingsService>();
+    final syncPeriod = settings.syncPeriod;
+
+    final available = [
+      for (int i = 0; i < _comparisonPeriods.length; i++)
+        if (_comparisonPeriods[i].$2 <= syncPeriod) i,
+    ];
+
+    if (available.isEmpty) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: available.map((i) {
+          final label = _getPeriodLabel(i, l10n);
+          final color = _periodColors[i];
+          final isSelected = _comparisonPeriodIndex == i;
+          return Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelected
+                          ? color
+                          : color.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  _isLoadingComparison && isSelected
+                      ? SizedBox(
+                          width: 32,
+                          height: 10,
+                          child: LinearProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            color: color.withValues(alpha: 0.5),
+                            minHeight: 1.5,
+                          ),
+                        )
+                      : Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? color
+                                : context.colors.textSecondary
+                                    .withValues(alpha: 0.4),
+                          ),
+                        ),
+                ],
+              ),
+            );
+        }).toList(),
       ),
     );
   }
@@ -475,26 +647,17 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
 
-    // _chartSize에 따라 데이터 그룹화 방식 변경
+    // _minutesPerBar에 따라 데이터 그룹화 (10분~60분 단위)
+    // 5분 단위로 스냅: 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60
+    final minPerBar = ((_minutesPerBar / 5).round() * 5).clamp(10, 60);
+    final totalBars = (24 * 60 / minPerBar).round();
     final timeData = <int, List<double>>{};
-    final totalBars = _chartSize == 'large' ? 96 : 24;
-
-    if (_chartSize == 'large') {
-      // 15분 단위로 데이터 그룹화 (0~95, 총 96개 구간 = 24시간 * 4)
-      for (final record in _todayRecords) {
-        final hour = record.timestamp.hour;
-        final minute = record.timestamp.minute;
-        final quarterHourIndex = hour * 4 + (minute ~/ 15); // 0~95
-        final value = record.valueIn('mg/dL');
-        timeData.putIfAbsent(quarterHourIndex, () => []).add(value);
-      }
-    } else {
-      // 1시간 단위로 데이터 그룹화 (0~23, 총 24개 구간)
-      for (final record in _todayRecords) {
-        final hour = record.timestamp.hour; // 0~23
-        final value = record.valueIn('mg/dL');
-        timeData.putIfAbsent(hour, () => []).add(value);
-      }
+    for (final record in _todayRecords) {
+      final hour = record.timestamp.hour;
+      final minute = record.timestamp.minute;
+      final index = (hour * 60 + minute) ~/ minPerBar;
+      final value = record.valueIn('mg/dL');
+      timeData.putIfAbsent(index, () => []).add(value);
     }
 
     // 각 구간의 평균값 계산
@@ -541,9 +704,27 @@ class _HomeScreenState extends State<HomeScreen>
               item.type == FeedItemType.insulin);
     }).toList();
 
-    // 화면 너비 계산 (크게일 때만)
+    // 화면 너비 계산: 1.5제곱으로 줌 → 막대 슬롯도 같이 커짐
+    // 60min: 1x, 30min: 2.8x, 10min: 14.7x
     final screenWidth = MediaQuery.of(context).size.width;
-    final chartWidth = screenWidth * 2 - 35; // 크게: 2배 너비, 스크롤
+    final availableWidth = screenWidth - 35; // Y축 너비 제외
+    final zoomFactor = 60.0 / minPerBar;
+    final chartWidth = availableWidth * math.pow(zoomFactor, 1.5);
+
+    // 비교 기간 슬롯별 평균 계산
+    final compAverage = <int, double>{};
+    if (_comparisonRecords.isNotEmpty) {
+      final compTimeData = <int, List<double>>{};
+      for (final record in _comparisonRecords) {
+        final hour = record.timestamp.hour;
+        final minute = record.timestamp.minute;
+        final index = (hour * 60 + minute) ~/ minPerBar;
+        compTimeData.putIfAbsent(index, () => []).add(record.valueIn('mg/dL'));
+      }
+      compTimeData.forEach((index, values) {
+        compAverage[index] = values.reduce((a, b) => a + b) / values.length;
+      });
+    }
 
     // 차트 위젯 생성
     final chartStack = Stack(
@@ -565,12 +746,13 @@ class _HomeScreenState extends State<HomeScreen>
             touchedBarIndex: _touchedBarIndex,
             touchLineColor: context.colors.textPrimary,
             totalBars: totalBars,
-            isLargeChart: _chartSize == 'large',
+            minutesPerBar: minPerBar.toDouble(),
           ),
           child: Container(),
         ),
         // 차트 레이어
         BarChart(
+                    key: ValueKey(minPerBar),
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
                       maxY: chartMaxY,
@@ -609,8 +791,14 @@ class _HomeScreenState extends State<HomeScreen>
                         enabled: true,
                         touchCallback: (FlTouchEvent event, barTouchResponse) {
                           setState(() {
-                            if (event is FlTapUpEvent ||
-                                event is FlPanEndEvent ||
+                            if (event is FlTapUpEvent) {
+                              _touchedBarIndex = null;
+                              _isChartTouching = false;
+                              // 빈 공간 탭 시 비교 기간 순환
+                              if (barTouchResponse?.spot == null) {
+                                _cycleComparisonPeriod();
+                              }
+                            } else if (event is FlPanEndEvent ||
                                 event is FlLongPressEnd) {
                               _touchedBarIndex = null;
                               _isChartTouching = false;
@@ -623,6 +811,7 @@ class _HomeScreenState extends State<HomeScreen>
                           });
                         },
                         touchTooltipData: BarTouchTooltipData(
+                          fitInsideVertically: true,
                           tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
                           getTooltipColor: (group) {
                             if (isDarkMode) {
@@ -640,17 +829,10 @@ class _HomeScreenState extends State<HomeScreen>
                             final index = group.x.toInt();
                             final value = rod.toY;
 
-                            String timeText;
-                            if (_chartSize == 'large') {
-                              // 15분 단위
-                              final hour = index ~/ 4;
-                              final quarter = index % 4;
-                              final minute = quarter * 15;
-                              timeText = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-                            } else {
-                              // 1시간 단위
-                              timeText = '${index.toString().padLeft(2, '0')}:00';
-                            }
+                            final totalMinutes = index * minPerBar;
+                            final hour = totalMinutes ~/ 60;
+                            final minute = totalMinutes % 60;
+                            final timeText = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
                             return BarTooltipItem(
                               '$timeText\n',
@@ -688,37 +870,26 @@ class _HomeScreenState extends State<HomeScreen>
                             getTitlesWidget: (value, meta) {
                               final index = value.toInt();
 
-                              if (_chartSize == 'large') {
-                                // 15분 단위: index ~/ 4 = hour
-                                final hour = index ~/ 4;
-                                // 0, 3, 6, 9, 12, 15, 18, 21시 표시 (각 시간의 첫 15분)
-                                if (hour % 3 == 0 && index % 4 == 0) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      hour.toString().padLeft(2, '0'),
-                                      style: TextStyle(
-                                        color: context.colors.textSecondary,
-                                        fontSize: 10,
-                                      ),
+                              // 항상 3바마다 레이블 → 보이는 영역에 항상 ~8개 유지
+                              // 60분/바: 3바 = 3시간, 10분/바: 3바 = 30분
+                              if (index % 3 == 0) {
+                                final totalMinutes = index * minPerBar;
+                                if (totalMinutes >= 1440) return const SizedBox.shrink();
+                                final hour = totalMinutes ~/ 60;
+                                final minute = totalMinutes % 60;
+                                final label = minute == 0
+                                    ? hour.toString().padLeft(2, '0')
+                                    : '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    label,
+                                    style: TextStyle(
+                                      color: context.colors.textSecondary,
+                                      fontSize: 10,
                                     ),
-                                  );
-                                }
-                              } else {
-                                // 1시간 단위: index = hour
-                                // 0, 3, 6, 9, 12, 15, 18, 21시 표시
-                                if (index % 3 == 0) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      index.toString().padLeft(2, '0'),
-                                      style: TextStyle(
-                                        color: context.colors.textSecondary,
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  );
-                                }
+                                  ),
+                                );
                               }
                               return const SizedBox.shrink();
                             },
@@ -747,7 +918,8 @@ class _HomeScreenState extends State<HomeScreen>
                       borderData: FlBorderData(show: false),
                       barGroups: List.generate(totalBars, (index) {
                         final value = timeAverage[index];
-                        final barWidth = _chartSize == 'large' ? 4.0 : 8.0;
+                        // 슬롯의 55% 너비, 최소 6px ~ 최대 22px
+                        final barWidth = (chartWidth / totalBars * 0.55).clamp(6.0, 22.0);
 
                         if (value == null) {
                           // 데이터가 없는 구간
@@ -779,6 +951,18 @@ class _HomeScreenState extends State<HomeScreen>
                       }),
                     ),
                   ),
+        // 비교 기간 오버레이 라인
+        if (compAverage.isNotEmpty)
+          CustomPaint(
+            painter: _ComparisonLinePainter(
+              compAverage: compAverage,
+              chartMinY: chartMinY,
+              chartMaxY: chartMaxY,
+              totalBars: totalBars,
+              color: _HomeScreenState._periodColors[_comparisonPeriodIndex!],
+            ),
+            child: Container(),
+          ),
       ],
     );
 
@@ -802,9 +986,9 @@ class _HomeScreenState extends State<HomeScreen>
             ],
           ),
         ),
-        // 차트 영역
+        // 차트 영역 (줌인시 스크롤 가능)
         Expanded(
-          child: _chartSize == 'large'
+          child: minPerBar < 60
               ? SingleChildScrollView(
                   controller: _chartScrollController,
                   scrollDirection: Axis.horizontal,
@@ -816,7 +1000,7 @@ class _HomeScreenState extends State<HomeScreen>
                     child: chartStack,
                   ),
                 )
-              : chartStack, // 작게: 스크롤 없이
+              : chartStack, // 기본(60분단위): 스크롤 없이
         ),
       ],
     );
@@ -1560,7 +1744,7 @@ class _EventBackgroundPainter extends CustomPainter {
   final int? touchedBarIndex;
   final Color touchLineColor;
   final int totalBars;
-  final bool isLargeChart;
+  final double minutesPerBar;
 
   _EventBackgroundPainter({
     required this.events,
@@ -1575,7 +1759,7 @@ class _EventBackgroundPainter extends CustomPainter {
     required this.touchedBarIndex,
     required this.touchLineColor,
     required this.totalBars,
-    required this.isLargeChart,
+    required this.minutesPerBar,
   });
 
   @override
@@ -1596,18 +1780,10 @@ class _EventBackgroundPainter extends CustomPainter {
       double durationInBars;
       double halfWidth;
 
-      if (isLargeChart) {
-        // 15분 단위 (96개 구간)
-        eventIndex =
-            eventHour * 4 + (eventMinute / 15.0) + (eventSecond / 3600.0);
-        durationInBars = duration * 4; // 지속시간을 15분 단위로 변환
-        halfWidth = (durationInBars / 2) * 0.5;
-      } else {
-        // 1시간 단위 (24개 구간)
-        eventIndex = eventHour + (eventMinute / 60.0) + (eventSecond / 3600.0);
-        durationInBars = duration; // 지속시간이 이미 시간 단위
-        halfWidth = (durationInBars / 2) * 0.5;
-      }
+      // 분 단위로 통일된 공식
+      eventIndex = (eventHour * 60 + eventMinute + eventSecond / 60.0) / minutesPerBar;
+      durationInBars = duration * 60.0 / minutesPerBar;
+      halfWidth = (durationInBars / 2) * 0.5;
 
       // 이벤트 범위 계산
       final x1 = (eventIndex - halfWidth).clamp(0.0, totalBars.toDouble());
@@ -1684,7 +1860,73 @@ class _EventBackgroundPainter extends CustomPainter {
         oldDelegate.chartMaxY != chartMaxY ||
         oldDelegate.touchedBarIndex != touchedBarIndex ||
         oldDelegate.totalBars != totalBars ||
-        oldDelegate.isLargeChart != isLargeChart;
+        oldDelegate.minutesPerBar != minutesPerBar;
+  }
+}
+
+/// 비교 기간 평균 혈당을 선으로 그리는 CustomPainter
+class _ComparisonLinePainter extends CustomPainter {
+  final Map<int, double> compAverage;
+  final double chartMinY;
+  final double chartMaxY;
+  final int totalBars;
+  final Color color;
+
+  _ComparisonLinePainter({
+    required this.compAverage,
+    required this.chartMinY,
+    required this.chartMaxY,
+    required this.totalBars,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final chartHeight = size.height - 24; // bottomTitles 영역 제외
+    final barSlotWidth = size.width / totalBars;
+    final yRange = chartMaxY - chartMinY;
+
+    final linePaint = Paint()
+      ..color = color.withValues(alpha: 0.55)
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+
+    final dotPaint = Paint()
+      ..color = color.withValues(alpha: 0.45)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    bool firstPoint = true;
+
+    for (int i = 0; i < totalBars; i++) {
+      final value = compAverage[i];
+      if (value == null) {
+        firstPoint = true;
+        continue;
+      }
+      final x = i * barSlotWidth + barSlotWidth / 2;
+      final y = chartHeight * (1 - (value - chartMinY) / yRange);
+
+      if (firstPoint) {
+        path.moveTo(x, y);
+        firstPoint = false;
+      } else {
+        path.lineTo(x, y);
+      }
+      canvas.drawCircle(Offset(x, y), 2.5, dotPaint);
+    }
+    canvas.drawPath(path, linePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ComparisonLinePainter oldDelegate) {
+    return oldDelegate.compAverage != compAverage ||
+        oldDelegate.totalBars != totalBars ||
+        oldDelegate.chartMinY != chartMinY ||
+        oldDelegate.chartMaxY != chartMaxY ||
+        oldDelegate.color != color;
   }
 }
 
