@@ -17,6 +17,7 @@ import 'package:glu_butler/core/widgets/large_title_scroll_view.dart';
 import 'package:glu_butler/core/widgets/settings_icon_button.dart';
 import 'package:glu_butler/core/widgets/modals/date_picker_modal.dart';
 import 'package:glu_butler/models/glucose_record.dart';
+import 'package:glu_butler/models/glucose_range_settings.dart';
 import 'package:glu_butler/models/feed_item.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/glucose_score_service.dart';
@@ -305,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen>
         veryLow++;
       } else if (value < glucoseRange.low) {
         low++;
-      } else if (value <= glucoseRange.high) {
+      } else if (value <= glucoseRange.targetHigh) {
         normal++;
       } else if (value <= glucoseRange.veryHigh) {
         high++;
@@ -663,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 TextSpan(
                                   text: '${value.toInt()} ${settings.unit}',
                                   style: TextStyle(
-                                    color: _getGlucoseColorForValue(value),
+                                    color: _getGlucoseColorForValue(value, glucoseRange),
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   ),
@@ -767,7 +768,7 @@ class _HomeScreenState extends State<HomeScreen>
                           barRods: [
                             BarChartRodData(
                               toY: value * _animation.value,
-                              color: _getGlucoseColorForValue(value),
+                              color: _getGlucoseColorForValue(value, glucoseRange),
                               width: barWidth,
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(4),
@@ -821,21 +822,17 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  /// 혈당 값에 따른 색상 반환 (6단계)
-  Color _getGlucoseColorForValue(double value) {
-    const defaultTarget = 100.0;
-    final targetHigh = defaultTarget + 20; // 120
-
-    if (value < 60) {
+  /// 혈당 값에 따른 색상 반환 (settings 기준)
+  Color _getGlucoseColorForValue(double value, [GlucoseRangeSettings? range]) {
+    final r = range ?? GlucoseRangeSettings.defaults;
+    if (value < r.veryLow) {
       return AppTheme.glucoseVeryLow;
-    } else if (value < 80) {
+    } else if (value < r.low) {
       return AppTheme.glucoseLow;
-    } else if (value <= targetHigh) {
+    } else if (value <= r.targetHigh) {
       return AppTheme.glucoseNormal;
-    } else if (value < 160) {
-      return AppTheme.glucoseHigh; // 주의 (warning)
-    } else if (value < 180) {
-      return AppTheme.glucoseHigh; // 높음 (high)
+    } else if (value <= r.veryHigh) {
+      return AppTheme.glucoseHigh; // 주의
     } else {
       return AppTheme.glucoseVeryHigh;
     }
@@ -871,7 +868,7 @@ class _HomeScreenState extends State<HomeScreen>
                   unit: settings.unit,
                   subtitle: l10n.average,
                   color: hasData
-                      ? _getGlucoseColorForValue(_averageGlucose)
+                      ? _getGlucoseColorForValue(_averageGlucose, settings.glucoseRange)
                       : context.colors.textSecondary.withValues(alpha: 0.5),
                   hasData: hasData,
                 ),
