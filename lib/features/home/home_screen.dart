@@ -79,6 +79,8 @@ class _HomeScreenState extends State<HomeScreen>
   List<GlucoseRecord> _comparisonRecords = [];
   bool _isLoadingComparison = false;
   final List<GlobalKey> _chipKeys = List.generate(7, (_) => GlobalKey());
+  final GlobalKey _chipsRowKey = GlobalKey();
+  final ScrollController _chipsScrollController = ScrollController();
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -98,10 +100,10 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  @override
   void dispose() {
     _animationController.dispose();
     _chartScrollController.dispose();
+    _chipsScrollController.dispose();
     super.dispose();
   }
 
@@ -197,7 +199,12 @@ class _HomeScreenState extends State<HomeScreen>
         setState(() {
           _comparisonPeriodIndex = null;
           _comparisonRecords = [];
+          _isLoadingComparison = false;
         });
+        // postFrameCallback 없이 즉시 jumpTo — animateTo 애니메이션 취소
+        if (_chipsScrollController.hasClients) {
+          _chipsScrollController.jumpTo(0);
+        }
       } else {
         final next = available[pos + 1];
         setState(() {
@@ -219,16 +226,32 @@ class _HomeScreenState extends State<HomeScreen>
     final isLast = available.isNotEmpty && available.last == periodIndex;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final key = _chipKeys[periodIndex];
-      final ctx = key.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(
-          ctx,
+      if (!_chipsScrollController.hasClients) return;
+      // 콜백이 실행될 때 이미 다른 기간으로 바뀌었으면 스크롤 안 함
+      if (_comparisonPeriodIndex != periodIndex) return;
+      if (isLast) {
+        _chipsScrollController.animateTo(
+          _chipsScrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOut,
-          alignment: isLast ? 1.0 : 0.5,
         );
+        return;
       }
+      final chipBox = _chipKeys[periodIndex].currentContext?.findRenderObject() as RenderBox?;
+      final rowBox = _chipsRowKey.currentContext?.findRenderObject() as RenderBox?;
+      if (chipBox == null || rowBox == null) return;
+      final chipInRow = rowBox.globalToLocal(chipBox.localToGlobal(Offset.zero));
+      final chipCenter = chipInRow.dx + chipBox.size.width / 2;
+      final viewport = _chipsScrollController.position.viewportDimension;
+      final target = (chipCenter - viewport / 2).clamp(
+        0.0,
+        _chipsScrollController.position.maxScrollExtent,
+      );
+      _chipsScrollController.animateTo(
+        target,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -249,10 +272,16 @@ class _HomeScreenState extends State<HomeScreen>
     }
 
     if (!mounted) return;
+    // 로드 중에 기간이 바뀌었으면 결과 버림
+    if (_comparisonPeriodIndex != periodIndex) {
+      setState(() => _isLoadingComparison = false);
+      return;
+    }
     setState(() {
       _comparisonRecords = records;
       _isLoadingComparison = false;
     });
+    _scrollToChip(periodIndex);
   }
 
   /// 건강 앱 데이터 로드 (수면, 운동)
@@ -480,6 +509,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildChartCard(BuildContext context, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: BorderRadius.circular(16),
@@ -531,9 +561,13 @@ class _HomeScreenState extends State<HomeScreen>
                 _activePointers[event.pointer] = event.localPosition;
                 if (_activePointers.length == 2 && _pinchStartDistance > 0) {
                   final positions = _activePointers.values.toList();
-                  final currentDistance = (positions[0] - positions[1]).distance;
+                  final currentDistance =
+                      (positions[0] - positions[1]).distance;
                   final scale = currentDistance / _pinchStartDistance;
-                  final newMinutes = (_pinchStartMinutesPerBar / scale).clamp(10.0, 60.0);
+                  final newMinutes = (_pinchStartMinutesPerBar / scale).clamp(
+                    10.0,
+                    60.0,
+                  );
                   if ((newMinutes - _minutesPerBar).abs() > 0.2) {
                     setState(() {
                       _minutesPerBar = newMinutes;
@@ -579,14 +613,22 @@ class _HomeScreenState extends State<HomeScreen>
 
   String _getPeriodLabel(int index, AppLocalizations l10n) {
     switch (index) {
-      case 0: return l10n.compThisWeek;
-      case 1: return l10n.compLastWeek;
-      case 2: return l10n.comp3WeeksAgo;
-      case 3: return l10n.comp1MonthAgo;
-      case 4: return l10n.comp2MonthsAgo;
-      case 5: return l10n.comp3MonthsAgo;
-      case 6: return l10n.comp6MonthsAgo;
-      default: return _comparisonPeriods[index].$1;
+      case 0:
+        return l10n.compThisWeek;
+      case 1:
+        return l10n.compLastWeek;
+      case 2:
+        return l10n.comp3WeeksAgo;
+      case 3:
+        return l10n.comp1MonthAgo;
+      case 4:
+        return l10n.comp2MonthsAgo;
+      case 5:
+        return l10n.comp3MonthsAgo;
+      case 6:
+        return l10n.comp6MonthsAgo;
+      default:
+        return _comparisonPeriods[index].$1;
     }
   }
 
@@ -602,58 +644,59 @@ class _HomeScreenState extends State<HomeScreen>
     if (available.isEmpty) return const SizedBox.shrink();
 
     return SingleChildScrollView(
+      controller: _chipsScrollController,
       scrollDirection: Axis.horizontal,
-      clipBehavior: Clip.none,
-      padding: const EdgeInsets.only(right: 4),
       child: Row(
+        key: _chipsRowKey,
+        mainAxisSize: MainAxisSize.min,
         children: available.map((i) {
           final label = _getPeriodLabel(i, l10n);
           final color = _periodColors[i];
           final isSelected = _comparisonPeriodIndex == i;
+          final isLast = i == available.last;
           return Padding(
-              key: _chipKeys[i],
-              padding: const EdgeInsets.only(right: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 7,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isSelected
-                          ? color
-                          : color.withValues(alpha: 0.3),
-                    ),
+            key: _chipKeys[i],
+            padding: EdgeInsets.only(right: isLast ? 0 : 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? color : color.withValues(alpha: 0.3),
                   ),
-                  const SizedBox(width: 4),
-                  _isLoadingComparison && isSelected
-                      ? SizedBox(
-                          width: 32,
-                          height: 10,
-                          child: LinearProgressIndicator(
-                            backgroundColor: Colors.transparent,
-                            color: color.withValues(alpha: 0.5),
-                            minHeight: 1.5,
-                          ),
-                        )
-                      : Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                            color: isSelected
-                                ? color
-                                : context.colors.textSecondary
-                                    .withValues(alpha: 0.4),
-                          ),
+                ),
+                const SizedBox(width: 4),
+                _isLoadingComparison && isSelected
+                    ? SizedBox(
+                        width: 32,
+                        height: 10,
+                        child: LinearProgressIndicator(
+                          backgroundColor: Colors.transparent,
+                          color: color.withValues(alpha: 0.5),
+                          minHeight: 1.5,
                         ),
-                ],
-              ),
-            );
+                      )
+                    : Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? color
+                              : context.colors.textSecondary.withValues(
+                                  alpha: 0.4,
+                                ),
+                        ),
+                      ),
+              ],
+            ),
+          );
         }).toList(),
       ),
     );
@@ -775,9 +818,7 @@ class _HomeScreenState extends State<HomeScreen>
             getEventLabel: (type) => _getEventLabel(type, l10n),
             getEventDuration: _getEventDuration,
             cardColor: context.colors.card,
-            textColor: isDarkMode
-                ? context.colors.textPrimary
-                : Colors.black,
+            textColor: isDarkMode ? context.colors.textPrimary : Colors.black,
             touchedBarIndex: _touchedBarIndex,
             touchLineColor: context.colors.textPrimary,
             totalBars: totalBars,
@@ -787,216 +828,216 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         // 차트 레이어
         BarChart(
-                    key: ValueKey(minPerBar),
-                    BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: chartMaxY,
-                      minY: chartMinY,
-                      // 평균 혈당 수평선 + 이벤트 배경선 + 이벤트 레이블
-                      extraLinesData: ExtraLinesData(
-                        horizontalLines: [
-                          HorizontalLine(
-                            y: averageGlucose,
-                            color: averageLineColor.withValues(alpha: 0.4),
-                            strokeWidth: 2,
-                            dashArray: [8, 4], // 점선 패턴
-                            label: HorizontalLineLabel(
-                              show: true,
-                              alignment: Alignment.topRight,
-                              padding: const EdgeInsets.only(
-                                right: 8,
-                                bottom: 4,
-                              ),
-                              style: TextStyle(
-                                color: averageLineColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                backgroundColor: context.colors.card.withValues(
-                                  alpha: 0.8,
-                                ),
-                              ),
-                              labelResolver: (line) =>
-                                  ' ${l10n.average} ${averageGlucose.toInt()} ',
-                            ),
-                          ),
-                        ],
-                        verticalLines: [],
+          key: ValueKey(minPerBar),
+          BarChartData(
+            alignment: BarChartAlignment.spaceAround,
+            maxY: chartMaxY,
+            minY: chartMinY,
+            // 평균 혈당 수평선 + 이벤트 배경선 + 이벤트 레이블
+            extraLinesData: ExtraLinesData(
+              horizontalLines: [
+                HorizontalLine(
+                  y: averageGlucose,
+                  color: averageLineColor.withValues(alpha: 0.4),
+                  strokeWidth: 2,
+                  dashArray: [8, 4], // 점선 패턴
+                  label: HorizontalLineLabel(
+                    show: true,
+                    alignment: Alignment.topRight,
+                    padding: const EdgeInsets.only(right: 8, bottom: 4),
+                    style: TextStyle(
+                      color: averageLineColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      backgroundColor: context.colors.card.withValues(
+                        alpha: 0.8,
                       ),
-                      barTouchData: BarTouchData(
-                        enabled: true,
-                        touchCallback: (FlTouchEvent event, barTouchResponse) {
-                          setState(() {
-                            if (event is FlTapUpEvent) {
-                              _touchedBarIndex = null;
-                              _isChartTouching = false;
-                              // 빈 공간 탭 시 비교 기간 순환
-                              if (barTouchResponse?.spot == null) {
-                                _cycleComparisonPeriod();
-                              }
-                            } else if (event is FlPanEndEvent ||
-                                event is FlLongPressEnd) {
-                              _touchedBarIndex = null;
-                              _isChartTouching = false;
-                            } else if (barTouchResponse != null &&
-                                barTouchResponse.spot != null) {
-                              _touchedBarIndex =
-                                  barTouchResponse.spot!.touchedBarGroupIndex;
-                              _isChartTouching = true;
-                            }
-                          });
-                        },
-                        touchTooltipData: BarTouchTooltipData(
-                          fitInsideVertically: true,
-                          tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                          getTooltipColor: (group) {
-                            if (isDarkMode) {
-                              return context.colors.card.withValues(alpha: 1.0);
-                            }
-                            return context.colors.card.withValues(alpha: 0.9);
-                          },
-                          tooltipBorder: BorderSide(
-                            color: isDarkMode
-                                ? Colors.grey.withValues(alpha: 0.5)
-                                : context.colors.divider,
-                            width: isDarkMode ? 1.5 : 1.0,
-                          ),
-                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                            final index = group.x.toInt();
-                            final value = rod.toY;
+                    ),
+                    labelResolver: (line) =>
+                        ' ${l10n.average} ${averageGlucose.toInt()} ',
+                  ),
+                ),
+              ],
+              verticalLines: [],
+            ),
+            barTouchData: BarTouchData(
+              enabled: true,
+              touchCallback: (FlTouchEvent event, barTouchResponse) {
+                if (event is FlTapUpEvent) {
+                  setState(() {
+                    _touchedBarIndex = null;
+                    _isChartTouching = false;
+                  });
+                  if (barTouchResponse?.spot == null) {
+                    _cycleComparisonPeriod();
+                  }
+                } else if (event is FlPanEndEvent || event is FlLongPressEnd) {
+                  setState(() {
+                    _touchedBarIndex = null;
+                    _isChartTouching = false;
+                  });
+                } else if (barTouchResponse != null &&
+                    barTouchResponse.spot != null) {
+                  setState(() {
+                    _touchedBarIndex =
+                        barTouchResponse.spot!.touchedBarGroupIndex;
+                    _isChartTouching = true;
+                  });
+                }
+              },
+              touchTooltipData: BarTouchTooltipData(
+                fitInsideVertically: true,
+                tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                getTooltipColor: (group) {
+                  if (isDarkMode) {
+                    return context.colors.card.withValues(alpha: 1.0);
+                  }
+                  return context.colors.card.withValues(alpha: 0.9);
+                },
+                tooltipBorder: BorderSide(
+                  color: isDarkMode
+                      ? Colors.grey.withValues(alpha: 0.5)
+                      : context.colors.divider,
+                  width: isDarkMode ? 1.5 : 1.0,
+                ),
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                  final index = group.x.toInt();
+                  final value = rod.toY;
 
-                            final totalMinutes = index * minPerBar;
-                            final hour = totalMinutes ~/ 60;
-                            final minute = totalMinutes % 60;
-                            final timeText = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                  final totalMinutes = index * minPerBar;
+                  final hour = totalMinutes ~/ 60;
+                  final minute = totalMinutes % 60;
+                  final timeText =
+                      '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
-                            return BarTooltipItem(
-                              '$timeText\n',
-                              TextStyle(
-                                color: context.colors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                              children: [
-                                TextSpan(
-                                  text: '${value.toInt()} ${settings.unit}',
-                                  style: TextStyle(
-                                    color: _getGlucoseColorForValue(value, glucoseRange),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                  return BarTooltipItem(
+                    '$timeText\n',
+                    TextStyle(
+                      color: context.colors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                    children: [
+                      TextSpan(
+                        text: '${value.toInt()} ${settings.unit}',
+                        style: TextStyle(
+                          color: _getGlucoseColorForValue(value, glucoseRange),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
                       ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              final index = value.toInt();
+                    ],
+                  );
+                },
+              ),
+            ),
+            titlesData: FlTitlesData(
+              show: true,
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, meta) {
+                    final index = value.toInt();
 
-                              // 항상 3바마다 레이블 → 보이는 영역에 항상 ~8개 유지
-                              // 60분/바: 3바 = 3시간, 10분/바: 3바 = 30분
-                              if (index % 3 == 0) {
-                                final totalMinutes = index * minPerBar;
-                                if (totalMinutes >= 1440) return const SizedBox.shrink();
-                                final hour = totalMinutes ~/ 60;
-                                final minute = totalMinutes % 60;
-                                final label = minute == 0
-                                    ? hour.toString().padLeft(2, '0')
-                                    : '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    label,
-                                    style: TextStyle(
-                                      color: context.colors.textSecondary,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                            reservedSize: 24,
+                    // 항상 3바마다 레이블 → 보이는 영역에 항상 ~8개 유지
+                    // 60분/바: 3바 = 3시간, 10분/바: 3바 = 30분
+                    if (index % 3 == 0) {
+                      final totalMinutes = index * minPerBar;
+                      if (totalMinutes >= 1440) return const SizedBox.shrink();
+                      final hour = totalMinutes ~/ 60;
+                      final minute = totalMinutes % 60;
+                      final label = minute == 0
+                          ? hour.toString().padLeft(2, '0')
+                          : '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            color: context.colors.textSecondary,
+                            fontSize: 10,
                           ),
                         ),
-                        leftTitles: const AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: false,
-                          ), // Y축 라벨 숨김 (커스텀 페인터 사용)
-                        ),
-                      ),
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: false,
-                        horizontalInterval: (chartMaxY - chartMinY) / 4,
-                        getDrawingHorizontalLine: (value) {
-                          return FlLine(
-                            color: context.colors.divider.withValues(
-                              alpha: 0.3,
-                            ),
-                            strokeWidth: 1,
-                          );
-                        },
-                      ),
-                      borderData: FlBorderData(show: false),
-                      barGroups: List.generate(totalBars, (index) {
-                        final value = timeAverage[index];
-                        // 슬롯의 55% 너비, 최소 6px ~ 최대 22px
-                        final barWidth = (chartWidth / totalBars * 0.55).clamp(6.0, 22.0);
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  reservedSize: 24,
+                ),
+              ),
+              leftTitles: const AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: false,
+                ), // Y축 라벨 숨김 (커스텀 페인터 사용)
+              ),
+            ),
+            gridData: FlGridData(
+              show: true,
+              drawVerticalLine: false,
+              horizontalInterval: (chartMaxY - chartMinY) / 4,
+              getDrawingHorizontalLine: (value) {
+                return FlLine(
+                  color: context.colors.divider.withValues(alpha: 0.3),
+                  strokeWidth: 1,
+                );
+              },
+            ),
+            borderData: FlBorderData(show: false),
+            barGroups: List.generate(totalBars, (index) {
+              final value = timeAverage[index];
+              // 슬롯의 55% 너비, 최소 6px ~ 최대 22px
+              final barWidth = (chartWidth / totalBars * 0.55).clamp(6.0, 22.0);
 
-                        if (value == null) {
-                          // 데이터가 없는 구간
-                          return BarChartGroupData(
-                            x: index,
-                            barRods: [
-                              BarChartRodData(
-                                toY: 0,
-                                color: Colors.transparent,
-                                width: barWidth,
-                              ),
-                            ],
-                          );
-                        }
+              if (value == null) {
+                // 데이터가 없는 구간
+                return BarChartGroupData(
+                  x: index,
+                  barRods: [
+                    BarChartRodData(
+                      toY: 0,
+                      color: Colors.transparent,
+                      width: barWidth,
+                    ),
+                  ],
+                );
+              }
 
-                        return BarChartGroupData(
-                          x: index,
-                          barRods: [
-                            BarChartRodData(
-                              toY: value * _animation.value,
-                              color: _getGlucoseColorForValue(value, glucoseRange),
-                              width: barWidth,
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(4),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
+              return BarChartGroupData(
+                x: index,
+                barRods: [
+                  BarChartRodData(
+                    toY: value * _animation.value,
+                    color: _getGlucoseColorForValue(value, glucoseRange),
+                    width: barWidth,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(4),
                     ),
                   ),
+                ],
+              );
+            }),
+          ),
+        ),
         // 비교 기간 오버레이 라인
-        if (compAverage.isNotEmpty)
-          CustomPaint(
-            painter: _ComparisonLinePainter(
-              compAverage: compAverage,
-              chartMinY: chartMinY,
-              chartMaxY: chartMaxY,
-              totalBars: totalBars,
-              color: _HomeScreenState._periodColors[_comparisonPeriodIndex!],
+        if (compAverage.isNotEmpty && _comparisonPeriodIndex != null)
+          IgnorePointer(
+            child: CustomPaint(
+              painter: _ComparisonLinePainter(
+                compAverage: compAverage,
+                chartMinY: chartMinY,
+                chartMaxY: chartMaxY,
+                totalBars: totalBars,
+                color: _HomeScreenState._periodColors[_comparisonPeriodIndex!],
+              ),
+              child: Container(),
             ),
-            child: Container(),
           ),
       ],
     );
@@ -1030,10 +1071,7 @@ class _HomeScreenState extends State<HomeScreen>
                   physics: _isChartTouching
                       ? const NeverScrollableScrollPhysics()
                       : const AlwaysScrollableScrollPhysics(),
-                  child: SizedBox(
-                    width: chartWidth,
-                    child: chartStack,
-                  ),
+                  child: SizedBox(width: chartWidth, child: chartStack),
                 )
               : chartStack, // 기본(60분단위): 스크롤 없이
         ),
@@ -1087,7 +1125,10 @@ class _HomeScreenState extends State<HomeScreen>
                   unit: settings.unit,
                   subtitle: l10n.average,
                   color: hasData
-                      ? _getGlucoseColorForValue(_averageGlucose, settings.glucoseRange)
+                      ? _getGlucoseColorForValue(
+                          _averageGlucose,
+                          settings.glucoseRange,
+                        )
                       : context.colors.textSecondary.withValues(alpha: 0.5),
                   hasData: hasData,
                 ),
@@ -1816,7 +1857,8 @@ class _EventBackgroundPainter extends CustomPainter {
       double halfWidth;
 
       // 분 단위로 통일된 공식
-      eventIndex = (eventHour * 60 + eventMinute + eventSecond / 60.0) / minutesPerBar;
+      eventIndex =
+          (eventHour * 60 + eventMinute + eventSecond / 60.0) / minutesPerBar;
       durationInBars = duration * 60.0 / minutesPerBar;
       halfWidth = (durationInBars / 2) * 0.5;
 

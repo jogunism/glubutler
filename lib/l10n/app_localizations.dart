@@ -2791,6 +2791,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'2 hours'**
   String get mealWindow2hours;
+
+  /// No description provided for @tapToCompare.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to Compare'**
+  String get tapToCompare;
+
+  /// No description provided for @compThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get compThisWeek;
+
+  /// No description provided for @compLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Week'**
+  String get compLastWeek;
+
+  /// No description provided for @comp3WeeksAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'3 Weeks Ago'**
+  String get comp3WeeksAgo;
+
+  /// No description provided for @comp1MonthAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Month Ago'**
+  String get comp1MonthAgo;
+
+  /// No description provided for @comp2MonthsAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'2 Months Ago'**
+  String get comp2MonthsAgo;
+
+  /// No description provided for @comp3MonthsAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'3 Months Ago'**
+  String get comp3MonthsAgo;
+
+  /// No description provided for @comp6MonthsAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'6 Months Ago'**
+  String get comp6MonthsAgo;
 }
 
 class _AppLocalizationsDelegate

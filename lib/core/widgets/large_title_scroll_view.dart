@@ -176,7 +176,8 @@ class _LargeTitleScrollViewState extends State<LargeTitleScrollView> {
       backgroundColor: backgroundColor,
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
-          if (notification is ScrollUpdateNotification) {
+          if (notification is ScrollUpdateNotification &&
+              notification.metrics.axis == Axis.vertical) {
             _onScroll(notification.metrics.pixels);
           }
           return false;

@@ -493,5 +493,13 @@
   "mealWindow30min": "30 min",
   "mealWindow1hour": "1 ora",
   "mealWindow1hour30min": "1h 30min",
-  "mealWindow2hours": "2 ore"
+  "mealWindow2hours": "2 ore",
+  "tapToCompare": "Tocca per confrontare",
+  "compThisWeek": "Questa settimana",
+  "compLastWeek": "La settimana scorsa",
+  "comp3WeeksAgo": "3 settimane fa",
+  "comp1MonthAgo": "1 mese fa",
+  "comp2MonthsAgo": "2 mesi fa",
+  "comp3MonthsAgo": "3 mesi fa",
+  "comp6MonthsAgo": "6 mesi fa"
 }

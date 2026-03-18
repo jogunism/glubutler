@@ -1451,4 +1451,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mealWindow2hours => '2 Stunden';
+
+  @override
+  String get tapToCompare => 'Zum Vergleichen tippen';
+
+  @override
+  String get compThisWeek => 'Diese Woche';
+
+  @override
+  String get compLastWeek => 'Letzte Woche';
+
+  @override
+  String get comp3WeeksAgo => 'Vor 3 Wochen';
+
+  @override
+  String get comp1MonthAgo => 'Vor 1 Monat';
+
+  @override
+  String get comp2MonthsAgo => 'Vor 2 Monaten';
+
+  @override
+  String get comp3MonthsAgo => 'Vor 3 Monaten';
+
+  @override
+  String get comp6MonthsAgo => 'Vor 6 Monaten';
 }

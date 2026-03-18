@@ -512,5 +512,13 @@
   "mealWindow30min": "30분",
   "mealWindow1hour": "1시간",
   "mealWindow1hour30min": "1시간 30분",
-  "mealWindow2hours": "2시간"
+  "mealWindow2hours": "2시간",
+  "tapToCompare": "탭하여 비교",
+  "compThisWeek": "이번주",
+  "compLastWeek": "지난주",
+  "comp3WeeksAgo": "3주전",
+  "comp1MonthAgo": "1달전",
+  "comp2MonthsAgo": "2달전",
+  "comp3MonthsAgo": "3달전",
+  "comp6MonthsAgo": "6개월전"
 }

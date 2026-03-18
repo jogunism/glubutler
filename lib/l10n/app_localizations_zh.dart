@@ -1377,4 +1377,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mealWindow2hours => '2小时';
+
+  @override
+  String get tapToCompare => '点击比较';
+
+  @override
+  String get compThisWeek => '本周';
+
+  @override
+  String get compLastWeek => '上周';
+
+  @override
+  String get comp3WeeksAgo => '3周前';
+
+  @override
+  String get comp1MonthAgo => '1个月前';
+
+  @override
+  String get comp2MonthsAgo => '2个月前';
+
+  @override
+  String get comp3MonthsAgo => '3个月前';
+
+  @override
+  String get comp6MonthsAgo => '6个月前';
 }

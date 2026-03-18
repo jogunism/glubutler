@@ -1382,4 +1382,28 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get mealWindow2hours => '2時間';
+
+  @override
+  String get tapToCompare => 'タップして比較';
+
+  @override
+  String get compThisWeek => '今週';
+
+  @override
+  String get compLastWeek => '先週';
+
+  @override
+  String get comp3WeeksAgo => '3週間前';
+
+  @override
+  String get comp1MonthAgo => '1ヶ月前';
+
+  @override
+  String get comp2MonthsAgo => '2ヶ月前';
+
+  @override
+  String get comp3MonthsAgo => '3ヶ月前';
+
+  @override
+  String get comp6MonthsAgo => '6ヶ月前';
 }

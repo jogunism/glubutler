@@ -1458,4 +1458,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mealWindow2hours => '2 heures';
+
+  @override
+  String get tapToCompare => 'Appuyer pour comparer';
+
+  @override
+  String get compThisWeek => 'Cette semaine';
+
+  @override
+  String get compLastWeek => 'La semaine dernière';
+
+  @override
+  String get comp3WeeksAgo => 'Il y a 3 semaines';
+
+  @override
+  String get comp1MonthAgo => 'Il y a 1 mois';
+
+  @override
+  String get comp2MonthsAgo => 'Il y a 2 mois';
+
+  @override
+  String get comp3MonthsAgo => 'Il y a 3 mois';
+
+  @override
+  String get comp6MonthsAgo => 'Il y a 6 mois';
 }

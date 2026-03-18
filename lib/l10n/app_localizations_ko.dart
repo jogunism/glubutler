@@ -1386,4 +1386,28 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get mealWindow2hours => '2시간';
+
+  @override
+  String get tapToCompare => '탭하여 비교';
+
+  @override
+  String get compThisWeek => '이번주';
+
+  @override
+  String get compLastWeek => '지난주';
+
+  @override
+  String get comp3WeeksAgo => '3주전';
+
+  @override
+  String get comp1MonthAgo => '1달전';
+
+  @override
+  String get comp2MonthsAgo => '2달전';
+
+  @override
+  String get comp3MonthsAgo => '3달전';
+
+  @override
+  String get comp6MonthsAgo => '6개월전';
 }

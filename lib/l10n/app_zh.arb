@@ -493,5 +493,13 @@
   "mealWindow30min": "30分钟",
   "mealWindow1hour": "1小时",
   "mealWindow1hour30min": "1小时30分",
-  "mealWindow2hours": "2小时"
+  "mealWindow2hours": "2小时",
+  "tapToCompare": "点击比较",
+  "compThisWeek": "本周",
+  "compLastWeek": "上周",
+  "comp3WeeksAgo": "3周前",
+  "comp1MonthAgo": "1个月前",
+  "comp2MonthsAgo": "2个月前",
+  "comp3MonthsAgo": "3个月前",
+  "comp6MonthsAgo": "6个月前"
 }

@@ -495,5 +495,13 @@
   "mealWindow30min": "30分",
   "mealWindow1hour": "1時間",
   "mealWindow1hour30min": "1時間30分",
-  "mealWindow2hours": "2時間"
+  "mealWindow2hours": "2時間",
+  "tapToCompare": "タップして比較",
+  "compThisWeek": "今週",
+  "compLastWeek": "先週",
+  "comp3WeeksAgo": "3週間前",
+  "comp1MonthAgo": "1ヶ月前",
+  "comp2MonthsAgo": "2ヶ月前",
+  "comp3MonthsAgo": "3ヶ月前",
+  "comp6MonthsAgo": "6ヶ月前"
 }
