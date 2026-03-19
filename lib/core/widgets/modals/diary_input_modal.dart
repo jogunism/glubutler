@@ -50,8 +50,7 @@ class DiaryInputModal extends StatefulWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       useRootNavigator: true,
-      isDismissible: false, // Prevent tap outside to close
-      enableDrag: false, // Disable drag completely
+
       builder: (context) => DiaryInputModal(entry: entry),
       routeSettings: const RouteSettings(name: 'DiaryInputModal'),
     );

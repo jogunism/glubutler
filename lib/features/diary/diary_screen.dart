@@ -173,7 +173,11 @@ class DiaryScreenState extends State<DiaryScreen> {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.only(bottom: 80),
+              padding: EdgeInsets.only(
+                bottom: Platform.isAndroid
+                    ? 56 + MediaQuery.of(context).padding.bottom + 16
+                    : 80 + MediaQuery.of(context).padding.bottom,
+              ),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final entry = diaryProvider.entries[index];

@@ -53,13 +53,15 @@ class AuthService {
     }
 
     try {
-      debugPrint('[AuthService] Requesting new JWT token...');
+      // iOS: cloudKitId, Android: googleId
+      final requestData = userIdentity.googleId != null
+          ? {'googleId': userIdentity.googleId}
+          : {'cloudKitId': userId};
+      debugPrint('[AuthService] Requesting new JWT token... data: $requestData');
 
       final response = await _dio.post(
         '$baseUrl/API/auth/token',
-        data: {
-          'cloudKitId': userId,
-        },
+        data: requestData,
         options: Options(
           headers: {'Content-Type': 'application/json'},
           sendTimeout: const Duration(seconds: 10),
@@ -83,6 +85,8 @@ class AuthService {
       }
     } on DioException catch (e) {
       debugPrint('[AuthService] DioException: ${e.message}');
+      debugPrint('[AuthService] Response status: ${e.response?.statusCode}');
+      debugPrint('[AuthService] Response body: ${e.response?.data}');
       throw AuthException('Network error: ${e.message}');
     } catch (e) {
       debugPrint('[AuthService] Error: $e');

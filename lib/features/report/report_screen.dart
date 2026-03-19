@@ -215,7 +215,7 @@ class _ReportScreenState extends State<ReportScreen> {
     }
 
     // iCloud 연동 확인 (개발 모드에서는 건너뜀)
-    if (!settingsService.iCloudSyncEnabled && !isDevMode) {
+    if (!settingsService.isCloudSyncEnabled && !isDevMode) {
       if (!mounted) return;
       await showCupertinoDialog(
         context: context,
@@ -377,7 +377,11 @@ class _ReportScreenState extends State<ReportScreen> {
                   SliverFillRemaining(
                     hasScrollBody: false,
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 80),
+                      padding: EdgeInsets.only(
+                        bottom: Platform.isAndroid
+                            ? 56 + MediaQuery.of(context).padding.bottom + 16
+                            : 80,
+                      ),
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -426,7 +430,11 @@ class _ReportScreenState extends State<ReportScreen> {
                 else
                   // 레포트 있을 때: 기간 + 지난 리포트 버튼 + 내용 + Export 버튼
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                    padding: EdgeInsets.fromLTRB(16, 0, 16,
+                      Platform.isAndroid
+                          ? 56 + MediaQuery.of(context).padding.bottom + 16
+                          : 100,
+                    ),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         // 기간 + 지난 리포트 보기 버튼

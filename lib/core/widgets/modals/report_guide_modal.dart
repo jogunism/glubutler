@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,6 +40,7 @@ class ReportGuideModal {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      useRootNavigator: true,
       isDismissible: true,
       enableDrag: true,
       builder: (context) => _ReportGuideSheet(infoMode: infoMode),
@@ -229,7 +232,8 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
     final l10n = AppLocalizations.of(context)!;
     final mediaQuery = MediaQuery.of(context);
     final screenHeight = mediaQuery.size.height;
-    final bottomPadding = mediaQuery.viewInsets.bottom;
+    final bottomPadding = mediaQuery.viewInsets.bottom +
+        (Platform.isAndroid ? mediaQuery.padding.bottom : 0);
 
     return Container(
       height: screenHeight * 0.75,
@@ -294,7 +298,8 @@ class _ReportGuideSheetState extends State<_ReportGuideSheet> {
           // 스크롤 가능한 내용
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+              padding: EdgeInsets.fromLTRB(20, 0, 20,
+                  32 + (Platform.isAndroid ? mediaQuery.padding.bottom : 0)),
               child: _buildMessageContent(context, l10n),
             ),
           ),
