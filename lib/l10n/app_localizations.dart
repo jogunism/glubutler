@@ -1118,6 +1118,36 @@ abstract class AppLocalizations {
   /// **'※ All information used in the app is not stored separately or shared externally.'**
   String get scoreInfoPrivacy;
 
+  /// No description provided for @trendInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Glucose Trend Guide'**
+  String get trendInfoTitle;
+
+  /// No description provided for @trendInfoPeriodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Period Glucose Comparison'**
+  String get trendInfoPeriodTitle;
+
+  /// No description provided for @trendInfoPeriodDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the chart to compare today\'s glucose with past periods. Only today\'s date can be compared.'**
+  String get trendInfoPeriodDesc;
+
+  /// No description provided for @trendInfoZoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Zoom In & Out'**
+  String get trendInfoZoomTitle;
+
+  /// No description provided for @trendInfoZoomDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinch in or out with two fingers to zoom in or out for a more detailed view.'**
+  String get trendInfoZoomDesc;
+
   /// No description provided for @times.
   ///
   /// In en, this message translates to:
@@ -1567,6 +1597,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'6 Months'**
   String get syncPeriod6Months;
+
+  /// No description provided for @syncPeriod9Months.
+  ///
+  /// In en, this message translates to:
+  /// **'9 Months'**
+  String get syncPeriod9Months;
+
+  /// No description provided for @syncPeriod12Months.
+  ///
+  /// In en, this message translates to:
+  /// **'12 Months'**
+  String get syncPeriod12Months;
 
   /// No description provided for @disconnected.
   ///

@@ -423,6 +423,10 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
           return l10n.syncPeriod3Months;
         case AppConstants.syncPeriod6Months:
           return l10n.syncPeriod6Months;
+        case AppConstants.syncPeriod9Months:
+          return l10n.syncPeriod9Months;
+        case AppConstants.syncPeriod12Months:
+          return l10n.syncPeriod12Months;
         default:
           return l10n.syncPeriod1Month;
       }
@@ -430,6 +434,16 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
 
     // AdaptivePopupMenuButton용 아이템 리스트 생성
     final items = [
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod12Months,
+        label: l10n.syncPeriod12Months,
+        icon: currentPeriod == AppConstants.syncPeriod12Months ? 'checkmark' : null,
+      ),
+      AdaptivePopupMenuItem<int>(
+        value: AppConstants.syncPeriod9Months,
+        label: l10n.syncPeriod9Months,
+        icon: currentPeriod == AppConstants.syncPeriod9Months ? 'checkmark' : null,
+      ),
       AdaptivePopupMenuItem<int>(
         value: AppConstants.syncPeriod6Months,
         label: l10n.syncPeriod6Months,

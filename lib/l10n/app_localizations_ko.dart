@@ -518,6 +518,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get scoreInfoPrivacy => '※ 앱에 사용되는 모든 정보는 따로 저장되거나 외부로 공유되지 않습니다.';
 
   @override
+  String get trendInfoTitle => '혈당추이 안내';
+
+  @override
+  String get trendInfoPeriodTitle => '기간별 혈당 추이';
+
+  @override
+  String get trendInfoPeriodDesc =>
+      '차트를 탭하면 오늘의 혈당과 지난 기간의 혈당을 함께 비교할 수 있습니다. 오늘 날짜의 데이터만 비교할 수 있습니다.';
+
+  @override
+  String get trendInfoZoomTitle => '차트 확대 & 축소';
+
+  @override
+  String get trendInfoZoomDesc =>
+      '두 손가락으로 오므리거나 벌려서 차트를 확대하거나 축소해 더 자세히 확인할 수 있습니다.';
+
+  @override
   String get times => '회';
 
   @override
@@ -743,6 +760,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncPeriod6Months => '6개월';
+
+  @override
+  String get syncPeriod9Months => '9개월';
+
+  @override
+  String get syncPeriod12Months => '12개월';
 
   @override
   String get disconnected => 'Apple 건강 연동이 해제되었습니다';

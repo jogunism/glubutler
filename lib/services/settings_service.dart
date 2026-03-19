@@ -352,7 +352,9 @@ class SettingsService extends ChangeNotifier {
   Future<void> setSyncPeriod(int days) async {
     if (days != AppConstants.syncPeriod1Month &&
         days != AppConstants.syncPeriod3Months &&
-        days != AppConstants.syncPeriod6Months) return;
+        days != AppConstants.syncPeriod6Months &&
+        days != AppConstants.syncPeriod9Months &&
+        days != AppConstants.syncPeriod12Months) { return; }
     _syncPeriod = days;
     await _prefs.setInt(AppConstants.keySyncPeriod, days);
 

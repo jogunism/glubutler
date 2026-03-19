@@ -518,6 +518,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String get scoreInfoPrivacy => '※ アプリで使用されるすべての情報は、別途保存されたり外部に共有されることはありません。';
 
   @override
+  String get trendInfoTitle => '血糖トレンドガイド';
+
+  @override
+  String get trendInfoPeriodTitle => '期間別血糖比較';
+
+  @override
+  String get trendInfoPeriodDesc =>
+      'グラフをタップすると、今日の血糖と過去の期間の血糖を一緒に比較できます。今日の日付のデータのみ比較できます。';
+
+  @override
+  String get trendInfoZoomTitle => 'グラフの拡大・縮小';
+
+  @override
+  String get trendInfoZoomDesc =>
+      '2本指でピンチインまたはピンチアウトして、グラフを拡大または縮小してより詳しく確認できます。';
+
+  @override
   String get times => '回';
 
   @override
@@ -742,6 +759,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get syncPeriod6Months => '6ヶ月';
+
+  @override
+  String get syncPeriod9Months => '9ヶ月';
+
+  @override
+  String get syncPeriod12Months => '12ヶ月';
 
   @override
   String get disconnected => 'Apple ヘルスケアとの連携が解除されました';

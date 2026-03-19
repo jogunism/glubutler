@@ -60,6 +60,8 @@ class AppConstants {
   static const int syncPeriod1Month = 30;
   static const int syncPeriod3Months = 90;
   static const int syncPeriod6Months = 180;
+  static const int syncPeriod9Months = 270;
+  static const int syncPeriod12Months = 365;
   static const int defaultSyncPeriod = syncPeriod1Month;
 
   // Storage Keys

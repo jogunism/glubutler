@@ -530,6 +530,23 @@ class AppLocalizationsEs extends AppLocalizations {
       '※ Toda la información utilizada en la app no se almacena por separado ni se comparte externamente.';
 
   @override
+  String get trendInfoTitle => 'Guía de tendencia glucémica';
+
+  @override
+  String get trendInfoPeriodTitle => 'Comparación de glucosa por período';
+
+  @override
+  String get trendInfoPeriodDesc =>
+      'Toca el gráfico para comparar la glucosa de hoy con períodos anteriores. Solo se puede comparar la fecha de hoy.';
+
+  @override
+  String get trendInfoZoomTitle => 'Ampliar y reducir el gráfico';
+
+  @override
+  String get trendInfoZoomDesc =>
+      'Pellizca o separa con dos dedos para ampliar o reducir el gráfico y ver más detalles.';
+
+  @override
   String get times => '×';
 
   @override
@@ -761,6 +778,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get syncPeriod6Months => '6 meses';
+
+  @override
+  String get syncPeriod9Months => '9 meses';
+
+  @override
+  String get syncPeriod12Months => '12 meses';
 
   @override
   String get disconnected => 'Desconectado de Apple Salud';

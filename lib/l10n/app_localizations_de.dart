@@ -530,6 +530,23 @@ class AppLocalizationsDe extends AppLocalizations {
       '※ Alle in der App verwendeten Informationen werden nicht separat gespeichert oder nach außen weitergegeben.';
 
   @override
+  String get trendInfoTitle => 'Blutzucker-Trend-Anleitung';
+
+  @override
+  String get trendInfoPeriodTitle => 'Blutzucker nach Zeitraum vergleichen';
+
+  @override
+  String get trendInfoPeriodDesc =>
+      'Tippen Sie auf das Diagramm, um den heutigen Blutzucker mit vergangenen Zeiträumen zu vergleichen. Nur das heutige Datum kann verglichen werden.';
+
+  @override
+  String get trendInfoZoomTitle => 'Diagramm vergrößern & verkleinern';
+
+  @override
+  String get trendInfoZoomDesc =>
+      'Zwicken oder spreizen Sie mit zwei Fingern, um das Diagramm für eine genauere Ansicht zu vergrößern oder zu verkleinern.';
+
+  @override
   String get times => '×';
 
   @override
@@ -761,6 +778,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get syncPeriod6Months => '6 Monate';
+
+  @override
+  String get syncPeriod9Months => '9 Monate';
+
+  @override
+  String get syncPeriod12Months => '12 Monate';
 
   @override
   String get disconnected => 'Verbindung zu Apple Health getrennt';

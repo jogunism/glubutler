@@ -33,14 +33,16 @@ void main() async {
   // Load .env file (for API keys)
   await dotenv.load(fileName: ".env");
 
-  // Initialize Firebase (production only)
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    await AnalyticsService.initialize();
-  } catch (e) {
-    debugPrint('[Firebase] Initialization failed: $e');
+  // Initialize Firebase (Android only)
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      await AnalyticsService.initialize();
+    } catch (e) {
+      debugPrint('[Firebase] Initialization failed: $e');
+    }
   }
 
   // Initialize Google Sign-In (Android only, must be called once before use)
@@ -194,9 +196,10 @@ class GluButlerApp extends StatelessWidget {
           initialRoute: initialRoute,
           onGenerateRoute: AppRoutes.generateRoute,
 
-          // Firebase Analytics - screen tracking
+          // Firebase Analytics - screen tracking (Android only)
           navigatorObservers: [
-            AnalyticsService.getObserver(),
+            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+              AnalyticsService.getObserver(),
           ],
         );
       },

@@ -7,8 +7,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AnalyticsService {
   static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
-  /// Check if analytics is enabled (production mode only)
-  static bool get isEnabled => dotenv.env['APP_ENV'] == 'production';
+  /// Check if analytics is enabled (Android + production mode only)
+  static bool get isEnabled =>
+      !kIsWeb &&
+      defaultTargetPlatform == TargetPlatform.android &&
+      dotenv.env['APP_ENV'] == 'production';
 
   /// Initialize analytics
   static Future<void> initialize() async {

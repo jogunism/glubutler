@@ -55,13 +55,17 @@ class _HomeScreenState extends State<HomeScreen>
 
   // 차트 터치 상태
   int? _touchedBarIndex;
-  final ScrollController _chartScrollController = ScrollController();
   bool _isChartTouching = false;
 
   // 차트 줌 설정 (60 = 1시간단위/기본, 10 = 최대확대/10분단위)
   double _minutesPerBar = 60.0;
   double _pinchStartMinutesPerBar = 60.0;
   double _pinchStartDistance = 0.0;
+  double _pinchCenterX = 0.0;           // 핀치 중점 X (뷰포트 기준)
+  double _pinchStartScrollOffset = 0.0; // 핀치 시작 시 스크롤 오프셋
+  double _chartAvailableWidth = 300.0;  // 차트 너비 (Y축 제외)
+  double _chartScrollOffset = 0.0;      // Transform.translate 기반 스크롤 오프셋
+  bool _isPinching = false;             // 핀치 중 단일 터치 패닝 차단
   final Map<int, Offset> _activePointers = {};
 
   // 비교 기간 오버레이
@@ -102,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void dispose() {
     _animationController.dispose();
-    _chartScrollController.dispose();
     _chipsScrollController.dispose();
     super.dispose();
   }
@@ -177,8 +180,33 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
+  bool get _isToday {
+    final now = DateTime.now();
+    return _selectedDate.year == now.year &&
+        _selectedDate.month == now.month &&
+        _selectedDate.day == now.day;
+  }
+
+  /// 핀치 종료: 고정된 막대 수 해제, _isPinching 리셋
+  void _endPinch() {
+    setState(() {
+      _isPinching = false;
+      // 절반 이상 줌아웃된 경우 기본값(24시간 전체)으로 스냅
+      if (_minutesPerBar > 48.0) {
+        _minutesPerBar = 60.0;
+        _chartScrollOffset = 0.0;
+      } else {
+        // 스크롤이 현재 줌의 최대치를 초과하지 않도록 클램프
+        final zf = math.pow(60.0 / _minutesPerBar, 1.5);
+        final maxScroll = math.max(0.0, _chartAvailableWidth * (zf - 1));
+        _chartScrollOffset = _chartScrollOffset.clamp(0.0, maxScroll);
+      }
+    });
+  }
+
   /// 차트 탭 시 비교 기간 순환 (없음 → 이번주 → 지난주 → ... → 없음)
   void _cycleComparisonPeriod() {
+    if (!_isToday) return;
     final syncPeriod = context.read<SettingsService>().syncPeriod;
     final available = [
       for (int i = 0; i < _comparisonPeriods.length; i++)
@@ -392,9 +420,22 @@ class _HomeScreenState extends State<HomeScreen>
             DateFormat('yyyy-MM-dd').format(pickedDate),
           );
 
+          final now = DateTime.now();
+          final isToday = pickedDate.year == now.year &&
+              pickedDate.month == now.month &&
+              pickedDate.day == now.day;
           setState(() {
             _selectedDate = pickedDate;
+            _chartScrollOffset = 0.0;
+            if (!isToday) {
+              _comparisonPeriodIndex = null;
+              _comparisonRecords = [];
+              _isLoadingComparison = false;
+            }
           });
+          if (!isToday && _chipsScrollController.hasClients) {
+            _chipsScrollController.jumpTo(0);
+          }
           _loadSelectedDateData();
         }
       },
@@ -522,6 +563,7 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 타이틀
           Row(
@@ -532,14 +574,27 @@ class _HomeScreenState extends State<HomeScreen>
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const Spacer(),
-              Text(
-                l10n.tapToCompare,
-                style: context.textStyles.tileSubtitle.copyWith(
-                  fontSize: 11,
-                  color: context.colors.textSecondary.withValues(alpha: 0.45),
+              GestureDetector(
+                onTap: () => _showChartInfoModal(context),
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  child: Icon(
+                    CupertinoIcons.info_circle,
+                    size: 16,
+                    color: context.colors.textSecondary.withValues(alpha: 0.6),
+                  ),
                 ),
               ),
+              const Spacer(),
+              if (_isToday)
+                Text(
+                  l10n.tapToCompare,
+                  style: context.textStyles.tileSubtitle.copyWith(
+                    fontSize: 11,
+                    color: context.colors.textSecondary.withValues(alpha: 0.45),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -554,6 +609,12 @@ class _HomeScreenState extends State<HomeScreen>
                   final positions = _activePointers.values.toList();
                   _pinchStartDistance = (positions[0] - positions[1]).distance;
                   _pinchStartMinutesPerBar = _minutesPerBar;
+                  _pinchCenterX = ((positions[0].dx + positions[1].dx) / 2 - 35)
+                      .clamp(0.0, _chartAvailableWidth);
+                  // 완전 줌아웃 상태이면 stale 스크롤을 여기서 리셋
+                  if (_minutesPerBar >= 60.0) _chartScrollOffset = 0.0;
+                  _pinchStartScrollOffset = _chartScrollOffset;
+                  setState(() => _isPinching = true);
                 }
               },
               onPointerMove: (event) {
@@ -561,40 +622,80 @@ class _HomeScreenState extends State<HomeScreen>
                 _activePointers[event.pointer] = event.localPosition;
                 if (_activePointers.length == 2 && _pinchStartDistance > 0) {
                   final positions = _activePointers.values.toList();
-                  final currentDistance =
-                      (positions[0] - positions[1]).distance;
+                  final currentDistance = (positions[0] - positions[1]).distance;
                   final scale = currentDistance / _pinchStartDistance;
-                  final newMinutes = (_pinchStartMinutesPerBar / scale).clamp(
-                    10.0,
-                    60.0,
-                  );
-                  if ((newMinutes - _minutesPerBar).abs() > 0.2) {
+                  final newMinutes =
+                      (_pinchStartMinutesPerBar / scale).clamp(10.0, 60.0);
+                  if ((newMinutes - _minutesPerBar).abs() > 0.05 ||
+                      (newMinutes == 60.0 && _minutesPerBar < 60.0)) {
+                    // 줌+스크롤 동기 업데이트 — X 고정
+                    // 완전 줌아웃(60min)이면 스크롤 0으로 리셋해서 24시간 전체 표시
+                    final double newScrollOffset;
+                    if (newMinutes >= 60.0) {
+                      newScrollOffset = 0.0;
+                    } else {
+                      final oldZoom =
+                          math.pow(60.0 / _pinchStartMinutesPerBar, 1.5);
+                      final newZoom = math.pow(60.0 / newMinutes, 1.5);
+                      final contentPoint =
+                          _pinchStartScrollOffset + _pinchCenterX;
+                      final maxScroll =
+                          math.max(0.0, _chartAvailableWidth * (newZoom - 1));
+                      newScrollOffset =
+                          (contentPoint * (newZoom / oldZoom) - _pinchCenterX)
+                              .clamp(0.0, maxScroll);
+                    }
                     setState(() {
                       _minutesPerBar = newMinutes;
+                      _chartScrollOffset = newScrollOffset;
                       _touchedBarIndex = null;
                     });
                   }
+                } else if (_activePointers.length == 1 &&
+                    !_isPinching &&
+                    _minutesPerBar < 60) {
+                  // 단일 터치 패닝
+                  final newZoom = math.pow(60.0 / _minutesPerBar, 1.5);
+                  final maxScroll =
+                      math.max(0.0, _chartAvailableWidth * (newZoom - 1));
+                  setState(() {
+                    _chartScrollOffset =
+                        (_chartScrollOffset - event.delta.dx)
+                            .clamp(0.0, maxScroll);
+                  });
                 }
               },
               onPointerUp: (event) {
                 _activePointers.remove(event.pointer);
-                if (_activePointers.length < 2) _pinchStartDistance = 0.0;
+                if (_activePointers.length < 2) {
+                  _pinchStartDistance = 0.0;
+                  if (_isPinching) _endPinch();
+                }
               },
               onPointerCancel: (event) {
                 _activePointers.remove(event.pointer);
-                if (_activePointers.length < 2) _pinchStartDistance = 0.0;
+                if (_activePointers.length < 2) {
+                  _pinchStartDistance = 0.0;
+                  if (_isPinching) _endPinch();
+                }
               },
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return _buildGlucoseChart(context, l10n);
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      return _buildGlucoseChart(context, l10n, constraints.maxWidth);
+                    },
+                  );
                 },
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          // 비교 기간 칩
-          _buildComparisonChips(context, l10n),
+          if (_isToday) ...[
+            const SizedBox(height: 12),
+            // 비교 기간 칩
+            _buildComparisonChips(context, l10n),
+          ],
         ],
       ),
     );
@@ -702,7 +803,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildGlucoseChart(BuildContext context, AppLocalizations l10n) {
+  Widget _buildGlucoseChart(BuildContext context, AppLocalizations l10n, double actualWidth) {
     if (_todayRecords.isEmpty) {
       return Center(
         child: Column(
@@ -725,9 +826,8 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
 
-    // _minutesPerBar에 따라 데이터 그룹화 (10분~60분 단위)
-    // 5분 단위로 스냅: 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60
-    final minPerBar = ((_minutesPerBar / 5).round() * 5).clamp(10, 60);
+    // 데이터 집계 / 막대 수 계산용 (정수, 안정적인 슬롯 경계)
+    final minPerBar = _minutesPerBar.round().clamp(10, 60);
     final totalBars = (24 * 60 / minPerBar).round();
     final timeData = <int, List<double>>{};
     for (final record in _todayRecords) {
@@ -782,12 +882,17 @@ class _HomeScreenState extends State<HomeScreen>
               item.type == FeedItemType.insulin);
     }).toList();
 
-    // 화면 너비 계산: 1.5제곱으로 줌 → 막대 슬롯도 같이 커짐
+    // 화면 너비 계산: LayoutBuilder로 받은 실제 너비 사용 (카드 패딩 자동 반영)
     // 60min: 1x, 30min: 2.8x, 10min: 14.7x
-    final screenWidth = MediaQuery.of(context).size.width;
-    final availableWidth = screenWidth - 35; // Y축 너비 제외
-    final zoomFactor = 60.0 / minPerBar;
+    final availableWidth = actualWidth - 35; // Y축 너비 제외
+    // 핀치 줌 중심점 계산에 사용
+    if (_chartAvailableWidth != availableWidth) {
+      _chartAvailableWidth = availableWidth;
+    }
+    // 줌/너비 계산은 _minutesPerBar 연속값 사용 (부드러운 확대/축소)
+    final zoomFactor = 60.0 / _minutesPerBar;
     final chartWidth = availableWidth * math.pow(zoomFactor, 1.5);
+    final effectiveScroll = _chartScrollOffset.clamp(0.0, math.max(0.0, chartWidth - availableWidth).toDouble());
 
     // 비교 기간 슬롯별 평균 계산
     final compAverage = <int, double>{};
@@ -803,6 +908,23 @@ class _HomeScreenState extends State<HomeScreen>
         compAverage[index] = values.reduce((a, b) => a + b) / values.length;
       });
     }
+    // min/max는 고정 60분 슬롯 기준 — 줌 변경 시 값이 바뀌지 않도록
+    final double? compMin;
+    final double? compMax;
+    if (_comparisonRecords.isEmpty) {
+      compMin = null;
+      compMax = null;
+    } else {
+      final fixedData = <int, List<double>>{};
+      for (final record in _comparisonRecords) {
+        final idx = (record.timestamp.hour * 60 + record.timestamp.minute) ~/ 60;
+        fixedData.putIfAbsent(idx, () => []).add(record.valueIn('mg/dL'));
+      }
+      final fixedAvg = fixedData.map((k, v) =>
+          MapEntry(k, v.reduce((a, b) => a + b) / v.length));
+      compMin = fixedAvg.values.reduce(math.min);
+      compMax = fixedAvg.values.reduce(math.max);
+    }
 
     // 차트 위젯 생성
     final chartStack = Stack(
@@ -816,6 +938,7 @@ class _HomeScreenState extends State<HomeScreen>
             getEventColor: _getEventColor,
             getEventLabelColor: _getEventColor,
             getEventLabel: (type) => _getEventLabel(type, l10n),
+            getEventIcon: _getEventIcon,
             getEventDuration: _getEventDuration,
             cardColor: context.colors.card,
             textColor: isDarkMode ? context.colors.textPrimary : Colors.black,
@@ -826,9 +949,9 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           child: Container(),
         ),
-        // 차트 레이어
+        // 차트 레이어 (key 제거 — 위젯 재생성 없이 in-place 업데이트)
         BarChart(
-          key: ValueKey(minPerBar),
+          duration: Duration.zero,
           BarChartData(
             alignment: BarChartAlignment.spaceAround,
             maxY: chartMaxY,
@@ -839,7 +962,7 @@ class _HomeScreenState extends State<HomeScreen>
                 HorizontalLine(
                   y: averageGlucose,
                   color: averageLineColor.withValues(alpha: 0.4),
-                  strokeWidth: 2,
+                  strokeWidth: 1,
                   dashArray: [8, 4], // 점선 패턴
                   label: HorizontalLineLabel(
                     show: true,
@@ -992,8 +1115,8 @@ class _HomeScreenState extends State<HomeScreen>
             borderData: FlBorderData(show: false),
             barGroups: List.generate(totalBars, (index) {
               final value = timeAverage[index];
-              // 슬롯의 55% 너비, 최소 6px ~ 최대 22px
-              final barWidth = (chartWidth / totalBars * 0.55).clamp(6.0, 22.0);
+              // 막대 두께는 기본 줌(60분/24칸) 슬롯 기준으로 고정 — 줌 레벨과 무관
+              final barWidth = (availableWidth / 24 * 0.55).clamp(4.0, 14.0);
 
               if (value == null) {
                 // 데이터가 없는 구간
@@ -1035,6 +1158,11 @@ class _HomeScreenState extends State<HomeScreen>
                 chartMaxY: chartMaxY,
                 totalBars: totalBars,
                 color: _HomeScreenState._periodColors[_comparisonPeriodIndex!],
+                compMin: compMin,
+                compMax: compMax,
+                unit: settings.unit,
+                viewportWidth: availableWidth,
+                scrollOffset: effectiveScroll,
               ),
               child: Container(),
             ),
@@ -1062,18 +1190,19 @@ class _HomeScreenState extends State<HomeScreen>
             ],
           ),
         ),
-        // 차트 영역 (줌인시 스크롤 가능)
+        // 차트 영역: 항상 OverflowBox + Transform.translate (조건부 전환 제거)
         Expanded(
-          child: minPerBar < 60
-              ? SingleChildScrollView(
-                  controller: _chartScrollController,
-                  scrollDirection: Axis.horizontal,
-                  physics: _isChartTouching
-                      ? const NeverScrollableScrollPhysics()
-                      : const AlwaysScrollableScrollPhysics(),
-                  child: SizedBox(width: chartWidth, child: chartStack),
-                )
-              : chartStack, // 기본(60분단위): 스크롤 없이
+          child: ClipRect(
+            child: OverflowBox(
+              alignment: Alignment.centerLeft,
+              minWidth: chartWidth,
+              maxWidth: chartWidth,
+              child: Transform.translate(
+                offset: Offset(-effectiveScroll, 0),
+                child: SizedBox(width: chartWidth, child: chartStack),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -1268,14 +1397,29 @@ class _HomeScreenState extends State<HomeScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 타이틀
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              l10n.glucoseStatus,
-              style: context.textStyles.tileTitle.copyWith(
-                fontWeight: FontWeight.w600,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                l10n.glucoseStatus,
+                style: context.textStyles.tileTitle.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
+              GestureDetector(
+                onTap: () => _showScoreInfoModal(context),
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  child: Icon(
+                    CupertinoIcons.info_circle,
+                    size: 16,
+                    color: context.colors.textSecondary.withValues(alpha: 0.6),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Row(
@@ -1396,32 +1540,159 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // 점수 정보 버튼
-          GestureDetector(
-            onTap: () => _showScoreInfoModal(context),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  CupertinoIcons.info_circle,
-                  size: 14,
-                  color: context.colors.textSecondary.withValues(alpha: 0.7),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  l10n.scoreHint,
-                  style: context.textStyles.tileSubtitle.copyWith(
-                    fontSize: 11,
-                    color: context.colors.textSecondary.withValues(alpha: 0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
+  }
+
+  void _showChartInfoModal(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    MainScreen.globalKey.currentState?.setTabBarVisibility(false);
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      useRootNavigator: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: context.colors.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.only(bottom: bottomPadding + 30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      l10n.close,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    ),
+                  ),
+                  Text(
+                    l10n.trendInfoTitle,
+                    style: context.textStyles.tileTitle.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 60),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '• ',
+                        style: context.textStyles.tileTitle.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.trendInfoPeriodTitle,
+                              style: context.textStyles.tileTitle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              l10n.trendInfoPeriodDesc,
+                              style: context.textStyles.tileSubtitle.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '• ',
+                        style: context.textStyles.tileTitle.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.trendInfoZoomTitle,
+                              style: context.textStyles.tileTitle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              l10n.trendInfoZoomDesc,
+                              style: context.textStyles.tileSubtitle.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // 개인정보 안내
+                  Text(
+                    l10n.scoreInfoPrivacy,
+                    style: context.textStyles.tileSubtitle.copyWith(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.accentRedColorDarkMode
+                          : AppTheme.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+
+    MainScreen.globalKey.currentState?.setTabBarVisibility(true);
   }
 
   void _showScoreInfoModal(BuildContext context) async {
@@ -1725,6 +1996,19 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   /// 이벤트 타입에 따른 텍스트 반환 (국제화)
+  IconData _getEventIcon(FeedItemType type) {
+    switch (type) {
+      case FeedItemType.meal:
+        return Icons.restaurant;
+      case FeedItemType.exercise:
+        return Icons.local_fire_department;
+      case FeedItemType.insulin:
+        return Icons.vaccines;
+      default:
+        return Icons.circle;
+    }
+  }
+
   String _getEventLabel(FeedItemType type, AppLocalizations l10n) {
     switch (type) {
       case FeedItemType.meal:
@@ -1814,6 +2098,7 @@ class _EventBackgroundPainter extends CustomPainter {
   final Color Function(FeedItemType) getEventColor;
   final Color Function(FeedItemType) getEventLabelColor;
   final String Function(FeedItemType) getEventLabel;
+  final IconData Function(FeedItemType) getEventIcon;
   final double Function(FeedItem) getEventDuration;
   final Color cardColor;
   final Color textColor;
@@ -1829,6 +2114,7 @@ class _EventBackgroundPainter extends CustomPainter {
     required this.getEventColor,
     required this.getEventLabelColor,
     required this.getEventLabel,
+    required this.getEventIcon,
     required this.getEventDuration,
     required this.cardColor,
     required this.textColor,
@@ -1884,32 +2170,60 @@ class _EventBackgroundPainter extends CustomPainter {
 
       canvas.drawRect(rect, paint);
 
-      // 레이블 텍스트 그리기
-      final labelText = ' ${getEventLabel(event.type)} ';
-      final textSpan = TextSpan(
-        text: labelText,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          backgroundColor: cardColor.withValues(alpha: 0.8),
-        ),
-      );
-
-      final textPainter = TextPainter(
-        text: textSpan,
-        textDirection: ui.TextDirection.ltr,
-        textAlign: TextAlign.center,
-      );
-
-      textPainter.layout();
-
-      // 레이블을 배경 중앙 상단에 배치
+      // 레이블: 줌 레벨에 따라 아이콘만 or 아이콘+텍스트
+      // minutesPerBar >= 40 → 아이콘만, < 40 → 아이콘+텍스트
+      final iconData = getEventIcon(event.type);
+      final labelColor = getEventColor(event.type);
       final centerX = (left + right) / 2;
-      final labelX = centerX - (textPainter.width / 2);
-      final labelY = 4.0; // 상단에서 4px 아래
+      const topY = 4.0;
+      const iconSize = 12.0;
 
-      textPainter.paint(canvas, Offset(labelX, labelY));
+      // 아이콘 (Material font glyph)
+      final iconPainter = TextPainter(
+        text: TextSpan(
+          text: String.fromCharCode(iconData.codePoint),
+          style: TextStyle(
+            fontSize: iconSize,
+            fontFamily: iconData.fontFamily,
+            color: labelColor.withValues(alpha: 0.85),
+          ),
+        ),
+        textDirection: ui.TextDirection.ltr,
+      )..layout();
+
+      if (minutesPerBar >= 40) {
+        // 아이콘만
+        iconPainter.paint(
+          canvas,
+          Offset(centerX - iconPainter.width / 2, topY),
+        );
+      } else {
+        // 아이콘 + 텍스트 (세로 배치)
+        final textPainter = TextPainter(
+          text: TextSpan(
+            text: getEventLabel(event.type),
+            style: TextStyle(
+              color: labelColor.withValues(alpha: 0.85),
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          textDirection: ui.TextDirection.ltr,
+        )..layout();
+
+        final startY = topY;
+        iconPainter.paint(
+          canvas,
+          Offset(centerX - iconPainter.width / 2, startY),
+        );
+        textPainter.paint(
+          canvas,
+          Offset(
+            centerX - textPainter.width / 2,
+            startY + iconPainter.height + 2,
+          ),
+        );
+      }
     }
 
     // 터치된 바의 수직선 그리기
@@ -1948,6 +2262,11 @@ class _ComparisonLinePainter extends CustomPainter {
   final double chartMaxY;
   final int totalBars;
   final Color color;
+  final double? compMin;
+  final double? compMax;
+  final String unit;
+  final double viewportWidth;  // 실제 보이는 너비
+  final double scrollOffset;   // 현재 스크롤 오프셋
 
   _ComparisonLinePainter({
     required this.compAverage,
@@ -1955,23 +2274,68 @@ class _ComparisonLinePainter extends CustomPainter {
     required this.chartMaxY,
     required this.totalBars,
     required this.color,
+    required this.compMin,
+    required this.compMax,
+    required this.unit,
+    required this.viewportWidth,
+    required this.scrollOffset,
   });
+
+  double _toY(double value, double chartHeight) {
+    final yRange = chartMaxY - chartMinY;
+    return chartHeight * (1 - (value - chartMinY) / yRange);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     final chartHeight = size.height - 24; // bottomTitles 영역 제외
     final barSlotWidth = size.width / totalBars;
-    final yRange = chartMaxY - chartMinY;
+    // 배경 밴드 상하 패딩 (mg/dL 단위)
+    const bandPadding = 8.0;
 
+    // ── 1. min~max 범위 배경 밴드 (패딩 포함) ──────────────────
+    if (compMin != null && compMax != null) {
+      final bandPaint = Paint()
+        ..color = color.withValues(alpha: 0.10)
+        ..style = PaintingStyle.fill;
+      final paddedMax = compMax! + bandPadding;
+      final paddedMin = compMin! - bandPadding;
+      final yTop = _toY(paddedMax, chartHeight).clamp(0.0, chartHeight);
+      final yBottom = _toY(paddedMin, chartHeight).clamp(0.0, chartHeight);
+      final bandRect = Rect.fromLTRB(0, yTop, size.width, yBottom);
+      canvas.drawRect(bandRect, bandPaint);
+
+      // ── 2. 배경 우측 상단에 최고/최소 수치 텍스트 ─────────────
+      final maxText = TextPainter(
+        text: TextSpan(
+          text: '↑ ${compMax!.toInt()} $unit  ↓ ${compMin!.toInt()} $unit',
+          style: TextStyle(
+            color: color.withValues(alpha: 0.75),
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        textDirection: ui.TextDirection.ltr,
+      )..layout();
+      // 뷰포트 우측에 고정 — 줌/스크롤에 상관없이 항상 표시
+      final textX = (scrollOffset + viewportWidth - maxText.width)
+          .clamp(0.0, size.width - maxText.width);
+      // Y: 밴드 위에 그리되, 차트 상단 밖으로 나가면 밴드 아래(안쪽)로 이동
+      final preferredY = yTop - maxText.height - 4;
+      final textY = preferredY < 0 ? (yTop + 4).clamp(0.0, chartHeight - maxText.height) : preferredY;
+      maxText.paint(canvas, Offset(textX, textY));
+    }
+
+    // ── 3. 비교 추이 라인 (갭 구간도 직접 연결) ─────────────────
     final linePaint = Paint()
-      ..color = color.withValues(alpha: 0.55)
+      ..color = color.withValues(alpha: 0.65)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
       ..strokeJoin = StrokeJoin.round
       ..strokeCap = StrokeCap.round;
 
     final dotPaint = Paint()
-      ..color = color.withValues(alpha: 0.45)
+      ..color = color.withValues(alpha: 0.55)
       ..style = PaintingStyle.fill;
 
     final path = Path();
@@ -1979,12 +2343,9 @@ class _ComparisonLinePainter extends CustomPainter {
 
     for (int i = 0; i < totalBars; i++) {
       final value = compAverage[i];
-      if (value == null) {
-        firstPoint = true;
-        continue;
-      }
+      if (value == null) continue; // 갭은 건너뛰고 다음 점과 직선 연결
       final x = i * barSlotWidth + barSlotWidth / 2;
-      final y = chartHeight * (1 - (value - chartMinY) / yRange);
+      final y = _toY(value, chartHeight);
 
       if (firstPoint) {
         path.moveTo(x, y);
@@ -2003,7 +2364,12 @@ class _ComparisonLinePainter extends CustomPainter {
         oldDelegate.totalBars != totalBars ||
         oldDelegate.chartMinY != chartMinY ||
         oldDelegate.chartMaxY != chartMaxY ||
-        oldDelegate.color != color;
+        oldDelegate.color != color ||
+        oldDelegate.compMin != compMin ||
+        oldDelegate.compMax != compMax ||
+        oldDelegate.unit != unit ||
+        oldDelegate.viewportWidth != viewportWidth ||
+        oldDelegate.scrollOffset != scrollOffset;
   }
 }
 

@@ -414,9 +414,10 @@ class FeedProvider extends ChangeNotifier {
       final now = DateTime.now();
       final syncDays =
           _settingsService?.syncPeriod ?? AppConstants.defaultSyncPeriod;
-      // 오늘 포함 syncDays일 = (syncDays - 1)일 전부터
-      // 예: 오늘이 30일, syncDays=7 -> 24일부터 30일까지 (7일간)
-      final startDate = now.subtract(Duration(days: syncDays - 1));
+      // 오늘 포함 syncDays일 = (syncDays - 1)일 전 00:00:00부터
+      // 예: 오늘이 30일, syncDays=7 -> 24일 00:00:00부터 30일까지 (7일간)
+      final rawStart = now.subtract(Duration(days: syncDays - 1));
+      final startDate = DateTime(rawStart.year, rawStart.month, rawStart.day);
       // Allow future dates (up to 1 day ahead) in case user enters future time
       final endDate = now.add(const Duration(days: 1));
 

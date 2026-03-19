@@ -20,6 +20,8 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
     <!-- Health Connect 읽기 권한 -->
+    <!-- 30일 이상 과거 데이터 접근에 필요 (3/6/9/12개월 연동 지원) -->
+    <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_HISTORY"/>
     <uses-permission android:name="android.permission.health.READ_BLOOD_GLUCOSE"/>
     <uses-permission android:name="android.permission.health.READ_INSULIN"/>
     <uses-permission android:name="android.permission.health.READ_STEPS"/>

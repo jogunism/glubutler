@@ -518,6 +518,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scoreInfoPrivacy => '※ 应用中使用的所有信息不会单独存储或分享到外部。';
 
   @override
+  String get trendInfoTitle => '血糖趋势指南';
+
+  @override
+  String get trendInfoPeriodTitle => '按时期比较血糖';
+
+  @override
+  String get trendInfoPeriodDesc => '点击图表可以将今天的血糖与过去时期的血糖进行比较。只能比较今天的数据。';
+
+  @override
+  String get trendInfoZoomTitle => '图表放大和缩小';
+
+  @override
+  String get trendInfoZoomDesc => '用两根手指捏合或展开来放大或缩小图表，以获得更详细的视图。';
+
+  @override
   String get times => '次';
 
   @override
@@ -742,6 +757,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get syncPeriod6Months => '6个月';
+
+  @override
+  String get syncPeriod9Months => '9个月';
+
+  @override
+  String get syncPeriod12Months => '12个月';
 
   @override
   String get disconnected => '已断开与 Apple 健康的连接';

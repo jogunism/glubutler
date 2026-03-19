@@ -529,6 +529,23 @@ class AppLocalizationsEn extends AppLocalizations {
       '※ All information used in the app is not stored separately or shared externally.';
 
   @override
+  String get trendInfoTitle => 'Glucose Trend Guide';
+
+  @override
+  String get trendInfoPeriodTitle => 'Period Glucose Comparison';
+
+  @override
+  String get trendInfoPeriodDesc =>
+      'Tap the chart to compare today\'s glucose with past periods. Only today\'s date can be compared.';
+
+  @override
+  String get trendInfoZoomTitle => 'Chart Zoom In & Out';
+
+  @override
+  String get trendInfoZoomDesc =>
+      'Pinch in or out with two fingers to zoom in or out for a more detailed view.';
+
+  @override
   String get times => '×';
 
   @override
@@ -760,6 +777,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncPeriod6Months => '6 Months';
+
+  @override
+  String get syncPeriod9Months => '9 Months';
+
+  @override
+  String get syncPeriod12Months => '12 Months';
 
   @override
   String get disconnected => 'Disconnected from Apple Health';
