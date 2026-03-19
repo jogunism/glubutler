@@ -73,6 +73,30 @@ class ReportRepository {
     final language = _settingsService.language;
     final glucoseRange = _settingsService.glucoseRange;
 
+    // 비교 기간별 데이터 조립 (홈탭 차트 기준: endDate 기준 상대 날짜)
+    // (label, startDaysAgo, endDaysAgo)
+    const comparisonPeriods = [
+      ('this_week', 7, 1),
+      ('last_week', 14, 8),
+      ('3_weeks_ago', 21, 15),
+      ('1_month_ago', 37, 31),
+      ('2_months_ago', 67, 61),
+      ('3_months_ago', 90, 84),
+      ('6_months_ago', 180, 174),
+    ];
+    final previousData = <String, dynamic>{};
+    for (final (label, startDaysAgo, endDaysAgo) in comparisonPeriods) {
+      final periodStart = endDate.subtract(Duration(days: startDaysAgo));
+      final periodEnd = endDate.subtract(Duration(days: endDaysAgo));
+      final periodFeedData = _feedProvider.getSimplifiedReportData(
+        startDate: periodStart,
+        endDate: periodEnd,
+      );
+      if (periodFeedData.isNotEmpty) {
+        previousData[label] = periodFeedData;
+      }
+    }
+
     try {
       // 이전 가이드 요약 가져오기 - reports 테이블에서 직접 조회
       final allReports = await _databaseService.getAllReports();
@@ -98,6 +122,7 @@ class ReportRepository {
         simplifiedDiaryData: simplifiedDiaryData,
         imagePaths: imagePaths,
         previousGuideSummaries: previousGuideSummariesJson,
+        previousData: previousData.isNotEmpty ? previousData : null,
         onProgress: onProgress,
       );
 

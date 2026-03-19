@@ -56,6 +56,7 @@ class ReportApiService {
     required List<Map<String, dynamic>> simplifiedDiaryData,
     List<String>? imagePaths,
     List<Map<String, dynamic>>? previousGuideSummaries,
+    Map<String, dynamic>? previousData,
     void Function(int sent, int total)? onProgress,
   }) async {
     try {
@@ -90,6 +91,13 @@ class ReportApiService {
             jsonEncode(previousGuideSummaries ?? []),
           ),
         );
+
+        // 비교 기간 데이터 전송 (this_week, last_week, 3_weeks_ago, ...)
+        if (previousData != null && previousData.isNotEmpty) {
+          formData.fields.add(
+            MapEntry('previousData', _encodeJson(previousData)),
+          );
+        }
 
         // debugPrint('[ReportApiService] FormData fields added successfully');
       } catch (e) {

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -560,6 +561,31 @@ class _ReportScreenState extends State<ReportScreen> {
             child: MarkdownBody(
               data: content,
               softLineBreak: true,
+              sizedImageBuilder: (config) {
+                // data:image/png;base64,... 형식의 인라인 이미지 처리
+                if (config.uri.scheme == 'data') {
+                  try {
+                    final uriStr = config.uri.toString();
+                    final commaIdx = uriStr.indexOf(',');
+                    if (commaIdx != -1) {
+                      final base64Str = uriStr.substring(commaIdx + 1);
+                      final bytes = base64Decode(base64Str);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.memory(
+                            bytes,
+                            fit: BoxFit.fitWidth,
+                            width: double.infinity,
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (_) {}
+                }
+                return const SizedBox.shrink();
+              },
               styleSheet: MarkdownStyleSheet(
                 h1: const TextStyle(
                   color: textColor,
