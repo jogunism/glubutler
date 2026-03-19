@@ -20,17 +20,29 @@ class YAxisPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final interval = (maxY - minY) / 4;
+    const candidates = [70, 100, 120, 150, 180, 200, 220, 250, 280, 300, 320];
 
-    for (int i = 0; i <= 4; i++) {
-      final value = minY + (interval * i);
-      // 최소값은 표시하지 않음
-      if (i == 0) continue;
+    // displayMinY ~ displayMaxY 범위에 포함되는 후보 필터링
+    final inRange = candidates
+        .where((v) => v > minY && v <= maxY)
+        .toList();
 
-      final yPosition = size.height * (1 - (i / 4.0));
+    // 최대 5개 균등 선택
+    final List<int> labels;
+    if (inRange.length <= 5) {
+      labels = inRange;
+    } else {
+      labels = List.generate(5, (i) {
+        final idx = ((i * (inRange.length - 1)) / 4).round();
+        return inRange[idx];
+      });
+    }
+
+    for (final value in labels) {
+      final yPosition = size.height * (1 - (value - minY) / (maxY - minY));
 
       final textSpan = TextSpan(
-        text: value.toInt().toString(),
+        text: value.toString(),
         style: TextStyle(color: textColor, fontSize: 10),
       );
 

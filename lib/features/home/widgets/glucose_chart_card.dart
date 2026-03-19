@@ -863,14 +863,21 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
       }
 
       if (yVals.isEmpty) yVals = [100.0];
-      _displayMaxY = (yVals.reduce(math.max) + 20).toDouble();
-      _displayMinY = (yVals.reduce(math.min) - 20).toDouble();
-      // 최소 Y 범위 180 mg/dL 보장
-      if (_displayMaxY - _displayMinY < 180) {
-        final midY = (_displayMaxY + _displayMinY) / 2;
-        _displayMaxY = midY + 90;
-        _displayMinY = midY - 90;
-      }
+      final dataMax = yVals.reduce(math.max);
+      final dataMin = yVals.reduce(math.min);
+
+      const yCandidates = [70, 100, 120, 150, 180, 200, 220, 250, 280, 300, 320];
+      final rawMax = math.max(180.0, dataMax + 20);
+      final rawMin = dataMin - 20;
+      // 후보값으로 스냅: max는 rawMax 이상 중 최솟값, min은 rawMin 이하 중 최댓값
+      _displayMaxY = yCandidates
+          .where((v) => v >= rawMax)
+          .map((v) => v.toDouble())
+          .fold<double>(320.0, (prev, v) => v < prev ? v : prev);
+      _displayMinY = yCandidates
+          .where((v) => v <= rawMin)
+          .map((v) => v.toDouble())
+          .fold<double>(70.0, (prev, v) => v > prev ? v : prev);
     }
 
     final chartMaxY = _displayMaxY;
@@ -945,6 +952,27 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
           ),
           child: Container(),
         ),
+        // 비교 기간 오버레이 라인 (BarChart 아래에 배치하여 툴팁이 위에 오도록)
+        if (compAverage.isNotEmpty && _comparisonPeriodIndex != null)
+          IgnorePointer(
+            child: ClipRect(
+              child: CustomPaint(
+                painter: ComparisonLinePainter(
+                  compAverage: compAverage,
+                  chartMinY: chartMinY,
+                  chartMaxY: chartMaxY,
+                  totalBars: totalBars,
+                  color: _periodColors[_comparisonPeriodIndex!],
+                  compMin: compMin,
+                  compMax: compMax,
+                  unit: settings.unit,
+                  viewportWidth: availableWidth,
+                  scrollOffset: effectiveScroll,
+                ),
+                child: Container(),
+              ),
+            ),
+          ),
         // 차트 레이어
         BarChart(
           duration: Duration.zero,
@@ -1003,17 +1031,10 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
               touchTooltipData: BarTouchTooltipData(
                 fitInsideVertically: true,
                 tooltipPadding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                getTooltipColor: (group) {
-                  if (isDarkMode) {
-                    return context.colors.card.withValues(alpha: 1.0);
-                  }
-                  return context.colors.card.withValues(alpha: 0.9);
-                },
+                getTooltipColor: (group) => Colors.white,
                 tooltipBorder: BorderSide(
-                  color: isDarkMode
-                      ? Colors.grey.withValues(alpha: 0.5)
-                      : context.colors.divider,
-                  width: isDarkMode ? 1.5 : 1.0,
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  width: 1.0,
                 ),
                 getTooltipItem: (group, groupIndex, rod, rodIndex) {
                   final index = group.x.toInt();
@@ -1027,8 +1048,8 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
 
                   return BarTooltipItem(
                     '$timeText\n',
-                    TextStyle(
-                      color: context.colors.textPrimary,
+                    const TextStyle(
+                      color: Color(0xFF333333),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -1095,7 +1116,11 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
             gridData: FlGridData(
               show: true,
               drawVerticalLine: false,
-              horizontalInterval: (chartMaxY - chartMinY) / 4,
+              horizontalInterval: 1,
+              checkToShowHorizontalLine: (value) {
+                const candidates = [70, 100, 120, 150, 180, 200, 220, 250, 280, 300, 320];
+                return candidates.contains(value.round());
+              },
               getDrawingHorizontalLine: (value) {
                 return FlLine(
                   color: context.colors.divider.withValues(alpha: 0.3),
@@ -1138,27 +1163,6 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
             }),
           ),
         ),
-        // 비교 기간 오버레이 라인
-        if (compAverage.isNotEmpty && _comparisonPeriodIndex != null)
-          IgnorePointer(
-            child: ClipRect(
-              child: CustomPaint(
-                painter: ComparisonLinePainter(
-                  compAverage: compAverage,
-                  chartMinY: chartMinY,
-                  chartMaxY: chartMaxY,
-                  totalBars: totalBars,
-                  color: _periodColors[_comparisonPeriodIndex!],
-                  compMin: compMin,
-                  compMax: compMax,
-                  unit: settings.unit,
-                  viewportWidth: availableWidth,
-                  scrollOffset: effectiveScroll,
-                ),
-                child: Container(),
-              ),
-            ),
-          ),
       ],
     );
 
