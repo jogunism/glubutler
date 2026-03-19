@@ -33,8 +33,10 @@ void main() async {
   // Load .env file (for API keys)
   await dotenv.load(fileName: ".env");
 
-  // Initialize Firebase (Android only)
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+  // Initialize Firebase (iOS + Android)
+  if (!kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS)) {
     try {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -196,9 +198,11 @@ class GluButlerApp extends StatelessWidget {
           initialRoute: initialRoute,
           onGenerateRoute: AppRoutes.generateRoute,
 
-          // Firebase Analytics - screen tracking (Android only)
+          // Firebase Analytics - screen tracking (iOS + Android)
           navigatorObservers: [
-            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+            if (!kIsWeb &&
+                (defaultTargetPlatform == TargetPlatform.android ||
+                    defaultTargetPlatform == TargetPlatform.iOS))
               AnalyticsService.getObserver(),
           ],
         );
