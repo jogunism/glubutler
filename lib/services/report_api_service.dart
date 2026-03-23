@@ -68,8 +68,13 @@ class ReportApiService {
       // debugPrint('[ReportApiService] Simplified feed data count: ${simplifiedFeedData.length}');
       // debugPrint('[ReportApiService] Simplified diary data count: ${simplifiedDiaryData.length}');
       try {
+        // 플랫폼별 사용자 ID: iOS는 cloudKit_, Android는 android_ prefix
+        final userId = userIdentity.cloudKitId != null
+            ? 'cloudKit_${userIdentity.cloudKitId}'
+            : 'android_${userIdentity.googleId ?? ''}';
+
         formData.fields.addAll([
-          MapEntry('cloudKitId', userIdentity.userId ?? ''),
+          MapEntry('userId', userId),
           MapEntry('userProfile', _encodeJson(userProfile.toJson())),
           MapEntry('target', glucoseRange.target.toString()),
           MapEntry('lang', language),

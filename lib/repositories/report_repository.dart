@@ -10,6 +10,7 @@ import 'package:glu_butler/services/database_service.dart';
 import 'package:glu_butler/services/report_api_service.dart';
 import 'package:glu_butler/services/settings_service.dart';
 import 'package:glu_butler/services/cloudkit_service.dart';
+import 'package:glu_butler/services/firestore_service.dart';
 import 'package:glu_butler/utils/report_parser.dart';
 
 /// Repository for report generation and management.
@@ -140,14 +141,26 @@ class ReportRepository {
       final reportId = await _databaseService.insertReport(report);
       final savedReport = report.copyWith(id: reportId);
 
-      // iCloud에 업로드 (iCloud 동기화가 활성화된 경우)
-      if (_settingsService.iCloudSyncEnabled) {
+      // 플랫폼별 클라우드 업로드
+      // iOS: iCloud (CloudKit)
+      if (userIdentity.cloudKitId != null && _settingsService.iCloudSyncEnabled) {
         try {
           await CloudKitService.uploadReport(savedReport);
           debugPrint('[ReportRepository] Report uploaded to iCloud');
         } catch (e) {
           debugPrint('[ReportRepository] Failed to upload report to iCloud: $e');
           // iCloud 업로드 실패해도 로컬 저장은 성공했으므로 계속 진행
+        }
+      }
+
+      // Android: Firestore
+      if (userIdentity.googleId != null) {
+        try {
+          await FirestoreService.uploadReport(userIdentity.googleId!, savedReport);
+          debugPrint('[ReportRepository] Report uploaded to Firestore');
+        } catch (e) {
+          debugPrint('[ReportRepository] Failed to upload report to Firestore: $e');
+          // Firestore 업로드 실패해도 로컬 저장은 성공했으므로 계속 진행
         }
       }
 
@@ -187,14 +200,27 @@ class ReportRepository {
     await _databaseService.deleteReport(id);
     debugPrint('[ReportRepository] Report deleted: $id');
 
-    // iCloud에서도 삭제 (iCloud 동기화가 활성화된 경우)
-    if (_settingsService.iCloudSyncEnabled) {
+    final userIdentity = _settingsService.userIdentity;
+
+    // iCloud에서도 삭제 (iOS, iCloud 동기화가 활성화된 경우)
+    if (userIdentity.cloudKitId != null && _settingsService.iCloudSyncEnabled) {
       try {
         await CloudKitService.deleteReport(id);
         debugPrint('[ReportRepository] Report deleted from iCloud');
       } catch (e) {
         debugPrint('[ReportRepository] Failed to delete report from iCloud: $e');
         // iCloud 삭제 실패해도 로컬 삭제는 성공했으므로 무시
+      }
+    }
+
+    // Firestore에서도 삭제 (Android)
+    if (userIdentity.googleId != null) {
+      try {
+        await FirestoreService.deleteReport(userIdentity.googleId!, id);
+        debugPrint('[ReportRepository] Report deleted from Firestore');
+      } catch (e) {
+        debugPrint('[ReportRepository] Failed to delete report from Firestore: $e');
+        // Firestore 삭제 실패해도 로컬 삭제는 성공했으므로 무시
       }
     }
   }
@@ -210,20 +236,33 @@ class ReportRepository {
 
   /// Delete all reports from database (개발용)
   ///
-  /// ⚠️ Hard delete - DB에서 완전히 삭제하고 iCloud에서도 삭제
+  /// ⚠️ Hard delete - DB에서 완전히 삭제하고 클라우드에서도 삭제
   Future<int> deleteAllReports() async {
     // 로컬 DB에서 hard delete
     final deletedCount = await _databaseService.deleteAllReports();
     debugPrint('[ReportRepository] All reports hard deleted from DB: $deletedCount');
 
-    // iCloud에서도 모두 삭제 (iCloud 동기화가 활성화된 경우)
-    if (_settingsService.iCloudSyncEnabled) {
+    final userIdentity = _settingsService.userIdentity;
+
+    // iCloud에서도 모두 삭제 (iOS, iCloud 동기화가 활성화된 경우)
+    if (userIdentity.cloudKitId != null && _settingsService.iCloudSyncEnabled) {
       try {
         await CloudKitService.deleteAllReports();
         debugPrint('[ReportRepository] All reports deleted from iCloud');
       } catch (e) {
         debugPrint('[ReportRepository] Failed to delete all reports from iCloud: $e');
         // iCloud 삭제 실패해도 로컬 삭제는 성공했으므로 무시
+      }
+    }
+
+    // Firestore에서도 모두 삭제 (Android)
+    if (userIdentity.googleId != null) {
+      try {
+        await FirestoreService.deleteAllReports(userIdentity.googleId!);
+        debugPrint('[ReportRepository] All reports deleted from Firestore');
+      } catch (e) {
+        debugPrint('[ReportRepository] Failed to delete all reports from Firestore: $e');
+        // Firestore 삭제 실패해도 로컬 삭제는 성공했으므로 무시
       }
     }
 

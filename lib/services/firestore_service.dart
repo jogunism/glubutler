@@ -462,6 +462,21 @@ class FirestoreService {
     }
   }
 
+  /// 모든 리포트 삭제 (Firestore에서, 개발용)
+  ///
+  /// ⚠️ 주의: 이 메서드는 해당 사용자의 모든 Report를 Firestore에서 삭제합니다.
+  static Future<void> deleteAllReports(String googleId) async {
+    try {
+      final snapshot = await _reportCol(googleId).get();
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+      debugPrint('[Firestore] All reports deleted for user $googleId');
+    } catch (e) {
+      throw Exception('Failed to delete all reports from Firestore: $e');
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // 식사 기록 동기화
   // ---------------------------------------------------------------------------
