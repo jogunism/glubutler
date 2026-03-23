@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import 'package:glu_butler/services/image_service.dart';
 
 import 'package:glu_butler/l10n/app_localizations.dart';
 import 'package:glu_butler/core/theme/app_theme.dart';
@@ -203,12 +204,16 @@ class _DiaryImageWidget extends StatelessWidget {
 
   const _DiaryImageWidget({required this.diaryFile});
 
+  Future<(File, bool)> _resolveFile() async {
+    final fullPath = await ImageService.resolveFullPath(diaryFile.filePath);
+    final file = File(fullPath);
+    return (file, await file.exists());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final file = File(diaryFile.filePath);
-
-    return FutureBuilder<bool>(
-      future: file.exists(),
+    return FutureBuilder<(File, bool)>(
+      future: _resolveFile(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
@@ -228,7 +233,8 @@ class _DiaryImageWidget extends StatelessWidget {
           );
         }
 
-        final fileExists = snapshot.data ?? false;
+        final file = snapshot.data?.$1;
+        final fileExists = snapshot.data?.$2 ?? false;
 
         // 로컬 파일이 없지만 downloadUrl이 있으면 네트워크 이미지 사용
         if (!fileExists && diaryFile.downloadUrl != null) {
@@ -252,7 +258,7 @@ class _DiaryImageWidget extends StatelessWidget {
           );
         }
 
-        if (!fileExists) {
+        if (!fileExists || file == null) {
           return Container(
             width: 60,
             height: 60,

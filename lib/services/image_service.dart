@@ -107,7 +107,8 @@ class ImageService {
 
   /// Save image to Documents directory
   ///
-  /// Returns the saved file path
+  /// Returns a relative path (e.g. "diary/filename.jpg") to avoid container
+  /// UUID invalidation when switching between App Store / TestFlight builds.
   Future<String> saveToDocuments(Uint8List imageBytes, String fileName) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
@@ -123,11 +124,29 @@ class ImageService {
       await file.writeAsBytes(imageBytes);
 
       debugPrint('[ImageService] Image saved to: $filePath');
-      return filePath;
+      // Return relative path so it remains valid across container UUID changes
+      return 'diary/$fileName';
     } catch (e) {
       debugPrint('[ImageService] Failed to save image: $e');
       rethrow;
     }
+  }
+
+  /// Resolve a stored path (absolute legacy or relative) to the current
+  /// absolute path using the app's documents directory.
+  static Future<String> resolveFullPath(String filePath) async {
+    if (filePath.startsWith('/')) {
+      // Legacy absolute path — extract the relative "diary/…" portion
+      if (filePath.contains('/diary/')) {
+        final relativePath = 'diary/${filePath.split('/diary/').last}';
+        final directory = await getApplicationDocumentsDirectory();
+        return path.join(directory.path, relativePath);
+      }
+      return filePath; // Unrecognised format, use as-is
+    }
+    // Already a relative path
+    final directory = await getApplicationDocumentsDirectory();
+    return path.join(directory.path, filePath);
   }
 
   /// Convert GPS coordinate from EXIF format to decimal degrees

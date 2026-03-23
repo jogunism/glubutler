@@ -108,7 +108,7 @@ void notificationBackgroundCallback() {
           );
           break;
 
-        case 'checkDiaryAbsence':
+        case 'checkDiaryReminder':
           await _checkAndSendDiaryReminder(
             notifications,
             prefs,
@@ -163,8 +163,8 @@ Future<void> _checkAndSendLongTermAbsenceReminder(
     messages['glucoseReminderBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
-        'glucose_absence_reminder',
-        '장기간 혈당 기록 부재 알림',
+        'glucose_reminder',
+        '혈당 측정 알림',
         importance: Importance.high,
         priority: Priority.high,
       ),
@@ -212,8 +212,8 @@ Future<void> _checkAndSendDiaryReminder(
     messages['diaryReminderBody'],
     const NotificationDetails(
       android: AndroidNotificationDetails(
-        'diary_absence_reminder',
-        '장기간 일기 작성 부재 알림',
+        'diary_reminder',
+        '일기 작성 알림',
         importance: Importance.high,
         priority: Priority.high,
       ),

@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database schema definition and migration logic
 class DatabaseSchema {
-  static const int version = 3;
+  static const int version = 4;
 
   // Table names
   static const String tableGlucose = 'glucose_records';
@@ -49,6 +49,24 @@ class DatabaseSchema {
     if (oldVersion < 3) {
       await db.execute(
           'ALTER TABLE $tableMeal ADD COLUMN meal_window_minutes INTEGER NOT NULL DEFAULT 30');
+    }
+    if (oldVersion < 4) {
+      // Convert absolute file paths to relative paths (diary/filename.jpg)
+      // so images remain valid after App Store <-> TestFlight container UUID changes.
+      final files = await db.query(tableDiaryFiles, columns: ['id', 'file_path']);
+      for (final file in files) {
+        final storedPath = file['file_path'] as String;
+        if (storedPath.startsWith('/') && storedPath.contains('/diary/')) {
+          final relativePath = 'diary/${storedPath.split('/diary/').last}';
+          await db.update(
+            tableDiaryFiles,
+            {'file_path': relativePath},
+            where: 'id = ?',
+            whereArgs: [file['id']],
+          );
+        }
+      }
+      debugPrint('[DatabaseSchema] Migrated diary file paths to relative');
     }
   }
 

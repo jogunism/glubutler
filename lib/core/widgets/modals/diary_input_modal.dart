@@ -95,15 +95,28 @@ class _DiaryInputModalState extends State<DiaryInputModal> {
       _selectedDate = widget.entry!.timestamp;
       _addMealToFeed = widget.entry!.hasMealDetected;
 
-      // 기존 이미지 파일 로드
-      for (final file in widget.entry!.files) {
-        _selectedImages.add(File(file.filePath));
-      }
+      // 기존 이미지 파일 로드 (상대 경로를 절대 경로로 해결 후 추가)
+      _loadExistingImages(widget.entry!.files);
+      return; // _initialImagePaths는 _loadExistingImages 완료 후 설정
     }
 
     // 초기 상태 저장
     _initialContent = _contentController.text;
     _initialImagePaths = _selectedImages.map((f) => f.path).toList();
+  }
+
+  Future<void> _loadExistingImages(List<DiaryFile> files) async {
+    final resolved = <File>[];
+    for (final file in files) {
+      final fullPath = await ImageService.resolveFullPath(file.filePath);
+      resolved.add(File(fullPath));
+    }
+    if (!mounted) return;
+    setState(() {
+      _selectedImages.addAll(resolved);
+      _initialContent = _contentController.text;
+      _initialImagePaths = _selectedImages.map((f) => f.path).toList();
+    });
   }
 
   @override

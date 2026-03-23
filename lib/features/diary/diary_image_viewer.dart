@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:glu_butler/models/diary_file.dart';
 import 'package:glu_butler/l10n/app_localizations.dart';
+import 'package:glu_butler/services/image_service.dart';
 
 /// 일기 이미지 전체화면 뷰어
 ///
@@ -277,15 +278,20 @@ class _ImageZoomView extends StatelessWidget {
     }
   }
 
+  Future<(File, bool)> _resolveFile() async {
+    final fullPath = await ImageService.resolveFullPath(file.filePath);
+    final imageFile = File(fullPath);
+    return (imageFile, await imageFile.exists());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final imageFile = File(file.filePath);
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context);
     final languageCode = locale.languageCode;
 
-    return FutureBuilder<bool>(
-      future: imageFile.exists(),
+    return FutureBuilder<(File, bool)>(
+      future: _resolveFile(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -296,7 +302,8 @@ class _ImageZoomView extends StatelessWidget {
           );
         }
 
-        final fileExists = snapshot.data ?? false;
+        final imageFile = snapshot.data?.$1;
+        final fileExists = snapshot.data?.$2 ?? false;
 
         // 로컬 파일이 없고 downloadUrl이 있으면 네트워크 이미지 사용
         final useNetwork = !fileExists && file.downloadUrl != null;
@@ -344,7 +351,7 @@ class _ImageZoomView extends StatelessWidget {
                 },
               )
             : Image.file(
-                imageFile,
+                imageFile!,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Center(

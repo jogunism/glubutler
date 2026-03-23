@@ -46,15 +46,49 @@ class SubscriptionScreen extends StatefulWidget {
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
 }
 
-class _SubscriptionScreenState extends State<SubscriptionScreen> {
+class _SubscriptionScreenState extends State<SubscriptionScreen>
+    with WidgetsBindingObserver {
   Offering? _currentOffering;
   Package? _selectedPackage;
   bool _isLoadingOfferings = true;
+  CustomerInfo? _customerInfo;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadOfferings();
+    _refreshCustomerInfo();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // iOS native redemption sheet가 닫힐 때 앱이 resume됨
+    // 이 시점에 구독 상태 재확인
+    if (state == AppLifecycleState.resumed) {
+      _refreshCustomerInfo();
+    }
+  }
+
+  Future<void> _refreshCustomerInfo() async {
+    final info = await SubscriptionService.getCustomerInfo();
+    if (!mounted) return;
+    setState(() {
+      _customerInfo = info;
+    });
+    final isPremium = info?.entitlements.active.containsKey('premium') ?? false;
+    if (isPremium) {
+      final settings = context.read<SettingsService>();
+      if (!settings.isPro) {
+        await settings.setProStatus(true);
+      }
+    }
   }
 
   Future<void> _loadOfferings() async {
@@ -92,6 +126,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         _isLoadingOfferings = false;
       });
     }
+  }
+
+  String _getPlanLabel(AppLocalizations l10n) {
+    final productId =
+        _customerInfo?.entitlements.active['premium']?.productIdentifier ?? '';
+    if (productId.toLowerCase().contains('month') ||
+        productId.toLowerCase().contains('1m')) {
+      return l10n.monthlyPlan;
+    }
+    return l10n.yearlyPlan;
   }
 
   @override
@@ -203,7 +247,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               icon: CupertinoIcons.star_fill,
               iconColor: AppTheme.iconAmber,
               title: l10n.subscriptionPlan,
-              value: l10n.yearlyPlan,
+              value: _getPlanLabel(l10n),
             ),
           ],
         ),
@@ -662,6 +706,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _showRedeemCodeSheet(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
+
+    // Android: Google Play redemption page (no in-app API available)
+    if (Platform.isAndroid) {
+      final url = Uri.parse('https://play.google.com/store/payment-methods/redeem');
+      try {
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        }
+      } catch (e) {
+        debugPrint('[Subscription] Error opening Google Play redeem page: $e');
+      }
+      return;
+    }
 
     try {
       await SubscriptionService.presentCodeRedemptionSheet();

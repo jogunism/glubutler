@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glu_butler/models/diary_file.dart';
+import 'package:glu_butler/services/image_service.dart';
 import 'package:glu_butler/models/diary_item.dart';
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/models/insulin_record.dart';
@@ -166,7 +167,8 @@ class FirestoreService {
   /// 이미지를 압축 후 base64로 diaryFiles에 업로드
   static Future<void> _uploadDiaryFile(String googleId, DiaryFile file) async {
     try {
-      final localFile = File(file.filePath);
+      final fullPath = await ImageService.resolveFullPath(file.filePath);
+      final localFile = File(fullPath);
       if (!localFile.existsSync()) return;
 
       final bytes = await localFile.readAsBytes();
