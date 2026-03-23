@@ -1,7 +1,7 @@
 name: glu_butler
 description: "Glu Butler - Your personal blood glucose management assistant"
 publish_to: "none"
-version: 1.0.2+3
+version: 1.1.0+7
 
 environment:
   sdk: ^3.10.4
@@ -11,6 +11,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+
+  # App version info
+  package_info_plus: ^8.3.0
 
   # Icons
   cupertino_icons: ^1.0.8

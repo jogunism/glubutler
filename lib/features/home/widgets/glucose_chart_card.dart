@@ -935,7 +935,7 @@ class _GlucoseChartCardState extends State<GlucoseChartCard> {
         // 이벤트 배경 + 터치 라인 레이어 (CustomPaint)
         CustomPaint(
           painter: EventBackgroundPainter(
-            events: eventsInRange,
+            events: _comparisonPeriodIndex != null ? [] : eventsInRange,
             chartMinY: chartMinY,
             chartMaxY: chartMaxY,
             getEventColor: _getEventColor,

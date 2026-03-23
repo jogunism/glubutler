@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
@@ -62,11 +63,22 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _iCloudSyncEnabled = false;
   bool _isTogglingSync = false;
+  String _appVersion = '';
 
   @override
   void initState() {
     super.initState();
     _loadSyncStatus();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _appVersion = '${info.version} (${info.buildNumber})';
+      });
+    }
   }
 
   Future<void> _loadSyncStatus() async {
@@ -468,6 +480,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // App version
+              Text(
+                _appVersion,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: context.colors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
               ),
 
               SizedBox(

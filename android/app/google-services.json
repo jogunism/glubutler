@@ -22,6 +22,22 @@
           }
         },
         {
+          "client_id": "759962797676-bg80u2mm2r6jbc672c1vim2svup5s4im.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jogunism.gluButler",
+            "certificate_hash": "808e356b51c30e803f1e7808924b32b9a503dee3"
+          }
+        },
+        {
+          "client_id": "759962797676-dp0h1iv0hok4vs5f8an2k1igk2crl2od.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jogunism.gluButler",
+            "certificate_hash": "311adbdab3621d5cd44125f1f9a8f35e322897ba"
+          }
+        },
+        {
           "client_id": "759962797676-nc1f3va2ku70a6srqqggk71oevri30mf.apps.googleusercontent.com",
           "client_type": 3
         }

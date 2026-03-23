@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -774,8 +776,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Future<void> _showManageSubscriptionAlert(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
 
-    // iOS App Store subscription management URL
-    final url = Uri.parse('https://apps.apple.com/account/subscriptions');
+    // Platform-specific subscription management URL
+    final url = Platform.isAndroid
+        ? Uri.parse('https://play.google.com/store/account/subscriptions')
+        : Uri.parse('https://apps.apple.com/account/subscriptions');
 
     try {
       if (await canLaunchUrl(url)) {

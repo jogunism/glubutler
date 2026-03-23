@@ -57,6 +57,7 @@ lib/l10n/generated/
 
 # Android local environment
 android/local.properties
+android/key.properties
 android/.gradle/
 android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
 
