@@ -27,6 +27,7 @@ enum HealthDataCategory {
   water,
   menstrualCycle,
   steps,
+  distance,
   mindfulness,
 }
 

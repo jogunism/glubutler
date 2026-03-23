@@ -6,7 +6,6 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.BloodGlucoseRecord
-import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.records.ExerciseSessionRecord
@@ -75,7 +74,6 @@ class HealthConnectBridge(
         HealthPermission.getReadPermission(SleepSessionRecord::class),
         HealthPermission.getReadPermission(WeightRecord::class),
         HealthPermission.getWritePermission(WeightRecord::class),
-        HealthPermission.getReadPermission(BodyFatRecord::class),
         HealthPermission.getReadPermission(DistanceRecord::class),
         HealthPermission.getReadPermission(HydrationRecord::class),
         HealthPermission.getReadPermission(MenstruationFlowRecord::class),

@@ -296,6 +296,14 @@ class _HealthConnectScreenState extends State<HealthConnectScreen> with WidgetsB
         category: HealthDataCategory.steps,
         isWriteType: false,
       ),
+      _DataTypeItem(
+        icon: Icons.directions_run,
+        title: l10n.distance,
+        subtitle: l10n.readOnly,
+        color: AppTheme.iconBlue,
+        category: HealthDataCategory.distance,
+        isWriteType: false,
+      ),
       // Mindfulness not available in Health Connect SDK (MindfulnessSessionRecord absent)
       if (!Platform.isAndroid)
         _DataTypeItem(
