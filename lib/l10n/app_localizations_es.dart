@@ -761,6 +761,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get steps => 'Pasos';
 
   @override
+  String get distance => 'Distancia';
+
+  @override
   String get mindfulness => 'Atención plena';
 
   @override

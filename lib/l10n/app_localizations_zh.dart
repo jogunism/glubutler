@@ -741,6 +741,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get steps => '步数';
 
   @override
+  String get distance => '距离';
+
+  @override
   String get mindfulness => '正念';
 
   @override

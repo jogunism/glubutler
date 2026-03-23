@@ -1562,6 +1562,12 @@ abstract class AppLocalizations {
   /// **'Steps'**
   String get steps;
 
+  /// No description provided for @distance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get distance;
+
   /// No description provided for @mindfulness.
   ///
   /// In en, this message translates to:

@@ -761,6 +761,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get steps => 'Schritte';
 
   @override
+  String get distance => 'Entfernung';
+
+  @override
   String get mindfulness => 'Achtsamkeit';
 
   @override

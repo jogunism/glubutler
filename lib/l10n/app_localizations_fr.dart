@@ -765,6 +765,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get steps => 'Pas';
 
   @override
+  String get distance => 'Distance';
+
+  @override
   String get mindfulness => 'Pleine conscience';
 
   @override

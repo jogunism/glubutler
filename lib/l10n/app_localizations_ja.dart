@@ -743,6 +743,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get steps => '歩数';
 
   @override
+  String get distance => '距離';
+
+  @override
   String get mindfulness => 'マインドフルネス';
 
   @override

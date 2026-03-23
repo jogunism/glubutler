@@ -744,6 +744,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get steps => '걸음 수';
 
   @override
+  String get distance => '거리';
+
+  @override
   String get mindfulness => '마음 챙김';
 
   @override
