@@ -5,10 +5,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-    <!-- 사진/미디어 접근 권한 (photo_manager) -->
+    <!-- 사진 접근 권한 (photo_manager) -->
     <!-- Android 13+ (API 33+) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
     <!-- Android 14+ (API 34+): 부분 사진 접근 -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
     <!-- Android 12 이하 -->
