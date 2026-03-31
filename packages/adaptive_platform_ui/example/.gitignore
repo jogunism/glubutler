@@ -32,8 +32,6 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
-ios/build/
-.packages/
 
 # Symbolication related
 app.*.symbols
@@ -45,29 +43,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-# Environment variables
-.env
-!.env.example
-
-# Generated files
-*.g.dart
-*.freezed.dart
-lib/l10n/generated/
-
-# Android local environment
-android/local.properties
-android/key.properties
-android/.gradle/
-android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
-
-# macOS/Windows generated
-macos/Flutter/GeneratedPluginRegistrant.swift
-windows/flutter/generated_plugin_registrant.cc
-windows/flutter/generated_plugins.cmake
-
-# Claude Code local settings
-.claude/settings.local.json
-
-# App icon source (빌드 결과물은 별도 커밋)
-assets/icon/

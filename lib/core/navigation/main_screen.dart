@@ -281,8 +281,11 @@ class MainScreenState extends State<MainScreen> {
       );
     } else if (PlatformInfo.isIOS) {
       // iOS <26: CupertinoTabBar
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
       return CupertinoTabBar(
-        backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
+        backgroundColor: isDarkMode
+            ? const Color(0xF01D1D1D)
+            : const Color(0xF0F9F9F9),
         activeColor: AppTheme.primaryColor,
         inactiveColor: CupertinoColors.inactiveGray,
         currentIndex: _currentIndex,
