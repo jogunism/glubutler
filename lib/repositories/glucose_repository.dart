@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import 'package:glu_butler/models/glucose_record.dart';
 import 'package:glu_butler/services/health_service.dart';
 import 'package:glu_butler/services/database_service.dart';
@@ -31,22 +35,30 @@ class GlucoseRepository {
 
   /// Save a glucose record.
   ///
-  /// If HealthKit write permission is granted, writes to HealthKit.
-  /// Otherwise, saves to local database.
-  /// Returns true if save was successful.
+  /// If HealthKit write permission is granted, writes to HealthKit in the
+  /// background (fire-and-forget) so the UI is not blocked by the native
+  /// HealthKit/Health Connect call. On background failure, falls back to
+  /// inserting into the local database so the record is not lost.
+  ///
+  /// If write permission is not granted, saves to the local database.
+  /// Returns true if the save flow was initiated successfully.
   Future<bool> save(GlucoseRecord record) async {
     final hasPermission = await hasHealthWritePermission();
 
     if (hasPermission) {
-      // Write to HealthKit/Health Connect
-      final success = await _healthService.writeGlucoseRecord(record);
-      if (success) {
-        return true;
-      } else {
-        // Fallback to local DB if HealthKit write fails
-        await _databaseService.insertGlucose(record);
-        return true;
-      }
+      // Fire-and-forget: do not block the UI on the native HealthKit write.
+      // If the write fails, fall back to the local DB so the record persists.
+      unawaited(
+        _healthService.writeGlucoseRecord(record).then((success) async {
+          if (!success) {
+            await _databaseService.insertGlucose(record);
+          }
+        }).catchError((Object e, StackTrace st) async {
+          debugPrint('[GlucoseRepository] Background health write failed: $e');
+          await _databaseService.insertGlucose(record);
+        }),
+      );
+      return true;
     } else {
       // Save to local database
       await _databaseService.insertGlucose(record);

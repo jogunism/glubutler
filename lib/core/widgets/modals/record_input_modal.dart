@@ -810,7 +810,7 @@ class _RecordInputModalState extends State<RecordInputModal> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 CupertinoButton(
-                  child: Text(AppLocalizations.of(context)!.save),
+                  child: Text(AppLocalizations.of(context)!.confirm),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
